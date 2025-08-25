@@ -12,6 +12,13 @@ r_obj* vec_check_recycle(r_obj* x,
                          struct vctrs_arg* x_arg,
                          struct r_lazy call);
 
+r_ssize vec_check_recyclable(
+  r_obj* x,
+  r_ssize size,
+  struct vctrs_arg* x_arg,
+  struct r_lazy call
+);
+
 static inline
 r_obj* vec_recycle(r_obj* x,
                    r_ssize size) {

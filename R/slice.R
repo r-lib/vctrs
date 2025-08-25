@@ -14,7 +14,8 @@
 #'   `integer()` to index none (as in `x[NULL]`).
 #' @param value Replacement values. `value` is cast to the type of
 #'   `x`, but only if they have a common type. See below for examples
-#'   of this rule.
+#'   of this rule. `value` must be recyclable to the size of `i` after `i`
+#'   has been converted to a valid integer location vector.
 #' @param x_arg,value_arg Argument names for `x` and `value`. These are used
 #'   in error messages to inform the user about the locations of
 #'   incompatible types and sizes (see [stop_incompatible_type()] and
@@ -27,10 +28,23 @@
 #' Support for S3 objects depends on whether the object implements a
 #' [vec_proxy()] method.
 #'
-#' * When a `vec_proxy()` method exists, the proxy is sliced and
+#' * When a `vec_proxy()` method exists, the proxy is sliced or assigned to and
 #'   `vec_restore()` is called on the result.
 #'
-#' * Otherwise `vec_slice()` falls back to the base generic `[`.
+#' * Otherwise, `vec_slice()` falls back to the base generic `[` and
+#'   `vec_slice<-()` falls back to the base generic `[<-`.
+#'
+#' When `vec_slice<-()` falls back to `[<-`, it is expected that the subclass's
+#' `[<-` method can handle the following subset of cases that base R's `[<-`
+#' can also handle:
+#'
+#' * An `i` vector of positive integer positions (notably excluding `NA`).
+#'
+#' * A `value` vector of length 1 or length `length(i)`. If length 1, it
+#'   should be recycled by the `[<-` method to the length of `i`.
+#'
+#' If your `[<-` method eventually calls base R's native `[<-` code, then these
+#' cases will be handled for you.
 #'
 #' Note that S3 lists are treated as scalars by default, and will
 #' cause an error if they don't implement a [vec_proxy()] method.
@@ -55,9 +69,7 @@
 #' ## base dependencies
 #'
 #' - \code{base::`[`}
-#'
-#' If a non-data-frame vector class doesn't have a [vec_proxy()]
-#' method, the vector is sliced with `[` instead.
+#' - \code{base::`[<-`}
 #'
 #' @export
 #' @keywords internal
@@ -185,11 +197,26 @@ vec_assign <- function(x, i, value, ..., x_arg = "", value_arg = "") {
   check_dots_empty0(...)
   .Call(ffi_assign, x, i, value, environment())
 }
+
+# Invariants for `[<-` methods:
+#
+# - `i` will contain positive integers
+# - `i` will not contain `NA` (a base `[<-` bug gets in the way if we allow this)
+# - `value` will be size 1 or size `length(i)`
+#
+# Given these invariants, the base `[<-` works the way we want it to in fallback
+# methods, and we expect any subclasses to also uphold the same behavior as base
+# `[<-` with these inputs. In other words, we don't expect subclasses to have
+# vctrs subassign behavior, but we do expect them to match a subset of base R
+# subassign behavior.
 vec_assign_fallback <- function(x, i, value) {
   # Work around bug in base `[<-`
   existing <- !is.na(i)
   i <- vec_slice(i, existing)
-  value <- vec_slice(value, existing)
+  if (vec_size(value) != 1L) {
+    # Only slice `value` if we aren't recycling it
+    value <- vec_slice(value, existing)
+  }
 
   d <- vec_dim_n(x)
   miss_args <- rep(list(missing_arg()), d - 1)

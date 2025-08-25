@@ -1,74 +1,102 @@
 #include "vctrs.h"
 
-#define ASSIGN_SHAPED_INDEX(CTYPE, DEREF, CONST_DEREF)        \
-  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership)); \
-  CTYPE* p_out = DEREF(out);                                  \
-                                                              \
-  const CTYPE* p_value = CONST_DEREF(value);                  \
-  R_len_t k = 0;                                              \
-                                                              \
-  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {        \
-    R_len_t loc = vec_strided_loc(                            \
-      p_info->p_shape_index,                                  \
-      p_info->p_strides,                                      \
-      p_info->shape_n                                         \
-    );                                                        \
-                                                              \
-    for (R_len_t j = 0; j < p_info->index_n; ++j, ++k) {      \
-      const int step = p_info->p_steps[j];                    \
-                                                              \
-      if (step == NA_INTEGER) {                               \
-        continue;                                             \
-      }                                                       \
-                                                              \
-      loc += step;                                            \
-                                                              \
-      p_out[loc] = p_value[k];                                \
-    }                                                         \
-                                                              \
-    vec_shape_index_increment(p_info);                        \
-  }                                                           \
-                                                              \
-  UNPROTECT(1);                                               \
+#define ASSIGN_SHAPED_INDEX(                                           \
+  CTYPE,                                                               \
+  DEREF,                                                               \
+  CONST_DEREF,                                                         \
+  VALUE_POST_INDEX_INCREMENT,                                          \
+  VALUE_POST_SHAPE_INCREMENT                                           \
+)                                                                      \
+  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership));          \
+  CTYPE* p_out = DEREF(out);                                           \
+                                                                       \
+  const CTYPE* p_value = CONST_DEREF(value);                           \
+  R_len_t k = 0;                                                       \
+                                                                       \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {                 \
+    R_len_t loc = vec_strided_loc(                                     \
+      p_info->p_shape_index,                                           \
+      p_info->p_strides,                                               \
+      p_info->shape_n                                                  \
+    );                                                                 \
+                                                                       \
+    for (R_len_t j = 0; j < p_info->index_n; ++j) {                    \
+      const int step = p_info->p_steps[j];                             \
+                                                                       \
+      if (step != NA_INTEGER) {                                        \
+        loc += step;                                                   \
+        p_out[loc] = p_value[k];                                       \
+      }                                                                \
+                                                                       \
+      k += VALUE_POST_INDEX_INCREMENT;                                 \
+    }                                                                  \
+                                                                       \
+    vec_shape_index_increment(p_info);                                 \
+    k += VALUE_POST_SHAPE_INCREMENT;                                   \
+  }                                                                    \
+                                                                       \
+  UNPROTECT(1);                                                        \
   return out
 
-#define ASSIGN_SHAPED_COMPACT(CTYPE, DEREF, CONST_DEREF)      \
-  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership)); \
-  CTYPE* p_out = DEREF(out);                                  \
-                                                              \
-  const R_len_t start = p_info->p_index[0];                   \
-  const R_len_t n = p_info->p_index[1];                       \
-  const R_len_t step = p_info->p_index[2];                    \
-                                                              \
-  const CTYPE* p_value = CONST_DEREF(value);                  \
-  R_len_t k = 0;                                              \
-                                                              \
-  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {        \
-    R_len_t loc = vec_strided_loc(                            \
-      p_info->p_shape_index,                                  \
-      p_info->p_strides,                                      \
-      p_info->shape_n                                         \
-    );                                                        \
-                                                              \
-    loc += start;                                             \
-                                                              \
-    for (R_len_t j = 0; j < n; ++j, ++k, loc += step) {       \
-      p_out[loc] = p_value[k];                                \
-    }                                                         \
-                                                              \
-    vec_shape_index_increment(p_info);                        \
-  }                                                           \
-                                                              \
-  UNPROTECT(1);                                               \
+#define ASSIGN_SHAPED_COMPACT(                                         \
+  CTYPE,                                                               \
+  DEREF,                                                               \
+  CONST_DEREF,                                                         \
+  VALUE_POST_INDEX_INCREMENT,                                          \
+  VALUE_POST_SHAPE_INCREMENT                                           \
+)                                                                      \
+  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership));          \
+  CTYPE* p_out = DEREF(out);                                           \
+                                                                       \
+  const R_len_t start = p_info->p_index[0];                            \
+  const R_len_t step = p_info->p_index[2];                             \
+                                                                       \
+  const CTYPE* p_value = CONST_DEREF(value);                           \
+  R_len_t k = 0;                                                       \
+                                                                       \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {                 \
+    R_len_t loc = vec_strided_loc(                                     \
+      p_info->p_shape_index,                                           \
+      p_info->p_strides,                                               \
+      p_info->shape_n                                                  \
+    );                                                                 \
+                                                                       \
+    loc += start;                                                      \
+                                                                       \
+    for (R_len_t j = 0; j < p_info->index_n; ++j) {                    \
+      p_out[loc] = p_value[k];                                         \
+      loc += step;                                                     \
+      k += VALUE_POST_INDEX_INCREMENT;                                 \
+    }                                                                  \
+                                                                       \
+    vec_shape_index_increment(p_info);                                 \
+    k += VALUE_POST_SHAPE_INCREMENT;                                   \
+  }                                                                    \
+                                                                       \
+  UNPROTECT(1);                                                        \
   return out
 
 // -----------------------------------------------------------------------------
 
-#define ASSIGN_SHAPED(CTYPE, DEREF, CONST_DEREF)      \
-  if (is_compact_seq(index)) {                        \
-    ASSIGN_SHAPED_COMPACT(CTYPE, DEREF, CONST_DEREF); \
-  } else {                                            \
-    ASSIGN_SHAPED_INDEX(CTYPE, DEREF, CONST_DEREF);   \
+#define ASSIGN_SHAPED(CTYPE, DEREF, CONST_DEREF)                               \
+  r_ssize value_size = vec_size(value);                                        \
+                                                                               \
+  if (is_compact_seq(index)) {                                                 \
+    if (value_size == 1) {                                                     \
+      ASSIGN_SHAPED_COMPACT(CTYPE, DEREF, CONST_DEREF, 0, 1);                  \
+    } else if (value_size == p_info->index_n) {                                \
+      ASSIGN_SHAPED_COMPACT(CTYPE, DEREF, CONST_DEREF, 1, 0);                  \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
+  } else {                                                                     \
+    if (value_size == 1) {                                                     \
+      ASSIGN_SHAPED_INDEX(CTYPE, DEREF, CONST_DEREF, 0, 1);                    \
+    } else if (value_size == p_info->index_n) {                                \
+      ASSIGN_SHAPED_INDEX(CTYPE, DEREF, CONST_DEREF, 1, 0);                    \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
   }
 
 static inline SEXP lgl_assign_shaped(SEXP proxy, SEXP index, SEXP value,
@@ -108,73 +136,101 @@ static inline SEXP raw_assign_shaped(SEXP proxy, SEXP index, SEXP value,
 
 // -----------------------------------------------------------------------------
 
-#define ASSIGN_BARRIER_SHAPED_INDEX(GET, SET)                 \
-  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership)); \
-                                                              \
-  R_len_t k = 0;                                              \
-                                                              \
-  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {        \
-    R_len_t loc = vec_strided_loc(                            \
-      p_info->p_shape_index,                                  \
-      p_info->p_strides,                                      \
-      p_info->shape_n                                         \
-    );                                                        \
-                                                              \
-    for (R_len_t j = 0; j < p_info->index_n; ++j, ++k) {      \
-      const int step = p_info->p_steps[j];                    \
-                                                              \
-      if (step == NA_INTEGER) {                               \
-        continue;                                             \
-      }                                                       \
-                                                              \
-      loc += step;                                            \
-                                                              \
-      SEXP elt = GET(value, k);                               \
-      SET(out, loc, elt);                                     \
-    }                                                         \
-                                                              \
-    vec_shape_index_increment(p_info);                        \
-  }                                                           \
-                                                              \
-  UNPROTECT(1);                                               \
+#define ASSIGN_BARRIER_SHAPED_INDEX(                                   \
+  CTYPE,                                                               \
+  CONST_DEREF,                                                         \
+  SET,                                                                 \
+  VALUE_POST_INDEX_INCREMENT,                                          \
+  VALUE_POST_SHAPE_INCREMENT                                           \
+)                                                                      \
+  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership));          \
+                                                                       \
+  CTYPE const* p_value = CONST_DEREF(value);                           \
+  R_len_t k = 0;                                                       \
+                                                                       \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {                 \
+    R_len_t loc = vec_strided_loc(                                     \
+      p_info->p_shape_index,                                           \
+      p_info->p_strides,                                               \
+      p_info->shape_n                                                  \
+    );                                                                 \
+                                                                       \
+    for (R_len_t j = 0; j < p_info->index_n; ++j) {                    \
+      const int step = p_info->p_steps[j];                             \
+                                                                       \
+      if (step != NA_INTEGER) {                                        \
+        loc += step;                                                   \
+        SET(out, loc, p_value[k]);                                     \
+      }                                                                \
+                                                                       \
+      k += VALUE_POST_INDEX_INCREMENT;                                 \
+    }                                                                  \
+                                                                       \
+    vec_shape_index_increment(p_info);                                 \
+    k += VALUE_POST_SHAPE_INCREMENT;                                   \
+  }                                                                    \
+                                                                       \
+  UNPROTECT(1);                                                        \
   return out
 
-#define ASSIGN_BARRIER_SHAPED_COMPACT(GET, SET)               \
-  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership)); \
-                                                              \
-  const R_len_t start = p_info->p_index[0];                   \
-  const R_len_t n = p_info->p_index[1];                       \
-  const R_len_t step = p_info->p_index[2];                    \
-                                                              \
-  R_len_t k = 0;                                              \
-                                                              \
-  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {        \
-    R_len_t loc = vec_strided_loc(                            \
-      p_info->p_shape_index,                                  \
-      p_info->p_strides,                                      \
-      p_info->shape_n                                         \
-    );                                                        \
-                                                              \
-    loc += start;                                             \
-                                                              \
-    for (R_len_t j = 0; j < n; ++j, ++k, loc += step) {       \
-      SEXP elt = GET(value, k);                               \
-      SET(out, loc, elt);                                     \
-    }                                                         \
-                                                              \
-    vec_shape_index_increment(p_info);                        \
-  }                                                           \
-                                                              \
-  UNPROTECT(1);                                               \
+#define ASSIGN_BARRIER_SHAPED_COMPACT(                                 \
+  CTYPE,                                                               \
+  CONST_DEREF,                                                         \
+  SET,                                                                 \
+  VALUE_POST_INDEX_INCREMENT,                                          \
+  VALUE_POST_SHAPE_INCREMENT                                           \
+)                                                                      \
+  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership));          \
+                                                                       \
+  const R_len_t start = p_info->p_index[0];                            \
+  const R_len_t step = p_info->p_index[2];                             \
+                                                                       \
+  CTYPE const* p_value = CONST_DEREF(value);                           \
+  R_len_t k = 0;                                                       \
+                                                                       \
+  for (R_len_t i = 0; i < p_info->shape_elem_n; ++i) {                 \
+    R_len_t loc = vec_strided_loc(                                     \
+      p_info->p_shape_index,                                           \
+      p_info->p_strides,                                               \
+      p_info->shape_n                                                  \
+    );                                                                 \
+                                                                       \
+    loc += start;                                                      \
+                                                                       \
+    for (R_len_t j = 0; j < p_info->index_n; ++j) {                    \
+      SET(out, loc, p_value[k]);                                       \
+      loc += step;                                                     \
+      k += VALUE_POST_INDEX_INCREMENT;                                 \
+    }                                                                  \
+                                                                       \
+    vec_shape_index_increment(p_info);                                 \
+    k += VALUE_POST_SHAPE_INCREMENT;                                   \
+  }                                                                    \
+                                                                       \
+  UNPROTECT(1);                                                        \
   return out
 
 // -----------------------------------------------------------------------------
 
-#define ASSIGN_BARRIER_SHAPED(GET, SET)      \
-  if (is_compact_seq(index)) {               \
-    ASSIGN_BARRIER_SHAPED_COMPACT(GET, SET); \
-  } else {                                   \
-    ASSIGN_BARRIER_SHAPED_INDEX(GET, SET);   \
+#define ASSIGN_BARRIER_SHAPED(CTYPE, CONST_DEREF, SET)                         \
+  r_ssize value_size = vec_size(value);                                        \
+                                                                               \
+  if (is_compact_seq(index)) {                                                 \
+    if (value_size == 1) {                                                     \
+      ASSIGN_BARRIER_SHAPED_COMPACT(CTYPE, CONST_DEREF, SET, 0, 1);            \
+    } else if (value_size == p_info->index_n) {                                \
+      ASSIGN_BARRIER_SHAPED_COMPACT(CTYPE, CONST_DEREF, SET, 1, 0);            \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
+  } else {                                                                     \
+    if (value_size == 1) {                                                     \
+      ASSIGN_BARRIER_SHAPED_INDEX(CTYPE, CONST_DEREF, SET, 0, 1);              \
+    } else if (value_size == p_info->index_n) {                                \
+      ASSIGN_BARRIER_SHAPED_INDEX(CTYPE, CONST_DEREF, SET, 1, 0);              \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
   }
 
 static SEXP list_assign_shaped(
@@ -184,7 +240,7 @@ static SEXP list_assign_shaped(
   const enum vctrs_ownership ownership,
   struct strides_info* p_info
 ) {
-  ASSIGN_BARRIER_SHAPED(VECTOR_ELT, SET_VECTOR_ELT);
+  ASSIGN_BARRIER_SHAPED(SEXP, VECTOR_PTR_RO, SET_VECTOR_ELT);
 }
 
 #undef ASSIGN_BARRIER_SHAPED
@@ -214,7 +270,12 @@ static inline SEXP vec_assign_shaped_switch(SEXP proxy,
 // -----------------------------------------------------------------------------
 
 // [[ include("vctrs.h") ]]
-SEXP vec_assign_shaped(SEXP proxy, SEXP index, SEXP value, const enum vctrs_ownership ownership) {
+SEXP vec_assign_shaped(
+  SEXP proxy,
+  SEXP index,
+  SEXP value,
+  enum vctrs_ownership ownership
+) {
   int n_protect = 0;
 
   struct strides_info info = new_strides_info(proxy, index);

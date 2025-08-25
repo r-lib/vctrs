@@ -68,6 +68,32 @@ test_that("can assign base vectors", {
   expect_identical(x, as.raw(rep(0, 3)))
 })
 
+test_that("can assign base vectors with recycling of `value`", {
+  x <- rep(FALSE, 3)
+  expect_identical(vec_assign(x, c(3, 1), TRUE), lgl(TRUE, FALSE, TRUE))
+  expect_identical(x, rep(FALSE, 3))
+
+  x <- rep(0L, 3)
+  expect_identical(vec_assign(x, c(3, 1), 1L), int(1L, 0L, 1L))
+  expect_identical(x, rep(0L, 3))
+
+  x <- rep(0., 3)
+  expect_identical(vec_assign(x, c(3, 1), 1), dbl(1, 0, 1))
+  expect_identical(x, rep(0., 3))
+
+  x <- rep(0i, 3)
+  expect_identical(vec_assign(x, c(3, 1), 1i), cpl(1i, 0i, 1i))
+  expect_identical(x, rep(0i, 3))
+
+  x <- rep("", 3)
+  expect_identical(vec_assign(x, c(3, 1), "foo"), chr("foo", "", "foo"))
+  expect_identical(x, rep("", 3))
+
+  x <- as.raw(rep(0, 3))
+  expect_identical(vec_assign(x, c(3, 1), as.raw(1)), as.raw(c(1, 0, 1)))
+  expect_identical(x, as.raw(rep(0, 3)))
+})
+
 test_that("can assign shaped base vectors", {
   mat <- as.matrix
 
@@ -96,6 +122,34 @@ test_that("can assign shaped base vectors", {
   expect_identical(x, mat(as.raw(rep(0, 3))))
 })
 
+test_that("can assign shaped base vectors with recycling of `value`", {
+  mat <- as.matrix
+
+  x <- mat(rep(FALSE, 3))
+  expect_identical(vec_assign(x, c(3, 1), TRUE), mat(lgl(TRUE, FALSE, TRUE)))
+  expect_identical(x, mat(rep(FALSE, 3)))
+
+  x <- mat(rep(0L, 3))
+  expect_identical(vec_assign(x, c(3, 1), 1L), mat(int(1L, 0L, 1L)))
+  expect_identical(x, mat(rep(0L, 3)))
+
+  x <- mat(rep(0, 3))
+  expect_identical(vec_assign(x, c(3, 1), 1), mat(dbl(1, 0, 1)))
+  expect_identical(x, mat(rep(0, 3)))
+
+  x <- mat(rep(0i, 3))
+  expect_identical(vec_assign(x, c(3, 1), 1i), mat(cpl(1i, 0i, 1i)))
+  expect_identical(x, mat(rep(0i, 3)))
+
+  x <- mat(rep("", 3))
+  expect_identical(vec_assign(x, c(3, 1), "foo"), mat(chr("foo", "", "foo")))
+  expect_identical(x, mat(rep("", 3)))
+
+  x <- mat(as.raw(rep(0, 3)))
+  expect_identical(vec_assign(x, c(3, 1), as.raw(1)), mat(as.raw(c(1, 0, 1))))
+  expect_identical(x, mat(as.raw(rep(0, 3))))
+})
+
 test_that("can slice-assign lists", {
   x <- rep(list(NULL), 3)
   vec_slice(x, 2) <- list(NA)
@@ -115,6 +169,12 @@ test_that("can assign lists", {
   expect_identical(x, rep(list(NULL), 3))
 })
 
+test_that("can assign lists with recycling of `value`", {
+  x <- rep(list(NULL), 3)
+  expect_identical(vec_assign(x, c(3, 1), list(NA)), list(NA, NULL, NA))
+  expect_identical(x, rep(list(NULL), 3))
+})
+
 test_that("can assign shaped lists", {
   mat <- as.matrix
   x <- mat(rep(list(NULL), 3))
@@ -122,16 +182,29 @@ test_that("can assign shaped lists", {
   expect_identical(x, mat(rep(list(NULL), 3)))
 })
 
-test_that("can assign object of any dimensionality", {
-  x1 <- ones(2)
-  x2 <- ones(2, 3)
-  x3 <- ones(2, 3, 4)
-  x4 <- ones(2, 3, 4, 5)
+test_that("can assign shaped lists with recycling of `value`", {
+  mat <- as.matrix
+  x <- mat(rep(list(NULL), 3))
+  expect_identical(vec_assign(x, c(3, 1), list(NA)), mat(list(NA, NULL, NA)))
+  expect_identical(x, mat(rep(list(NULL), 3)))
+})
 
-  expect_identical(vec_assign(x1, 1L, 2L), array(rep(c(2, 1), 1),  dim = 2))
-  expect_identical(vec_assign(x2, 1L, 2L), array(rep(c(2, 1), 3),  dim = c(2, 3)))
-  expect_identical(vec_assign(x3, 1L, 2L), array(rep(c(2, 1), 12), dim = c(2, 3, 4)))
-  expect_identical(vec_assign(x4, 1L, 2L), array(rep(c(2, 1), 60), dim = c(2, 3, 4, 5)))
+test_that("can assign object of any dimensionality", {
+  x1 <- ones(3)
+  x2 <- ones(3, 4)
+  x3 <- ones(3, 4, 5)
+  x4 <- ones(3, 4, 5, 6)
+
+  expect_identical(vec_assign(x1, 1L, 2L), array(rep(c(2, 1, 1), 1),  dim = 3))
+  expect_identical(vec_assign(x2, 1L, 2L), array(rep(c(2, 1, 1), 3),  dim = c(3, 4)))
+  expect_identical(vec_assign(x3, 1L, 2L), array(rep(c(2, 1, 1), 12), dim = c(3, 4, 5)))
+  expect_identical(vec_assign(x4, 1L, 2L), array(rep(c(2, 1, 1), 60), dim = c(3, 4, 5, 6)))
+
+  # With recycling of `value`
+  expect_identical(vec_assign(x1, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 1),  dim = 3))
+  expect_identical(vec_assign(x2, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 3),  dim = c(3, 4)))
+  expect_identical(vec_assign(x3, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 12), dim = c(3, 4, 5)))
+  expect_identical(vec_assign(x4, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 60), dim = c(3, 4, 5, 6)))
 })
 
 test_that("atomics can't be assigned in lists", {
@@ -379,6 +452,16 @@ test_that("index and value are sliced before falling back", {
   rhs <- foobar(int(0L, 10L))
   exp <- foobar(int(10L, 1:4))
   expect_identical(vec_assign(lhs, c(NA, 1), rhs), exp)
+})
+
+test_that("size 1 value is expected to be handled by the `[<-` fallback", {
+  # i.e., we don't pre recycle size 1 value to the size of the index because
+  # we expect that most `[<-` fallbacks eventually call base `[<-`, which
+  # recycles size 1 value efficiently. See `vec_assign_fallback()`.
+  lhs <- foobar(1:4)
+  rhs <- foobar(0L)
+  exp <- foobar(c(1L, 0L, 3L, 0L))
+  expect_identical(vec_assign(lhs, c(2L, 4L), rhs), exp)
 })
 
 test_that("can assign to data frame", {

@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_assign()` and `vec_slice<-()` now efficiently internally recycle `value` of size 1 at the C level, resulting in less memory usage.
+
 * `vec_assign()` no longer modifies `POSIXlt` and `vctrs_rcrd` types in place (#1951).
 
 * data.table's `IDate` class now has `vec_proxy()` and `vec_restore()` methods, fixing a number of issues with that class (#1549, #1961, #1972, #1781).

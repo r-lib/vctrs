@@ -45,15 +45,15 @@ r_obj* vec_assign_opts(r_obj* x,
     &location_opts
   ));
 
-  // Cast and recycle `value`
+  // Cast `value` and check that it can recycle
   value = KEEP(vec_cast(value, x, assign_opts.value_arg, assign_opts.x_arg, assign_opts.call));
-  value = KEEP(vec_check_recycle(value, vec_size(index), assign_opts.value_arg, assign_opts.call));
+  vec_check_recyclable(value, r_length(index), assign_opts.value_arg, assign_opts.call);
 
   r_obj* proxy = KEEP(vec_proxy(x));
   proxy = KEEP(vec_proxy_assign_opts(proxy, index, value, &assign_opts));
   r_obj* out = vec_restore_opts(proxy, x, &restore_opts);
 
-  FREE(6);
+  FREE(5);
   return out;
 }
 
@@ -158,9 +158,9 @@ r_obj* vec_assign_switch(r_obj* proxy,
  * @param proxy The proxy of the output container
  * @param index The locations to assign `value` to
  * @param value The value to assign into the proxy. Must already be
- *   cast to the type of the true output container, and have been
- *   recycled to the correct size. Should not be proxied, in case
- *   we have to fallback.
+ *   cast to the type of the true output container, and have already
+ *   been checked for recyclability (either size 1 or size of `index`).
+ *   Should not be proxied, in case we have to fallback.
  * @param p_opts The options to use during the assignment process
  */
 r_obj* vec_proxy_assign_opts(r_obj* proxy,
@@ -212,56 +212,67 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
   return out;
 }
 
-#define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF)                         \
-  r_ssize n = r_length(index);                                          \
+#define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF, VALUE_I)                \
+  r_ssize index_size = r_length(index);                                 \
   int* index_data = r_int_begin(index);                                 \
-                                                                        \
-  if (n != r_length(value)) {                                           \
-    r_stop_internal("`value` should have been recycled to fit `x`.");   \
-  }                                                                     \
                                                                         \
   const CTYPE* value_data = CONST_DEREF(value);                         \
                                                                         \
   r_obj* out = KEEP(vec_clone_referenced(x, ownership));                \
   CTYPE* out_data = DEREF(out);                                         \
                                                                         \
-  for (r_ssize i = 0; i < n; ++i) {                                     \
+  for (r_ssize i = 0; i < index_size; ++i) {                            \
     int j = index_data[i];                                              \
     if (j != r_globals.na_int) {                                        \
-      out_data[j - 1] = value_data[i];                                  \
+      out_data[j - 1] = value_data[VALUE_I];                            \
     }                                                                   \
   }                                                                     \
                                                                         \
   FREE(1);                                                              \
   return out
 
-#define ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF)                       \
+#define ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF, VALUE_I)              \
   int* index_data = r_int_begin(index);                                 \
   r_ssize start = index_data[0];                                        \
-  r_ssize n = index_data[1];                                            \
+  r_ssize index_size = index_data[1];                                   \
   r_ssize step = index_data[2];                                         \
-                                                                        \
-  if (n != r_length(value)) {                                           \
-    r_stop_internal("`value` should have been recycled to fit `x`.");   \
-  }                                                                     \
                                                                         \
   const CTYPE* value_data = CONST_DEREF(value);                         \
                                                                         \
   r_obj* out = KEEP(vec_clone_referenced(x, ownership));                \
   CTYPE* out_data = DEREF(out) + start;                                 \
                                                                         \
-  for (r_ssize i = 0; i < n; ++i, out_data += step, ++value_data) {     \
-    *out_data = *value_data;                                            \
+  for (r_ssize i = 0; i < index_size; ++i) {                            \
+    *out_data = value_data[VALUE_I];                                    \
+    out_data += step;                                                   \
   }                                                                     \
                                                                         \
   FREE(1);                                                              \
   return out
 
-#define ASSIGN(CTYPE, DEREF, CONST_DEREF)       \
-  if (is_compact_seq(index)) {                  \
-    ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF);  \
-  } else {                                      \
-    ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);    \
+#define ASSIGN(CTYPE, DEREF, CONST_DEREF)                                      \
+  r_ssize value_size = r_length(value);                                        \
+                                                                               \
+  if (is_compact_seq(index)) {                                                 \
+    r_ssize index_size = r_int_get(index, 1);                                  \
+                                                                               \
+    if (value_size == 1) {                                                     \
+      ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF, 0);                            \
+    } else if (value_size == index_size) {                                     \
+      ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF, i);                            \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
+  } else {                                                                     \
+    r_ssize index_size = r_length(index);                                      \
+                                                                               \
+    if (value_size == 1) {                                                     \
+      ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF, 0);                              \
+    } else if (value_size == index_size) {                                     \
+      ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF, i);                              \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
   }
 
 static
@@ -286,68 +297,80 @@ r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownersh
 }
 
 
-#define ASSIGN_BARRIER_INDEX(GET, SET)                                  \
-  r_ssize n = r_length(index);                                          \
-  int* index_data = r_int_begin(index);                                 \
-                                                                        \
-  if (n != r_length(value)) {                                           \
-    r_stop_internal("`value` (size %d) doesn't match `x` (size %d).",   \
-                    r_length(value),                                    \
-                    n);                                                 \
-  }                                                                     \
-                                                                        \
-  r_obj* out = KEEP(vec_clone_referenced(x, ownership));                \
-                                                                        \
-  for (r_ssize i = 0; i < n; ++i) {                                     \
-    int j = index_data[i];                                              \
-    if (j != r_globals.na_int) {                                        \
-      SET(out, j - 1, GET(value, i));                                   \
-    }                                                                   \
-  }                                                                     \
-                                                                        \
-  FREE(1);                                                              \
+#define ASSIGN_BARRIER_INDEX(CTYPE, CONST_DEREF, SET, VALUE_I)             \
+  r_ssize index_size = r_length(index);                                    \
+  int* index_data = r_int_begin(index);                                    \
+                                                                           \
+  CTYPE const* value_data = CONST_DEREF(value);                            \
+                                                                           \
+  r_obj* out = KEEP(vec_clone_referenced(x, ownership));                   \
+                                                                           \
+  for (r_ssize i = 0; i < index_size; ++i) {                               \
+    int j = index_data[i];                                                 \
+    if (j != r_globals.na_int) {                                           \
+      SET(out, j - 1, value_data[VALUE_I]);                                \
+    }                                                                      \
+  }                                                                        \
+                                                                           \
+  FREE(1);                                                                 \
   return out
 
-#define ASSIGN_BARRIER_COMPACT(GET, SET)                                \
-  int* index_data = r_int_begin(index);                                 \
-  r_ssize start = index_data[0];                                        \
-  r_ssize n = index_data[1];                                            \
-  r_ssize step = index_data[2];                                         \
-                                                                        \
-  if (n != r_length(value)) {                                           \
-    r_stop_internal("`value` (size %d) doesn't match `x` (size %d).",   \
-                    r_length(value),                                    \
-                    n);                                                 \
-  }                                                                     \
-                                                                        \
-  r_obj* out = KEEP(vec_clone_referenced(x, ownership));                \
-                                                                        \
-  for (r_ssize i = 0; i < n; ++i, start += step) {                      \
-    SET(out, start, GET(value, i));                                     \
-  }                                                                     \
-                                                                        \
-  FREE(1);                                                              \
+#define ASSIGN_BARRIER_COMPACT(CTYPE, CONST_DEREF, SET, VALUE_I)             \
+  int* index_data = r_int_begin(index);                                      \
+  r_ssize start = index_data[0];                                             \
+  r_ssize index_size = index_data[1];                                        \
+  r_ssize step = index_data[2];                                              \
+                                                                             \
+  CTYPE const* value_data = CONST_DEREF(value);                              \
+                                                                             \
+  r_obj* out = KEEP(vec_clone_referenced(x, ownership));                     \
+                                                                             \
+  for (r_ssize i = 0; i < index_size; ++i) {                                 \
+    SET(out, start, value_data[VALUE_I]);                                    \
+    start += step;                                                           \
+  }                                                                          \
+                                                                             \
+  FREE(1);                                                                   \
   return out
 
-#define ASSIGN_BARRIER(GET, SET)                \
-  if (is_compact_seq(index)) {                  \
-    ASSIGN_BARRIER_COMPACT(GET, SET);           \
-  } else {                                      \
-    ASSIGN_BARRIER_INDEX(GET, SET);             \
+
+#define ASSIGN_BARRIER(CTYPE, CONST_DEREF, SET)                                \
+  r_ssize value_size = r_length(value);                                        \
+                                                                               \
+  if (is_compact_seq(index)) {                                                 \
+    r_ssize index_size = r_int_get(index, 1);                                  \
+                                                                               \
+    if (value_size == 1) {                                                     \
+      ASSIGN_BARRIER_COMPACT(CTYPE, CONST_DEREF, SET, 0);                      \
+    } else if (value_size == index_size) {                                     \
+      ASSIGN_BARRIER_COMPACT(CTYPE, CONST_DEREF, SET, i);                      \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
+  } else {                                                                     \
+    r_ssize index_size = r_length(index);                                      \
+                                                                               \
+    if (value_size == 1) {                                                     \
+      ASSIGN_BARRIER_INDEX(CTYPE, CONST_DEREF, SET, 0);                        \
+    } else if (value_size == index_size) {                                     \
+      ASSIGN_BARRIER_INDEX(CTYPE, CONST_DEREF, SET, i);                        \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
   }
 
 r_obj* chr_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
-  ASSIGN_BARRIER(r_chr_get, r_chr_poke);
+  ASSIGN_BARRIER(r_obj*, r_chr_cbegin, r_chr_poke);
 }
 r_obj* list_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
-  ASSIGN_BARRIER(r_list_get, r_list_poke);
+  ASSIGN_BARRIER(r_obj*, r_list_cbegin, r_list_poke);
 }
 
 /**
  * Invariants:
  *
  * - `out` and `value` must be rectangular lists.
- * - `value` must have the same size as `index`.
+ * - `value` must have the same size as `index` or be size 1.
  *
  * Performance and safety notes:
  *
@@ -499,13 +522,13 @@ r_obj* ffi_assign_seq(r_obj* x,
 
   // Cast and recycle `value`
   value = KEEP(vec_cast(value, x, vec_args.value, vec_args.x, call));
-  value = KEEP(vec_check_recycle(value, vec_subscript_size(index), vec_args.value, call));
+  vec_check_recyclable(value, vec_subscript_size(index), vec_args.value, call);
 
   r_obj* proxy = KEEP(vec_proxy(x));
   proxy = KEEP(vec_proxy_assign_opts(proxy, index, value, &assign_opts));
   r_obj* out = vec_restore_opts(proxy, x, &restore_opts);
 
-  FREE(5);
+  FREE(4);
   return out;
 }
 
