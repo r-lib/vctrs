@@ -49,6 +49,10 @@ r_obj* vec_c_opts(r_obj* xs,
     return out;
   }
 
+  bool assign_names = !r_inherits(name_spec, "rlang_zap");
+  r_obj* xs_names = KEEP(r_names(xs));
+  bool xs_is_named = xs_names != r_null && !is_data_frame(ptype);
+
   // Find individual input sizes and total size of output
   r_ssize xs_size = r_length(xs);
   r_ssize out_size = 0;
@@ -71,12 +75,23 @@ r_obj* vec_c_opts(r_obj* xs,
   out = vec_proxy_recurse(out);
   KEEP_AT(out, out_pi);
 
+  // - We own the `out` container
+  // - We own `out` recursively
+  // - We call `vec_proxy_recurse()` so must restore recursively
+  const struct vec_restore_opts c_restore_opts = {
+    .ownership = VCTRS_OWNERSHIP_deep,
+    .recursively_proxied = true
+  };
+  const struct vec_proxy_assign_opts c_proxy_assign_opts = {
+    .ownership = VCTRS_OWNERSHIP_deep,
+    .recursively_proxied = true,
+    .assign_names = assign_names,
+    .ignore_outer_names = true,
+    .call = error_call
+  };
+
   r_obj* loc = KEEP(compact_seq(0, 0, true));
   int* p_loc = r_int_begin(loc);
-
-  bool assign_names = !r_inherits(name_spec, "rlang_zap");
-  r_obj* xs_names = KEEP(r_names(xs));
-  bool xs_is_named = xs_names != r_null && !is_data_frame(ptype);
 
   r_obj* out_names = r_null;
   r_keep_loc out_names_pi;
@@ -102,13 +117,6 @@ r_obj* vec_c_opts(r_obj* xs,
     .fallback = *fallback_opts
   };
 
-  const struct vec_assign_opts c_assign_opts = {
-    .recursive = true,
-    .assign_names = assign_names,
-    .ignore_outer_names = true,
-    .call = error_call
-  };
-
   for (; i < xs_size; ++i) {
     r_obj* x = r_list_get(xs, i);
     r_ssize size = p_sizes[i];
@@ -126,7 +134,7 @@ r_obj* vec_c_opts(r_obj* xs,
         // If there is no name to assign, skip the assignment since
         // `out_names` already contains empty strings
         if (x_nms != chrs_empty) {
-          out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNED_true);
+          out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNERSHIP_deep);
           KEEP_AT(out_names, out_names_pi);
         }
       }
@@ -142,7 +150,7 @@ r_obj* vec_c_opts(r_obj* xs,
     x = KEEP(vec_cast_opts(&c_cast_opts));
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = vec_proxy_assign_opts(out, loc, x, VCTRS_OWNED_true, &c_assign_opts);
+    out = vec_proxy_assign_opts(out, loc, x, &c_proxy_assign_opts);
     KEEP_AT(out, out_pi);
 
     counter += size;
@@ -152,7 +160,7 @@ r_obj* vec_c_opts(r_obj* xs,
   if (is_data_frame(out) && fallback_opts->s3) {
     df_c_fallback(out, ptype, xs, out_size, name_spec, name_repair, error_call);
   }
-  out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
+  out = KEEP(vec_restore_opts(out, ptype, &c_restore_opts));
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, name_repair));

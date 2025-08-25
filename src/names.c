@@ -737,7 +737,7 @@ void check_names(r_obj* x, r_obj* names) {
   }
 }
 
-r_obj* vec_set_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_owned owned) {
+r_obj* vec_set_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_ownership ownership) {
   if (!proxy && r_is_object(x)) {
     return set_rownames_dispatch(x, names);
   }
@@ -753,7 +753,7 @@ r_obj* vec_set_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_own
     }
   }
 
-  x = KEEP_N(vec_clone_referenced(x, owned), &nprot);
+  x = KEEP_N(vec_clone_referenced(x, ownership), &nprot);
 
   if (dim_names == r_null) {
     dim_names = KEEP_N(r_alloc_list(vec_dim_n(x)), &nprot);
@@ -770,13 +770,13 @@ r_obj* vec_set_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_own
   return x;
 }
 
-r_obj* vec_set_df_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_owned owned) {
+r_obj* vec_set_df_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_ownership ownership) {
   if (names == r_null) {
     if (rownames_type(df_rownames(x)) != ROWNAMES_TYPE_identifiers) {
       return(x);
     }
 
-    x = KEEP(vec_clone_referenced(x, owned));
+    x = KEEP(vec_clone_referenced(x, ownership));
     init_compact_rownames(x, vec_size(x));
 
     FREE(1);
@@ -789,7 +789,7 @@ r_obj* vec_set_df_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_
   }
   KEEP(names);
 
-  x = KEEP(vec_clone_referenced(x, owned));
+  x = KEEP(vec_clone_referenced(x, ownership));
   r_attrib_poke(x, r_syms.row_names, names);
 
   FREE(2);
@@ -798,15 +798,15 @@ r_obj* vec_set_df_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_
 
 // FIXME: Do we need to get the vec_proxy() and only fall back if it doesn't
 // exist? See #526 and #531 for discussion and the related issue.
-r_obj* vec_set_names_impl(r_obj* x, r_obj* names, bool proxy, const enum vctrs_owned owned) {
+r_obj* vec_set_names_impl(r_obj* x, r_obj* names, bool proxy, const enum vctrs_ownership ownership) {
   check_names(x, names);
 
   if (is_data_frame(x)) {
-    return vec_set_df_rownames(x, names, proxy, owned);
+    return vec_set_df_rownames(x, names, proxy, ownership);
   }
 
   if (has_dim(x)) {
-    return vec_set_rownames(x, names, proxy, owned);
+    return vec_set_rownames(x, names, proxy, ownership);
   }
 
   if (!proxy && r_is_object(x)) {
@@ -818,14 +818,21 @@ r_obj* vec_set_names_impl(r_obj* x, r_obj* names, bool proxy, const enum vctrs_o
     return x;
   }
 
-  if (owned) {
-    // Possibly skip the cloning altogether
-    x = KEEP(vec_clone_referenced(x, owned));
-    r_attrib_poke(x, r_syms.names, names);
-  } else {
-    // We need to clone, but to do this we will use `names<-`
+  switch (ownership) {
+  case VCTRS_OWNERSHIP_foreign: {
+    // We likely need to clone, but to do this we will use `names<-`
     // which can perform a cheaper ALTREP shallow duplication
     x = KEEP(set_names_dispatch(x, names));
+    break;
+  }
+  case VCTRS_OWNERSHIP_shallow:
+  case VCTRS_OWNERSHIP_deep: {
+    // This ends up skipping the cloning altogether
+    x = KEEP(vec_clone_referenced(x, ownership));
+    r_attrib_poke(x, r_syms.names, names);
+    break;
+  }
+  default: r_stop_unreachable();
   }
 
   FREE(1);
@@ -833,10 +840,10 @@ r_obj* vec_set_names_impl(r_obj* x, r_obj* names, bool proxy, const enum vctrs_o
 }
 // [[ register() ]]
 r_obj* vec_set_names(r_obj* x, r_obj* names) {
-  return vec_set_names_impl(x, names, false, VCTRS_OWNED_false);
+  return vec_set_names_impl(x, names, false, VCTRS_OWNERSHIP_foreign);
 }
-r_obj* vec_proxy_set_names(r_obj* x, r_obj* names, const enum vctrs_owned owned) {
-  return vec_set_names_impl(x, names, true, owned);
+r_obj* vec_proxy_set_names(r_obj* x, r_obj* names, const enum vctrs_ownership ownership) {
+  return vec_set_names_impl(x, names, true, ownership);
 }
 
 

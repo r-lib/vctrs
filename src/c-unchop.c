@@ -94,6 +94,21 @@ r_obj* list_unchop(r_obj* xs,
   proxy = vec_init(proxy, out_size);
   KEEP_AT(proxy, proxy_pi);
 
+  // - We own the `proxy` container
+  // - We own `proxy` recursively
+  // - We call `vec_proxy_recurse()` so must restore recursively
+  const struct vec_restore_opts unchop_restore_opts = {
+    .ownership = VCTRS_OWNERSHIP_deep,
+    .recursively_proxied = true
+  };
+  const struct vec_proxy_assign_opts unchop_proxy_assign_opts = {
+    .ownership = VCTRS_OWNERSHIP_deep,
+    .recursively_proxied = true,
+    .assign_names = assign_names,
+    .ignore_outer_names = true,
+    .call = error_call
+  };
+
   r_obj* out_names = r_null;
   r_keep_loc out_names_pi;
   KEEP_HERE(out_names, &out_names_pi);
@@ -111,13 +126,6 @@ r_obj* list_unchop(r_obj* xs,
   struct cast_opts unchop_cast_opts = {
     .to = ptype,
     .p_x_arg = p_x_arg,
-    .call = error_call
-  };
-
-  const struct vec_assign_opts unchop_assign_opts = {
-    .recursive = true,
-    .assign_names = assign_names,
-    .ignore_outer_names = true,
     .call = error_call
   };
 
@@ -145,7 +153,7 @@ r_obj* list_unchop(r_obj* xs,
         // If there is no name to assign, skip the assignment since
         // `out_names` already contains empty strings
         if (x_nms != chrs_empty) {
-          out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNED_true);
+          out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNERSHIP_deep);
           KEEP_AT(out_names, out_names_pi);
         }
       }
@@ -157,7 +165,7 @@ r_obj* list_unchop(r_obj* xs,
     x = KEEP(vec_cast_opts(&unchop_cast_opts));
 
     // Total ownership of `proxy` because it was freshly created with `vec_init()`
-    proxy = vec_proxy_assign_opts(proxy, loc, x, VCTRS_OWNED_true, &unchop_assign_opts);
+    proxy = vec_proxy_assign_opts(proxy, loc, x, &unchop_proxy_assign_opts);
     KEEP_AT(proxy, proxy_pi);
 
     FREE(2);
@@ -166,7 +174,7 @@ r_obj* list_unchop(r_obj* xs,
   if (is_data_frame(proxy)) {
     df_c_fallback(proxy, ptype, xs, out_size, name_spec, name_repair, error_call);
   }
-  r_obj* out = KEEP(vec_restore_recurse(proxy, ptype, VCTRS_OWNED_true));
+  r_obj* out = KEEP(vec_restore_opts(proxy, ptype, &unchop_restore_opts));
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, name_repair));

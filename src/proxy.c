@@ -4,14 +4,14 @@
 
 
 r_obj* vec_proxy(r_obj* x) {
-  return vec_proxy_2(x, VCTRS_RECURSE_false);
+  return vec_proxy_2(x, false);
 }
 r_obj* vec_proxy_recurse(r_obj* x) {
-  return vec_proxy_2(x, VCTRS_RECURSE_true);
+  return vec_proxy_2(x, true);
 }
 
 static
-r_obj* vec_proxy_2(r_obj* x, enum vctrs_recurse recurse) {
+r_obj* vec_proxy_2(r_obj* x, bool recurse) {
   struct vctrs_type_info info = vec_type_info(x);
   KEEP(info.shelter);
 

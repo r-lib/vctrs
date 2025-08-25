@@ -669,6 +669,32 @@ test_that("monitoring: assignment to atomic vectors doesn't modify by reference"
   expect_identical(x, expect)
 })
 
+test_that("monitoring: assignment to POSIXlt doesn't modify by reference (#1951)", {
+  original <- as.POSIXlt("2020-11-01")
+  expect_original <- as.POSIXlt("2020-11-01")
+
+  value <- as.POSIXlt("2020-12-02")
+
+  expect <- as.POSIXlt("2020-12-02")
+  actual <- vec_assign(original, 1, value)
+  expect_identical(expect, actual)
+
+  expect_identical(original, expect_original)
+})
+
+test_that("monitoring: assignment to `vctrs_rcrd` doesn't modify by reference (#1951)", {
+  original <- new_rcrd(list(x = 1:5))
+  expect_original <- new_rcrd(list(x = 1:5))
+
+  value <- new_rcrd(list(x = 0L))
+
+  expect <- new_rcrd(list(x = c(0L, 2:5)))
+  actual <- vec_assign(original, 1, value)
+  expect_identical(expect, actual)
+
+  expect_identical(original, expect_original)
+})
+
 # vec_assign + compact_seq -------------------------------------------------
 
 # `start` is 0-based

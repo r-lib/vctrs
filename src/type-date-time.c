@@ -237,24 +237,24 @@ SEXP posixlt_as_posixlt(SEXP x, SEXP to) {
 // restore
 
 // [[ include("vctrs.h") ]]
-SEXP vec_date_restore(SEXP x, SEXP to, const enum vctrs_owned owned) {
-  SEXP out = PROTECT(vec_restore_default(x, to, owned));
+SEXP vec_date_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership) {
+  SEXP out = PROTECT(vec_restore_default(x, to, ownership));
   out = date_validate(out);
   UNPROTECT(1);
   return out;
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_posixct_restore(SEXP x, SEXP to, const enum vctrs_owned owned) {
-  SEXP out = PROTECT(vec_restore_default(x, to, owned));
+SEXP vec_posixct_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership) {
+  SEXP out = PROTECT(vec_restore_default(x, to, ownership));
   out = datetime_validate(out);
   UNPROTECT(1);
   return out;
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_owned owned) {
-  SEXP out = PROTECT(vec_restore_default(x, to, owned));
+SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership) {
+  SEXP out = PROTECT(vec_restore_default(x, to, ownership));
   out = datetime_validate_tzone(out);
   UNPROTECT(1);
   return out;

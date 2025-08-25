@@ -2,47 +2,54 @@
 #include "type-data-frame.h"
 #include "decl/proxy-restore-decl.h"
 
-// FIXME: Having `owned` as an argument to `vec_restore()` may be
-// unnecessary once we have recursive proxy / restore mechanisms.
-// It currently helps resolve performance issues in `vec_rbind()`'s usage of
-// `df_assign()`, which repeatedly proxies and restores each column,
-// causing duplication to occur. Passing `owned` through here allows us to
-// call `vec_clone_referenced()`, which won't attempt to clone if we know we
-// own the object. See #1151.
-r_obj* vec_restore(r_obj* x, r_obj* to, enum vctrs_owned owned) {
-  return vec_restore_4(x, to, owned, VCTRS_RECURSE_false);
-}
-r_obj* vec_restore_recurse(r_obj* x, r_obj* to, enum vctrs_owned owned) {
-  return vec_restore_4(x, to, owned, VCTRS_RECURSE_true);
-}
-
 r_obj* ffi_vec_restore(r_obj* x, r_obj* to) {
-  return vec_restore(x, to, vec_owned(x));
-}
-r_obj* ffi_vec_restore_recurse(r_obj* x, r_obj* to) {
-  return vec_restore_recurse(x, to, vec_owned(x));
+  // Never own user objects, so foreign ownership.
+  // Hooked to `vec_restore()`, which is called after an R level non-recursive
+  // `vec_proxy()`, so not recursively proxied.
+  struct vec_restore_opts opts = {
+    .ownership = VCTRS_OWNERSHIP_foreign,
+    .recursively_proxied = false
+  };
+  return vec_restore_opts(x, to, &opts);
 }
 
-static
-r_obj* vec_restore_4(r_obj* x,
-                     r_obj* to,
-                     enum vctrs_owned owned,
-                     enum vctrs_recurse recurse) {
+// Exposed for testing
+r_obj* ffi_vec_restore_recurse(r_obj* x, r_obj* to) {
+  // Never own user objects, but we are restoring recursively here for testing purposes
+  struct vec_restore_opts opts = {
+    .ownership = VCTRS_OWNERSHIP_foreign,
+    .recursively_proxied = true
+  };
+  return vec_restore_opts(x, to, &opts);
+}
+
+// Restoration with full options
+//
+// This gives you the ability to perform a recursive restore, which is needed
+// when `vec_proxy_recurse()` is used, like in `vec_c()` and `vec_rbind()`. In
+// that case you also specify `VCTRS_OWNERSHIP_deep` to indicate full ownership
+// to avoid copies (of data frame columns in particular) during the restoration
+// process.
+r_obj* vec_restore_opts(
+  r_obj* x,
+  r_obj* to,
+  const struct vec_restore_opts* p_opts
+) {
   enum vctrs_class_type to_type = class_type(to);
 
   switch (to_type) {
   case VCTRS_CLASS_bare_factor:
   case VCTRS_CLASS_bare_ordered:
-  case VCTRS_CLASS_none: return vec_restore_default(x, to, owned);
-  case VCTRS_CLASS_bare_date: return vec_date_restore(x, to, owned);
-  case VCTRS_CLASS_bare_posixct: return vec_posixct_restore(x, to, owned);
-  case VCTRS_CLASS_bare_posixlt: return vec_posixlt_restore(x, to, owned);
+  case VCTRS_CLASS_none: return vec_restore_default(x, to, p_opts->ownership);
+  case VCTRS_CLASS_bare_date: return vec_date_restore(x, to, p_opts->ownership);
+  case VCTRS_CLASS_bare_posixct: return vec_posixct_restore(x, to, p_opts->ownership);
+  case VCTRS_CLASS_bare_posixlt: return vec_posixlt_restore(x, to, p_opts->ownership);
   case VCTRS_CLASS_bare_data_frame:
-  case VCTRS_CLASS_bare_tibble: return vec_bare_df_restore(x, to, owned, recurse);
-  case VCTRS_CLASS_data_frame: return vec_df_restore(x, to, owned, recurse);
+  case VCTRS_CLASS_bare_tibble: return vec_bare_df_restore(x, to, p_opts);
+  case VCTRS_CLASS_data_frame: return vec_df_restore(x, to, p_opts);
   default:
-    if (recurse && is_data_frame(x)) {
-      return vec_df_restore(x, to, owned, recurse);
+    if (p_opts->recursively_proxied && is_data_frame(x)) {
+      return vec_df_restore(x, to, p_opts);
     } else {
       return vec_restore_dispatch(x, to);
     }
@@ -59,7 +66,9 @@ r_obj* vec_restore_dispatch(r_obj* x, r_obj* to) {
 
 
 // Copy attributes except names and dim. This duplicates `x` if needed.
-r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_owned owned) {
+// Knowledge about recursive ownership is not required here, we only touch
+// the container, not the elements inside.
+r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_ownership ownership) {
   r_obj* attrib = r_attrib(to);
 
   const bool is_s4 = IS_S4_OBJECT(to);
@@ -73,7 +82,7 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_owned owned) {
   attrib = KEEP(r_clone(attrib));
   ++n_prot;
 
-  x = KEEP(vec_clone_referenced(x, owned));
+  x = KEEP(vec_clone_referenced(x, ownership));
   ++n_prot;
 
   // Remove vectorised attributes which might be incongruent after reshaping.
@@ -157,15 +166,15 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_owned owned) {
 }
 
 r_obj* ffi_vec_restore_default(r_obj* x, r_obj* to) {
-  return vec_restore_default(x, to, vec_owned(x));
+  // Never own user objects
+  return vec_restore_default(x, to, VCTRS_OWNERSHIP_foreign);
 }
 
 
 r_obj* vec_df_restore(r_obj* x,
                       r_obj* to,
-                      enum vctrs_owned owned,
-                      enum vctrs_recurse recurse) {
-  r_obj* out = KEEP(vec_bare_df_restore(x, to, owned, recurse));
+                      const struct vec_restore_opts* p_opts) {
+  r_obj* out = KEEP(vec_bare_df_restore(x, to, p_opts));
   out = vec_restore_dispatch(out, to);
   FREE(1);
   return out;
@@ -173,8 +182,7 @@ r_obj* vec_df_restore(r_obj* x,
 
 r_obj* vec_bare_df_restore(r_obj* x,
                            r_obj* to,
-                           enum vctrs_owned owned,
-                           enum vctrs_recurse recurse) {
+                           const struct vec_restore_opts* p_opts) {
   if (r_typeof(x) != R_TYPE_list) {
     r_stop_internal("Attempt to restore data frame from a %s.",
                     r_type_as_c_string(r_typeof(x)));
@@ -189,7 +197,7 @@ r_obj* vec_bare_df_restore(r_obj* x,
     }
   }
 
-  if (recurse) {
+  if (p_opts->recursively_proxied) {
     r_ssize n_cols = r_length(x);
     if (n_cols != r_length(to)) {
       r_stop_internal("Shape of `x` doesn't match `to` in recursive df restoration.");
@@ -198,13 +206,29 @@ r_obj* vec_bare_df_restore(r_obj* x,
     r_obj* const * v_x = r_list_cbegin(x);
     r_obj* const * v_to = r_list_cbegin(to);
 
+    // During restoration, if we have deep ownership over `x` we can
+    // propagate that ownership to the columns, otherwise we have no
+    // known ownership over the columns
+    enum vctrs_ownership col_ownership;
+    switch (p_opts->ownership) {
+    case VCTRS_OWNERSHIP_foreign: col_ownership = VCTRS_OWNERSHIP_foreign; break;
+    case VCTRS_OWNERSHIP_shallow: col_ownership = VCTRS_OWNERSHIP_foreign; break;
+    case VCTRS_OWNERSHIP_deep: col_ownership = VCTRS_OWNERSHIP_deep; break;
+    default: r_stop_unreachable();
+    }
+
+    const struct vec_restore_opts col_opts = {
+      .ownership = col_ownership,
+      .recursively_proxied = p_opts->recursively_proxied
+    };
+
     for (r_ssize i = 0; i < n_cols; ++i) {
-      r_obj* x_restored = vec_restore_recurse(v_x[i], v_to[i], owned);
+      r_obj* x_restored = vec_restore_opts(v_x[i], v_to[i], &col_opts);
       r_list_poke(x, i, x_restored);
     }
   }
 
-  x = KEEP(vec_restore_default(x, to, owned));
+  x = KEEP(vec_restore_default(x, to, p_opts->ownership));
 
   if (r_attrib_get(x, r_syms.names) == r_null) {
     r_obj* names = KEEP(r_alloc_character(r_length(x)));
@@ -219,7 +243,7 @@ r_obj* vec_bare_df_restore(r_obj* x,
     init_compact_rownames(x, size);
   } else if (rownames_type(rownames) == ROWNAMES_TYPE_identifiers) {
     rownames = KEEP(vec_as_names(rownames, p_unique_repair_silent_opts));
-    x = vec_proxy_set_names(x, rownames, owned);
+    x = vec_proxy_set_names(x, rownames, p_opts->ownership);
     FREE(1);
   }
 
@@ -228,13 +252,16 @@ r_obj* vec_bare_df_restore(r_obj* x,
   return x;
 }
 
+// Mapped to `vec_restore.data.frame()`, which is called after non-recursive R
+// level `vec_proxy()`, so we don't need recursion here
 r_obj* ffi_vec_bare_df_restore(r_obj* x, r_obj* to) {
-  return vec_bare_df_restore(x,
-                             to,
-                             vec_owned(x),
-                             VCTRS_RECURSE_false);
+  // Never own user objects
+  const struct vec_restore_opts opts = {
+    .ownership = VCTRS_OWNERSHIP_foreign,
+    .recursively_proxied = false
+  };
+  return vec_bare_df_restore(x, to, &opts);
 }
-
 
 void vctrs_init_proxy_restore(r_obj* ns) {
   syms_vec_restore_dispatch = r_sym("vec_restore_dispatch");
