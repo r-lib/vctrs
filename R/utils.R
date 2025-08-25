@@ -10,6 +10,9 @@ indent <- function(x, n) {
 ones <- function(...) {
   array(1, dim = c(...))
 }
+ones_list <- function(...) {
+  array(list(1), dim = c(...))
+}
 
 vec_coerce_bare <- function(x, type) {
   # FIXME! Unexported wrapper around Rf_coerceVector()

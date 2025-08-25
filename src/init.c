@@ -79,7 +79,7 @@ extern SEXP ffi_proxy_info(SEXP);
 extern r_obj* ffi_class_type(r_obj*);
 extern r_obj* ffi_vec_bare_df_restore(r_obj*, r_obj*);
 extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern r_obj* ffi_as_df_row(r_obj*, r_obj*, r_obj*);
@@ -265,7 +265,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_class_type",                            (DL_FUNC) &ffi_class_type, 1},
   {"ffi_vec_bare_df_restore",                   (DL_FUNC) &ffi_vec_bare_df_restore, 2},
   {"ffi_recycle",                               (DL_FUNC) &ffi_recycle, 3},
-  {"ffi_assign",                                (DL_FUNC) &ffi_assign, 4},
+  {"ffi_assign",                                (DL_FUNC) &ffi_assign, 5},
   {"ffi_assign_seq",                            (DL_FUNC) &ffi_assign_seq, 5},
   {"vctrs_set_attributes",                      (DL_FUNC) &vctrs_set_attributes, 2},
   {"ffi_as_df_row",                             (DL_FUNC) &ffi_as_df_row, 3},

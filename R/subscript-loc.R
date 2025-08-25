@@ -19,8 +19,10 @@
 #' * `num_as_location()` and `num_as_location2()` are specialized variants
 #'   that have extra options for numeric indices.
 #'
-#' @inheritParams vec_slice
 #' @inheritParams rlang::args_error_context
+#' @inheritParams rlang::args_dots_empty
+#'
+#' @param i An index vector to convert.
 #'
 #' @param n A single integer representing the total size of the
 #'   object that `i` is meant to index into.

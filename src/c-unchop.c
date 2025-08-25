@@ -104,6 +104,7 @@ r_obj* list_unchop(r_obj* xs,
   const struct vec_proxy_assign_opts unchop_proxy_assign_opts = {
     .ownership = VCTRS_OWNERSHIP_deep,
     .recursively_proxied = true,
+    .style = VCTRS_ASSIGNMENT_STYLE_location,
     .assign_names = assign_names,
     .ignore_outer_names = true,
     .call = error_call
@@ -153,7 +154,13 @@ r_obj* list_unchop(r_obj* xs,
         // If there is no name to assign, skip the assignment since
         // `out_names` already contains empty strings
         if (x_nms != chrs_empty) {
-          out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNERSHIP_deep);
+          out_names = chr_assign(
+            out_names,
+            loc,
+            x_nms,
+            VCTRS_OWNERSHIP_deep,
+            VCTRS_ASSIGNMENT_STYLE_location
+          );
           KEEP_AT(out_names, out_names_pi);
         }
       }

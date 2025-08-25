@@ -20,6 +20,7 @@ r_obj* vec_assign_opts(r_obj* x,
     .call = p_opts->call,
     .x_arg = p_opts->x_arg,
     .value_arg = p_opts->value_arg,
+    .style = p_opts->style,
     .ownership = p_opts->ownership,
     .recursively_proxied = recursively_proxied
   };
@@ -37,13 +38,28 @@ r_obj* vec_assign_opts(r_obj* x,
   obj_check_vector(x, assign_opts.x_arg, assign_opts.call);
   obj_check_vector(value, assign_opts.value_arg, assign_opts.call);
 
-  const struct location_opts location_opts = new_location_opts_assign();
-  index = KEEP(vec_as_location_opts(
-    index,
-    vec_size(x),
-    KEEP(vec_names(x)),
-    &location_opts
-  ));
+  const r_ssize x_size = vec_size(x);
+
+  switch (assign_opts.style) {
+  case VCTRS_ASSIGNMENT_STYLE_location: {
+    r_obj* x_names = KEEP(vec_names(x));
+    const struct location_opts location_opts = new_location_opts_assign();
+    index = vec_as_location_opts(
+      index,
+      x_size,
+      x_names,
+      &location_opts
+    );
+    FREE(1);
+    break;
+  }
+  case VCTRS_ASSIGNMENT_STYLE_condition: {
+    vec_check_condition_index(index, x_size, vec_args.i, assign_opts.call);
+    break;
+  }
+  default: r_stop_unreachable();
+  }
+  KEEP(index);
 
   // Cast `value` and check that it can recycle
   value = KEEP(vec_cast(value, x, assign_opts.value_arg, assign_opts.x_arg, assign_opts.call));
@@ -53,19 +69,31 @@ r_obj* vec_assign_opts(r_obj* x,
   proxy = KEEP(vec_proxy_assign_opts(proxy, index, value, &assign_opts));
   r_obj* out = vec_restore_opts(proxy, x, &restore_opts);
 
-  FREE(5);
+  FREE(4);
   return out;
 }
 
 // [[ register() ]]
-r_obj* ffi_assign(r_obj* x, r_obj* index, r_obj* value, r_obj* frame) {
-  struct r_lazy x_arg_lazy = { .x = syms.x_arg, .env = frame };
+r_obj* ffi_assign(
+  r_obj* ffi_x,
+  r_obj* ffi_i,
+  r_obj* ffi_value,
+  r_obj* ffi_style,
+  r_obj* ffi_frame
+) {
+  struct r_lazy x_arg_lazy = { .x = syms.x_arg, .env = ffi_frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_lazy);
 
-  struct r_lazy value_arg_lazy = { .x = syms.value_arg, .env = frame };
+  struct r_lazy value_arg_lazy = { .x = syms.value_arg, .env = ffi_frame };
   struct vctrs_arg value_arg = new_lazy_arg(&value_arg_lazy);
 
-  struct r_lazy call = { .x = frame, .env = r_null };
+  struct r_lazy call = { .x = ffi_frame, .env = r_null };
+
+  enum vctrs_assignment_style style = parse_assignment_style(
+    ffi_style,
+    "style",
+    call
+  );
 
   // Comes from the R side, so no known ownership
   enum vctrs_ownership ownership = VCTRS_OWNERSHIP_foreign;
@@ -73,12 +101,13 @@ r_obj* ffi_assign(r_obj* x, r_obj* index, r_obj* value, r_obj* frame) {
   const struct vec_assign_opts opts = {
     .assign_names = false,
     .ownership = ownership,
+    .style = style,
     .x_arg = &x_arg,
     .value_arg = &value_arg,
     .call = call
   };
 
-  return vec_assign_opts(x, index, value, &opts);
+  return vec_assign_opts(ffi_x, ffi_i, ffi_value, &opts);
 }
 
 // [[ register() ]]
@@ -92,6 +121,7 @@ r_obj* ffi_assign_params(r_obj* x,
   const struct vec_assign_opts opts =  {
     .assign_names = r_bool_as_int(assign_names),
     .ownership = ownership,
+    .style = VCTRS_ASSIGNMENT_STYLE_location,
     .call = lazy_calls.vec_assign_params
   };
 
@@ -99,18 +129,20 @@ r_obj* ffi_assign_params(r_obj* x,
 }
 
 static
-r_obj* vec_assign_switch(r_obj* proxy,
-                         r_obj* index,
-                         r_obj* value,
-                         const struct vec_proxy_assign_opts* p_opts) {
+r_obj* vec_assign_switch(
+  r_obj* proxy,
+  r_obj* index,
+  r_obj* value,
+  const struct vec_proxy_assign_opts* p_opts
+) {
   switch (vec_proxy_typeof(proxy)) {
-  case VCTRS_TYPE_logical:   return lgl_assign(proxy, index, value, p_opts->ownership);
-  case VCTRS_TYPE_integer:   return int_assign(proxy, index, value, p_opts->ownership);
-  case VCTRS_TYPE_double:    return dbl_assign(proxy, index, value, p_opts->ownership);
-  case VCTRS_TYPE_complex:   return cpl_assign(proxy, index, value, p_opts->ownership);
-  case VCTRS_TYPE_character: return chr_assign(proxy, index, value, p_opts->ownership);
-  case VCTRS_TYPE_raw:       return raw_assign(proxy, index, value, p_opts->ownership);
-  case VCTRS_TYPE_list:      return list_assign(proxy, index, value, p_opts->ownership);
+  case VCTRS_TYPE_logical:   return lgl_assign(proxy, index, value, p_opts->ownership, p_opts->style);
+  case VCTRS_TYPE_integer:   return int_assign(proxy, index, value, p_opts->ownership, p_opts->style);
+  case VCTRS_TYPE_double:    return dbl_assign(proxy, index, value, p_opts->ownership, p_opts->style);
+  case VCTRS_TYPE_complex:   return cpl_assign(proxy, index, value, p_opts->ownership, p_opts->style);
+  case VCTRS_TYPE_character: return chr_assign(proxy, index, value, p_opts->ownership, p_opts->style);
+  case VCTRS_TYPE_raw:       return raw_assign(proxy, index, value, p_opts->ownership, p_opts->style);
+  case VCTRS_TYPE_list:      return list_assign(proxy, index, value, p_opts->ownership, p_opts->style);
   case VCTRS_TYPE_dataframe: return df_assign(proxy, index, value, p_opts);
   case VCTRS_TYPE_scalar:    stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
   default:                   stop_unimplemented_vctrs_type("vec_assign_switch", vec_typeof(proxy));
@@ -197,22 +229,22 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
 
   if (vec_requires_fallback(value, value_info)) {
     index = KEEP_N(compact_materialize(index), &n_protect);
-    out = KEEP_N(vec_assign_fallback(proxy, index, value), &n_protect);
+    out = KEEP_N(vec_assign_fallback(proxy, index, value, opts_copy.style), &n_protect);
   } else if (has_dim(proxy)) {
-    out = KEEP_N(vec_assign_shaped(proxy, index, value_info.proxy, opts_copy.ownership), &n_protect);
+    out = KEEP_N(vec_assign_shaped(proxy, index, value_info.proxy, opts_copy.ownership, opts_copy.style), &n_protect);
   } else {
     out = KEEP_N(vec_assign_switch(proxy, index, value_info.proxy, &opts_copy), &n_protect);
   }
 
   if (!ignore_outer_names && p_opts->assign_names) {
-    out = vec_proxy_assign_names(out, index, value_info.proxy, opts_copy.ownership);
+    out = vec_proxy_assign_names(out, index, value_info.proxy, opts_copy.ownership, opts_copy.style);
   }
 
   FREE(n_protect);
   return out;
 }
 
-#define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF, VALUE_I)                \
+#define ASSIGN_LOCATION_INDEX(CTYPE, DEREF, CONST_DEREF, VALUE_I)       \
   r_ssize index_size = r_length(index);                                 \
   int* index_data = r_int_begin(index);                                 \
                                                                         \
@@ -231,7 +263,7 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
   FREE(1);                                                              \
   return out
 
-#define ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF, VALUE_I)              \
+#define ASSIGN_LOCATION_COMPACT(CTYPE, DEREF, CONST_DEREF, VALUE_I)     \
   int* index_data = r_int_begin(index);                                 \
   r_ssize start = index_data[0];                                        \
   r_ssize index_size = index_data[1];                                   \
@@ -250,16 +282,16 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
   FREE(1);                                                              \
   return out
 
-#define ASSIGN(CTYPE, DEREF, CONST_DEREF)                                      \
+#define ASSIGN_LOCATION(CTYPE, DEREF, CONST_DEREF)                             \
   r_ssize value_size = r_length(value);                                        \
                                                                                \
   if (is_compact_seq(index)) {                                                 \
     r_ssize index_size = r_int_get(index, 1);                                  \
                                                                                \
     if (value_size == 1) {                                                     \
-      ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF, 0);                            \
+      ASSIGN_LOCATION_COMPACT(CTYPE, DEREF, CONST_DEREF, 0);                   \
     } else if (value_size == index_size) {                                     \
-      ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF, i);                            \
+      ASSIGN_LOCATION_COMPACT(CTYPE, DEREF, CONST_DEREF, i);                   \
     } else {                                                                   \
       r_stop_internal("`value` should have been recycled to match `index`.");  \
     }                                                                          \
@@ -267,37 +299,85 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
     r_ssize index_size = r_length(index);                                      \
                                                                                \
     if (value_size == 1) {                                                     \
-      ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF, 0);                              \
+      ASSIGN_LOCATION_INDEX(CTYPE, DEREF, CONST_DEREF, 0);                     \
     } else if (value_size == index_size) {                                     \
-      ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF, i);                              \
+      ASSIGN_LOCATION_INDEX(CTYPE, DEREF, CONST_DEREF, i);                     \
     } else {                                                                   \
       r_stop_internal("`value` should have been recycled to match `index`.");  \
     }                                                                          \
   }
 
+#define ASSIGN_CONDITION_INDEX(CTYPE, DEREF, CONST_DEREF, VALUE_I)      \
+  r_ssize index_size = r_length(index);                                 \
+  const int* index_data = r_lgl_cbegin(index);                          \
+                                                                        \
+  const CTYPE* value_data = CONST_DEREF(value);                         \
+                                                                        \
+  r_obj* out = KEEP(vec_clone_referenced(x, ownership));                \
+  CTYPE* out_data = DEREF(out);                                         \
+                                                                        \
+  for (r_ssize i = 0; i < index_size; ++i) {                            \
+    if (index_data[i] == 1) {                                           \
+      out_data[i] = value_data[VALUE_I];                                \
+    }                                                                   \
+  }                                                                     \
+                                                                        \
+  FREE(1);                                                              \
+  return out
+
+#define ASSIGN_CONDITION(CTYPE, DEREF, CONST_DEREF)                            \
+  r_ssize value_size = r_length(value);                                        \
+                                                                               \
+  if (is_compact_seq(index)) {                                                 \
+    r_stop_internal(                                                           \
+      "Compact sequence `index` are not supported in the condition path."      \
+    );                                                                         \
+  } else {                                                                     \
+    r_ssize index_size = r_length(index);                                      \
+                                                                               \
+    if (value_size == 1) {                                                     \
+      ASSIGN_CONDITION_INDEX(CTYPE, DEREF, CONST_DEREF, 0);                    \
+    } else if (value_size == index_size) {                                     \
+      ASSIGN_CONDITION_INDEX(CTYPE, DEREF, CONST_DEREF, i);                    \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
+  }
+
+#define ASSIGN(CTYPE, DEREF, CONST_DEREF)                               \
+  switch (style) {                                                      \
+  case VCTRS_ASSIGNMENT_STYLE_location: {                               \
+    ASSIGN_LOCATION(CTYPE, DEREF, CONST_DEREF);                         \
+  }                                                                     \
+  case VCTRS_ASSIGNMENT_STYLE_condition: {                              \
+    ASSIGN_CONDITION(CTYPE, DEREF, CONST_DEREF);                        \
+  }                                                                     \
+  default: r_stop_unreachable();                                        \
+  }
+
 static
-r_obj* lgl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
+r_obj* lgl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership, const enum vctrs_assignment_style style) {
   ASSIGN(int, LOGICAL, LOGICAL_RO);
 }
 static
-r_obj* int_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
+r_obj* int_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership, const enum vctrs_assignment_style style) {
   ASSIGN(int, r_int_begin, INTEGER_RO);
 }
 static
-r_obj* dbl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
+r_obj* dbl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership, const enum vctrs_assignment_style style) {
   ASSIGN(double, REAL, REAL_RO);
 }
 static
-r_obj* cpl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
+r_obj* cpl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership, const enum vctrs_assignment_style style) {
   ASSIGN(Rcomplex, COMPLEX, COMPLEX_RO);
 }
 static
-r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
+r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership, const enum vctrs_assignment_style style) {
   ASSIGN(Rbyte, RAW, RAW_RO);
 }
 
 
-#define ASSIGN_BARRIER_INDEX(CTYPE, CONST_DEREF, SET, VALUE_I)             \
+#define ASSIGN_BARRIER_LOCATION_INDEX(CTYPE, CONST_DEREF, SET, VALUE_I)    \
   r_ssize index_size = r_length(index);                                    \
   int* index_data = r_int_begin(index);                                    \
                                                                            \
@@ -315,7 +395,7 @@ r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownersh
   FREE(1);                                                                 \
   return out
 
-#define ASSIGN_BARRIER_COMPACT(CTYPE, CONST_DEREF, SET, VALUE_I)             \
+#define ASSIGN_BARRIER_LOCATION_COMPACT(CTYPE, CONST_DEREF, SET, VALUE_I)    \
   int* index_data = r_int_begin(index);                                      \
   r_ssize start = index_data[0];                                             \
   r_ssize index_size = index_data[1];                                        \
@@ -334,16 +414,16 @@ r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownersh
   return out
 
 
-#define ASSIGN_BARRIER(CTYPE, CONST_DEREF, SET)                                \
+#define ASSIGN_BARRIER_LOCATION(CTYPE, CONST_DEREF, SET)                       \
   r_ssize value_size = r_length(value);                                        \
                                                                                \
   if (is_compact_seq(index)) {                                                 \
     r_ssize index_size = r_int_get(index, 1);                                  \
                                                                                \
     if (value_size == 1) {                                                     \
-      ASSIGN_BARRIER_COMPACT(CTYPE, CONST_DEREF, SET, 0);                      \
+      ASSIGN_BARRIER_LOCATION_COMPACT(CTYPE, CONST_DEREF, SET, 0);             \
     } else if (value_size == index_size) {                                     \
-      ASSIGN_BARRIER_COMPACT(CTYPE, CONST_DEREF, SET, i);                      \
+      ASSIGN_BARRIER_LOCATION_COMPACT(CTYPE, CONST_DEREF, SET, i);             \
     } else {                                                                   \
       r_stop_internal("`value` should have been recycled to match `index`.");  \
     }                                                                          \
@@ -351,18 +431,65 @@ r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownersh
     r_ssize index_size = r_length(index);                                      \
                                                                                \
     if (value_size == 1) {                                                     \
-      ASSIGN_BARRIER_INDEX(CTYPE, CONST_DEREF, SET, 0);                        \
+      ASSIGN_BARRIER_LOCATION_INDEX(CTYPE, CONST_DEREF, SET, 0);               \
     } else if (value_size == index_size) {                                     \
-      ASSIGN_BARRIER_INDEX(CTYPE, CONST_DEREF, SET, i);                        \
+      ASSIGN_BARRIER_LOCATION_INDEX(CTYPE, CONST_DEREF, SET, i);               \
     } else {                                                                   \
       r_stop_internal("`value` should have been recycled to match `index`.");  \
     }                                                                          \
   }
 
-r_obj* chr_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
+#define ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, VALUE_I)        \
+  r_ssize index_size = r_length(index);                                         \
+  const int* index_data = r_lgl_cbegin(index);                                  \
+                                                                                \
+  CTYPE const* value_data = CONST_DEREF(value);                                 \
+                                                                                \
+  r_obj* out = KEEP(vec_clone_referenced(x, ownership));                        \
+                                                                                \
+  for (r_ssize i = 0; i < index_size; ++i) {                                    \
+    if (index_data[i] == 1) {                                                   \
+      SET(out, i, value_data[VALUE_I]);                                         \
+    }                                                                           \
+  }                                                                             \
+                                                                                \
+  FREE(1);                                                                      \
+  return out
+
+#define ASSIGN_BARRIER_CONDITION(CTYPE, CONST_DEREF, SET)                      \
+  r_ssize value_size = r_length(value);                                        \
+                                                                               \
+  if (is_compact_seq(index)) {                                                 \
+    r_stop_internal(                                                           \
+      "Compact sequence `index` are not supported in the condition path."      \
+    );                                                                         \
+  } else {                                                                     \
+    r_ssize index_size = r_length(index);                                      \
+                                                                               \
+    if (value_size == 1) {                                                     \
+      ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, 0);              \
+    } else if (value_size == index_size) {                                     \
+      ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, i);              \
+    } else {                                                                   \
+      r_stop_internal("`value` should have been recycled to match `index`.");  \
+    }                                                                          \
+  }
+
+#define ASSIGN_BARRIER(CTYPE, CONST_DEREF, SET)                         \
+  switch (style) {                                                      \
+  case VCTRS_ASSIGNMENT_STYLE_location: {                               \
+    ASSIGN_BARRIER_LOCATION(CTYPE, CONST_DEREF, SET);                   \
+  }                                                                     \
+  case VCTRS_ASSIGNMENT_STYLE_condition: {                              \
+    ASSIGN_BARRIER_CONDITION(CTYPE, CONST_DEREF, SET);                  \
+  }                                                                     \
+  default: r_stop_unreachable();                                        \
+  }
+
+r_obj* chr_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership, const enum vctrs_assignment_style style) {
   ASSIGN_BARRIER(r_obj*, r_chr_cbegin, r_chr_poke);
 }
-r_obj* list_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership) {
+r_obj* list_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_ownership ownership, const enum vctrs_assignment_style style) {
   ASSIGN_BARRIER(r_obj*, r_list_cbegin, r_list_poke);
 }
 
@@ -422,6 +549,7 @@ r_obj* df_assign(r_obj* x,
     .call = p_opts->call,
     .x_arg = p_opts->x_arg,
     .value_arg = p_opts->value_arg,
+    .style = p_opts->style,
     .ownership = col_ownership,
     .recursively_proxied = p_opts->recursively_proxied
   };
@@ -457,10 +585,19 @@ r_obj* df_assign(r_obj* x,
 }
 
 static
-r_obj* vec_assign_fallback(r_obj* x, r_obj* index, r_obj* value) {
-  return vctrs_dispatch3(syms_vec_assign_fallback, fns_vec_assign_fallback,
+r_obj* vec_assign_fallback(r_obj* x, r_obj* index, r_obj* value, enum vctrs_assignment_style style) {
+  r_obj* location;
+
+  switch (style) {
+  case VCTRS_ASSIGNMENT_STYLE_location: location = r_true; break;
+  case VCTRS_ASSIGNMENT_STYLE_condition: location = r_false; break;
+  default: r_stop_unreachable();
+  }
+
+  return vctrs_dispatch4(syms_vec_assign_fallback, fns_vec_assign_fallback,
                          syms_x, x,
                          syms_i, index,
+                         syms_location, location,
                          syms_value, value);
 }
 
@@ -468,7 +605,8 @@ static
 r_obj* vec_proxy_assign_names(r_obj* proxy,
                               r_obj* index,
                               r_obj* value,
-                              const enum vctrs_ownership ownership) {
+                              const enum vctrs_ownership ownership,
+                              const enum vctrs_assignment_style style) {
   r_obj* value_nms = KEEP(vec_names(value));
 
   if (value_nms == r_null) {
@@ -482,7 +620,7 @@ r_obj* vec_proxy_assign_names(r_obj* proxy,
   } else {
     proxy_nms = KEEP(vec_clone_referenced(proxy_nms, ownership));
   }
-  proxy_nms = KEEP(chr_assign(proxy_nms, index, value_nms, ownership));
+  proxy_nms = KEEP(chr_assign(proxy_nms, index, value_nms, ownership, style));
 
   proxy = KEEP(vec_clone_referenced(proxy, ownership));
   proxy = vec_proxy_set_names(proxy, proxy_nms, ownership);
@@ -491,6 +629,61 @@ r_obj* vec_proxy_assign_names(r_obj* proxy,
   return proxy;
 }
 
+void vec_check_condition_index(
+  r_obj* index,
+  r_ssize size,
+  struct vctrs_arg* p_index_arg,
+  struct r_lazy call
+) {
+  if (r_typeof(index) != R_TYPE_logical) {
+    r_abort_lazy_call(
+      call,
+      "%s must be a logical vector, not %s.",
+      vec_arg_format(p_index_arg),
+      r_obj_type_friendly(index)
+    );
+  }
+
+  if (has_dim(index)) {
+    r_abort_lazy_call(
+      call,
+      "%s can't be an array.",
+      vec_arg_format(p_index_arg)
+    );
+  }
+
+  vec_check_size(index, size, p_index_arg, call);
+}
+
+enum vctrs_assignment_style parse_assignment_style(
+  r_obj* x,
+  const char* x_arg,
+  struct r_lazy call
+) {
+  if (!r_is_string(x)) {
+    r_abort_lazy_call(
+      call,
+      "%s must be a string, not %s.",
+      x_arg,
+      r_obj_type_friendly(x)
+    );
+  }
+
+  const char* elt = r_chr_get_c_string(x, 0);
+
+  if (!strcmp(elt, "location")) {
+    return VCTRS_ASSIGNMENT_STYLE_location;
+  }
+  if (!strcmp(elt, "condition")) {
+    return VCTRS_ASSIGNMENT_STYLE_condition;
+  }
+
+  r_abort_lazy_call(
+    call,
+    "%s must be either \"location\" or \"condition\".",
+    x_arg
+  );
+}
 
 // Exported for testing
 // [[ register() ]]
@@ -512,6 +705,7 @@ r_obj* ffi_assign_seq(r_obj* x,
     .x_arg = vec_args.x,
     .value_arg = vec_args.value,
     .call = call,
+    .style = VCTRS_ASSIGNMENT_STYLE_location,
     .ownership = VCTRS_OWNERSHIP_foreign,
     .recursively_proxied = false
   };
