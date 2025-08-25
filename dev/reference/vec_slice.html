@@ -87,7 +87,8 @@ mentioned in error messages as the source of the error. See the
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>Replacement values. <code>value</code> is cast to the type of
 <code>x</code>, but only if they have a common type. See below for examples
-of this rule.</p></dd>
+of this rule. <code>value</code> must be recyclable to the size of <code>i</code> after <code>i</code>
+has been converted to a valid integer location vector.</p></dd>
 
 
 <dt id="arg-x-arg-value-arg">x_arg, value_arg<a class="anchor" aria-label="anchor" href="#arg-x-arg-value-arg"></a></dt>
@@ -107,10 +108,18 @@ incompatible types and sizes (see <code><a href="vctrs-conditions.html">stop_inc
 
 
 <p>Support for S3 objects depends on whether the object implements a
-<code><a href="vec_proxy.html">vec_proxy()</a></code> method.</p><ul><li><p>When a <code><a href="vec_proxy.html">vec_proxy()</a></code> method exists, the proxy is sliced and
+<code><a href="vec_proxy.html">vec_proxy()</a></code> method.</p><ul><li><p>When a <code><a href="vec_proxy.html">vec_proxy()</a></code> method exists, the proxy is sliced or assigned to and
 <code><a href="vec_proxy.html">vec_restore()</a></code> is called on the result.</p></li>
-<li><p>Otherwise <code>vec_slice()</code> falls back to the base generic <code>[</code>.</p></li>
-</ul><p>Note that S3 lists are treated as scalars by default, and will
+<li><p>Otherwise, <code>vec_slice()</code> falls back to the base generic <code>[</code> and
+<code>vec_slice&lt;-()</code> falls back to the base generic <code>[&lt;-</code>.</p></li>
+</ul><p>When <code>vec_slice&lt;-()</code> falls back to <code>[&lt;-</code>, it is expected that the subclass's
+<code>[&lt;-</code> method can handle the following subset of cases that base R's <code>[&lt;-</code>
+can also handle:</p><ul><li><p>An <code>i</code> vector of positive integer positions (notably excluding <code>NA</code>).</p></li>
+<li><p>A <code>value</code> vector of length 1 or length <code>length(i)</code>. If length 1, it
+should be recycled by the <code>[&lt;-</code> method to the length of <code>i</code>.</p></li>
+</ul><p>If your <code>[&lt;-</code> method eventually calls base R's native <code>[&lt;-</code> code, then these
+cases will be handled for you.</p>
+<p>Note that S3 lists are treated as scalars by default, and will
 cause an error if they don't implement a <code><a href="vec_proxy.html">vec_proxy()</a></code> method.</p>
     </div>
     <div class="section level2">
@@ -138,9 +147,8 @@ as the LHS.</p></li>
 <h3 id="base-dependencies">base dependencies<a class="anchor" aria-label="anchor" href="#base-dependencies"></a></h3>
 
 <ul><li><p><code><a href="https://rdrr.io/r/base/Extract.html" class="external-link">base::`[`</a></code></p></li>
-</ul><p>If a non-data-frame vector class doesn't have a <code><a href="vec_proxy.html">vec_proxy()</a></code>
-method, the vector is sliced with <code>[</code> instead.</p>
-</div>
+<li><p><code>base::`[&lt;-`</code></p></li>
+</ul></div>
 
     </div>
 
