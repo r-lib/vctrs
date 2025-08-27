@@ -69,6 +69,3 @@ r_obj* raw_assign(
   enum assignment_slice_value slice_value,
   enum vctrs_index_style index_style
 );
-
-static inline
-bool should_slice_value(enum assignment_slice_value slice_value);
