@@ -229,16 +229,6 @@ static inline SEXP cpl_assign_shaped(
 ) {
   ASSIGN_SHAPED(Rcomplex, COMPLEX, COMPLEX_RO);
 }
-static inline SEXP chr_assign_shaped(
-  SEXP proxy,
-  SEXP index,
-  SEXP value,
-  enum vctrs_ownership ownership,
-  enum assignment_slice_value slice_value,
-  enum vctrs_index_style index_style
-) {
-  ASSIGN_SHAPED(SEXP, STRING_PTR, STRING_PTR_RO);
-}
 static inline SEXP raw_assign_shaped(
   SEXP proxy,
   SEXP index,
@@ -442,6 +432,16 @@ static inline SEXP raw_assign_shaped(
   default: r_stop_unreachable();                                        \
   }
 
+static inline SEXP chr_assign_shaped(
+  SEXP proxy,
+  SEXP index,
+  SEXP value,
+  enum vctrs_ownership ownership,
+  enum assignment_slice_value slice_value,
+  enum vctrs_index_style index_style
+) {
+  ASSIGN_BARRIER_SHAPED(SEXP, STRING_PTR_RO, SET_STRING_ELT);
+}
 static SEXP list_assign_shaped(
   SEXP proxy,
   SEXP index,
