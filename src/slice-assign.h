@@ -110,6 +110,7 @@ void check_value_recyclable(
   struct r_lazy call
 );
 
+// Exposed for `slice-assign-array.c`
 void check_assign_sizes(
   r_obj* x,
   r_obj* index,
@@ -118,6 +119,7 @@ void check_assign_sizes(
   enum vctrs_index_style index_style
 );
 
+// Exposed for `slice-assign-array.c`
 static inline
 bool should_slice_value(enum assignment_slice_value slice_value) {
   return slice_value == ASSIGNMENT_SLICE_VALUE_yes;
