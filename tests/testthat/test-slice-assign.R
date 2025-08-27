@@ -10,10 +10,41 @@ test_that("slice-assign throws error with non-vector `value`", {
   expect_error(vec_slice(x, 1L) <- environment(), class = "vctrs_error_scalar_type")
 })
 
+test_that("assign throws error with non-vector `value`", {
+  x <- 1L
+
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, NULL)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, NULL, slice_value = TRUE)
+  })
+
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, NULL, value_arg = "foo")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, NULL, slice_value = TRUE, value_arg = "foo")
+  })
+
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, environment(), value_arg = "foo")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, environment(), slice_value = TRUE, value_arg = "foo")
+  })
+})
+
 test_that("can slice-assign NULL", {
   x <- NULL
   vec_slice(x, 1L) <- 1
   expect_identical(x, NULL)
+})
+
+test_that("can assign on NULL `x`", {
+  x <- NULL
+  expect_identical(vec_assign(x, TRUE, 1), NULL)
+  expect_identical(vec_assign(x, TRUE, 1, slice_value = TRUE), NULL)
 })
 
 test_that("can slice-assign base vectors", {
@@ -40,6 +71,10 @@ test_that("can slice-assign base vectors", {
   x <- as.raw(rep(0, 3))
   vec_slice(x, 2) <- as.raw(1)
   expect_identical(x, as.raw(c(0, 1, 0)))
+
+  x <- rep(list(NULL), 3)
+  vec_slice(x, 2) <- list(NA)
+  expect_identical(x, list(NULL, NA, NULL))
 })
 
 test_that("can assign base vectors", {
@@ -66,6 +101,59 @@ test_that("can assign base vectors", {
   x <- as.raw(rep(0, 3))
   expect_identical(vec_assign(x, 2, as.raw(1)), as.raw(c(0, 1, 0)))
   expect_identical(x, as.raw(rep(0, 3)))
+
+  x <- rep(list(NULL), 3)
+  expect_identical(vec_assign(x, 2, list(NA)), list(NULL, NA, NULL))
+  expect_identical(x, rep(list(NULL), 3))
+})
+
+test_that("can assign base vectors with logical indices", {
+  # Logical indices have their own optimized path so we test them specially
+
+  condition <- c(TRUE, FALSE, NA, TRUE)
+
+  x <- rep(FALSE, 4)
+  value <- c(NA, TRUE, TRUE, TRUE)
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, lgl(NA, FALSE, FALSE, TRUE))
+
+  x <- rep(0L, 4)
+  value <- c(NA, 1L, 2L, 3L)
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, int(NA, 0L, 0L, 3L))
+
+  x <- rep(0, 4)
+  value <- c(NA, 1, 2, 3)
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, dbl(NA, 0, 0, 3))
+
+  x <- rep(0i, 4)
+  na <- complex(real = NA, imaginary = NA)
+  value <- c(na, 1i, 2i, 3i)
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, c(na, 0i, 0i, 3i))
+
+  x <- rep("", 4)
+  value <- c(NA, "foo", "bar", "baz")
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, c(NA, "", "", "baz"))
+
+  x <- as.raw(rep(0, 4))
+  value <- as.raw(c(1, 2, 3, 4))
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, as.raw(c(1, 0, 0, 4)))
+
+  x <- rep(list(1), 4)
+  value <- list(NA, 2, 3, 4)
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, list(NA, 1, 1, 4))
 })
 
 test_that("can assign base vectors with recycling of `value`", {
@@ -92,6 +180,59 @@ test_that("can assign base vectors with recycling of `value`", {
   x <- as.raw(rep(0, 3))
   expect_identical(vec_assign(x, c(3, 1), as.raw(1)), as.raw(c(1, 0, 1)))
   expect_identical(x, as.raw(rep(0, 3)))
+
+  x <- rep(list(NULL), 3)
+  expect_identical(vec_assign(x, c(3, 1), list(NA)), list(NA, NULL, NA))
+  expect_identical(x, rep(list(NULL), 3))
+})
+
+test_that("can assign base vectors with logical indices with recycled `value`", {
+  # Logical indices have their own optimized path so we test them specially
+
+  condition <- c(TRUE, FALSE, NA, TRUE)
+
+  x <- rep(FALSE, 4)
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, lgl(NA, FALSE, FALSE, NA))
+
+  x <- rep(0L, 4)
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, int(NA, 0L, 0L, NA))
+
+  x <- rep(0, 4)
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, dbl(NA, 0, 0, NA))
+
+  x <- rep(0i, 4)
+  na <- complex(real = NA, imaginary = NA)
+  value <- na
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, c(na, 0i, 0i, na))
+
+  x <- rep("", 4)
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, c(NA, "", "", NA))
+
+  x <- as.raw(rep(0, 4))
+  value <- as.raw(1)
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, as.raw(c(1, 0, 0, 1)))
+
+  x <- rep(list(1), 4)
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, list(NULL, 1, 1, NULL))
 })
 
 test_that("can assign shaped base vectors", {
@@ -120,6 +261,68 @@ test_that("can assign shaped base vectors", {
   x <- mat(as.raw(rep(0, 3)))
   expect_identical(vec_assign(x, 2, as.raw(1)), mat(as.raw(c(0, 1, 0))))
   expect_identical(x, mat(as.raw(rep(0, 3))))
+
+  mat <- as.matrix
+  x <- mat(rep(list(NULL), 3))
+  expect_identical(vec_assign(x, 2, list(NA)), mat(list(NULL, NA, NULL)))
+  expect_identical(x, mat(rep(list(NULL), 3)))
+})
+
+test_that("can assign shaped base vectors with logical indices", {
+  # Logical indices have their own optimized path so we test them specially
+
+  mat <- as.matrix
+
+  condition <- c(TRUE, FALSE, NA, TRUE)
+
+  x <- mat(rep(FALSE, 4))
+  value <- mat(c(NA, TRUE, TRUE, TRUE))
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(NA, FALSE, FALSE, TRUE)))
+
+  x <- mat(rep(0L, 4))
+  value <- mat(c(NA, 1L, 2L, 3L))
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(NA, 0L, 0L, 3L)))
+
+  x <- mat(rep(0, 4))
+  value <- mat(c(NA, 1, 2, 3))
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(NA, 0, 0, 3)))
+
+  x <- mat(rep(0i, 4))
+  value <- mat(c(1i, 2i, 3i, 4i))
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(1i, 0i, 0i, 4i)))
+
+  x <- mat(rep("", 4))
+  value <- mat(c(NA, "foo", "bar", "baz"))
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(NA, "", "", "baz")))
+
+  x <- mat(as.raw(rep(0, 4)))
+  value <- mat(as.raw(c(1, 2, 3, 4)))
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(as.raw(c(1, 0, 0, 4))))
+
+  x <- mat(rep(list(1), 4))
+  value <- mat(list(NA, 2, 3, 4))
+  y <- vec_assign(x, condition, vec_slice(value, condition))
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(list(NA, 1, 1, 4)))
 })
 
 test_that("can assign shaped base vectors with recycling of `value`", {
@@ -148,45 +351,69 @@ test_that("can assign shaped base vectors with recycling of `value`", {
   x <- mat(as.raw(rep(0, 3)))
   expect_identical(vec_assign(x, c(3, 1), as.raw(1)), mat(as.raw(c(1, 0, 1))))
   expect_identical(x, mat(as.raw(rep(0, 3))))
-})
 
-test_that("can slice-assign lists", {
-  x <- rep(list(NULL), 3)
-  vec_slice(x, 2) <- list(NA)
-  expect_identical(x, list(NULL, NA, NULL))
-})
-
-test_that("can slice-assign shaped lists", {
-  mat <- as.matrix
-  x <- mat(rep(list(NULL), 3))
-  vec_slice(x, 2) <- list(NA)
-  expect_identical(x, mat(list(NULL, NA, NULL)))
-})
-
-test_that("can assign lists", {
-  x <- rep(list(NULL), 3)
-  expect_identical(vec_assign(x, 2, list(NA)), list(NULL, NA, NULL))
-  expect_identical(x, rep(list(NULL), 3))
-})
-
-test_that("can assign lists with recycling of `value`", {
-  x <- rep(list(NULL), 3)
-  expect_identical(vec_assign(x, c(3, 1), list(NA)), list(NA, NULL, NA))
-  expect_identical(x, rep(list(NULL), 3))
-})
-
-test_that("can assign shaped lists", {
-  mat <- as.matrix
-  x <- mat(rep(list(NULL), 3))
-  expect_identical(vec_assign(x, 2, list(NA)), mat(list(NULL, NA, NULL)))
-  expect_identical(x, mat(rep(list(NULL), 3)))
-})
-
-test_that("can assign shaped lists with recycling of `value`", {
   mat <- as.matrix
   x <- mat(rep(list(NULL), 3))
   expect_identical(vec_assign(x, c(3, 1), list(NA)), mat(list(NA, NULL, NA)))
   expect_identical(x, mat(rep(list(NULL), 3)))
+})
+
+test_that("can assign shaped base vectors with logical indices with recycling of `value`", {
+  # Logical indices have their own optimized path so we test them specially
+
+  mat <- as.matrix
+
+  condition <- c(TRUE, FALSE, NA, TRUE)
+
+  x <- mat(rep(FALSE, 4))
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(NA, FALSE, FALSE, NA)))
+
+  x <- mat(rep(0L, 4))
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(NA, 0L, 0L, NA)))
+
+  x <- mat(rep(0, 4))
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(NA, 0, 0, NA)))
+
+  x <- mat(rep(0i, 4))
+  value <- NA
+  na <- complex(real = NA, imaginary = NA)
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(na, 0i, 0i, na)))
+
+  x <- mat(rep("", 4))
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(c(NA, "", "", NA)))
+
+  x <- mat(as.raw(rep(1, 4)))
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(as.raw(c(0, 1, 1, 0))))
+
+  x <- mat(rep(list(1), 4))
+  value <- NA
+  y <- vec_assign(x, condition, value)
+  z <- vec_assign(x, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, mat(list(NULL, 1, 1, NULL)))
 })
 
 test_that("can assign object of any dimensionality", {
@@ -205,6 +432,112 @@ test_that("can assign object of any dimensionality", {
   expect_identical(vec_assign(x2, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 3),  dim = c(3, 4)))
   expect_identical(vec_assign(x3, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 12), dim = c(3, 4, 5)))
   expect_identical(vec_assign(x4, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 60), dim = c(3, 4, 5, 6)))
+})
+
+test_that("can assign object of any dimensionality with logical indices", {
+  # Logical indices have their own optimized path so we test them specially
+
+  # Non barrier (integer, double, logical, etc)
+  x1 <- ones(4)
+  x2 <- ones(4, 5)
+  x3 <- ones(4, 5, 6)
+  x4 <- ones(4, 5, 6, 7)
+
+  # Barrier (list, character)
+  x1_list <- ones_list(4)
+  x2_list <- ones_list(4, 5)
+  x3_list <- ones_list(4, 5, 6)
+  x4_list <- ones_list(4, 5, 6, 7)
+
+  condition <- c(TRUE, FALSE, NA, TRUE)
+
+  # No recycling
+  value <- c(2, 3, 4, 5)
+  value_list <- as.list(value)
+
+  y <- vec_assign(x1, condition, vec_slice(value, condition))
+  z <- vec_assign(x1, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(c(2, 1, 1, 5), 1),  dim = dim(x1)))
+
+  y <- vec_assign(x1_list, condition, vec_slice(value_list, condition))
+  z <- vec_assign(x1_list, condition, value_list, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(list(2, 1, 1, 5), 1),  dim = dim(x1_list)))
+
+  y <- vec_assign(x2, condition, vec_slice(value, condition))
+  z <- vec_assign(x2, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(c(2, 1, 1, 5), 4),  dim = dim(x2)))
+
+  y <- vec_assign(x2_list, condition, vec_slice(value_list, condition))
+  z <- vec_assign(x2_list, condition, value_list, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(list(2, 1, 1, 5), 4),  dim = dim(x2_list)))
+
+  y <- vec_assign(x3, condition, vec_slice(value, condition))
+  z <- vec_assign(x3, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(c(2, 1, 1, 5), 20), dim = dim(x3)))
+
+  y <- vec_assign(x3_list, condition, vec_slice(value_list, condition))
+  z <- vec_assign(x3_list, condition, value_list, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(list(2, 1, 1, 5), 20), dim = dim(x3_list)))
+
+  y <- vec_assign(x4, condition, vec_slice(value, condition))
+  z <- vec_assign(x4, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(c(2, 1, 1, 5), 120), dim = dim(x4)))
+
+  y <- vec_assign(x4_list, condition, vec_slice(value_list, condition))
+  z <- vec_assign(x4_list, condition, value_list, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(list(2, 1, 1, 5), 120), dim = dim(x4_list)))
+
+  # `value` recycling
+  value <- 2
+  value_list <- as.list(value)
+
+  y <- vec_assign(x1, condition, value)
+  z <- vec_assign(x1, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(c(2, 1, 1, 2), 1),  dim = dim(x1)))
+
+  y <- vec_assign(x1_list, condition, value_list)
+  z <- vec_assign(x1_list, condition, value_list, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(list(2, 1, 1, 2), 1),  dim = dim(x1_list)))
+
+  y <- vec_assign(x2, condition, value)
+  z <- vec_assign(x2, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(c(2, 1, 1, 2), 4),  dim = dim(x2)))
+
+  y <- vec_assign(x2_list, condition, value_list)
+  z <- vec_assign(x2_list, condition, value_list, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(list(2, 1, 1, 2), 4),  dim = dim(x2_list)))
+
+  y <- vec_assign(x3, condition, value)
+  z <- vec_assign(x3, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(c(2, 1, 1, 2), 20), dim = dim(x3)))
+
+  y <- vec_assign(x3_list, condition, value_list)
+  z <- vec_assign(x3_list, condition, value_list, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(list(2, 1, 1, 2), 20), dim = dim(x3_list)))
+
+  y <- vec_assign(x4, condition, value)
+  z <- vec_assign(x4, condition, value, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(c(2, 1, 1, 2), 120), dim = dim(x4)))
+
+  y <- vec_assign(x4_list, condition, value_list)
+  z <- vec_assign(x4_list, condition, value_list, slice_value = TRUE)
+  expect_identical(y, z)
+  expect_identical(y, array(rep(list(2, 1, 1, 2), 120), dim = dim(x4_list)))
 })
 
 test_that("atomics can't be assigned in lists", {
@@ -243,11 +576,14 @@ test_that("can assign and slice-assign data frames", {
   expect_identical(vec_assign(df, 1, other), exp)
   expect_identical(df, orig)
 
+  expect_identical(vec_assign(df, 1, other, slice_value = TRUE), exp)
+  expect_identical(df, orig)
+
   vec_slice(df, 1) <- other
   expect_identical(df, exp)
 })
 
-test_that("can slice-assign using logical index", {
+test_that("can assign using logical index", {
   x <- c(2, 1)
   vec_slice(x, TRUE) <- 3
   expect_equal(x, c(3, 3))
@@ -255,40 +591,75 @@ test_that("can slice-assign using logical index", {
   vec_slice(x, c(TRUE, FALSE)) <- 4
   expect_equal(x, c(4, 3))
 
-  expect_error(
-    vec_assign(x, c(TRUE, FALSE, TRUE), 5),
-    class = "vctrs_error_subscript_size"
-  )
-  expect_error(
-    vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ]),
-    class = "vctrs_error_subscript_size"
-  )
+  expect_snapshot({
+    (expect_error(
+      vec_assign(x, c(TRUE, FALSE, TRUE), 5),
+      class = "vctrs_error_subscript_size"
+    ))
+  })
+  expect_snapshot({
+    (expect_error(
+      vec_assign(x, c(TRUE, FALSE, TRUE), 5, slice_value = TRUE),
+      class = "vctrs_error_subscript_size"
+    ))
+  })
+
+  expect_snapshot({
+    (expect_error(
+      vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ]),
+      class = "vctrs_error_subscript_size"
+    ))
+  })
+  expect_snapshot({
+    (expect_error(
+      vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ], slice_value = TRUE),
+      class = "vctrs_error_subscript_size"
+    ))
+  })
 })
 
-test_that("slice-assign ignores NA in logical subsetting", {
+test_that("assign `value` size depends on `slice_value`", {
+  x <- c(1, 2, 3)
+
+  # `value` size depends on number of `NA` or `TRUE` values in `i`
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, c(TRUE, NA, FALSE), c(1, 2, 3))
+  })
+
+  # `value` size depends on size of `x`
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, c(TRUE, NA, FALSE), c(1, 2), slice_value = TRUE)
+  })
+})
+
+test_that("assign ignores NA in logical subsetting", {
   x <- c(NA, 1, 2)
-  expect_equal(`vec_slice<-`(x, x > 0, 1), c(NA, 1, 1))
-  expect_equal(`vec_slice<-`(x, x > 0, c(NA, 2:1)), c(NA, 2, 1))
+
+  expect_equal(vec_assign(x, x > 0, 1), c(NA, 1, 1))
+  expect_equal(vec_assign(x, x > 0, 1, slice_value = TRUE), c(NA, 1, 1))
+
+  expect_equal(vec_assign(x, x > 0, c(NA, 2:1)), c(NA, 2, 1))
+  expect_equal(vec_assign(x, x > 0, c(NA, 2:1), slice_value = TRUE), c(NA, 2, 1))
 })
 
-test_that("slice-assign with arrays ignores NA in logical subsetting", {
+test_that("assign with arrays ignores NA in logical subsetting", {
   mat <- as.matrix
   x <- c(NA, 1, 2)
-  expect_equal(`vec_slice<-`(mat(x), x > 0, 1), mat(c(NA, 1, 1)))
-  expect_equal(`vec_slice<-`(mat(x), x > 0, c(NA, 2:1)), mat(c(NA, 2, 1)))
+  expect_equal(vec_assign(mat(x), x > 0, 1), mat(c(NA, 1, 1)))
+  expect_equal(vec_assign(mat(x), x > 0, c(NA, 2:1)), mat(c(NA, 2, 1)))
 })
 
-test_that("slice-assign ignores NA in integer subsetting", {
+test_that("assign ignores NA in integer subsetting", {
   x <- 0:2
-  expect_equal(`vec_slice<-`(x, c(NA, 2:3), 1), c(0, 1, 1))
-  expect_equal(`vec_slice<-`(x, c(NA, 2:3), c(NA, 2:1)), c(0, 2, 1))
+  expect_equal(vec_assign(x, c(NA, 2:3), 1), c(0, 1, 1))
+  expect_equal(vec_assign(x, c(NA, 2:3), c(NA, 2:1)), c(0, 2, 1))
 })
 
-test_that("slice-assign with arrays ignores NA in integer subsetting", {
+test_that("assign with arrays ignores NA in integer subsetting", {
   mat <- as.matrix
   x <- mat(0:2)
-  expect_equal(`vec_slice<-`(x, c(NA, 2:3), 1), mat(c(0, 1, 1)))
-  expect_equal(`vec_slice<-`(x, c(NA, 2:3), c(NA, 2:1)), mat(c(0, 2, 1)))
+  expect_equal(vec_assign(x, c(NA, 2:3), 1), mat(c(0, 1, 1)))
+  expect_equal(vec_assign(x, c(NA, 2:3), c(NA, 2:1)), mat(c(0, 2, 1)))
 })
 
 test_that("can't modify subset with missing argument", {
@@ -317,16 +688,51 @@ test_that("can modify subset with recycled FALSE argument", {
 test_that("can modify subset with NULL argument", {
   x <- 1:3
   vec_slice(x, NULL) <- 2L
+  expect_identical(x, 1:3)
 
+  x <- vec_assign(x, NULL, 2L)
+  expect_identical(x, 1:3)
+
+  x <- vec_assign(x, NULL, 2L, slice_value = TRUE)
   expect_identical(x, 1:3)
 })
 
 test_that("can slice-assign with missing indices", {
+  # Atomic case
   x <- 1:3
   y <- 4:6
   test <- c(NA, TRUE, FALSE)
   vec_slice(x, test) <- vec_slice(y, test)
   expect_identical(x, int(1, 5, 3))
+
+  # Barrier case
+  x <- as.list(1:3)
+  y <- as.list(4:6)
+  test <- c(NA, TRUE, FALSE)
+  vec_slice(x, test) <- vec_slice(y, test)
+  expect_identical(x, as.list(int(1, 5, 3)))
+
+  # Atomic array case
+  x <- array(1:12, dim = c(3, 2, 2))
+  y <- array(13:24, dim = c(3, 2, 2))
+  test <- c(NA, TRUE, FALSE)
+  vec_slice(x, test) <- vec_slice(y, test)
+  expect <- array(
+    int(1, 14, 3, 4, 17, 6, 7, 20, 9, 10, 23, 12),
+    dim = c(3, 2, 2)
+  )
+  expect_identical(x, expect)
+
+  # Barrier array case
+  x <- array(as.list(1:12), dim = c(3, 2, 2))
+  y <- array(as.list(13:24), dim = c(3, 2, 2))
+  test <- c(NA, TRUE, FALSE)
+  vec_slice(x, test) <- vec_slice(y, test)
+  expect <- array(
+    as.list(int(1, 14, 3, 4, 17, 6, 7, 20, 9, 10, 23, 12)),
+    dim = c(3, 2, 2)
+  )
+  expect_identical(x, expect)
 })
 
 test_that("slice-assign checks vectorness", {
@@ -364,22 +770,47 @@ test_that("slice-assign takes the proxy", {
   expect_identical(proxy_deref(x), int(1, 20, 21))
 })
 
-test_that("can use names to vec_slice<-() a named object", {
-  x0 <- c(a = 1, b = 2)
-  x1 <- c(a = 1, a = 2)
+test_that("can use names to assign with a named object", {
+  x0 <- c(a = 1, b = 2, c = 3)
+  x1 <- c(a = 1, a = 2, a = 3)
 
-  vec_slice(x0, "b") <- 3
-  expect_identical(x0, c(a = 1, b = 3))
+  vec_slice(x0, "b") <- 4
+  expect_identical(x0, c(a = 1, b = 4, c = 3))
 
-  vec_slice(x1, "a") <- 3
-  expect_identical(x1, c(a = 3, a = 2))
+  # Only first is changed
+  vec_slice(x1, "a") <- 4
+  expect_identical(x1, c(a = 4, a = 2, a = 3))
+
+  x <- c(a = 1, b = 2, c = 3)
+
+  expect_identical(
+    vec_assign(x, c("c", "a"), c(4, 5)),
+    c(a = 5, b = 2, c = 4)
+  )
+  # Slices `value` by `i` after matching `i` against `x` names
+  expect_identical(
+    vec_assign(x, c("c", "a"), c(4, 5, 6), slice_value = TRUE),
+    c(a = 4, b = 2, c = 6)
+  )
+
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, c("c", "a"), c(4, 5, 6))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, c("c", "a"), c(4, 5), slice_value = TRUE)
+  })
 })
 
-test_that("can't use names to vec_slice<-() an unnamed object", {
+test_that("can't use names to assign with an unnamed object", {
   x0 <- 1:3
 
   expect_error(
     vec_slice(x0, letters[1]) <- 4L,
+    "Can't use character names to index an unnamed vector.",
+    fixed = TRUE
+  )
+  expect_error(
+    vec_assign(x0, letters[1], 4L, slice_value = TRUE),
     "Can't use character names to index an unnamed vector.",
     fixed = TRUE
   )
@@ -413,8 +844,16 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   )
 
   obj <- foobar(c("foo", "bar", "baz"))
-  vec_slice(obj, 1:2) <- TRUE
-  expect_identical(obj, foobar(c("dispatched", "dispatched", "baz")))
+
+  obj2 <- vec_assign(obj, 1:2, TRUE)
+  expect_identical(obj2, foobar(c("dispatched", "dispatched", "baz")))
+
+  obj2 <- vec_assign(obj, c(TRUE, FALSE, TRUE), TRUE)
+  expect_identical(obj2, foobar(c("dispatched", "bar", "dispatched")))
+
+  # We handle `NA` for the end user
+  obj2 <- vec_assign(obj, c(1, NA, 2), TRUE)
+  expect_identical(obj2, foobar(c("dispatched", "dispatched", "baz")))
 })
 
 test_that("vec_assign() can always assign unspecified values into foreign vector types", {
@@ -423,6 +862,9 @@ test_that("vec_assign() can always assign unspecified values into foreign vector
 
   expect_identical(vec_assign(obj, 1, NA), expect)
   expect_identical(vec_assign(obj, 1, unspecified(1)), expect)
+
+  expect_identical(vec_assign(obj, 1, c(NA, NA, NA), slice_value = TRUE), expect)
+  expect_identical(vec_assign(obj, 1, unspecified(3), slice_value = TRUE), expect)
 })
 
 test_that("slice-assign casts to `to` before falling back to `[<-` (#443)", {
@@ -447,11 +889,34 @@ test_that("slice-assign casts to `to` before falling back to `[<-` (#443)", {
 })
 
 test_that("index and value are sliced before falling back", {
-  # Work around a bug in base R `[<-`
-  lhs <- foobar(c(NA, 1:4))
-  rhs <- foobar(int(0L, 10L))
-  exp <- foobar(int(10L, 1:4))
-  expect_identical(vec_assign(lhs, c(NA, 1), rhs), exp)
+  # Works around a bug in base R `[<-` before we call it, in particular, related
+  # to the fact that `[<-` doesn't allow `NA` in subassign indices, but we do.
+
+  lhs <- foobar(int(1:5))
+
+  # With location vector
+  expect_identical(
+    vec_assign(lhs, c(NA, 1), foobar(int(6:7))),
+    foobar(int(7, 2:5))
+  )
+
+  # With location vector and `slice_value = TRUE`
+  expect_identical(
+    vec_assign(lhs, c(NA, 1), foobar(int(6:10)), slice_value = TRUE),
+    foobar(int(6, 2:5))
+  )
+
+  # With condition vector
+  expect_identical(
+    vec_assign(lhs, c(NA, FALSE, TRUE, NA, TRUE), foobar(int(6:9))),
+    foobar(int(1, 2, 7, 4, 9))
+  )
+
+  # With condition vector and `slice_value = TRUE`
+  expect_identical(
+    vec_assign(lhs, c(NA, FALSE, TRUE, NA, TRUE), foobar(int(6:10)), slice_value = TRUE),
+    foobar(int(1, 2, 8, 4, 10))
+  )
 })
 
 test_that("size 1 value is expected to be handled by the `[<-` fallback", {
@@ -461,13 +926,33 @@ test_that("size 1 value is expected to be handled by the `[<-` fallback", {
   lhs <- foobar(1:4)
   rhs <- foobar(0L)
   exp <- foobar(c(1L, 0L, 3L, 0L))
+
   expect_identical(vec_assign(lhs, c(2L, 4L), rhs), exp)
+
+  expect_identical(
+    vec_assign(lhs, c(FALSE, TRUE, FALSE, TRUE), rhs),
+    exp
+  )
+  expect_identical(
+    vec_assign(lhs, c(FALSE, TRUE, FALSE, TRUE), rhs, slice_value = TRUE),
+    exp
+  )
 })
 
 test_that("can assign to data frame", {
   x <- data_frame(x = 1:3)
   y <- data_frame(x = 20)
   expect_identical(vec_assign(x, 2, y), data_frame(x = int(1, 20, 3)))
+})
+
+test_that("can assign to data frame with `slice_value`", {
+  x <- data_frame(x = 1:4)
+  y <- data_frame(x = 21:24)
+  i <- c(TRUE, FALSE, NA, TRUE)
+  expect_identical(
+    vec_assign(x, i, y, slice_value = TRUE),
+    data_frame(x = int(21, 2, 3, 24))
+  )
 })
 
 test_that("can assign to a data frame with matrix columns (#625)", {
@@ -501,7 +986,13 @@ test_that("`vec_assign()` evaluates arg lazily", {
 test_that("`vec_assign()` requires recyclable value", {
   expect_snapshot({
     (expect_error(
-      vec_assign(1:3, 1:3, 1:2),
+      vec_assign(1:3, 1:2, 1:3),
+      class = "vctrs_error_recycle_incompatible_size"
+    ))
+  })
+  expect_snapshot({
+    (expect_error(
+      vec_assign(1:3, 1:2, 1:2, slice_value = TRUE),
       class = "vctrs_error_recycle_incompatible_size"
     ))
   })
@@ -635,6 +1126,65 @@ test_that("can optionally assign names", {
 
   expect_identical(
     vec_assign_params(nested_x, 2, nested_y, assign_names = TRUE),
+    nested_out
+  )
+})
+
+test_that("can optionally assign names with `slice_value`", {
+  vec_x <- set_names(1:3, letters[1:3])
+  vec_y <- c(FOO = 4L, BAR = 5L, BAZ = 6L)
+  vec_out <- c(a = 1L, BAR = 5L, BAZ = 6L)
+  expect_identical(
+    vec_assign_params(
+      vec_x,
+      c(FALSE, TRUE, TRUE),
+      vec_y,
+      assign_names = TRUE,
+      slice_value = TRUE
+    ),
+    vec_out
+  )
+
+  df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
+  df_y <- new_data_frame(list(x = 4:6), row.names = c("FOO", "BAR", "BAZ"))
+  df_out <- new_data_frame(list(x = c(1L, 5L, 6L)), row.names = c("a", "BAR", "BAZ"))
+  expect_identical(
+    vec_assign_params(
+      df_x,
+      c(FALSE, TRUE, TRUE),
+      df_y,
+      assign_names = TRUE,
+      slice_value = TRUE
+    ),
+    df_out
+  )
+
+  mat_x <- matrix(1:3, 3, dimnames = list(letters[1:3]))
+  mat_y <- matrix(4:6, 3, dimnames = list(c("FOO", "BAR", "BAZ")))
+  mat_out <- matrix(c(1L, 5L, 6L), dimnames = list(c("a", "BAR", "BAZ")))
+  expect_identical(
+    vec_assign_params(
+      mat_x,
+      c(FALSE, TRUE, TRUE),
+      mat_y,
+      assign_names = TRUE,
+      slice_value = TRUE
+    ),
+    mat_out
+  )
+
+  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
+  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c(c("x", "y", "z")))
+  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out), row.names = c("foo", "y", "z"))
+
+  expect_identical(
+    vec_assign_params(
+      nested_x,
+      c(FALSE, TRUE, TRUE),
+      nested_y,
+      assign_names = TRUE,
+      slice_value = TRUE
+    ),
     nested_out
   )
 })
@@ -780,9 +1330,163 @@ test_that("monitoring: assignment to `vctrs_rcrd` doesn't modify by reference (#
 
 # vec_assign + compact_seq -------------------------------------------------
 
-# `start` is 0-based
+test_that("can assign base vectors with compact seqs", {
+  # `start` is 0-based
+  start <- 1L
+  size <- 2L
+  increasing <- TRUE
+
+  x <- c(FALSE, FALSE, FALSE)
+  value <- c(TRUE, NA, TRUE)
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, c(FALSE, NA, TRUE))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- c(1L, 2L, 3L)
+  value <- c(4L, 5L, 6L)
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, c(1L, 5L, 6L))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- c(1, 2, 3)
+  value <- c(4, 5, 6)
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, c(1, 5, 6))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- c(1i, 2i, 3i)
+  value <- c(4i, 5i, 6i)
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, c(1i, 5i, 6i))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- c("1", "2", "3")
+  value <- c("4", "5", "6")
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, c("1", "5", "6"))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- raw2(1, 2, 3)
+  value <- raw2(4, 5, 6)
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, raw2(1, 5, 6))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- list(1, 2, 3)
+  value <- list(4, 5, 6)
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, list(1, 5, 6))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+})
 
 test_that("can assign shaped base vectors with compact seqs", {
+  # `start` is 0-based
+  start <- 1L
+  size <- 2L
+  increasing <- TRUE
+  mat <- as.matrix
+
+  x <- mat(c(FALSE, FALSE, FALSE))
+  value <- mat(c(TRUE, NA, TRUE))
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, mat(c(FALSE, NA, TRUE)))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(c(1L, 2L, 3L))
+  value <- mat(c(4L, 5L, 6L))
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, mat(c(1L, 5L, 6L)))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(c(1, 2, 3))
+  value <- mat(c(4, 5, 6))
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, mat(c(1, 5, 6)))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(c(1i, 2i, 3i))
+  value <- mat(c(4i, 5i, 6i))
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, mat(c(1i, 5i, 6i)))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(c("1", "2", "3"))
+  value <- mat(c("4", "5", "6"))
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, mat(c("1", "5", "6")))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(raw2(1, 2, 3))
+  value <- mat(raw2(4, 5, 6))
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, mat(raw2(1, 5, 6)))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(list(1, 2, 3))
+  value <- mat(list(4, 5, 6))
+  value_sliced <- vec_slice_seq(value, start, size, increasing)
+  y <- vec_assign_seq(x, value_sliced, start, size, increasing)
+  expect_identical(y, mat(list(1, 5, 6)))
+  expect_identical(
+    vec_assign_seq(x, value, start, size, increasing, slice_value = TRUE),
+    y
+  )
+})
+
+test_that("can assign shaped base vectors with compact seqs and recycled `value`", {
+  # `start` is 0-based
   start <- 1L
   size <- 2L
   increasing <- TRUE
@@ -796,7 +1500,8 @@ test_that("can assign shaped base vectors with compact seqs", {
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))
 })
 
-test_that("can assign shaped base vectors with decreasing compact seqs", {
+test_that("can assign shaped base vectors with decreasing compact seqs and recycled `value`", {
+  # `start` is 0-based
   start <- 2L
   size <- 2L
   increasing <- FALSE
@@ -811,6 +1516,7 @@ test_that("can assign shaped base vectors with decreasing compact seqs", {
 })
 
 test_that("can assign shaped base vectors with size 0 compact seqs", {
+  # `start` is 0-based
   start <- 1L
   size <- 0L
   increasing <- TRUE
@@ -831,6 +1537,7 @@ test_that("can assign object of any dimensionality with compact seqs", {
   x3 <- ones(3, 4, 5)
   x4 <- ones(3, 4, 5, 6)
 
+  # `start` is 0-based
   start <- 0L
   size <- 2L
   increasing <- TRUE

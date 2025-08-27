@@ -1,7 +1,141 @@
+# assign throws error with non-vector `value`
+
+    Code
+      vec_assign(x, 1L, NULL)
+    Condition
+      Error in `vec_assign()`:
+      ! Input must be a vector, not `NULL`.
+
+---
+
+    Code
+      vec_assign(x, 1L, NULL, slice_value = TRUE)
+    Condition
+      Error in `vec_assign()`:
+      ! Input must be a vector, not `NULL`.
+
+---
+
+    Code
+      vec_assign(x, 1L, NULL, value_arg = "foo")
+    Condition
+      Error in `vec_assign()`:
+      ! `foo` must be a vector, not `NULL`.
+
+---
+
+    Code
+      vec_assign(x, 1L, NULL, slice_value = TRUE, value_arg = "foo")
+    Condition
+      Error in `vec_assign()`:
+      ! `foo` must be a vector, not `NULL`.
+
+---
+
+    Code
+      vec_assign(x, 1L, environment(), value_arg = "foo")
+    Condition
+      Error in `vec_assign()`:
+      ! `foo` must be a vector, not an environment.
+
+---
+
+    Code
+      vec_assign(x, 1L, environment(), slice_value = TRUE, value_arg = "foo")
+    Condition
+      Error in `vec_assign()`:
+      ! `foo` must be a vector, not an environment.
+
+# can assign using logical index
+
+    Code
+      (expect_error(vec_assign(x, c(TRUE, FALSE, TRUE), 5), class = "vctrs_error_subscript_size")
+      )
+    Output
+      <error/vctrs_error_subscript_size>
+      Error:
+      ! Can't assign elements.
+      x Logical subscript must be size 1 or 2, not 3.
+
+---
+
+    Code
+      (expect_error(vec_assign(x, c(TRUE, FALSE, TRUE), 5, slice_value = TRUE),
+      class = "vctrs_error_subscript_size"))
+    Output
+      <error/vctrs_error_subscript_size>
+      Error:
+      ! Can't assign elements.
+      x Logical subscript must be size 1 or 2, not 3.
+
+---
+
+    Code
+      (expect_error(vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ]), class = "vctrs_error_subscript_size")
+      )
+    Output
+      <error/vctrs_error_subscript_size>
+      Error:
+      ! Can't assign elements.
+      x Logical subscript must be size 1 or 32, not 2.
+
+---
+
+    Code
+      (expect_error(vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ], slice_value = TRUE),
+      class = "vctrs_error_subscript_size"))
+    Output
+      <error/vctrs_error_subscript_size>
+      Error:
+      ! Can't assign elements.
+      x Logical subscript must be size 1 or 32, not 2.
+
+# assign `value` size depends on `slice_value`
+
+    Code
+      vec_assign(x, c(TRUE, NA, FALSE), c(1, 2, 3))
+    Condition
+      Error in `vec_assign()`:
+      ! Can't recycle input of size 3 to size 2.
+
+---
+
+    Code
+      vec_assign(x, c(TRUE, NA, FALSE), c(1, 2), slice_value = TRUE)
+    Condition
+      Error in `vec_assign()`:
+      ! Can't recycle input of size 2 to size 3.
+
+# can use names to assign with a named object
+
+    Code
+      vec_assign(x, c("c", "a"), c(4, 5, 6))
+    Condition
+      Error in `vec_assign()`:
+      ! Can't recycle input of size 3 to size 2.
+
+---
+
+    Code
+      vec_assign(x, c("c", "a"), c(4, 5), slice_value = TRUE)
+    Condition
+      Error in `vec_assign()`:
+      ! Can't recycle input of size 2 to size 3.
+
 # `vec_assign()` requires recyclable value
 
     Code
-      (expect_error(vec_assign(1:3, 1:3, 1:2), class = "vctrs_error_recycle_incompatible_size")
+      (expect_error(vec_assign(1:3, 1:2, 1:3), class = "vctrs_error_recycle_incompatible_size")
+      )
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `vec_assign()`:
+      ! Can't recycle input of size 3 to size 2.
+
+---
+
+    Code
+      (expect_error(vec_assign(1:3, 1:2, 1:2, slice_value = TRUE), class = "vctrs_error_recycle_incompatible_size")
       )
     Output
       <error/vctrs_error_incompatible_size>

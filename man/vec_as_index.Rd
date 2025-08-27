@@ -7,10 +7,7 @@
 vec_as_index(i, n, names = NULL)
 }
 \arguments{
-\item{i}{An integer, character or logical vector specifying the
-locations or names of the observations to get/set. Specify
-\code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
-\code{integer()} to index none (as in \code{x[NULL]}).}
+\item{i}{An index vector to convert.}
 
 \item{n}{A single integer representing the total size of the
 object that \code{i} is meant to index into.}

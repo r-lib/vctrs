@@ -79,8 +79,8 @@ extern SEXP ffi_proxy_info(SEXP);
 extern r_obj* ffi_class_type(r_obj*);
 extern r_obj* ffi_vec_bare_df_restore(r_obj*, r_obj*);
 extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern r_obj* ffi_as_df_row(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_outer_names(r_obj*, r_obj*, r_obj*);
@@ -102,7 +102,7 @@ extern r_obj* df_flatten(r_obj*);
 extern SEXP vctrs_linked_version(void);
 extern r_obj* ffi_tib_ptype2(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_tib_cast(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_assign_params(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_assign_params(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_has_dim(SEXP);
 extern r_obj* ffi_vec_rep(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_rep_each(r_obj*, r_obj*, r_obj*);
@@ -265,8 +265,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_class_type",                            (DL_FUNC) &ffi_class_type, 1},
   {"ffi_vec_bare_df_restore",                   (DL_FUNC) &ffi_vec_bare_df_restore, 2},
   {"ffi_recycle",                               (DL_FUNC) &ffi_recycle, 3},
-  {"ffi_assign",                                (DL_FUNC) &ffi_assign, 4},
-  {"ffi_assign_seq",                            (DL_FUNC) &ffi_assign_seq, 5},
+  {"ffi_assign",                                (DL_FUNC) &ffi_assign, 5},
+  {"ffi_assign_seq",                            (DL_FUNC) &ffi_assign_seq, 6},
   {"vctrs_set_attributes",                      (DL_FUNC) &vctrs_set_attributes, 2},
   {"ffi_as_df_row",                             (DL_FUNC) &ffi_as_df_row, 3},
   {"ffi_outer_names",                           (DL_FUNC) &ffi_outer_names, 3},
@@ -292,7 +292,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_linked_version",                      (DL_FUNC) &vctrs_linked_version, 0},
   {"ffi_tib_ptype2",                            (DL_FUNC) &ffi_tib_ptype2, 5},
   {"ffi_tib_cast",                              (DL_FUNC) &ffi_tib_cast, 5},
-  {"ffi_assign_params",                         (DL_FUNC) &ffi_assign_params, 4},
+  {"ffi_assign_params",                         (DL_FUNC) &ffi_assign_params, 6},
   {"vctrs_has_dim",                             (DL_FUNC) &vctrs_has_dim, 1},
   {"ffi_vec_rep",                               (DL_FUNC) &ffi_vec_rep, 3},
   {"ffi_vec_rep_each",                          (DL_FUNC) &ffi_vec_rep_each, 3},

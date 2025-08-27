@@ -51,6 +51,30 @@ enum vctrs_ownership {
 };
 
 /**
+ * Index style
+ *
+ * - Location indices can be integer, character, or logical, but are ultimately
+ *   converted to positive integer locations by `vec_as_location()` before the
+ *   core assignment loop.
+ *
+ * - Condition indices are logical vectors the same size as `x`, where `TRUE`
+ *   denotes that you should assign to that spot. They are not converted to
+ *   integer locations before assignment.
+ *
+ * `vec_assign()` has separate optimized paths for each index style.
+ *
+ * TODO: `vec_slice()` should also have an optimized path for condition indices!
+ * i.e. `vec_slice(x, <lgl>)` should not call `vec_as_location()`.
+ *
+ * Condition indices are the inputs to `dplyr::if_else()` and `dplyr::case_when()`,
+ * so having an optimized path for these is very helpful.
+ */
+enum vctrs_index_style {
+  VCTRS_INDEX_STYLE_location,
+  VCTRS_INDEX_STYLE_condition
+};
+
+/**
  * Structure for argument tags
  *
  * Argument tags are used in error messages to provide information
