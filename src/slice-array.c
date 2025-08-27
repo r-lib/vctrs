@@ -128,9 +128,6 @@ static SEXP dbl_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
 static SEXP cpl_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
   SLICE_SHAPED(CPLXSXP, Rcomplex, COMPLEX, COMPLEX_RO, vctrs_shared_na_cpl);
 }
-static SEXP chr_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
-  SLICE_SHAPED(STRSXP, SEXP, STRING_PTR, STRING_PTR_RO, NA_STRING);
-}
 static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
   SLICE_SHAPED(RAWSXP, Rbyte, RAW, RAW_RO, 0);
 }
@@ -262,6 +259,9 @@ static SEXP raw_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
     SLICE_BARRIER_SHAPED_INDEX(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE);       \
   }
 
+static SEXP chr_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
+  SLICE_BARRIER_SHAPED(STRSXP, SEXP, STRING_PTR_RO, SET_STRING_ELT, NA_STRING);
+}
 static SEXP list_slice_shaped(SEXP x, SEXP index, struct strides_info* p_info) {
   SLICE_BARRIER_SHAPED(VECSXP, SEXP, VECTOR_PTR_RO, SET_VECTOR_ELT, R_NilValue);
 }

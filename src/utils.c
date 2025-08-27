@@ -1075,9 +1075,6 @@ void r_lgl_fill(SEXP x, int value, R_len_t n) {
 void r_int_fill(SEXP x, int value, R_len_t n) {
   r_p_int_fill(INTEGER(x), value, n);
 }
-// void r_chr_fill(SEXP x, SEXP value, R_len_t n) {
-//   r_p_chr_fill(STRING_PTR(x), value, n);
-// }
 
 
 void r_int_fill_seq(SEXP x, int start, R_len_t n) {
