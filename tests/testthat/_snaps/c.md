@@ -152,6 +152,14 @@
       Error in `vec_c()`:
       ! Can't combine `a` <character> and `b` <double>.
 
+# calls cast method even with empty objects
+
+    Code
+      vec_c(foobar(integer()), foobar(integer(), foo = "bar"))
+    Condition
+      Error in `vec_c()`:
+      ! Can't convert `..2` <vctrs_foobar> to <vctrs_foobar>.
+
 # concatenation performs expected allocations
 
     Code
@@ -161,57 +169,57 @@
       # Integers
       with_memory_prof(vec_c_list(ints))
     Output
-      [1] 1.96KB
+      [1] 2.35KB
     Code
       # Doubles
       with_memory_prof(vec_c_list(dbls))
     Output
-      [1] 2.35KB
+      [1] 2.74KB
     Code
       # Integers to integer
       with_memory_prof(vec_c_list(ints, ptype = int()))
     Output
-      [1] 1.7KB
+      [1] 2.09KB
     Code
       # Doubles to integer
       with_memory_prof(vec_c_list(dbls, ptype = int()))
     Output
-      [1] 1.7KB
+      [1] 2.09KB
     Code
       # # `list_unchop()` 
       # Integers
       with_memory_prof(list_unchop(ints))
     Output
-      [1] 1.13KB
+      [1] 1.52KB
     Code
       # Doubles
       with_memory_prof(list_unchop(dbls))
     Output
-      [1] 1.52KB
+      [1] 1.91KB
     Code
       # Integers to integer
       with_memory_prof(list_unchop(ints, ptype = int()))
     Output
-      [1] 896B
+      [1] 1.27KB
     Code
       # Doubles to integer
       with_memory_prof(list_unchop(dbls, ptype = int()))
     Output
-      [1] 896B
+      [1] 1.27KB
     Code
       # # Concatenation with names
       # Named integers
       ints <- rep(list(set_names(1:3, letters[1:3])), 100)
       with_memory_prof(list_unchop(ints))
     Output
-      [1] 4.3KB
+      [1] 4.7KB
     Code
       # Named matrices
       mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
       mats <- rep(list(mat), 100)
       with_memory_prof(list_unchop(mats))
     Output
-      [1] 5.52KB
+      [1] 5.91KB
     Code
       # Data frame with named columns
       df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
@@ -219,7 +227,7 @@
       dfs <- rep(list(df), 100)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 8.79KB
+      [1] 9.18KB
     Code
       # Data frame with rownames (non-repaired, non-recursive case)
       df <- data_frame(x = 1:2)
@@ -227,13 +235,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 6.02KB
+      [1] 6.41KB
     Code
       # Data frame with rownames (repaired, non-recursive case)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 12.2KB
+      [1] 12.6KB
     Code
       # Data frame with rownames (non-repaired, recursive case) (#1217)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
@@ -241,13 +249,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 11.4KB
+      [1] 11.7KB
     Code
       # Data frame with rownames (repaired, recursive case) (#1217)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 23.7KB
+      [1] 24.1KB
     Code
       # list-ofs (#1496)
       make_list_of <- (function(n) {
@@ -256,13 +264,13 @@
       })
       with_memory_prof(list_unchop(make_list_of(1000)))
     Output
-      [1] 55.9KB
+      [1] 59.8KB
     Code
       with_memory_prof(list_unchop(make_list_of(2000)))
     Output
-      [1] 111KB
+      [1] 118KB
     Code
       with_memory_prof(list_unchop(make_list_of(4000)))
     Output
-      [1] 220KB
+      [1] 236KB
 

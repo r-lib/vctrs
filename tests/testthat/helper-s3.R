@@ -12,18 +12,24 @@ new_ctor <- function(base_class) {
 }
 
 foobar <- new_ctor("vctrs_foobar")
+foobar_c <- new_ctor("vctrs_foobar_c")
 foobaz <- new_ctor("vctrs_foobaz")
 quux <- new_ctor("vctrs_quux")
 
 expect_foobar <- function(x) expect_s3_class({{ x }}, "vctrs_foobar")
+expect_foobar_c <- function(x) expect_s3_class({{ x }}, "vctrs_foobar_c")
 expect_foobaz <- function(x) expect_s3_class({{ x }}, "vctrs_foobaz")
 expect_quux <- function(x) expect_s3_class({{ x }}, "vctrs_quux")
 
-with_c_foobar <- function(expr) {
-  with_methods(
-    expr,
-    c.vctrs_foobar = function(...) foobar(NextMethod())
+local_c_foobar <- function(frame = caller_env()) {
+  local_methods(
+    c.vctrs_foobar = function(...) foobar_c(NextMethod()),
+    .frame = frame
   )
+}
+with_c_foobar <- function(expr) {
+  local_c_foobar()
+  expr
 }
 
 unrownames <- function(x) {

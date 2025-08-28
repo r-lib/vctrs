@@ -447,7 +447,9 @@ test_that("`indices` must be a list of integers", {
 })
 
 test_that("`x` and `indices` must be lists of the same size", {
-  expect_error(list_unchop(list(1, 2), indices = list(1)), "`x` and `indices` must be lists of the same size")
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1, 2), indices = list(1))
+  })
 })
 
 test_that("can unchop with an AsIs list (#1463)", {
@@ -468,8 +470,98 @@ test_that("can unchop a list of NULL", {
 })
 
 test_that("NULLs are ignored when unchopped with other vectors", {
-  expect_identical(list_unchop(list("a", NULL, "b")), c("a", "b"))
-  expect_identical(list_unchop(list("a", NULL, "b"), indices = list(2, integer(), 1)), c("b", "a"))
+  expect_identical(
+    list_unchop(list("a", NULL, "b")),
+    c("a", "b")
+  )
+  expect_identical(
+    list_unchop(list("a", NULL, "b"), indices = list(2, integer(), 1)),
+    c("b", "a")
+  )
+
+  # Homogeneous fallback
+  expect_identical(
+    list_unchop(list(foobar("a"), NULL, foobar("b"))),
+    foobar(c("a", "b"))
+  )
+  expect_identical(
+    list_unchop(
+      list(foobar("a"), NULL, foobar("b")),
+      indices = list(2, integer(), 1)
+    ),
+    foobar(c("b", "a"))
+  )
+  expect_identical(
+    list_unchop(
+      list(foobar("a"), NULL, foobar("b")),
+      indices = list(2, 3, 1)
+    ),
+    foobar(c("b", "a", NA))
+  )
+
+  # Homoegeneous fallback (`NULL` at front)
+  expect_identical(
+    list_unchop(list(NULL, foobar("a"), foobar("b"))),
+    foobar(c("a", "b"))
+  )
+  expect_identical(
+    list_unchop(
+      list(NULL, foobar("a"), foobar("b")),
+      indices = list(integer(), 2, 1)
+    ),
+    foobar(c("b", "a"))
+  )
+  expect_identical(
+    list_unchop(
+      list(NULL, foobar("a"), foobar("b")),
+      indices = list(3, 2, 1)
+    ),
+    foobar(c("b", "a", NA))
+  )
+
+  # `c()` fallback
+  with_c_foobar({
+    expect_identical(
+      list_unchop(list(foobar("a"), NULL, foobar("b"))),
+      foobar_c(c("a", "b"))
+    )
+    expect_identical(
+      list_unchop(
+        list(foobar("a"), NULL, foobar("b")),
+        indices = list(2, integer(), 1)
+      ),
+      foobar_c(c("b", "a"))
+    )
+    expect_identical(
+      list_unchop(
+        list(foobar("a"), NULL, foobar("b")),
+        indices = list(2, 3, 1)
+      ),
+      foobar_c(c("b", "a", NA))
+    )
+  })
+
+  # `c()` fallback (`NULL` at front)
+  with_c_foobar({
+    expect_identical(
+      list_unchop(list(NULL, foobar("a"), foobar("b"))),
+      foobar_c(c("a", "b"))
+    )
+    expect_identical(
+      list_unchop(
+        list(NULL, foobar("a"), foobar("b")),
+        indices = list(integer(), 2, 1)
+      ),
+      foobar_c(c("b", "a"))
+    )
+    expect_identical(
+      list_unchop(
+        list(NULL, foobar("a"), foobar("b")),
+        indices = list(3, 2, 1)
+      ),
+      foobar_c(c("b", "a", NA))
+    )
+  })
 })
 
 test_that("can use a `NULL` element with a corresponding index", {
@@ -500,16 +592,88 @@ test_that("can unchop lists", {
   expect_identical(list_unchop(x, indices = indices), list("c", "a", "b"))
 })
 
-test_that("can unchop data frames", {
-  df1 <- data_frame(x = 1:2)
-  df2 <- data_frame(x = 3:4)
-
-  x <- list(df1, df2)
+test_that("can unchop data frames of 1 column", {
   indices <- list(c(3, 1), c(2, 4))
 
-  expect <- vec_slice(vec_c(df1, df2), vec_order(vec_c(!!! indices)))
+  values <- list(
+    data_frame(x = 1:2),
+    data_frame(x = 3:4)
+  )
+  expect_identical(
+    list_unchop(values, indices = indices),
+    data_frame(x = int(2, 3, 1, 4))
+  )
 
-  expect_identical(list_unchop(x, indices = indices), expect)
+  # Homogeneous fallback (#1975)
+  values <- list(
+    data_frame(x = foobar(1:2)),
+    data_frame(x = foobar(3:4))
+  )
+  expect_identical(
+    list_unchop(values, indices = indices),
+    data_frame(x = foobar(int(2, 3, 1, 4)))
+  )
+
+  # `c()` fallback
+  with_c_foobar({
+    values <- list(
+      data_frame(x = foobar(1:2)),
+      data_frame(x = foobar(3:4))
+    )
+    expect_identical(
+      list_unchop(values, indices = indices),
+      data_frame(x = foobar_c(int(2, 3, 1, 4)))
+    )
+  })
+})
+
+test_that("can unchop data frames of >1 column", {
+  indices <- list(c(3, 1), c(2, 4))
+
+  values <- list(
+    data_frame(x = 1:2, y = letters[1:2], z = c(1, 2)),
+    data_frame(x = 3:4, y = letters[3:4], z = c(3, 4))
+  )
+  expect_identical(
+    list_unchop(values, indices = indices),
+    data_frame(
+      x = int(2, 3, 1, 4),
+      y = letters[c(2, 3, 1, 4)],
+      z = dbl(2, 3, 1, 4),
+    )
+  )
+
+  # Homogeneous fallback (#1975)
+  # Mix of fallback and non-fallback columns
+  values <- list(
+    data_frame(x = foobar(1:2), y = foobar(letters[1:2]), z = c(1, 2)),
+    data_frame(x = foobar(3:4), y = foobar(letters[3:4]), z = c(3, 4))
+  )
+  expect_identical(
+    list_unchop(values, indices = indices),
+    data_frame(
+      x = foobar(int(2, 3, 1, 4)),
+      y = foobar(letters[c(2, 3, 1, 4)]),
+      z = dbl(2, 3, 1, 4)
+    )
+  )
+
+  # `c()` fallback
+  # Mix of fallback and non-fallback columns
+  with_c_foobar({
+    values <- list(
+      data_frame(x = foobar(1:2), y = foobar(letters[1:2]), z = c(1, 2)),
+      data_frame(x = foobar(3:4), y = foobar(letters[3:4]), z = c(3, 4))
+    )
+    expect_identical(
+      list_unchop(values, indices = indices),
+      data_frame(
+        x = foobar_c(int(2, 3, 1, 4)),
+        y = foobar_c(letters[c(2, 3, 1, 4)]),
+        z = dbl(2, 3, 1, 4)
+      )
+    )
+  })
 })
 
 test_that("can unchop factors", {
@@ -552,9 +716,20 @@ test_that("can fallback when unchopping arrays of >2D", {
 })
 
 test_that("can unchop with all size 0 elements and get the right ptype", {
-  x <- list(integer(), integer())
   indices <- list(integer(), integer())
+
+  x <- list(integer(), integer())
   expect_identical(list_unchop(x, indices = indices), integer())
+
+  # Homogeneous fallback
+  x <- list(foobar(integer()), foobar(integer()))
+  expect_identical(list_unchop(x, indices = indices), foobar(integer()))
+
+  # `c()` fallback
+  with_c_foobar({
+    x <- list(foobar(integer()), foobar(integer()))
+    expect_identical(list_unchop(x, indices = indices), foobar_c(integer()))
+  })
 })
 
 test_that("can unchop with some size 0 elements", {
@@ -563,21 +738,96 @@ test_that("can unchop with some size 0 elements", {
   expect_identical(list_unchop(x, indices = indices), 2:1)
 })
 
-test_that("NULL is a valid index", {
-  expect_equal(list_unchop(list(1, 2), indices = list(NULL, 1)), 2)
-  expect_error(list_unchop(list(1, 2), indices = list(NULL, 2)), class = "vctrs_error_subscript_oob")
+test_that("`NULL` is a valid index", {
+  expect_identical(
+    list_unchop(list(1, 2), indices = list(NULL, 1)),
+    2
+  )
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1, 2), indices = list(NULL, 2))
+  })
+
+  # Homogeneous fallback
+  expect_identical(
+    list_unchop(list(foobar(1), foobar(2)), indices = list(NULL, 1)),
+    foobar(2)
+  )
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(foobar(1), foobar(2)), indices = list(NULL, 2))
+  })
+
+  # `c()` fallback
+  with_c_foobar({
+    expect_identical(
+      list_unchop(list(foobar(1), foobar(2)), indices = list(NULL, 1)),
+      foobar_c(2)
+    )
+    expect_snapshot(error = TRUE, {
+      list_unchop(list(foobar(1), foobar(2)), indices = list(NULL, 2))
+    })
+  })
 })
 
 test_that("unchopping recycles elements of x to the size of the index", {
-  x <- list(1, 2)
   indices <- list(c(3, 4, 5), c(2, 1))
-  expect_identical(list_unchop(x, indices = indices), c(2, 2, 1, 1, 1))
 
-  x <- list(1:2)
+  expect_identical(
+    list_unchop(list(1, 2), indices = indices),
+    c(2, 2, 1, 1, 1)
+  )
+  # Homogeneous fallback
+  expect_identical(
+    list_unchop(list(foobar(1), foobar(2)), indices = indices),
+    foobar(c(2, 2, 1, 1, 1))
+  )
+  # `c()` fallback
+  with_c_foobar({
+    expect_identical(
+      list_unchop(list(foobar(1), foobar(2)), indices = indices),
+      foobar_c(c(2, 2, 1, 1, 1))
+    )
+  })
+
   indices <- list(1:3)
-  expect_snapshot({
-    (expect_error(list_unchop(x, indices = indices)))
-    (expect_error(list_unchop(x, indices = indices, error_call = call("foo"), error_arg = "arg")))
+
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1:2), indices = indices)
+  })
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(1:2),
+      indices = indices,
+      error_call = call("foo"),
+      error_arg = "arg"
+    )
+  })
+
+  # Homogeneous fallback
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(foobar(1:2)), indices = indices)
+  })
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(foobar(1:2)),
+      indices = indices,
+      error_call = call("foo"),
+      error_arg = "arg"
+    )
+  })
+
+  # `c()` fallback
+  with_c_foobar({
+    expect_snapshot(error = TRUE, {
+      list_unchop(list(foobar(1:2)), indices = indices)
+    })
+    expect_snapshot(error = TRUE, {
+      list_unchop(
+        list(foobar(1:2)),
+        indices = indices,
+        error_call = call("foo"),
+        error_arg = "arg"
+      )
+    })
   })
 })
 
@@ -630,12 +880,35 @@ test_that("can specify a ptype to override common type", {
 test_that("leaving `indices = NULL` unchops sequentially", {
   x <- list(1:2, 3:5, 6L)
   expect_identical(list_unchop(x), 1:6)
+
+  # Homogeneous fallback
+  x <- list(foobar(1:2), foobar(3:5), foobar(6L))
+  expect_identical(list_unchop(x), foobar(1:6))
+
+  # `c()` fallback
+  with_c_foobar({
+    x <- list(foobar(1:2), foobar(3:5), foobar(6L))
+    expect_identical(list_unchop(x), foobar_c(1:6))
+  })
 })
 
 test_that("outer names are kept", {
   x <- list(x = 1, y = 2)
   expect_named(list_unchop(x), c("x", "y"))
   expect_named(list_unchop(x, indices = list(2, 1)), c("y", "x"))
+
+  # Homogeneous fallback
+  x <- list(x = foobar(1), y = foobar(2))
+  expect_named(list_unchop(x), c("x", "y"))
+  expect_named(list_unchop(x, indices = list(2, 1)), c("y", "x"))
+
+  # `c()` fallback (dependent on `c()` implementation)
+  with_c_foobar({
+    x <- list(x = foobar(1), y = foobar(2))
+    expect_identical(list_unchop(x), foobar_c(c(x = 1, y = 2)))
+    expect_named(list_unchop(x), c("x", "y"))
+    expect_named(list_unchop(x, indices = list(2, 1)), c("y", "x"))
+  })
 })
 
 test_that("outer names are recycled in the right order", {
@@ -670,8 +943,21 @@ test_that("preserves names when inputs are cast to a common type (#1689)", {
 test_that("not all inputs have to be named", {
   x <- list(c(a = 1), 2, c(c = 3))
   indices <- list(2, 1, 3)
-
   expect_named(list_unchop(x, indices = indices), c("", "a", "c"))
+
+  # Homoegenous fallback
+  x <- list(foobar(c(a = 1)), foobar(2), foobar(c(c = 3)))
+  indices <- list(2, 1, 3)
+  expect_named(list_unchop(x, indices = indices), c("", "a", "c"))
+
+  # `c()` fallback
+  with_c_foobar({
+    x <- list(foobar(c(a = 1)), foobar(2), foobar(c(c = 3)))
+    indices <- list(2, 1, 3)
+    out <- list_unchop(x, indices = indices)
+    expect_foobar_c(out)
+    expect_named(out, c("", "a", "c"))
+  })
 })
 
 test_that("list_unchop() keeps data frame row names", {
@@ -717,10 +1003,29 @@ test_that("df-col row names are repaired silently", {
 })
 
 test_that("monitoring - can technically assign to the same location twice", {
-  x <- list(1:2, 3L)
   indices <- list(1:2, 1L)
 
-  expect_identical(list_unchop(x, indices = indices), c(3L, 2L, NA))
+  x <- list(1:2, 3L)
+  expect_identical(
+    list_unchop(x, indices = indices),
+    c(3L, 2L, NA)
+  )
+
+  # Homogeneous fallback
+  x <- list(foobar(1:2), foobar(3L))
+  expect_identical(
+    list_unchop(x, indices = indices),
+    foobar(c(3L, 2L, NA))
+  )
+
+  # `c()` fallback
+  with_c_foobar({
+    x <- list(foobar(1:2), foobar(3L))
+    expect_identical(
+      list_unchop(x, indices = indices),
+      foobar_c(c(3L, 2L, NA))
+    )
+  })
 })
 
 test_that("index values are validated", {
@@ -764,27 +1069,85 @@ test_that("list_unchop() can repair names quietly", {
 })
 
 test_that("list_unchop() errors on unsupported location values", {
-  expect_snapshot({
-    (expect_error(
-      list_unchop(list(1, 2), indices = list(c(1, 2), 0)),
-      class = "vctrs_error_subscript_type"
-    ))
-    (expect_error(
-      list_unchop(list(1), indices = list(-1)),
-      class = "vctrs_error_subscript_type"
-    ))
+  expect_snapshot(error = TRUE, cnd_class = TRUE, {
+    list_unchop(list(1, 2), indices = list(c(1, 2), 0))
+  })
+  expect_snapshot(error = TRUE, cnd_class = TRUE, {
+    list_unchop(list(1), indices = list(-1))
+  })
+
+  # Homogeneous fallback
+  expect_snapshot(error = TRUE, cnd_class = TRUE, {
+    list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 2), 0))
+  })
+  expect_snapshot(error = TRUE, cnd_class = TRUE, {
+    list_unchop(list(foobar(1)), indices = list(-1))
+  })
+
+  # `c()` fallback
+  with_c_foobar({
+    expect_snapshot(error = TRUE, cnd_class = TRUE, {
+      list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 2), 0))
+    })
+    expect_snapshot(error = TRUE, cnd_class = TRUE, {
+      list_unchop(list(foobar(1)), indices = list(-1))
+    })
   })
 })
 
 test_that("missing values propagate", {
+  indices <- list(c(NA_integer_, NA_integer_), c(NA_integer_, 3))
+
   expect_identical(
-    list_unchop(list(1, 2), indices = list(c(NA_integer_, NA_integer_), c(NA_integer_, 3))),
+    list_unchop(
+      list(1, 2),
+      indices = indices
+    ),
     c(NA, NA, 2, NA)
   )
+
+  # Homogenous fallback
+  expect_identical(
+    list_unchop(
+      list(foobar(1), foobar(2)),
+      indices = indices
+    ),
+    foobar(c(NA, NA, 2, NA))
+  )
+
+  # `c()` fallback
+  with_c_foobar({
+    expect_identical(
+      list_unchop(
+        list(foobar(1), foobar(2)),
+        indices = indices
+      ),
+      foobar_c(c(NA, NA, 2, NA))
+    )
+  })
 })
 
 test_that("list_unchop() works with simple homogeneous foreign S3 classes", {
-  expect_identical(list_unchop(list(foobar(1), foobar(2))), vec_c(foobar(c(1, 2))))
+  values <- list(
+    foobar(1:2),
+    foobar(3:4)
+  )
+  indices <- list(c(1, 3), c(2, 4))
+  expect_identical(
+    list_unchop(values, indices = indices),
+    foobar(int(1, 3, 2, 4))
+  )
+
+  # And in data frame columns (#1975)
+  values <- list(
+    data_frame(x = foobar(1:2)),
+    data_frame(x = foobar(3:4))
+  )
+  indices <- list(c(1, 3), c(2, 4))
+  expect_identical(
+    list_unchop(values, indices = indices),
+    data_frame(x = foobar(int(1, 3, 2, 4)))
+  )
 })
 
 test_that("list_unchop() fails with complex foreign S3 classes", {
@@ -813,31 +1176,23 @@ test_that("list_unchop() falls back to c() if S3 method is available", {
   )
 
   # Fallback when the class implements `c()`
-  method_foobar <- function(...) {
-    xs <- list(...)
-    xs <- map(xs, unclass)
-    res <- exec("c", !!!xs)
-    foobar(res)
-  }
+  local_c_foobar()
 
-  local_methods(
-    c.vctrs_foobar = method_foobar
-  )
   expect_identical(
     list_unchop(list(foobar(1), foobar(2))),
-    foobar(c(1, 2))
+    foobar_c(c(1, 2))
   )
   expect_identical(
     list_unchop(list(foobar(1), foobar(2)), indices = list(1, 2)),
-    foobar(c(1, 2))
+    foobar_c(c(1, 2))
   )
   expect_identical(
     list_unchop(list(foobar(1), foobar(2)), indices = list(2, 1)),
-    foobar(c(2, 1))
+    foobar_c(c(2, 1))
   )
   expect_identical(
     list_unchop(list(NULL, foobar(1), NULL, foobar(2))),
-    foobar(c(1, 2))
+    foobar_c(c(1, 2))
   )
 
   # OOB error is respected
@@ -850,27 +1205,27 @@ test_that("list_unchop() falls back to c() if S3 method is available", {
   # Repeated assignment uses the last assigned value.
   expect_identical(
     list_unchop(list(foobar(c(1, 2)), foobar(3)), indices = list(c(1, 3), 1)),
-    foobar(c(3, NA, 2))
+    foobar_c(c(3, NA, 2))
   )
   expect_identical(
     list_unchop(list(foobar(c(1, 2)), foobar(3)), indices = list(c(2, NA), NA)),
-    foobar(c(NA, 1, NA))
+    foobar_c(c(NA, 1, NA))
   )
 
   # Names are kept
   expect_identical(
     list_unchop(list(foobar(c(x = 1, y = 2)), foobar(c(x = 1))), indices = list(c(2, 1), 3)),
-    foobar(c(y = 2, x = 1, x = 1))
+    foobar_c(c(y = 2, x = 1, x = 1))
   )
 
   # Recycles to the size of index
   expect_identical(
     list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 3), 2)),
-    foobar(c(1, 2, 1))
+    foobar_c(c(1, 2, 1))
   )
   expect_identical(
     list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 2), integer())),
-    foobar(c(1, 1))
+    foobar_c(c(1, 1))
   )
   expect_snapshot({
     (expect_error(
@@ -948,24 +1303,22 @@ test_that("list_unchop() falls back for S4 classes with a registered c() method"
 })
 
 test_that("list_unchop() fallback doesn't support `name_spec` or `ptype`", {
-  expect_snapshot({
-    foo <- structure(foobar(1), foo = "foo")
-    bar <- structure(foobar(2), bar = "bar")
-    (expect_error(
-      with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}")),
-      "name specification"
-    ))
-    # With error call
-    (expect_error(
-      with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}", error_call = call("foo"))),
-      "name specification"
-    ))
-    # Used to be an error about `ptype`
-    x <- list(foobar(1))
-    (expect_error(
-      with_c_foobar(list_unchop(x, ptype = "")),
-      class = "vctrs_error_incompatible_type"
-    ))
+  local_c_foobar()
+
+  foo <- structure(foobar(1), foo = "foo")
+  bar <- structure(foobar(2), bar = "bar")
+
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(foo, bar), name_spec = "{outer}_{inner}")
+  })
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(foo, bar), name_spec = "{outer}_{inner}", error_call = call("foo"))
+  })
+
+  # Used to be an error about `ptype`
+  x <- list(foobar(1))
+  expect_snapshot(error = TRUE, {
+    list_unchop(x, ptype = "")
   })
 })
 
@@ -1084,4 +1437,32 @@ test_that("list_unchop() fails if foreign classes are not homogeneous and there 
     list_unchop(xs, indices = list(c(2, 1), 3)),
     class = "vctrs_error_incompatible_type"
   )
+})
+
+test_that("calls cast method even with empty objects", {
+  # https://github.com/paleolimbot/wk/issues/230
+
+  # There is a common type, but the cast method is intended
+  # to fail here for this test
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
+      x
+    },
+    vec_cast.vctrs_foobar.default = function(x, to, ...) {
+      vec_default_cast(x, to)
+    }
+  )
+
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(
+        foobar(integer()),
+        foobar(integer(), foo = "bar")
+      ),
+      indices = list(
+        integer(),
+        integer()
+      )
+    )
+  })
 })
