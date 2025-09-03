@@ -98,12 +98,14 @@ this is a convenient way to make production code demand fixed types.</p></dd>
 
 
 <dt id="arg--names-to">.names_to<a class="anchor" aria-label="anchor" href="#arg--names-to"></a></dt>
-<dd><p>This controls what to do with input names supplied in <code>...</code>.</p><ul><li><p>By default, input names are <a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">zapped</a>.</p></li>
-<li><p>If a string, specifies a column where the input names will be
+<dd><p>This controls what to do with names on <code>...</code>:</p><ul><li><p>By default, names on <code>...</code> are <a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">zapped</a> and do not appear
+anywhere in the output.</p></li>
+<li><p>If a string, specifies a column where the names on <code>...</code> will be
 copied. These names are often useful to identify rows with
 their original input. If a column name is supplied and <code>...</code> is
 not named, an integer column is used instead.</p></li>
-<li><p>If <code>NULL</code>, the input names are used as row names.</p></li>
+<li><p>If <code>NULL</code>, the outer names on <code>...</code> are instead merged with inner
+row names on each element of <code>...</code> and are subject to <code>.name_spec</code>.</p></li>
 </ul></dd>
 
 
@@ -121,11 +123,13 @@ permissive minimal names repair.</p></dd>
 
 
 <dt id="arg--name-spec">.name_spec<a class="anchor" aria-label="anchor" href="#arg--name-spec"></a></dt>
-<dd><p>A name specification (as documented in <code><a href="vec_c.html">vec_c()</a></code>)
-for combining the outer inputs names in <code>...</code> and the inner row
-names of the inputs. This only has an effect when <code>.names_to</code> is
-set to <code>NULL</code>, which causes the input names to be assigned as row
-names.</p></dd>
+<dd><p>A name specification (as documented in <code><a href="vec_c.html">vec_c()</a></code>) for
+combining the outer names on <code>...</code> with the inner row names of each element
+of <code>...</code>. An outer name will only ever be provided when <code>.names_to</code> is set
+to <code>NULL</code>, which causes the outer name to be used as part of the row names
+rather than as a new column, but it can still be useful to hardcode this to
+either <code><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">rlang::zap()</a></code> to always ignore all names, or <code>"inner"</code> to always
+ignore outer names, regardless of <code>.names_to</code>.</p></dd>
 
 
 <dt id="arg--error-call">.error_call<a class="anchor" aria-label="anchor" href="#arg--error-call"></a></dt>

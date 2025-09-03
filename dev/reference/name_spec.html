@@ -114,6 +114,9 @@ string to the first argument, and the inner names or positions
 are passed as second argument.</p></li>
 <li><p>An anonymous function as a purrr-style formula.</p></li>
 <li><p>A glue specification of the form <code>"{outer}_{inner}"</code>.</p></li>
+<li><p><code>"inner"</code>, in which case outer names are ignored, and inner
+names are used if they exist. Note that outer names may still
+be used to provide informative error messages.</p></li>
 <li><p>An <code><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">rlang::zap()</a></code> object, in which case both outer and inner
 names are ignored and the result is unnamed.</p></li>
 </ul><p>See the name specification topic.</p></dd>
@@ -156,6 +159,22 @@ names are ignored and the result is unnamed.</p></li>
 <span class="r-in"><span><span class="fu"><a href="vec_c.html">vec_c</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, other <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">5</span>, .name_spec <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  name1  name2  name3 other1 other2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      1      2      3      4      5 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Or the string `"inner"` to only use inner names</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vec_c.html">vec_c</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, outer <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">5</span>, .name_spec <span class="op">=</span> <span class="st">"inner"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 3 4 5</span>
+<span class="r-in"><span><span class="fu"><a href="vec_c.html">vec_c</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, outer <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">5</span>, .name_spec <span class="op">=</span> <span class="st">"inner"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a b c     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2 3 4 5 </span>
+<span class="r-in"><span><span class="co"># This can be useful when you want outer names mentioned in error messages,</span></span></span>
+<span class="r-in"><span><span class="co"># but you don't want them interfering with the result</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu"><a href="vec_c.html">vec_c</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>b <span class="op">=</span> <span class="st">"2"</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="st">"inner"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in vec_c(x = c(a = 1), y = c(b = "2"), .name_spec = "inner") : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't combine `x` &lt;double&gt; and `y` &lt;character&gt;.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Or `rlang::zap()` to ignore both outer and inner names entirely</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vec_c.html">vec_c</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, outer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">zap</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 3</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

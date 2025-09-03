@@ -155,6 +155,9 @@ string to the first argument, and the inner names or positions
 are passed as second argument.</p></li>
 <li><p>An anonymous function as a purrr-style formula.</p></li>
 <li><p>A glue specification of the form <code>"{outer}_{inner}"</code>.</p></li>
+<li><p><code>"inner"</code>, in which case outer names are ignored, and inner
+names are used if they exist. Note that outer names may still
+be used to provide informative error messages.</p></li>
 <li><p>An <code><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">rlang::zap()</a></code> object, in which case both outer and inner
 names are ignored and the result is unnamed.</p></li>
 </ul><p>See the <a href="name_spec.html">name specification topic</a>.</p></dd>

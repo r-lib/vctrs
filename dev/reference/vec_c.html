@@ -83,6 +83,9 @@ string to the first argument, and the inner names or positions
 are passed as second argument.</p></li>
 <li><p>An anonymous function as a purrr-style formula.</p></li>
 <li><p>A glue specification of the form <code>"{outer}_{inner}"</code>.</p></li>
+<li><p><code>"inner"</code>, in which case outer names are ignored, and inner
+names are used if they exist. Note that outer names may still
+be used to provide informative error messages.</p></li>
 <li><p>An <code><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">rlang::zap()</a></code> object, in which case both outer and inner
 names are ignored and the result is unnamed.</p></li>
 </ul><p>See the <a href="name_spec.html">name specification topic</a>.</p></dd>
@@ -159,12 +162,12 @@ or columns.</p></div>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-09-03" "2025-09-03"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-09-03 17:14:43 UTC" "2025-09-03 00:00:00 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-09-03 18:15:11 UTC" "2025-09-03 00:00:00 UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">vec_c</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-09-03 00:00:00 UTC" "2025-09-03 17:14:43 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-09-03 00:00:00 UTC" "2025-09-03 18:15:11 UTC"</span>
 <span class="r-in"><span><span class="fu">vec_c</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-09-03 17:14:43 UTC" "2025-09-03 00:00:00 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-09-03 18:15:11 UTC" "2025-09-03 00:00:00 UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Factors -----------------------------</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span></span></span>
