@@ -488,10 +488,10 @@
       Error in `list_unchop()`:
       ! Can't combine `x[[1]]` <vctrs_Counts> and `x[[2]]` <double>.
 
-# list_unchop() fallback doesn't support `name_spec` or `ptype`
+# list_unchop() fallback doesn't support (most) `name_spec` or `ptype`
 
     Code
-      list_unchop(list(foo, bar), name_spec = "{outer}_{inner}")
+      list_unchop(list(foo, bar), indices = list(1, 2), name_spec = "{outer}_{inner}")
     Condition
       Error in `list_unchop()`:
       ! Can't use a name specification with non-vctrs types.
@@ -501,8 +501,8 @@
 ---
 
     Code
-      list_unchop(list(foo, bar), name_spec = "{outer}_{inner}", error_call = call(
-        "foo"))
+      list_unchop(list(foo, bar), indices = list(1, 2), name_spec = "{outer}_{inner}",
+      error_call = call("foo"))
     Condition
       Error in `foo()`:
       ! Can't use a name specification with non-vctrs types.
@@ -512,7 +512,7 @@
 ---
 
     Code
-      list_unchop(x, ptype = "")
+      list_unchop(x, indices = list(1), ptype = "")
     Condition
       Error in `list_unchop()`:
       ! Can't convert `x[[1]]` <vctrs_foobar> to <character>.
@@ -571,6 +571,15 @@
       <error/vctrs_error_ptype2>
       Error in `list_unchop()`:
       ! Can't combine `x$a` <integer> and `x$b` <character>.
+
+# can ignore outer names in `list_unchop()` by providing a 'inner' name-spec (#1988)
+
+    Code
+      list_unchop(list(x = c(a = 1), y = c(b = "2")), indices = list(1, 2),
+      name_spec = "inner")
+    Condition
+      Error in `list_unchop()`:
+      ! Can't combine `x$x` <double> and `x$y` <character>.
 
 # calls cast method even with empty objects
 

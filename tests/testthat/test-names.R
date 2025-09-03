@@ -857,6 +857,19 @@ test_that("can pass glue string as name spec", {
   expect_error(vec_c(foo = c(a = 1, b = 2), .name_spec = c("a", "b")), "single string")
 })
 
+test_that("can pass 'inner' string as name spec", {
+  expect_named(vec_c(foo = c(a = 1, b = 2), .name_spec = "inner"), c("a", "b"))
+  expect_named(vec_c(foo = 1:2, .name_spec = "inner"), NULL)
+  expect_named(
+    list_unchop(
+      list(outer = c(a = 1)),
+      indices = list(1:2),
+      name_spec = "inner"
+    ),
+    c("a", "a")
+  )
+})
+
 test_that("`outer` is recycled after name spec is invoked in functions that use `apply_name_spec()`", {
   expect_identical(
     vec_c(outer = 1:2, .name_spec = "{outer}"),

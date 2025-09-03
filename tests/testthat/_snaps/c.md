@@ -114,7 +114,7 @@
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
 
-# vec_c() fallback doesn't support `name_spec` or `ptype`
+# vec_c() fallback doesn't support (most) `name_spec` or `ptype`
 
     Code
       (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")),
@@ -151,6 +151,14 @@
       <error/vctrs_error_ptype2>
       Error in `vec_c()`:
       ! Can't combine `a` <character> and `b` <double>.
+
+# can ignore outer names in `vec_c()` by providing an 'inner' name-spec (#1988)
+
+    Code
+      vec_c(x = c(a = 1), y = c(b = "2"), .name_spec = "inner")
+    Condition
+      Error in `vec_c()`:
+      ! Can't combine `x` <double> and `y` <character>.
 
 # calls cast method even with empty objects
 
