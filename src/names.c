@@ -548,6 +548,25 @@ r_obj* ffi_apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_obj* 
   return apply_name_spec(name_spec, r_chr_get(outer, 0), inner, r_int_get(n, 0));
 }
 
+// Applies a `name_spec` and returns one of the following:
+// - `NULL`
+// - A character vector of length 1
+// - A character vector of length `n`
+//
+// In the case of:
+//
+// ```r
+// list_combine(
+//   list(outer = c(a = 1)),
+//   list(1:2),
+//   name_spec = "{outer}_{inner}"
+// )
+// ```
+//
+// The `n` will be 2 but `inner` will only be length 1, "a". We apply `name_spec`
+// to get `"outer_a"` and return that, expecting that the caller recycles that
+// explicitly if required, or uses something like `chr_assign()` which can
+// efficiently recycle internally.
 r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) {
   if (r_inherits(name_spec, "rlang_zap")) {
     return r_null;
@@ -608,15 +627,12 @@ r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) 
   r_obj* out = KEEP(vctrs_dispatch2(syms_dot_name_spec, name_spec,
                                     syms_outer, outer_chr,
                                     syms_inner, inner));
-  out = vec_recycle(out, n);
 
   if (out != r_null) {
     if (r_typeof(out) != R_TYPE_character) {
       r_abort("`.name_spec` must return a character vector.");
     }
-    if (r_length(out) != n) {
-      r_abort("`.name_spec` must return a character vector as long as `inner`.");
-    }
+    vec_check_recyclable(out, n, vec_args.empty, r_lazy_null);
   }
 
   FREE(4);

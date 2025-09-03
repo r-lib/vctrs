@@ -343,12 +343,16 @@ r_obj* list_combine_impl(
       init_compact_seq(v_index, start, index_size, true);
     }
 
-    // Recycle `x` if required
+    // When we have `indices`, `x` should be size 1 or `index_size`
+    //
+    // When we don't have `indices`, we derive the index sizes from
+    // `x` itself so there is no reason to check the size.
+    //
+    // We don't actually recycle `x` because both `vec_proxy_assign_opts()` and
+    // `chr_assign()` efficiently recycle size 1 inputs, but we do check that
+    // `x` is recyclable to the right size.
     if (has_indices) {
-      // Each element of `xs` is recycled to its corresponding `index`'s size
-      r_ssize index_size = r_length(index);
-      x = vec_check_recycle(x, index_size, p_x_arg, error_call);
-      KEEP_AT(x, x_pi);
+      vec_check_recyclable(x, index_size, p_x_arg, error_call);
     }
 
     // Handle optional names assignment

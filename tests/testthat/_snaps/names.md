@@ -269,6 +269,14 @@
       ! Can't merge the outer name `x` with a named vector.
       Please supply a `.name_spec` specification.
 
+# apply_name_spec() checks recyclability of output
+
+    Code
+      apply_name_spec(function(...) c("a", "b", "c"), "outer", "inner", n = 2L)
+    Condition
+      Error:
+      ! Can't recycle input of size 3 to size 2.
+
 # vec_as_names() uses internal error if `repair_arg` is not supplied
 
     Code
