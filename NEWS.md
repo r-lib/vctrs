@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_unchop()` now correctly respects `indices` when combining fallback data frame columns (#1975).
+
 * `vec_assign()` has gained a new `slice_value` argument to optionally slice `value` by `i` before performing the assignment. It is an optimized form of `vec_slice(x, i) <- vec_slice(value, i)` that avoids materializing `vec_slice(value, i)` (#2009).
 
 * `vec_assign()` and `vec_slice<-()` are now more efficient with logical `i` (#2009).

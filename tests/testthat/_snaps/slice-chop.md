@@ -164,19 +164,91 @@
       Error in `list_unchop()`:
       ! `indices` must be a list, not a <data.frame> object.
 
+# `x` and `indices` must be lists of the same size
+
+    Code
+      list_unchop(list(1, 2), indices = list(1))
+    Condition
+      Error in `list_unchop()`:
+      ! `x` (size 2) and `indices` (size 1) must be lists of the same size.
+
+# `NULL` is a valid index
+
+    Code
+      list_unchop(list(1, 2), indices = list(NULL, 2))
+    Condition
+      Error:
+      ! Can't subset elements past the end.
+      i Location 2 doesn't exist.
+      i There is only 1 element.
+
+---
+
+    Code
+      list_unchop(list(foobar(1), foobar(2)), indices = list(NULL, 2))
+    Condition
+      Error:
+      ! Can't subset elements past the end.
+      i Location 2 doesn't exist.
+      i There is only 1 element.
+
+---
+
+    Code
+      list_unchop(list(foobar(1), foobar(2)), indices = list(NULL, 2))
+    Condition
+      Error:
+      ! Can't subset elements past the end.
+      i Location 2 doesn't exist.
+      i There is only 1 element.
+
 # unchopping recycles elements of x to the size of the index
 
     Code
-      (expect_error(list_unchop(x, indices = indices)))
-    Output
-      <error/vctrs_error_incompatible_size>
+      list_unchop(list(1:2), indices = indices)
+    Condition
       Error in `list_unchop()`:
       ! Can't recycle `x[[1]]` (size 2) to size 3.
+
+---
+
     Code
-      (expect_error(list_unchop(x, indices = indices, error_call = call("foo"),
-      error_arg = "arg")))
-    Output
-      <error/vctrs_error_incompatible_size>
+      list_unchop(list(1:2), indices = indices, error_call = call("foo"), error_arg = "arg")
+    Condition
+      Error in `foo()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 3.
+
+---
+
+    Code
+      list_unchop(list(foobar(1:2)), indices = indices)
+    Condition
+      Error in `list_unchop()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 3.
+
+---
+
+    Code
+      list_unchop(list(foobar(1:2)), indices = indices, error_call = call("foo"),
+      error_arg = "arg")
+    Condition
+      Error in `foo()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 3.
+
+---
+
+    Code
+      list_unchop(list(foobar(1:2)), indices = indices)
+    Condition
+      Error in `list_unchop()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 3.
+
+---
+
+    Code
+      list_unchop(list(foobar(1:2)), indices = indices, error_call = call("foo"),
+      error_arg = "arg")
+    Condition
       Error in `foo()`:
       ! Can't recycle `arg[[1]]` (size 2) to size 3.
 
@@ -273,19 +345,56 @@
 # list_unchop() errors on unsupported location values
 
     Code
-      (expect_error(list_unchop(list(1, 2), indices = list(c(1, 2), 0)), class = "vctrs_error_subscript_type")
-      )
-    Output
-      <error/vctrs_error_subscript_type>
+      list_unchop(list(1, 2), indices = list(c(1, 2), 0))
+    Condition <vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
       x Subscript can't contain `0` values.
       i It has a `0` value at location 1.
+
+---
+
     Code
-      (expect_error(list_unchop(list(1), indices = list(-1)), class = "vctrs_error_subscript_type")
-      )
-    Output
-      <error/vctrs_error_subscript_type>
+      list_unchop(list(1), indices = list(-1))
+    Condition <vctrs_error_subscript_type>
+      Error:
+      ! Can't subset elements.
+      x Subscript can't contain negative locations.
+
+---
+
+    Code
+      list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 2), 0))
+    Condition <vctrs_error_subscript_type>
+      Error:
+      ! Can't subset elements.
+      x Subscript can't contain `0` values.
+      i It has a `0` value at location 1.
+
+---
+
+    Code
+      list_unchop(list(foobar(1)), indices = list(-1))
+    Condition <vctrs_error_subscript_type>
+      Error:
+      ! Can't subset elements.
+      x Subscript can't contain negative locations.
+
+---
+
+    Code
+      list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 2), 0))
+    Condition <vctrs_error_subscript_type>
+      Error:
+      ! Can't subset elements.
+      x Subscript can't contain `0` values.
+      i It has a `0` value at location 1.
+
+---
+
+    Code
+      list_unchop(list(foobar(1)), indices = list(-1))
+    Condition <vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
       x Subscript can't contain negative locations.
@@ -382,31 +491,29 @@
 # list_unchop() fallback doesn't support `name_spec` or `ptype`
 
     Code
-      foo <- structure(foobar(1), foo = "foo")
-      bar <- structure(foobar(2), bar = "bar")
-      (expect_error(with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}")),
-      "name specification"))
-    Output
-      <error/rlang_error>
+      list_unchop(list(foo, bar), name_spec = "{outer}_{inner}")
+    Condition
       Error in `list_unchop()`:
       ! Can't use a name specification with non-vctrs types.
       vctrs methods must be implemented for class `vctrs_foobar`.
       See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+---
+
     Code
-      (expect_error(with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}",
-      error_call = call("foo"))), "name specification"))
-    Output
-      <error/rlang_error>
+      list_unchop(list(foo, bar), name_spec = "{outer}_{inner}", error_call = call(
+        "foo"))
+    Condition
       Error in `foo()`:
       ! Can't use a name specification with non-vctrs types.
       vctrs methods must be implemented for class `vctrs_foobar`.
       See <https://vctrs.r-lib.org/articles/s3-vector.html>.
+
+---
+
     Code
-      x <- list(foobar(1))
-      (expect_error(with_c_foobar(list_unchop(x, ptype = "")), class = "vctrs_error_incompatible_type")
-      )
-    Output
-      <error/vctrs_error_cast>
+      list_unchop(x, ptype = "")
+    Condition
       Error in `list_unchop()`:
       ! Can't convert `x[[1]]` <vctrs_foobar> to <character>.
 
@@ -464,4 +571,13 @@
       <error/vctrs_error_ptype2>
       Error in `list_unchop()`:
       ! Can't combine `x$a` <integer> and `x$b` <character>.
+
+# calls cast method even with empty objects
+
+    Code
+      list_unchop(list(foobar(integer()), foobar(integer(), foo = "bar")), indices = list(
+        integer(), integer()))
+    Condition
+      Error in `list_unchop()`:
+      ! Can't convert `x[[2]]` <vctrs_foobar> to <vctrs_foobar>.
 

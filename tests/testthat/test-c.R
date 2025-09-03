@@ -492,6 +492,28 @@ test_that("named empty vectors force named output (#1263)", {
   expect_named(list_unchop(list(x, 1), indices = list(int(), 1)), "")
 })
 
+test_that("calls cast method even with empty objects", {
+  # https://github.com/paleolimbot/wk/issues/230
+
+  # There is a common type, but the cast method is intended
+  # to fail here for this test
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
+      x
+    },
+    vec_cast.vctrs_foobar.default = function(x, to, ...) {
+      vec_default_cast(x, to)
+    }
+  )
+
+  expect_snapshot(error = TRUE, {
+    vec_c(
+      foobar(integer()),
+      foobar(integer(), foo = "bar")
+    )
+  })
+})
+
 # Golden tests -------------------------------------------------------
 
 test_that("concatenation performs expected allocations", {

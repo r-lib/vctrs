@@ -28,6 +28,7 @@ bool vec_is_unspecified(SEXP x);
 #include "expand.h"
 #include "hash.h"
 #include "lazy.h"
+#include "list-combine.h"
 #include "match-compare.h"
 #include "match-joint.h"
 #include "missing.h"

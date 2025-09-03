@@ -61,6 +61,7 @@ struct r_globals_syms {
   r_obj* error_call_flag;
   r_obj* expr;
   r_obj* function;
+  r_obj* indices_arg;
   r_obj* interrupt;
   r_obj* message;
   r_obj* missing;
@@ -80,6 +81,7 @@ struct r_globals_syms {
   r_obj* warning;
   r_obj* wholeSrcref;
   r_obj* x;
+  r_obj* x_arg;
   r_obj* y;
   r_obj* z;
 };

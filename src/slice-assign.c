@@ -198,7 +198,7 @@ r_obj* vec_assign_switch(
 // We only set `VCTRS_OWNERSHIP_deep` when we've created a fresh data structure
 // at C level and we are about to fill it. Some examples:
 // - vec_c()
-// - list_unchop()
+// - list_combine()
 // - vec_rbind()
 //
 // For data frames, this `ownership` parameter is particularly important for R
@@ -583,9 +583,9 @@ r_obj* list_assign(
  *
  * Performance and safety notes:
  *
- * In `vec_c()`, `vec_rbind()`, and `list_unchop()` we totally own the data
- * frame and its columns recursively, so we set `VCTRS_OWNERSHIP_deep`. This
- * helps us avoid copies of the columns during restoration even if
+ * In `vec_c()`, `vec_rbind()`, and `list_combine()` we totally own the
+ * data frame and its columns recursively, so we set `VCTRS_OWNERSHIP_deep`.
+ * This helps us avoid copies of the columns during restoration even if
  * `NO_REFERENCES()` disagrees (storing the column in a list counts as a
  * reference) (#1151).
  *
