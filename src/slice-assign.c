@@ -230,8 +230,11 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
                              const struct vec_proxy_assign_opts* p_opts) {
   int n_protect = 0;
 
-  // Ignore vectors marked as fallback because the caller will apply
-  // a fallback method instead
+  // Ignore vectors marked as fallback because the caller will apply a fallback
+  // method instead. We can't lift this check out of `vec_proxy_assign_opts()`
+  // and just apply at the call sites because we recurse through here with data
+  // frames and individual columns might need the fallback even if the whole
+  // data frame itself doesn't need it.
   if (vec_is_common_class_fallback(proxy)) {
     return proxy;
   }
