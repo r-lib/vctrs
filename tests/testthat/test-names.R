@@ -857,13 +857,51 @@ test_that("can pass glue string as name spec", {
   expect_error(vec_c(foo = c(a = 1, b = 2), .name_spec = c("a", "b")), "single string")
 })
 
-test_that("`outer` is recycled before name spec is invoked", {
-  expect_identical(vec_c(outer = 1:2, .name_spec = "{outer}"), c(outer = 1L, outer = 2L))
+test_that("`outer` is recycled after name spec is invoked in functions that use `apply_name_spec()`", {
+  expect_identical(
+    vec_c(outer = 1:2, .name_spec = "{outer}"),
+    c(outer = 1L, outer = 2L)
+  )
+  expect_identical(
+    vec_rbind(
+      outer = data_frame(x = 1:2),
+      .names_to = NULL,
+      .name_spec = "{outer}"
+    ),
+    new_data_frame(list(x = 1:2), row.names = c("outer...1", "outer...2"))
+  )
+  expect_identical(
+    list_unchop(
+      list(outer = c(a = 1)),
+      indices = list(1:2),
+      name_spec = "{outer}"
+    ),
+    c(outer = 1, outer = 1)
+  )
+  expect_identical(
+    list_unchop(
+      list(outer = c(a = 1)),
+      indices = list(1:2),
+      name_spec = "{outer}_{inner}"
+    ),
+    c(outer_a = 1, outer_a = 1)
+  )
+
+  # Note that `apply_name_spec()` itself doesn't recycle, it expects the caller
+  # to do so
+  expect_identical(
+    unstructure(apply_name_spec("{outer}", "outer", NULL, n = 2L)),
+    "outer"
+  )
 })
 
-test_that("apply_name_spec() recycles return value not arguments (#1099)", {
+test_that("apply_name_spec() doesn't recycle inputs (#1099)", {
+  # We used to recycle the output for the caller, but now we check that the
+  # output is recyclable and just return it even if it is size 1, expecting the
+  # caller to be able to handle it, possibly efficiently with `chr_assign()`.
+
   out <- unstructure(apply_name_spec("foo", "outer", c("a", "b", "c")))
-  expect_identical(out, c("foo", "foo", "foo"))
+  expect_identical(out, "foo")
 
   inner <- NULL
   outer <- NULL
@@ -875,6 +913,27 @@ test_that("apply_name_spec() recycles return value not arguments (#1099)", {
   apply_name_spec(spec, "outer", c("a", "b", "c"))
   expect_identical(inner, c("a", "b", "c"))
   expect_identical(outer, "outer")
+
+  apply_name_spec(spec, "outer", "a", n = 3L)
+  expect_identical(inner, "a")
+  expect_identical(outer, "outer")
+})
+
+test_that("apply_name_spec() checks recyclability of output", {
+  # These are recyclable
+  expect_identical(
+    apply_name_spec(function(...) c("a", "b"), "outer", "inner", n = 2L),
+    c("a", "b")
+  )
+  expect_identical(
+    apply_name_spec(function(...) "a", "outer", "inner", n = 2L),
+    "a"
+  )
+
+  # This is not
+  expect_snapshot(error = TRUE, {
+    apply_name_spec(function(...) c("a", "b", "c"), "outer", "inner", n = 2L)
+  })
 })
 
 test_that("r_chr_paste_prefix() works", {
