@@ -1056,20 +1056,45 @@ test_that("vec_rbind() zaps names when name-spec is zap() and names-to is NULL",
   )
 })
 
-test_that("can't zap names when `.names_to` is supplied", {
+test_that("can zap names even when `.names_to` is supplied", {
   expect_identical(
     vec_rbind(foo = c(x = 1), .names_to = zap(), .name_spec = zap()),
     data.frame(x = 1)
   )
+  expect_identical(
+    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = zap(), .name_spec = zap()),
+    data.frame(x = 1)
+  )
 
-  expect_snapshot({
-    (expect_error(
-      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())
-    ))
-    (expect_error(
-      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .error_call = call("foo"))
-    ))
-  })
+  # We previously didn't allow `.name_spec = zap()` when `.names_to = "id"`,
+  # but this does have a use case - zapping inner row names while also moving
+  # outer names into a new column
+  expect_identical(
+    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
+    data.frame(id = "foo", x = 1)
+  )
+  expect_identical(
+    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = "id", .name_spec = zap()),
+    data.frame(id = "foo", x = 1)
+  )
+})
+
+test_that("can request 'inner' names when `.names_to` is supplied", {
+  # Note how it can be useful to lock `.name_spec` to `"inner"` in your API, but
+  # still expose `.names_to` to your users and allow all of its options.
+  # `purrr::list_rbind()` does this.
+  expect_identical(
+    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = zap(), .name_spec = "inner"),
+    data.frame(x = 1, row.names = "row")
+  )
+  expect_identical(
+    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = "id", .name_spec = "inner"),
+    data.frame(id = "foo", x = 1, row.names = "row")
+  )
+  expect_identical(
+    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = NULL, .name_spec = "inner"),
+    data.frame(x = 1, row.names = "row")
+  )
 })
 
 test_that("can zap outer names from a name-spec (#1215)", {
@@ -1084,6 +1109,16 @@ test_that("can zap outer names from a name-spec (#1215)", {
   expect_identical(
     vec_names(vec_rbind(a = df, df_named, .name_spec = zap_outer_spec)),
     c("...1", "...2", "foo")
+  )
+
+  # These days it is more efficient to use a name-spec of "inner" (#1988)
+  expect_identical(
+    vec_rbind(a = df, .names_to = NULL, .name_spec = zap_outer_spec),
+    vec_rbind(a = df, .names_to = NULL, .name_spec = "inner")
+  )
+  expect_identical(
+    vec_rbind(a = df, df_named, .name_spec = zap_outer_spec),
+    vec_rbind(a = df, df_named, .name_spec = "inner")
   )
 })
 

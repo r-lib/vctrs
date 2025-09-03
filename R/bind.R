@@ -44,16 +44,18 @@
 #'
 #'   `NULL` inputs are silently ignored. Empty (e.g. zero row) inputs
 #'   will not appear in the output, but will affect the derived `.ptype`.
-#' @param .names_to
-#' This controls what to do with input names supplied in `...`.
-#'   * By default, input names are [zapped][rlang::zap].
+#' @param .names_to This controls what to do with names on `...`:
 #'
-#'   * If a string, specifies a column where the input names will be
+#'   * By default, names on `...` are [zapped][rlang::zap] and do not appear
+#'     anywhere in the output.
+#'
+#'   * If a string, specifies a column where the names on `...` will be
 #'     copied. These names are often useful to identify rows with
 #'     their original input. If a column name is supplied and `...` is
 #'     not named, an integer column is used instead.
 #'
-#'   * If `NULL`, the input names are used as row names.
+#'   * If `NULL`, the outer names on `...` are instead merged with inner
+#'     row names on each element of `...` and are subject to `.name_spec`.
 #' @param .name_repair One of `"unique"`, `"universal"`, `"check_unique"`,
 #'   `"unique_quiet"`, or  `"universal_quiet"`. See [vec_as_names()] for the
 #'   meaning of these options.
@@ -167,11 +169,13 @@
 NULL
 
 #' @export
-#' @param .name_spec A name specification (as documented in [vec_c()])
-#'   for combining the outer inputs names in `...` and the inner row
-#'   names of the inputs. This only has an effect when `.names_to` is
-#'   set to `NULL`, which causes the input names to be assigned as row
-#'   names.
+#' @param .name_spec A name specification (as documented in [vec_c()]) for
+#'   combining the outer names on `...` with the inner row names of each element
+#'   of `...`. An outer name will only ever be provided when `.names_to` is set
+#'   to `NULL`, which causes the outer name to be used as part of the row names
+#'   rather than as a new column, but it can still be useful to hardcode this to
+#'   either [rlang::zap()] to always ignore all names, or `"inner"` to always
+#'   ignore outer names, regardless of `.names_to`.
 #' @rdname vec_bind
 vec_rbind <- function(...,
                       .ptype = NULL,

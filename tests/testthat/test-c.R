@@ -120,6 +120,7 @@ test_that("can mix named and unnamed vectors (#271)", {
 test_that("preserves names when inputs are cast to a common type (#1690)", {
   expect_named(vec_c(c(a = 1), .ptype = integer()), "a")
   expect_named(vec_c(foo = c(a = 1), .ptype = integer(), .name_spec = "{outer}_{inner}"), "foo_a")
+  expect_named(vec_c(foo = c(a = 1), .ptype = integer(), .name_spec = "inner"), "a")
 })
 
 test_that("vec_c() repairs names", {
@@ -339,7 +340,7 @@ test_that("vec_c() falls back to c() if S4 method is available", {
   )
 })
 
-test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
+test_that("vec_c() fallback doesn't support (most) `name_spec` or `ptype`", {
   expect_snapshot({
     (expect_error(
       with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")),
@@ -361,6 +362,30 @@ test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
       ))
     ))
   })
+})
+
+test_that("vec_c() fallback does support `.name_spec = 'inner'`", {
+  # Because of how useful it is, and how easy it is to implement!
+  # It's extremely useful to be able to hardcode `.name_spec = "inner"`
+  # and not have to worry about hitting a fallback type that wouldn't support
+  # `name_spec`.
+  expect_identical(
+    with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "inner")),
+    foobar_c(c(1, 2))
+  )
+  expect_identical(
+    with_c_foobar(vec_c(x = foobar(1), y = foobar(2), .name_spec = "inner")),
+    foobar_c(c(1, 2))
+  )
+  expect_identical(
+    with_c_foobar(vec_c(
+      x = foobar(c(a = 1)),
+      y = foobar(c(b = 2)),
+      z = foobar(3),
+      .name_spec = "inner"
+    )),
+    foobar_c(c(a = 1, b = 2, 3))
+  )
 })
 
 test_that("vec_c() doesn't fall back when ptype2 is implemented", {
@@ -427,6 +452,18 @@ test_that("can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)
   })
 })
 
+test_that("can ignore outer names in `vec_c()` by providing an 'inner' name-spec (#1988)", {
+  expect_identical(
+    vec_c(x = c(a = 1, 2), y = c(3, b = 4), .name_spec = "inner"),
+    c(a = 1, 2, 3, b = 4)
+  )
+
+  # Importantly, outer names are still used in error messages!
+  expect_snapshot(error = TRUE, {
+    vec_c(x = c(a = 1), y = c(b = "2"), .name_spec = "inner")
+  })
+})
+
 test_that("can concatenate subclasses of `vctrs_vctr` which don't have ptype2 methods", {
   x <- new_vctr(1, class = "vctrs_foo")
   expect_identical(vec_c(x, x), new_vctr(c(1, 1), class = "vctrs_foo"))
@@ -474,6 +511,24 @@ test_that("can zap outer names from a name-spec (#1215)", {
   expect_identical(
     names(list_unchop(list(a = 1:2, c(foo = 3L)), indices = list(1:2, 3), name_spec = zap_outer_spec)),
     c("", "", "foo")
+  )
+
+  # These days it is more efficient to use a name-spec of "inner" (#1988)
+  expect_identical(
+    vec_c(a = 1:2, .name_spec = zap_outer_spec),
+    vec_c(a = 1:2, .name_spec = "inner")
+  )
+  expect_identical(
+    vec_c(a = 1:2, c(foo = 3L), .name_spec = zap_outer_spec),
+    vec_c(a = 1:2, c(foo = 3L), .name_spec = "inner")
+  )
+  expect_identical(
+    list_unchop(list(a = 1:2), indices = list(1:2), name_spec = zap_outer_spec),
+    list_unchop(list(a = 1:2), indices = list(1:2), name_spec = "inner")
+  )
+  expect_identical(
+    list_unchop(list(a = 1:2, c(foo = 3L)), indices = list(1:2, 3), name_spec = zap_outer_spec),
+    list_unchop(list(a = 1:2, c(foo = 3L)), indices = list(1:2, 3), name_spec = "inner")
   )
 })
 
