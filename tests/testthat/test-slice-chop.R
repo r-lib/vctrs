@@ -1466,3 +1466,23 @@ test_that("calls cast method even with empty objects", {
     )
   })
 })
+
+test_that("Size 1 unspecified `NA` that isn't used doesn't error (#1989)", {
+  # Works because we don't actually recycle `NA` to size 0 in the loop, we
+  # just check that it can recycle. If we recycled to `logical()`, it would
+  # no longer look unspecified and an error would be thrown instead.
+  expect_identical(
+    list_unchop(
+      list("x", NA),
+      indices = list(1L, integer())
+    ),
+    "x"
+  )
+  expect_identical(
+    list_unchop(
+      list("x", NA),
+      indices = list(integer(), 1L)
+    ),
+    NA_character_
+  )
+})

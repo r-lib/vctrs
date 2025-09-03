@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_unchop()` now works in an edge case with a single `NA` recycled to size 0 (#1989).
+
 * `list_unchop()` now efficiently internally recycles `x` elements of size 1 (#2013).
 
 * `list_unchop()` now correctly respects `indices` when combining fallback data frame columns (#1975).
