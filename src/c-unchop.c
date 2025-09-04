@@ -15,11 +15,12 @@ r_obj* ffi_list_unchop(
 
   struct r_lazy error_call = { .x = r_syms.error_call, .env = frame };
 
-  struct name_repair_opts name_repair_opts =
-    new_name_repair_opts(name_repair,
-                         r_lazy_null,
-                         false,
-                         error_call);
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(
+    name_repair,
+    r_lazy_null,
+    false,
+    error_call
+  );
   KEEP(name_repair_opts.shelter);
 
   r_obj* out = list_unchop(
@@ -52,20 +53,9 @@ r_obj* list_unchop(
   struct vctrs_arg* p_error_arg,
   struct r_lazy error_call
 ) {
-  struct list_combine_indices_info indices_info;
-  struct list_combine_indices_info* p_indices_info;
-
-  if (indices == r_null) {
-    p_indices_info = NULL;
-  } else {
-    indices_info.indices = indices;
-    indices_info.p_indices_arg = vec_args.indices;
-    p_indices_info = &indices_info;
-  }
-
-  return list_combine(
+  return list_combine_for_list_unchop(
     xs,
-    p_indices_info,
+    indices,
     ptype,
     name_spec,
     name_repair,

@@ -1,24 +1,18 @@
 static
-r_obj* list_combine_with_fallback_opts(
-  r_obj* xs,
-  const struct list_combine_indices_info* p_indices_info,
-  r_obj* ptype,
-  r_obj* name_spec,
-  const struct name_repair_opts* p_name_repair_opts,
-  struct vctrs_arg* p_xs_arg,
-  struct r_lazy error_call,
-  const struct fallback_opts fallback_opts
-);
-
-static
 r_obj* list_combine_impl(
   r_obj* xs,
   bool has_indices,
-  struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
+  enum list_combine_unmatched unmatched,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
   struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
   struct r_lazy error_call,
   const struct fallback_opts fallback_opts
 );
@@ -30,34 +24,60 @@ static
 r_obj* list_combine_common_class_fallback(
   r_obj* xs,
   bool has_indices,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
   struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 );
 
 static
-bool needs_list_combine_homogeneous_fallback(r_obj* xs, r_obj* ptype);
+bool needs_list_combine_homogeneous_fallback(
+  r_obj* xs,
+  bool has_default,
+  r_obj* default_,
+  r_obj* ptype
+);
 
 static
 r_obj* list_combine_homogeneous_fallback(
   r_obj* xs,
   bool has_indices,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 );
+
+static
+bool list_all_have_class(r_obj* xs, r_obj* class);
+
+static
+bool obj_has_class(r_obj* x, r_obj* class);
 
 static
 r_obj* base_list_combine_fallback(
   r_obj* xs,
   bool has_indices,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 );
 
@@ -72,7 +92,7 @@ static
 void stop_name_spec_in_fallback(r_obj* xs, struct r_lazy error_call);
 
 static
-r_obj* build_fallback_index(r_obj* indices, r_ssize out_size, struct r_lazy error_call);
+r_obj* build_fallback_index(r_obj* indices, r_ssize size, struct r_lazy error_call);
 
 static
 r_obj* vec_recycle_xs_fallback(
@@ -89,4 +109,41 @@ static
 bool class_implements_base_c(r_obj* cls);
 
 static
-r_ssize compute_out_size_from_indices(r_obj* indices);
+void check_any_unmatched(
+  r_obj* indices,
+  r_ssize size,
+  struct r_lazy error_call
+);
+
+static
+void stop_combine_unmatched(r_obj* loc, struct r_lazy error_call);
+
+static
+r_obj* compute_default_index(
+  r_obj* indices,
+  r_ssize size
+);
+
+static
+r_obj* push_default(
+  r_obj* xs,
+  r_obj* default_
+);
+
+static
+r_obj* push_default_index(
+  r_obj* indices,
+  r_obj* default_index
+);
+
+static
+r_obj* ptype_common_with_default(
+  r_obj* ptype,
+  r_obj* xs,
+  bool has_default,
+  r_obj* default_,
+  struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_default_arg,
+  struct r_lazy error_call,
+  const struct fallback_opts fallback_opts
+);

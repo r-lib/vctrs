@@ -4,20 +4,48 @@
 #include "vctrs-core.h"
 #include "names.h"
 
-struct list_combine_indices_info {
-  r_obj* indices;
-  struct vctrs_arg* p_indices_arg;
+enum list_combine_unmatched {
+    LIST_COMBINE_UNMATCHED_default = 0,
+    LIST_COMBINE_UNMATCHED_error = 1,
 };
 
 r_obj* list_combine(
   r_obj* xs,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  r_obj* default_,
+  enum list_combine_unmatched unmatched,
+  r_obj* ptype,
+  r_obj* name_spec,
+  const struct name_repair_opts* p_name_repair_opts,
+  struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
+  struct r_lazy error_call
+);
+
+// For `list_unchop()`
+r_obj* list_combine_for_list_unchop(
+  r_obj* xs,
+  r_obj* indices,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
   struct vctrs_arg* p_xs_arg,
   struct r_lazy error_call
 );
+
+// For `vec_c()`
+r_obj* list_combine_for_vec_c(
+  r_obj* xs,
+  r_obj* ptype,
+  r_obj* name_spec,
+  const struct name_repair_opts* p_name_repair_opts,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy error_call
+);
+
+enum list_combine_unmatched parse_unmatched(r_obj* unmatched, struct r_lazy error_call);
 
 // TODO: Exposed for `bind.c`. Can we remove?
 bool needs_df_list_combine_common_class_fallback(r_obj* x);
@@ -27,12 +55,15 @@ void df_list_combine_common_class_fallback(
   r_obj* out,
   r_obj* xs,
   bool has_indices,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
-  struct r_lazy error_call,
-  r_ssize n_rows
+  struct vctrs_arg* p_indices_arg,
+  struct r_lazy error_call
 );
 
 #endif

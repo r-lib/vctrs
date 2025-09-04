@@ -177,10 +177,9 @@ r_obj* vec_ptype_finalise_dispatch(r_obj* x) {
   );
 }
 
-r_obj* vec_ptype_final(r_obj* x) {
-  r_obj* out = KEEP(vec_ptype(x, vec_args.x, vec_ptype_final_lazy_call));
+r_obj* vec_ptype_final(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
+  r_obj* out = KEEP(vec_ptype(x, x_arg, call));
   out = vec_ptype_finalise(out);
-
   FREE(1);
   return out;
 }
@@ -191,15 +190,8 @@ void vctrs_init_ptype(r_obj* ns) {
 
   syms_vec_ptype_finalise_dispatch = r_sym("vec_ptype_finalise_dispatch");
   fns_vec_ptype_finalise_dispatch = r_eval(syms_vec_ptype_finalise_dispatch, ns);
-
-  vec_ptype_final_call = r_parse("vec_ptype_final()");
-  r_preserve_global(vec_ptype_final_call);
-
-  vec_ptype_final_lazy_call = (struct r_lazy) { .x = vec_ptype_final_call, .env = r_null };
 }
 
 static r_obj* syms_vec_ptype = NULL;
 static r_obj* syms_vec_ptype_finalise_dispatch = NULL;
 static r_obj* fns_vec_ptype_finalise_dispatch = NULL;
-static r_obj* vec_ptype_final_call = NULL;
-static struct r_lazy vec_ptype_final_lazy_call = { 0 };

@@ -170,7 +170,7 @@
       list_unchop(list(1, 2), indices = list(1))
     Condition
       Error in `list_unchop()`:
-      ! `x` (size 2) and `indices` (size 1) must be lists of the same size.
+      ! `indices` must have size 2, not size 1.
 
 # `NULL` is a valid index
 

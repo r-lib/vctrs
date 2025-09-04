@@ -25,18 +25,34 @@
 #'
 #'   The size of `indices` must match the size of `x`.
 #'
-#' @param ptype If `NULL`, the default, the output type is determined by
-#'   computing the common type across all elements of `x`. Alternatively, you
-#'   can supply `ptype` to give the output a known type.
+#' @param size The output size.
 #'
-#' @param x_arg,indices_arg An argument name as a string. This argument will be
-#'   mentioned in error messages as the input that is at the origin of a
-#'   problem.
+#' @param default If `NULL`, a missing value is used for locations unmatched by
+#'   `indices`, otherwise the provided `default` is used.
+#'
+#'   If provided, `default` must be size 1 or size `size`.
+#'
+#'   Can only be set when `unmatched = "default"`.
+#'
+#' @param unmatched Handling of locations in the output unmatched by `indices`.
+#'   One of:
+#'
+#'   - `"default"` to use `default` in unmatched locations.
+#'
+#'   - `"error"` to error when there are unmatched locations.
+#'
+#' @param ptype If `NULL`, the output type is determined by computing the common
+#'   type across all elements of `x` and `default`. Alternatively, you can
+#'   supply `ptype` to give the output a known type.
+#'
+#' @param x_arg,indices_arg,default_arg An argument name as a string. This
+#'   argument will be mentioned in error messages as the input that is at the
+#'   origin of a problem.
 #'
 #' @returns
 #' A vector of type `vec_ptype_common(!!!x)`, or `ptype`, if specified.
 #'
-#' The size is computed as `vec_size_common(!!!indices)`.
+#' The size of the output is determined by `size`.
 #'
 #' @examples
 #' # Combine a list of vectors using
@@ -51,7 +67,7 @@
 #'   c(8, 6, 5),
 #'   c(2, 4)
 #' )
-#' list_combine(x, indices)
+#' list_combine(x, indices = indices, size = 8)
 #'
 #' # Overlapping `indices` are allowed. The output size is
 #' # computed as `sum(list_sizes(indices))` and the last
@@ -64,7 +80,7 @@
 #'   c(1, 2, 3),
 #'   c(1, 2, 6)
 #' )
-#' list_combine(x, indices)
+#' list_combine(x, indices = indices, size = 6)
 #'
 #' # Works with data frames as well.
 #' # Now how index 2 is not assigned to.
@@ -76,13 +92,37 @@
 #'   c(4, 1),
 #'   c(3, NA)
 #' )
-#' list_combine(x, indices)
+#' list_combine(x, indices = indices, size = 4)
 #'
+#' # You can use `size` to combine into a larger object than you have values for
+#' list_combine(list(1:2, 4:5), indices = list(1:2, 4:5), size = 8)
+#'
+#' # Additionally specifying `default` allows you to control the value used in
+#' # unfilled locations
+#' list_combine(
+#'   list(1:2, 4:5),
+#'   indices = list(1:2, 4:5),
+#'   size = 8,
+#'   default = 0L
+#' )
+#'
+#' # Alternatively, if you'd like to assert that you've covered all output
+#' # locations through `indices`, set `unmatched = "error"`.
+#' # Here, we've set the size to 5 but missed location 3:
+#' try(list_combine(
+#'   list(1:2, 4:5),
+#'   indices = list(1:2, 4:5),
+#'   size = 5,
+#'   unmatched = "error"
+#' ))
 #' @noRd
 list_combine <- function(
   x,
-  indices,
   ...,
+  indices,
+  size,
+  default = NULL,
+  unmatched = "default",
   ptype = NULL,
   name_spec = NULL,
   name_repair = c(
@@ -95,6 +135,7 @@ list_combine <- function(
   ),
   x_arg = "x",
   indices_arg = "indices",
+  default_arg = "default",
   error_call = current_env()
 ) {
   check_dots_empty0(...)
@@ -102,6 +143,9 @@ list_combine <- function(
     ffi_list_combine,
     x,
     indices,
+    size,
+    default,
+    unmatched,
     ptype,
     name_spec,
     name_repair,
@@ -109,6 +153,43 @@ list_combine <- function(
   )
 }
 list_combine <- fn_inline_formals(list_combine, "name_repair")
+
+# ------------------------------------------------------------------------------
+
+stop_combine <- function(message = NULL, class = NULL, ..., call = caller_env()) {
+  stop_vctrs(
+    message = message,
+    class = c(class, "vctrs_error_combine"),
+    ...,
+    call = call
+  )
+}
+
+# ------------------------------------------------------------------------------
+
+stop_combine_unmatched <- function(loc, call) {
+  stop_combine(
+    class = "vctrs_error_combine_unmatched",
+    loc = loc,
+    call = call
+  )
+}
+
+#' @export
+cnd_header.vctrs_error_combine_unmatched <- function(cnd, ...) {
+  "Each location must be matched."
+}
+
+#' @export
+cnd_body.vctrs_error_combine_unmatched <- function(cnd, ...) {
+  # cli's pluralization length feature only kicks in on character vectors
+  loc <- as.character(cnd$loc)
+  bullet <- cli::format_inline("Location{?s} {loc} {?is/are} unmatched.")
+  bullet <- c(x = bullet)
+  format_error_bullets(bullet)
+}
+
+# ------------------------------------------------------------------------------
 
 # Called from C
 base_c_invoke <- function(xs) {

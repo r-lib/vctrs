@@ -565,9 +565,9 @@ test_that("NULLs are ignored when unchopped with other vectors", {
 })
 
 test_that("can use a `NULL` element with a corresponding index", {
-  # FIXME: Probably not quite right, but not entirely clear what it should be:
-  # - Maybe `unspecified(2)`?
-  # - Or should `NULL`s even be allowed in `list_unchop()`?
+  # We've determined this is the behavior we are locked to in `list_unchop()`,
+  # but in `list_combine()` we return `unspecified(2)` here because the user
+  # also specifies a `size`, making this less ambiguous.
   expect_null(list_unchop(list(NULL), indices = list(1:2)))
 
   expect_identical(
@@ -590,6 +590,21 @@ test_that("can unchop lists", {
   indices <- list(c(2, 3), 1)
 
   expect_identical(list_unchop(x, indices = indices), list("c", "a", "b"))
+})
+
+test_that("NA is logical if no other types intervene", {
+  expect_identical(
+    list_unchop(list(logical()), indices = list(integer())),
+    logical()
+  )
+  expect_identical(
+    list_unchop(list(NA), indices = list(1)),
+    NA
+  )
+  expect_identical(
+    list_unchop(list(NA, NA), indices = list(1, 2)),
+    c(NA, NA)
+  )
 })
 
 test_that("can unchop data frames of 1 column", {
@@ -1285,6 +1300,36 @@ test_that("list_unchop() falls back to c() if S3 method is available", {
   )
 })
 
+test_that("list_unchop() falls back even when ptype is supplied", {
+  expect_foobar(
+    list_unchop(list(foobar(1), foobar(2)), ptype = foobar(dbl()))
+  )
+
+  with_c_quux <- function(expr) {
+    with_methods(expr, c.vctrs_foobar = function(...) quux(NextMethod()))
+  }
+
+  with_c_quux({
+    expect_quux(
+      list_unchop(
+        list(foobar(1), foobar(2)),
+        indices = list(1, 2),
+        ptype = foobar(dbl())
+      )
+    )
+  })
+
+  with_c_quux({
+    expect_quux(
+      list_unchop(
+        list(foobar(1, foo = TRUE), foobar(2, bar = TRUE)),
+        indices = list(1, 2),
+        ptype = foobar(dbl())
+      )
+    )
+  })
+})
+
 test_that("list_unchop() falls back for S4 classes with a registered c() method", {
   joe <- .Counts(c(1L, 2L), name = "Joe")
   jane <- .Counts(3L, name = "Jane")
@@ -1564,4 +1609,31 @@ test_that("Size 1 unspecified `NA` that isn't used doesn't error (#1989)", {
     ),
     NA_character_
   )
+})
+
+test_that("list_unchop() and vec_c() are consistent-ish regarding `size` and empty inputs (#1980)", {
+  x <- list()
+  indices <- list()
+
+  # These should be consistent and return `NULL` when no inputs are provided.
+  # We treat this roughly equivalent to `unspecified(0)`.
+  expect_identical(vec_c(), NULL)
+  expect_identical(vec_c(), list_unchop(x, indices = indices))
+
+  # These should be consistent and return `NULL` when no inputs are provided.
+  # We treat this roughly equivalent to `unspecified(0)`.
+  expect_identical(vec_c(NULL), NULL)
+  expect_identical(vec_c(NULL), list_unchop(list(NULL), indices = list(integer())))
+
+  # This is ambiguous but we let this return `NULL` as well.
+  # `list_combine()` doesn't have this ambiguity
+  expect_null(list_unchop(list(NULL), indices = list(1:2)))
+  expect_identical(
+    list_combine(list(NULL), indices = list(1:2), size = 2),
+    unspecified(2)
+  )
+
+  # These should be consistent and return size 0 `ptype`
+  expect_identical(vec_c(.ptype = integer()), integer())
+  expect_identical(vec_c(.ptype = integer()), list_unchop(x, indices = indices, ptype = integer()))
 })

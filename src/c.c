@@ -34,11 +34,8 @@ r_obj* vec_c(
   struct vctrs_arg* p_error_arg,
   struct r_lazy error_call
 ) {
-  struct list_combine_indices_info* p_indices_info = NULL;
-
-  return list_combine(
+  return list_combine_for_vec_c(
     xs,
-    p_indices_info,
     ptype,
     name_spec,
     name_repair,
