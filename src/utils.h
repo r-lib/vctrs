@@ -163,7 +163,6 @@ static inline SEXP s3_get_table(SEXP env) {
 
 
 SEXP list_first_non_null(SEXP xs, R_len_t* non_null_i);
-bool list_is_homogeneously_classed(SEXP xs);
 
 // Destructive compacting
 SEXP node_compact_d(SEXP node);
@@ -220,6 +219,8 @@ void r_p_chr_fill(SEXP* p_x, SEXP value, R_len_t n);
 void r_int_fill_seq(SEXP x, int start, R_len_t n);
 SEXP r_seq(R_len_t from, R_len_t to);
 bool r_int_any_na(SEXP x);
+
+bool r_lgl_any(r_obj* x);
 
 R_len_t r_chr_find(SEXP x, SEXP value);
 
@@ -496,6 +497,7 @@ extern SEXP syms_stop_matches_relationship_one_to_one;
 extern SEXP syms_stop_matches_relationship_one_to_many;
 extern SEXP syms_stop_matches_relationship_many_to_one;
 extern SEXP syms_warn_matches_relationship_many_to_many;
+extern SEXP syms_stop_combine_unmatched;
 extern SEXP syms_action;
 extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;
@@ -509,6 +511,7 @@ extern SEXP syms_dot_call;
 extern SEXP syms_which;
 extern SEXP syms_slice_value;
 extern SEXP syms_index_style;
+extern SEXP syms_loc;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 

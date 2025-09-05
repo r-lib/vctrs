@@ -518,6 +518,7 @@ r_obj* list_as_locations(r_obj* indices, r_ssize n, r_obj* names) {
   r_obj* const* v_indices = r_list_cbegin(indices);
 
   // Restrict index values to positive integer locations
+  // Also, notably, the `index` vector can't change size, i.e. `0` and `NA` aren't dropped.
   const struct location_opts opts = {
     .subscript_opts = {
       .logical = SUBSCRIPT_TYPE_ACTION_ERROR,

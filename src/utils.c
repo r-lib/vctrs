@@ -717,36 +717,6 @@ SEXP list_first_non_null(SEXP xs, R_len_t* non_null_i) {
 }
 
 // [[ include("utils.h") ]]
-bool list_is_homogeneously_classed(SEXP xs) {
-  R_len_t n = Rf_length(xs);
-  if (n == 0 || n == 1) {
-    return true;
-  }
-
-  R_len_t i = -1;
-  SEXP first = list_first_non_null(xs, &i);
-  SEXP first_class = PROTECT(r_class(first));
-
-  for (; i < n; ++i) {
-    SEXP this = VECTOR_ELT(xs, i);
-    if (this == R_NilValue) {
-      continue;
-    }
-    SEXP this_class = PROTECT(r_class(this));
-
-    if (!equal_object(first_class, this_class)) {
-      UNPROTECT(2);
-      return false;
-    }
-
-    UNPROTECT(1);
-  }
-
-  UNPROTECT(1);
-  return true;
-}
-
-// [[ include("utils.h") ]]
 SEXP node_compact_d(SEXP node) {
   SEXP handle = PROTECT(Rf_cons(R_NilValue, node));
 
@@ -1123,6 +1093,24 @@ bool r_int_any_na(SEXP x) {
 
   for (R_len_t i = 0; i < n; ++i, ++data) {
     if (*data == NA_INTEGER) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// Treats missing values as `false`
+bool r_lgl_any(r_obj* x) {
+  if (r_typeof(x) != R_TYPE_logical) {
+    r_stop_internal("`x` must be a logical vector.");
+  }
+
+  const int* v_x = r_lgl_cbegin(x);
+  r_ssize size = r_length(x);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    if (v_x[i] == 1) {
       return true;
     }
   }
@@ -1599,6 +1587,7 @@ SEXP syms_stop_matches_relationship_one_to_one = NULL;
 SEXP syms_stop_matches_relationship_one_to_many = NULL;
 SEXP syms_stop_matches_relationship_many_to_one = NULL;
 SEXP syms_warn_matches_relationship_many_to_many = NULL;
+SEXP syms_stop_combine_unmatched = NULL;
 SEXP syms_action = NULL;
 SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
@@ -1612,6 +1601,7 @@ SEXP syms_dot_call = NULL;
 SEXP syms_which = NULL;
 SEXP syms_slice_value = NULL;
 SEXP syms_index_style = NULL;
+SEXP syms_loc = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1883,6 +1873,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_stop_matches_relationship_one_to_many = Rf_install("stop_matches_relationship_one_to_many");
   syms_stop_matches_relationship_many_to_one = Rf_install("stop_matches_relationship_many_to_one");
   syms_warn_matches_relationship_many_to_many = Rf_install("warn_matches_relationship_many_to_many");
+  syms_stop_combine_unmatched = Rf_install("stop_combine_unmatched");
   syms_action = Rf_install("action");
   syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
   syms_fallback_class = Rf_install("fallback_class");
@@ -1896,6 +1887,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_which = Rf_install("which");
   syms_slice_value = Rf_install("slice_value");
   syms_index_style = Rf_install("index_style");
+  syms_loc = Rf_install("loc");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

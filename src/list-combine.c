@@ -6,6 +6,9 @@
 r_obj* ffi_list_combine(
   r_obj* ffi_xs,
   r_obj* ffi_indices,
+  r_obj* ffi_size,
+  r_obj* ffi_default,
+  r_obj* ffi_unmatched,
   r_obj* ffi_ptype,
   r_obj* ffi_name_spec,
   r_obj* ffi_name_repair,
@@ -18,7 +21,13 @@ r_obj* ffi_list_combine(
   struct r_lazy indices_arg_lazy = { .x = r_syms.indices_arg, .env = ffi_frame };
   struct vctrs_arg indices_arg = new_lazy_arg(&indices_arg_lazy);
 
+  struct r_lazy default_arg_lazy = { .x = r_syms.default_arg, .env = ffi_frame };
+  struct vctrs_arg default_arg = new_lazy_arg(&default_arg_lazy);
+
   struct r_lazy error_call = { .x = r_syms.error_call, .env = ffi_frame };
+
+  const r_ssize size = r_arg_as_ssize(ffi_size, "size");
+  const enum list_combine_unmatched unmatched = parse_unmatched(ffi_unmatched, error_call);
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(
     ffi_name_repair,
@@ -28,18 +37,18 @@ r_obj* ffi_list_combine(
   );
   KEEP(name_repair_opts.shelter);
 
-  struct list_combine_indices_info indices_info = {
-    .indices = ffi_indices,
-    .p_indices_arg = &indices_arg
-  };
-
   r_obj* out = list_combine(
     ffi_xs,
-    &indices_info,
+    ffi_indices,
+    size,
+    ffi_default,
+    unmatched,
     ffi_ptype,
     ffi_name_spec,
     &name_repair_opts,
     &xs_arg,
+    &indices_arg,
+    &default_arg,
     error_call
   );
 
@@ -49,7 +58,87 @@ r_obj* ffi_list_combine(
 
 r_obj* list_combine(
   r_obj* xs,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  r_obj* default_,
+  enum list_combine_unmatched unmatched,
+  r_obj* ptype,
+  r_obj* name_spec,
+  const struct name_repair_opts* p_name_repair_opts,
+  struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
+  struct r_lazy error_call
+) {
+  const struct fallback_opts fallback_opts = {
+    .s3 = r_is_true(r_peek_option("vctrs:::base_c_in_progress")) ?
+      S3_FALLBACK_false :
+      S3_FALLBACK_true
+  };
+
+  // `list_combine_impl()` supports `vec_c()` and `list_unchop()`, which use
+  // some utilities not allowed by what `list_combine()` is really meant for
+  // these days. We do an internal check to make sure that `list_combine()`
+  // itself is being called correctly. This can be hit by users so we provide
+  // reasonable error messages.
+  if (indices == r_null) {
+    // `vec_c()` and `list_unchop()` use this to sequentially combine `xs`,
+    // but `list_combine()` requires `indices` to be a list
+    obj_check_list(indices, p_indices_arg, error_call);
+  }
+
+  bool has_indices = true;
+  bool has_default = default_ != r_null;
+
+  return list_combine_impl(
+    xs,
+    has_indices,
+    indices,
+    size,
+    has_default,
+    default_,
+    unmatched,
+    ptype,
+    name_spec,
+    p_name_repair_opts,
+    p_xs_arg,
+    p_indices_arg,
+    p_default_arg,
+    error_call,
+    fallback_opts
+  );
+}
+
+/**
+ * `vec_c()` backport
+ */
+r_obj* list_combine_for_vec_c(
+  r_obj* xs,
+  r_obj* ptype,
+  r_obj* name_spec,
+  const struct name_repair_opts* p_name_repair_opts,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy error_call
+) {
+  r_obj* indices = r_null;
+
+  return list_combine_for_list_unchop(
+    xs,
+    indices,
+    ptype,
+    name_spec,
+    p_name_repair_opts,
+    p_xs_arg,
+    error_call
+  );
+}
+
+/**
+ * `list_unchop()` backport
+ */
+r_obj* list_combine_for_list_unchop(
+  r_obj* xs,
+  r_obj* indices,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
@@ -62,76 +151,117 @@ r_obj* list_combine(
       S3_FALLBACK_true
   };
 
-  return list_combine_with_fallback_opts(
-    xs,
-    p_indices_info,
-    ptype,
-    name_spec,
-    p_name_repair_opts,
-    p_xs_arg,
-    error_call,
-    fallback_opts
-  );
-}
+  bool has_indices = indices != r_null;
+  struct vctrs_arg* p_indices_arg = vec_args.indices;
 
-static
-r_obj* list_combine_with_fallback_opts(
-  r_obj* xs,
-  const struct list_combine_indices_info* p_indices_info,
-  r_obj* ptype,
-  r_obj* name_spec,
-  const struct name_repair_opts* p_name_repair_opts,
-  struct vctrs_arg* p_xs_arg,
-  struct r_lazy error_call,
-  const struct fallback_opts fallback_opts
-) {
-  // `NULL` pointer is our signal of "no `indices`", i.e. combine sequentially
-  // like `vec_c()`
-  const bool has_indices = p_indices_info != NULL;
-
-  // Within a single `list_combine()` iteration, we get our own local
-  // copy of `indices` info. We may modify this directly, and we don't want our
-  // changes to cause upstream changes if we are being called recursively.
-  struct list_combine_indices_info local_indices_info;
-  struct list_combine_indices_info* p_local_indices_info;
+  // If `!has_indices`, `list_combine()` will compute the size from the sizes of
+  // `xs` and will ignore whatever we put here.
+  r_ssize size = 0;
 
   if (has_indices) {
-    // Copy over all `indices` information into local struct we can modify
-    local_indices_info = *p_indices_info;
-    p_local_indices_info = &local_indices_info;
-  } else {
-    p_local_indices_info = NULL;
+    // Sums the length of each `index` to compute the `size`
+    //
+    // This was the way that `list_unchop()` would compute the output size when
+    // `indices` were provided. In `list_combine()`, the `size` is explicitly
+    // required to account for a few edge cases and to work well with `default`.
+    //
+    // Note that `list_as_locations()` in `list_combine()` isn't allowed to
+    // change the `index` size, which is the only reason this works from a
+    // theoretical point of view.
+    obj_check_list(indices, p_indices_arg, error_call);
+
+    r_obj* const* v_indices = r_list_cbegin(indices);
+    r_ssize indices_size = vec_size(indices);
+
+    for (r_ssize i = 0; i < indices_size; ++i) {
+      size += r_length(v_indices[i]);
+    }
   }
 
-  return list_combine_impl(
+  bool has_default = false;
+  r_obj* default_ = r_null;
+  struct vctrs_arg* p_default_arg = vec_args.empty;
+
+  enum list_combine_unmatched unmatched = LIST_COMBINE_UNMATCHED_default;
+
+  r_obj* out = KEEP(list_combine_impl(
     xs,
     has_indices,
-    p_local_indices_info,
+    indices,
+    size,
+    has_default,
+    default_,
+    unmatched,
     ptype,
     name_spec,
     p_name_repair_opts,
     p_xs_arg,
+    p_indices_arg,
+    p_default_arg,
     error_call,
     fallback_opts
-  );
+  ));
+
+  if (vec_is_unspecified(out) && r_is_object(out)) {
+    // The following `list_c()` and `list_unchop()` cases historically return
+    // `NULL` because they don't have a `size` argument to maintain an invariant
+    // for. `list_combine()` returns `unspecified` for these, because there
+    // could be a `size > 0` argument supplied and we need to retain the size
+    // invariant. We rectify the difference here.
+    //
+    // ```
+    // vec_c()
+    // vec_c(NULL)
+    // list_unchop(list())
+    // list_unchop(list(), indices = list())
+    // list_unchop(list(NULL))
+    // list_unchop(list(NULL), indices = list(integer()))
+    // ```
+    //
+    // This is an ambiguous edge case that we've currently defined as also
+    // returning `NULL`. `list_combine()` returns `unspecified[2]` here, but
+    // that's clearer because `size` has to be explicitly provided.
+    //
+    // ```
+    // list_unchop(list(NULL), indices = list(1:2))
+    // ```
+    //
+    // We still want these cases to return `NA` even though they are technically
+    // "unspecified" outputs, so we explicitly check if the output is an S3 object
+    // as well, i.e. its an explicit `"vctrs_unspecified"` and not just a logical
+    // vector of `NA`s.
+    //
+    // ```
+    // vec_c(NA)
+    // list_unchop(list(NA), indices = list(1))
+    // ```
+    out = r_null;
+  }
+
+  FREE(1);
+  return out;
 }
 
 /**
  * Actual implementation for `list_combine()`
  *
- * Note that this is the one place where `p_indices_info` is not `const`!
- * We may modify the info struct directly here, and we manage protection
- * of any R objects within it.
+ * Exposes `fallback_opts` here for use in the fallback
  */
 static
 r_obj* list_combine_impl(
   r_obj* xs,
   bool has_indices,
-  struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
+  enum list_combine_unmatched unmatched,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
   struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
   struct r_lazy error_call,
   const struct fallback_opts fallback_opts
 ) {
@@ -144,98 +274,29 @@ r_obj* list_combine_impl(
 
   if (has_indices) {
     // Apply size/type checking to `indices` before possibly early exiting from
-    // having a `NULL` common type or needing to apply a fallback
-    obj_check_list(
-      p_indices_info->indices,
-      p_indices_info->p_indices_arg,
-      error_call
-    );
-
-    if (xs_size != vec_size(p_indices_info->indices)) {
-      r_abort_lazy_call(
-        error_call,
-        "%s (size %" R_PRI_SSIZE ") and %s (size %" R_PRI_SSIZE ") must be lists of the same size.",
-        vec_arg_format(p_xs_arg),
-        xs_size,
-        vec_arg_format(p_indices_info->p_indices_arg),
-        vec_size(p_indices_info->indices)
-      );
-    }
+    // needing to apply a fallback
+    obj_check_list(indices, p_indices_arg, error_call);
+    vec_check_size(indices, xs_size, p_indices_arg, error_call);
   }
-
-  const struct ptype_common_opts ptype_common_opts = {
-    .p_arg = p_xs_arg,
-    .call = error_call,
-    .fallback = fallback_opts
-  };
-
-  ptype = KEEP_N(
-    vec_ptype_common_opts(
-      xs,
-      ptype,
-      &ptype_common_opts
-    ),
-    &n_protect
-  );
-
-  if (ptype == r_null) {
-    FREE(n_protect);
-    return r_null;
-  }
-
-  if (needs_list_combine_common_class_fallback(ptype)) {
-    r_obj* out = list_combine_common_class_fallback(
-      xs,
-      has_indices,
-      p_indices_info,
-      ptype,
-      name_spec,
-      p_name_repair_opts,
-      p_xs_arg,
-      error_call
-    );
-    FREE(n_protect);
-    return out;
-  }
-
-  if (needs_list_combine_homogeneous_fallback(xs, ptype)) {
-    r_obj* out = list_combine_homogeneous_fallback(
-      xs,
-      has_indices,
-      p_indices_info,
-      name_spec,
-      p_xs_arg,
-      error_call
-    );
-    FREE(n_protect);
-    return out;
-  }
-
-  const bool assign_names = !r_inherits(name_spec, "rlang_zap");
-  r_obj* xs_names = KEEP_N(r_names(xs), &n_protect);
-  const bool xs_is_named = xs_names != r_null && !is_data_frame(ptype);
 
   // Sizes are reused by the sequential path when advancing the compact-seq index.
   // It's more efficient to build them once even though it requires an allocation.
   r_obj* xs_sizes = NULL;
   r_ssize* v_xs_sizes = NULL;
 
-  r_ssize out_size = 0;
+  if (!has_indices) {
+    // Infer `size` from `xs` for `vec_c()` and `list_unchop(indices = NULL)`
+    // sequential approach
+    size = 0;
 
-  if (has_indices) {
-    // Infer size from `indices`
-    // This happens before conversion to valid location vectors.
-    out_size = compute_out_size_from_indices(p_indices_info->indices);
-  } else {
-    // Infer size from `xs`
     xs_sizes = KEEP_N(r_alloc_raw(xs_size * sizeof(r_ssize)), &n_protect);
     v_xs_sizes = r_raw_begin(xs_sizes);
 
     for (r_ssize i = 0; i < xs_size; ++i) {
       r_obj* x = v_xs[i];
-      r_ssize size = vec_size(x);
-      out_size += size;
-      v_xs_sizes[i] = size;
+      r_ssize x_size = vec_size(x);
+      size += x_size;
+      v_xs_sizes[i] = x_size;
     }
   }
 
@@ -251,14 +312,122 @@ r_obj* list_combine_impl(
     // - We don't allow negative or zero indices (these change the size).
     // - We don't allow oob indices (makes no sense since we inferred the size from lengths).
     // - Numeric `NA` propagates.
-    p_indices_info->indices = KEEP_N(
-      list_as_locations(p_indices_info->indices, out_size, r_null),
-      &n_protect
-    );
+    indices = KEEP_N(list_as_locations(indices, size, r_null), &n_protect);
   }
 
+  // Perform `unmatched` check
+  // (before fallback cases!)
+  switch (unmatched) {
+  case LIST_COMBINE_UNMATCHED_default: {
+    // Will use `default` in unmatched locations
+    break;
+  }
+  case LIST_COMBINE_UNMATCHED_error: {
+    if (default_ != r_null) {
+      r_abort("Can't set `default` when `unmatched = \"error\"`.");
+    }
+    if (!has_indices) {
+      r_stop_internal("`indices` should have been required if `unmatched` was set.");
+    }
+    check_any_unmatched(indices, size, error_call);
+    break;
+  }
+  default: {
+    r_stop_unreachable();
+  }
+  }
+
+  ptype = KEEP_N(
+    ptype_common_with_default(
+      ptype,
+      xs,
+      has_default,
+      default_,
+      p_xs_arg,
+      p_default_arg,
+      error_call,
+      fallback_opts
+    ),
+    &n_protect
+  );
+
+  if (needs_list_combine_common_class_fallback(ptype)) {
+    r_obj* out = list_combine_common_class_fallback(
+      xs,
+      has_indices,
+      indices,
+      size,
+      has_default,
+      default_,
+      ptype,
+      name_spec,
+      p_name_repair_opts,
+      p_xs_arg,
+      p_indices_arg,
+      p_default_arg,
+      error_call
+    );
+    FREE(n_protect);
+    return out;
+  }
+
+  if (needs_list_combine_homogeneous_fallback(xs, has_default, default_, ptype)) {
+    r_obj* out = list_combine_homogeneous_fallback(
+      xs,
+      has_indices,
+      indices,
+      size,
+      has_default,
+      default_,
+      name_spec,
+      p_xs_arg,
+      p_indices_arg,
+      p_default_arg,
+      error_call
+    );
+    FREE(n_protect);
+    return out;
+  }
+
+  if (ptype == r_null) {
+    // Even when there are no inputs and we can't determine a `ptype`, the user
+    // will have supplied a `size`, so as an invariant we should return
+    // something with this `size`. Our size preserving identity type is
+    // `<unspecified[size]>`, so we use that.
+    //
+    // We catch `<unspecified[0]>` in `vec_c()` and `list_unchop()` and return
+    // `NULL` in those cases instead, because that is what they have historically
+    // returned and you can't supply `size` there, so this only happens in the
+    // empty input cases of those functions.
+    //
+    // Assuming `NULL` is roughly equivalent to `unspecified(0)`, this gives us:
+    //
+    // ```
+    // vec_c()
+    // #> NULL
+    // list_unchop(list(), indices = list())
+    // #> NULL
+    // list_combine(list(), indices = list(), size = 0)
+    // #> unspecified[0] # Consistent with size != 0 case.
+    // list_combine(list(), indices = list(), size = 5)
+    // #> unspecified[5] # Preserves size, good.
+    // ```
+    //
+    // The most theoretically correct thing may be to return `unspecified(0)`
+    // from `vec_c()` and `list_unchop()` as well, but we make a concious effort
+    // to avoid exposing this type to users when we can. Since those functions
+    // don't have the `size` invariant issue, `NULL` seems to be a good
+    // alternative.
+    // https://github.com/r-lib/vctrs/issues/1980
+    ptype = vctrs_shared_empty_uns;
+  }
+
+  const bool assign_names = !r_inherits(name_spec, "rlang_zap");
+  r_obj* xs_names = KEEP_N(r_names(xs), &n_protect);
+  const bool xs_is_named = xs_names != r_null && !is_data_frame(ptype);
+
   r_keep_loc out_pi;
-  r_obj* out = vec_init(ptype, out_size);
+  r_obj* out = vec_init(ptype, size);
   KEEP_HERE(out, &out_pi);
   ++n_protect;
 
@@ -272,7 +441,7 @@ r_obj* list_combine_impl(
     .ownership = VCTRS_OWNERSHIP_deep,
     .recursively_proxied = true
   };
-  const struct vec_proxy_assign_opts proxy_assign_opts = {
+ const struct vec_proxy_assign_opts proxy_assign_opts = {
     .ownership = VCTRS_OWNERSHIP_deep,
     .recursively_proxied = true,
     .slice_value = ASSIGNMENT_SLICE_VALUE_no,
@@ -336,7 +505,7 @@ r_obj* list_combine_impl(
 
     // Advance `index`
     if (has_indices) {
-      index = r_list_get(p_indices_info->indices, i);
+      index = r_list_get(indices, i);
       index_size = r_length(index);
     } else {
       index_size = v_xs_sizes[i];
@@ -362,7 +531,7 @@ r_obj* list_combine_impl(
       r_obj* x_names = KEEP(apply_name_spec(name_spec, outer, inner, index_size));
 
       if (x_names != r_null) {
-        R_LAZY_ALLOC(out_names, out_names_pi, R_TYPE_character, out_size);
+        R_LAZY_ALLOC(out_names, out_names_pi, R_TYPE_character, size);
 
         // If there is no name to assign, skip the assignment since
         // `out_names` already contains empty strings
@@ -386,13 +555,67 @@ r_obj* list_combine_impl(
     x = vec_cast_opts(&cast_opts);
     KEEP_AT(x, x_pi);
 
-    // Total ownership of `out` because it was freshly created with `vec_init()`
     out = vec_proxy_assign_opts(out, index, x, &proxy_assign_opts);
     KEEP_AT(out, out_pi);
 
     if (!has_indices) {
       start += index_size;
     }
+  }
+
+  if (has_default) {
+    // `default` uses a slightly modified form of `proxy_assign_opts` and `cast_opts`
+    // - `default` is size 1 or size of the output, so uses `ASSIGNMENT_SLICE_VALUE_yes`.
+    // - `default`'s index is always built using a logical vector, so uses `VCTRS_INDEX_STYLE_condition`.
+    // - `default` has its own special `p_default_arg`.
+    struct vec_proxy_assign_opts default_proxy_assign_opts = proxy_assign_opts;
+    default_proxy_assign_opts.index_style = VCTRS_INDEX_STYLE_condition;
+    default_proxy_assign_opts.slice_value = ASSIGNMENT_SLICE_VALUE_yes;
+
+    struct cast_opts default_cast_opts = cast_opts;
+    default_cast_opts.p_x_arg = p_default_arg;
+
+    // Compute `default` condition index
+    index = compute_default_index(indices, size);
+    KEEP_AT(index, index_pi);
+
+    // `default` recycles against the output size, not the `index`
+    vec_check_recyclable(default_, size, p_default_arg, error_call);
+
+    // Handle optional names assignment
+    if (assign_names) {
+      // `outer` names don't exist, but `name_spec` could still `zap()` any `inner` names
+      r_obj* outer = r_null;
+      r_obj* inner = KEEP(vec_names(default_));
+      r_obj* x_names = KEEP(apply_name_spec(name_spec, outer, inner, size));
+
+      if (x_names != r_null) {
+        R_LAZY_ALLOC(out_names, out_names_pi, R_TYPE_character, size);
+
+        // If there is no name to assign, skip the assignment since
+        // `out_names` already contains empty strings
+        if (x_names != chrs_empty) {
+          out_names = chr_assign(
+            out_names,
+            index,
+            x_names,
+            VCTRS_OWNERSHIP_deep,
+            ASSIGNMENT_SLICE_VALUE_yes,
+            VCTRS_INDEX_STYLE_condition
+          );
+          KEEP_AT(out_names, out_names_pi);
+        }
+      }
+
+      FREE(2);
+    }
+
+    default_cast_opts.x = default_;
+    x = vec_cast_opts(&default_cast_opts);
+    KEEP_AT(x, x_pi);
+
+    out = vec_proxy_assign_opts(out, index, x, &default_proxy_assign_opts);
+    KEEP_AT(out, out_pi);
   }
 
   if (
@@ -406,12 +629,15 @@ r_obj* list_combine_impl(
       out,
       xs,
       has_indices,
-      p_indices_info,
+      indices,
+      size,
+      has_default,
+      default_,
       ptype,
       name_spec,
       p_name_repair_opts,
-      error_call,
-      out_size
+      p_indices_arg,
+      error_call
     );
   }
 
@@ -471,11 +697,16 @@ static
 r_obj* list_combine_common_class_fallback(
   r_obj* xs,
   bool has_indices,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
   struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 ) {
   r_obj* cls = KEEP(r_attrib_get(ptype, syms_fallback_class));
@@ -486,9 +717,14 @@ r_obj* list_combine_common_class_fallback(
     return base_list_combine_fallback(
       xs,
       has_indices,
-      p_indices_info,
+      indices,
+      size,
+      has_default,
+      default_,
       name_spec,
       p_xs_arg,
+      p_indices_arg,
+      p_default_arg,
       error_call
     );
   } else {
@@ -510,15 +746,26 @@ r_obj* list_combine_common_class_fallback(
     // attributes)
     vec_ptype_common_opts(xs, ptype, &ptype_common_opts);
 
-    // Suboptimal: Call `list_combine_with_fallback_opts()` again to
+    // We will have already checked `unmatched` before the fallback
+    // is invoked, so no need to check it again
+    enum list_combine_unmatched unmatched = LIST_COMBINE_UNMATCHED_default;
+
+    // Suboptimal: Call `list_combine_impl()` again to
     // combine vector with homogeneous class fallback
-    return list_combine_with_fallback_opts(
+    return list_combine_impl(
       xs,
-      p_indices_info,
+      has_indices,
+      indices,
+      size,
+      has_default,
+      default_,
+      unmatched,
       ptype,
       name_spec,
       p_name_repair_opts,
       p_xs_arg,
+      p_indices_arg,
+      p_default_arg,
       error_call,
       fallback_opts
     );
@@ -556,12 +803,15 @@ void df_list_combine_common_class_fallback(
   r_obj* out,
   r_obj* xs,
   bool has_indices,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
-  struct r_lazy error_call,
-  r_ssize n_rows
+  struct vctrs_arg* p_indices_arg,
+  struct r_lazy error_call
 ) {
   int n_protect = 0;
   r_ssize n_cols = r_length(out);
@@ -589,46 +839,59 @@ void df_list_combine_common_class_fallback(
       // Recurse into df-cols
       r_obj* out_col = r_list_get(out, i);
       r_obj* xs_col = KEEP(list_pluck(xs, i));
+      r_obj* default_col = has_default ? r_list_get(default_, i) : r_null;
 
       df_list_combine_common_class_fallback(
         out_col,
         xs_col,
         has_indices,
-        p_indices_info,
+        indices,
+        size,
+        has_default,
+        default_col,
         ptype_col,
         name_spec,
         p_name_repair_opts,
-        error_call,
-        n_rows
+        p_indices_arg,
+        error_call
       );
 
       FREE(1);
     } else if (needs_list_combine_common_class_fallback(ptype_col)) {
       r_obj* xs_col = KEEP(list_pluck(xs, i));
+      r_obj* default_col = has_default ? r_list_get(default_, i) : r_null;
+
+      struct vctrs_arg* p_xs_col_arg = vec_args.empty;
+      struct vctrs_arg* p_default_col_arg = vec_args.empty;
 
       r_obj* out_col = list_combine_common_class_fallback(
         xs_col,
         has_indices,
-        p_indices_info,
+        indices,
+        size,
+        has_default,
+        default_col,
         ptype_col,
         name_spec,
         p_name_repair_opts,
-        vec_args.empty,
+        p_xs_col_arg,
+        p_indices_arg,
+        p_default_col_arg,
         error_call
       );
       r_list_poke(out, i, out_col);
 
-      if (vec_size(out_col) != n_rows) {
+      if (vec_size(out_col) != size) {
         r_stop_internal(
           "`c()` method returned a vector of unexpected size %d instead of %d.",
           vec_size(out_col),
-          n_rows
+          size
         );
       }
 
       // Remove fallback vector from the ptype so it doesn't get in
       // the way of restoration later on
-      r_list_poke(ptype_orig, i, vec_ptype_final(out_col));
+      r_list_poke(ptype_orig, i, vec_ptype_final(out_col, vec_args.empty, error_call));
 
       FREE(1);
     }
@@ -640,34 +903,44 @@ void df_list_combine_common_class_fallback(
 // -------------------------------------------------------------------------------------------
 
 static
-bool needs_list_combine_homogeneous_fallback(r_obj* xs, r_obj* ptype) {
-  if (!r_length(xs)) {
-    return false;
+bool needs_list_combine_homogeneous_fallback(
+  r_obj* xs,
+  bool has_default,
+  r_obj* default_,
+  r_obj* ptype
+) {
+  r_obj* first = list_first_non_null(xs, NULL);
+
+  if (first == r_null && has_default) {
+    // i.e. `list_combine(x = list(), default = foobar(1))`
+    first = default_;
   }
 
-  r_obj* x = list_first_non_null(xs, NULL);
-  if (!obj_is_vector(x)) {
+  if (!obj_is_vector(first)) {
     return false;
   }
 
   // Never fall back for `vctrs_vctr` classes to avoid infinite
   // recursion through `c.vctrs_vctr()`
-  if (r_inherits(x, "vctrs_vctr")) {
+  if (r_inherits(first, "vctrs_vctr")) {
     return false;
   }
 
-  r_obj* x_class = KEEP(r_class(x));
   r_obj* ptype_class = KEEP(r_class(ptype));
-  bool equal = equal_object(x_class, ptype_class);
-  FREE(2);
-  if (!equal) {
+
+  if (!obj_has_class(first, ptype_class)) {
+    // Cheap test before consulting `vec_ptype2()` and `c()` methods
+    FREE(1);
     return false;
   }
 
-  return
-    !vec_implements_ptype2(x) &&
-    list_is_homogeneously_classed(xs) &&
-    vec_implements_base_c(x);
+  bool out = !vec_implements_ptype2(first) &&
+    list_all_have_class(xs, ptype_class) &&
+    (has_default ? obj_has_class(default_, ptype_class) : true) &&
+    vec_implements_base_c(first);
+
+  FREE(1);
+  return out;
 }
 
 // To perform homogeneous fallback, we invoke `c()` because we've
@@ -677,19 +950,58 @@ static
 r_obj* list_combine_homogeneous_fallback(
   r_obj* xs,
   bool has_indices,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 ) {
   return base_list_combine_fallback(
     xs,
     has_indices,
-    p_indices_info,
+    indices,
+    size,
+    has_default,
+    default_,
     name_spec,
     p_xs_arg,
+    p_indices_arg,
+    p_default_arg,
     error_call
   );
+}
+
+static
+bool list_all_have_class(r_obj* xs, r_obj* class) {
+  r_ssize size = r_length(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    r_obj* x = v_xs[i];
+
+    if (x == r_null) {
+      // Allow `NULL`s
+      continue;
+    }
+
+    if (!obj_has_class(x, class)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static
+bool obj_has_class(r_obj* x, r_obj* class) {
+  r_obj* x_class = KEEP(r_class(x));
+  bool out = equal_object(x_class, class);
+  FREE(1);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------
@@ -710,9 +1022,14 @@ static
 r_obj* base_list_combine_fallback(
   r_obj* xs,
   bool has_indices,
-  const struct list_combine_indices_info* p_indices_info,
+  r_obj* indices,
+  r_ssize size,
+  bool has_default,
+  r_obj* default_,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_indices_arg,
+  struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 ) {
   if (!has_indices) {
@@ -721,8 +1038,6 @@ r_obj* base_list_combine_fallback(
   }
 
   // Otherwise we have `indices`, we are going to need to:
-  // - Compute the `out_size` based on the indices
-  // - Validate these indices with `list_as_locations()`
   // - Recycle each `xs` element to the size of the corresponding `indices` element
   // - Sequentially combine all `xs`
   // - Fallback slice the combined `xs` in an order determined by the `indices`
@@ -734,22 +1049,43 @@ r_obj* base_list_combine_fallback(
   // vec_slice_fallback(base_c(!!!xs), order(vec_c(!!!indices)))
   // ```
 
-  // Pluck this out, we are going to modify `indices`. We avoid modifying
-  // `p_indices_info->indices` directly, as other data frame columns might need
-  // to use them in their original form.
-  r_obj* indices = p_indices_info->indices;
-  r_ssize out_size = compute_out_size_from_indices(indices);
+  if (has_default) {
+    // Materialize the `default`'s index
+    r_obj* default_index = KEEP(compute_default_index(indices, size));
+    default_index = KEEP(r_lgl_which(default_index, false));
 
-  // Remember, `list_as_locations()` won't change the size of an individual
-  // `index`, which is why we can compute the `out_size` from them.
-  indices = KEEP(list_as_locations(indices, out_size, r_null));
+    // `default` recycles against the output size
+    r_ssize default_size = vec_check_recyclable(default_, size, p_default_arg, error_call);
 
+    // Slice `default` "down" to the size of the index
+    if (default_size == size) {
+      default_ = vec_slice_fallback(default_, default_index);
+    }
+    KEEP(default_);
+
+    // Append the default to `xs` and `indices` before the fallback
+    xs = KEEP(push_default(xs, default_));
+    indices = KEEP(push_default_index(indices, default_index));
+
+    FREE(5);
+  }
+  KEEP(xs);
+  KEEP(indices);
+
+  // Recycle each `x` element to the size of its `index`
+  //
+  // - Done after `default` is pushed, so it recycles size 1 `default` too
   xs = KEEP(vec_recycle_xs_fallback(xs, indices, p_xs_arg, error_call));
 
   // Remove all `NULL`s from `xs` and their corresponding slot in `indices`.
-  // Done after `out_size` computation and `indices` validation, same as main loop.
+  //
   // `base_c_invoke()` does this as well, but we need to remove the `indices` slot
   // at the same time.
+  //
+  // - Done after `default_index` computation, so `default_index` doesn't capture
+  //   dropped indices.
+  // - Done after `vec_recycle_xs_fallback()` so we have correct indices in recycling
+  //   error messages.
   if (vec_any_missing(xs)) {
     r_obj* complete = KEEP(vec_detect_complete(xs));
     complete = KEEP(r_lgl_which(complete, false));
@@ -762,11 +1098,11 @@ r_obj* base_list_combine_fallback(
 
   r_obj* out = KEEP(base_c_invoke(xs, name_spec, error_call));
 
-  r_obj* index = KEEP(build_fallback_index(indices, out_size, error_call));
+  r_obj* index = KEEP(build_fallback_index(indices, size, error_call));
 
   out = vec_slice_fallback(out, index);
 
-  FREE(6);
+  FREE(7);
   return out;
 }
 
@@ -825,7 +1161,49 @@ void stop_name_spec_in_fallback(r_obj* xs, struct r_lazy error_call) {
 }
 
 static
-r_obj* build_fallback_index(r_obj* indices, r_ssize out_size, struct r_lazy error_call) {
+r_obj* push_default(
+  r_obj* xs,
+  r_obj* default_
+) {
+  const r_ssize xs_size = vec_size(xs);
+
+  r_obj* xs_names = KEEP(r_names(xs));
+  xs = KEEP(r_list_resize(xs, xs_size + 1));
+  r_list_poke(xs, xs_size, default_);
+
+  if (xs_names != r_null) {
+    xs_names = r_chr_resize(xs_names, xs_size + 1);
+    r_attrib_poke_names(xs, xs_names);
+    r_chr_poke(xs_names, xs_size, r_strs.empty);
+  }
+
+  FREE(2);
+  return xs;
+}
+
+static
+r_obj* push_default_index(
+  r_obj* indices,
+  r_obj* default_index
+) {
+  const r_ssize indices_size = vec_size(indices);
+
+  r_obj* indices_names = KEEP(r_names(indices));
+  indices = KEEP(r_list_resize(indices, indices_size + 1));
+  r_list_poke(indices, indices_size, default_index);
+
+  if (indices_names != r_null) {
+    indices_names = r_chr_resize(indices_names, indices_size + 1);
+    r_attrib_poke_names(indices, indices_names);
+    r_chr_poke(indices_names, indices_size, r_strs.empty);
+  }
+
+  FREE(2);
+  return indices;
+}
+
+static
+r_obj* build_fallback_index(r_obj* indices, r_ssize size, struct r_lazy error_call) {
   const struct name_repair_opts name_repair_opts = {
     .type = NAME_REPAIR_none,
     .fn = r_null,
@@ -843,25 +1221,26 @@ r_obj* build_fallback_index(r_obj* indices, r_ssize out_size, struct r_lazy erro
 
   const int* v_index = r_int_cbegin(index);
 
-  // Not necessarily same as `out_size`!
+  // Not necessarily same as `size`!
   //
   // ```
   // local_c_foobar()
   // list_combine(
   //   list(foobar("a"), NULL, foobar("b")),
-  //   list(2, 3, 1)
+  //   indices = list(2, 3, 1),
+  //   size = 3
   // )
   // ```
   //
-  // Implies `out_size` of 3 but `NULL` causes the `3`
+  // Implies `size` of 3 but `NULL` causes the `3`
   // index to get dropped, so `index_size` is `2`.
   const r_ssize index_size = r_length(index);
 
-  r_obj* locations = KEEP(r_alloc_integer(out_size));
+  r_obj* locations = KEEP(r_alloc_integer(size));
   int* v_locations = r_int_begin(locations);
 
   // Initialize with missing to handle locations that are never selected
-  for (r_ssize i = 0; i < out_size; ++i) {
+  for (r_ssize i = 0; i < size; ++i) {
     v_locations[i] = r_globals.na_int;
   }
 
@@ -943,21 +1322,151 @@ bool class_implements_base_c(r_obj* cls) {
   return false;
 }
 
-// Sums the length of each `index` to compute the `out_size`
-//
-// Notably runs before `indices` is validated, but that's fine
-// because `list_as_locations()` won't allow an index to change
-// sizes.
-static
-r_ssize compute_out_size_from_indices(r_obj* indices) {
-  r_ssize out_size = 0;
+// -------------------------------------------------------------------------------------------
 
-  r_obj* const* v_indices = r_list_cbegin(indices);
-  r_ssize indices_size = r_length(indices);
-
-  for (r_ssize i = 0; i < indices_size; ++i) {
-    out_size += r_length(v_indices[i]);
+enum list_combine_unmatched parse_unmatched(r_obj* unmatched, struct r_lazy error_call) {
+  if (!r_is_string(unmatched)) {
+    r_stop_internal("`unmatched` must be a string.");
   }
 
-  return out_size;
+  const char* c_unmatched = r_chr_get_c_string(unmatched, 0);
+
+  if (!strcmp(c_unmatched, "default")) return LIST_COMBINE_UNMATCHED_default;
+  if (!strcmp(c_unmatched, "error")) return LIST_COMBINE_UNMATCHED_error;
+
+  r_abort_lazy_call(
+    error_call,
+    "`unmatched` must be either \"default\" or \"error\"."
+  );
 }
+
+// -------------------------------------------------------------------------------------------
+
+static
+void check_any_unmatched(
+  r_obj* indices,
+  r_ssize size,
+  struct r_lazy error_call
+) {
+  r_obj* default_index = KEEP(compute_default_index(indices, size));
+
+  if (r_lgl_any(default_index)) {
+    r_obj* loc = KEEP(r_lgl_which(default_index, false));
+    stop_combine_unmatched(loc, error_call);
+  }
+
+  FREE(1);
+}
+
+static
+void stop_combine_unmatched(r_obj* loc, struct r_lazy error_call) {
+  r_obj* syms[3] = {
+    syms_loc,
+    syms_call,
+    NULL
+  };
+  r_obj* args[3] = {
+    loc,
+    KEEP(r_lazy_eval_protect(error_call)),
+    NULL
+  };
+
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_combine_unmatched, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
+
+  never_reached("stop_combine_unmatched");
+}
+
+static
+r_obj* compute_default_index(
+  r_obj* indices,
+  r_ssize size
+) {
+  const r_ssize indices_size = r_length(indices);
+  r_obj* const* v_indices = r_list_cbegin(indices);
+
+  r_obj* out = KEEP(r_alloc_logical(size));
+  int* v_out = r_lgl_begin(out);
+
+  // Initialize mark everything as unmatched
+  r_p_lgl_fill(v_out, 1, size);
+
+  // Unmark matched locations
+  for (r_ssize i = 0; i < indices_size; ++i) {
+    r_obj* index = v_indices[i];
+
+    const r_ssize index_size = r_length(index);
+    const int* v_index = r_int_cbegin(index);
+
+    for (r_ssize j = 0; j < index_size; ++j) {
+      const int loc = v_index[j];
+
+      if (loc != r_globals.na_int) {
+        v_out[loc - 1] = 0;
+      }
+    }
+  }
+
+  FREE(1);
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------
+
+// `ptype` determination is complicated by the fact that both `xs` and `default`
+// will contribute to the output type, and we want the best error messages
+// possible. We can't just fold `default` into `xs` because we don't get
+// a chance to use `p_default_arg`. We could materialize `p_default_arg`
+// and use it as a name on the `xs` list, but that means it will get combined
+// with `p_xs_arg` when there is an error, which we don't want.
+static
+r_obj* ptype_common_with_default(
+  r_obj* ptype,
+  r_obj* xs,
+  bool has_default,
+  r_obj* default_,
+  struct vctrs_arg* p_xs_arg,
+  struct vctrs_arg* p_default_arg,
+  struct r_lazy error_call,
+  const struct fallback_opts fallback_opts
+) {
+  if (ptype != r_null) {
+    // Performs scalar checks and whatnot
+    return vec_ptype_final(ptype, vec_args.ptype, error_call);
+  }
+
+  // Okay `ptype` is `NULL`. We determine it from `xs` and `default`.
+
+  const struct ptype_common_opts ptype_common_opts = {
+    .p_arg = p_xs_arg,
+    .call = error_call,
+    .fallback = fallback_opts
+  };
+
+  // Use only `xs` and `p_xs_arg` first for best errors
+  ptype = KEEP(vec_ptype_common_opts(
+    xs,
+    ptype,
+    &ptype_common_opts
+  ));
+
+  // Now incorporate `default` and `p_default_arg` if required
+  if (has_default) {
+    const struct ptype2_opts ptype2_opts = {
+      .x = ptype,
+      .y = default_,
+      .p_x_arg = vec_args.empty,
+      .p_y_arg = p_default_arg,
+      .call = error_call,
+      .fallback = fallback_opts
+    };
+    int _;
+    ptype = vec_ptype2_opts(&ptype2_opts, &_);
+  }
+  KEEP(ptype);
+
+  FREE(2);
+  return ptype;
+}
+
+// -------------------------------------------------------------------------------------------

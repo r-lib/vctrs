@@ -50,6 +50,7 @@ struct r_globals_syms {
   // See https://github.com/r-lib/rlang/pull/1359 for details.
   r_obj* class_;
   r_obj* condition;
+  r_obj* default_arg;
   r_obj* dots;
   r_obj* dot_environment;
   r_obj* dot_fn;

@@ -255,19 +255,28 @@ r_obj* vec_rbind(r_obj* xs,
     // We take the common `ptype` with `S3_FALLBACK_true`, so we
     // may have common class fallback columns that we need to sequentially
     // combine (i.e. with a fallback `vec_c()` style operation).
+    // This is not ideal!
     const bool has_indices = false;
-    const struct list_combine_indices_info* p_indices_info = NULL;
+    r_obj* indices = r_null;
+
+    const bool has_default = false;
+    r_obj* default_ = r_null;
+
+    struct vctrs_arg* p_indices_arg = vec_args.empty;
 
     df_list_combine_common_class_fallback(
       out,
       xs,
       has_indices,
-      p_indices_info,
+      indices,
+      n_rows,
+      has_default,
+      default_,
       ptype,
       name_spec,
       name_repair,
-      error_call,
-      n_rows
+      p_indices_arg,
+      error_call
     );
   }
 

@@ -66,6 +66,7 @@ void r_init_library_globals_syms(void) {
   r_syms.colon2 = R_DoubleColonSymbol;
   r_syms.colon3 = R_TripleColonSymbol;
   r_syms.condition = r_sym("condition");
+  r_syms.default_arg = r_sym("default_arg");
   r_syms.dots = R_DotsSymbol;
   r_syms.error = r_sym("error");
   r_syms.error_arg = r_sym("error_arg");
