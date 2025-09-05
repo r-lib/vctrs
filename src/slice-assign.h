@@ -100,10 +100,10 @@ r_obj* vec_assign_shaped(
 
 bool is_condition_index(r_obj* index, r_ssize size);
 
-void check_value_recyclable(
+void check_recyclable_against_index(
   r_obj* value,
   r_obj* index,
-  r_ssize x_size,
+  r_ssize size,
   enum assignment_slice_value slice_value,
   enum vctrs_index_style index_style,
   struct vctrs_arg* p_value_arg,

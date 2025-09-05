@@ -3,6 +3,7 @@
 
 #include "vctrs-core.h"
 #include "names.h"
+#include "slice-assign.h"
 
 enum list_combine_unmatched {
     LIST_COMBINE_UNMATCHED_default = 0,
@@ -15,6 +16,7 @@ r_obj* list_combine(
   r_ssize size,
   r_obj* default_,
   enum list_combine_unmatched unmatched,
+  enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
@@ -56,9 +58,11 @@ void df_list_combine_common_class_fallback(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,

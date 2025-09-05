@@ -184,8 +184,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `x[[3]]` (size 2) to size 3.
@@ -194,8 +194,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `x[[3]]` (size 2) to size 3.
@@ -204,8 +205,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `x[[3]]` (size 2) to size 3.
@@ -265,8 +267,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements past the end.
@@ -277,8 +279,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements past the end.
@@ -289,8 +292,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements past the end.
@@ -301,8 +305,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! `d` must be a vector, not a <lm> object.
@@ -311,8 +315,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! `d` must be a vector, not a <vctrs_foobar> object.
@@ -321,8 +326,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! `d` must be a vector, not a <vctrs_foobar> object.
@@ -331,8 +337,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `d` (size 2) to size 1.
@@ -341,8 +347,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `d` (size 2) to size 1.
@@ -351,8 +358,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `d` (size 2) to size 1.
@@ -397,7 +405,28 @@
 ---
 
     Code
+      list_combine(list(1:9, 1:9), indices = list(c(TRUE, FALSE, NA, TRUE, FALSE, NA,
+        TRUE, FALSE, NA), c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, NA, NA, NA)),
+      size = 9, unmatched = "error")
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Locations 5, 6, 8, and 9 are unmatched.
+
+---
+
+    Code
       list_combine(list(1, 3), indices = list(1, 3), size = 3, unmatched = "error")
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Location 2 is unmatched.
+
+---
+
+    Code
+      list_combine(list(1, 1), indices = list(c(TRUE, FALSE), c(TRUE, FALSE)), size = 2,
+      unmatched = "error")
     Condition
       Error in `list_combine()`:
       ! Each location must be matched.
@@ -465,6 +494,16 @@
       ! Each location must be matched.
       x Location 2 is unmatched.
 
+---
+
+    Code
+      list_combine(x = list(1, 2:3), indices = list(c(TRUE, FALSE, FALSE), c(FALSE,
+        NA, TRUE)), size = 3, unmatched = "error")
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Location 2 is unmatched.
+
 # `x` must be a list
 
     Code
@@ -525,8 +564,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements past the end.
@@ -537,8 +576,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements past the end.
@@ -549,8 +589,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements past the end.
@@ -561,8 +602,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `x[[1]]` (size 2) to size 3.
@@ -571,8 +612,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `x[[1]]` (size 2) to size 3.
@@ -581,8 +623,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `x[[1]]` (size 2) to size 3.
@@ -591,8 +634,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `arg[[1]]` (size 2) to size 3.
@@ -601,8 +644,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `arg[[1]]` (size 2) to size 3.
@@ -611,18 +655,179 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't recycle `arg[[1]]` (size 2) to size 3.
+
+---
+
+    Code
+      list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
+
+---
+
+    Code
+      list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 4.
 
 # combining takes the common type
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't combine `x[[1]]` <double> and `x[[2]]` <character>.
@@ -631,8 +836,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't combine `x[[1]]` <vctrs_foobar> and `x[[2]]` <vctrs_foobar>.
@@ -644,8 +850,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error in `list_combine()`:
       ! Can't combine `x[[1]]` <vctrs_foobar> and `x[[2]]` <vctrs_foobar>.
@@ -723,8 +930,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements.
@@ -735,8 +942,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements.
@@ -747,8 +955,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements.
@@ -759,8 +968,8 @@
 
     Code
       list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
-        ptype = ptype, name_spec = name_spec, name_repair = name_repair, x_arg = x_arg,
-        indices_arg = indices_arg, default_arg = default_arg)
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements.
@@ -770,8 +979,9 @@
 
     Code
       list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements.
@@ -781,8 +991,9 @@
 
     Code
       list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
-        unmatched = unmatched, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
-        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
     Condition
       Error:
       ! Can't subset elements.
@@ -838,4 +1049,39 @@
       Error:
       ! Can't subset elements.
       x Subscript must be numeric, not a <vctrs_foobar> object.
+
+# `list_combine()` with logical `indices` checks `indices` size
+
+    Code
+      list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
+        slice_x = slice_x, ptype = ptype, name_spec = name_spec, name_repair = name_repair,
+        x_arg = x_arg, indices_arg = indices_arg, default_arg = default_arg)
+    Condition
+      Error:
+      ! Can't subset elements.
+      x Subscript must be numeric, not a logical vector.
+
+---
+
+    Code
+      list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error:
+      ! Can't subset elements.
+      x Subscript must be numeric, not a logical vector.
+
+---
+
+    Code
+      list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
+        unmatched = unmatched, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error:
+      ! Can't subset elements.
+      x Subscript must be numeric, not a logical vector.
 

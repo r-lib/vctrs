@@ -61,7 +61,7 @@ r_obj* vec_assign_opts(r_obj* x,
   // Cast `value` and check that it can recycle
   value = KEEP(vec_cast(value, x, assign_opts.value_arg, assign_opts.x_arg, assign_opts.call));
 
-  check_value_recyclable(
+  check_recyclable_against_index(
     value,
     index,
     x_size,
@@ -884,16 +884,18 @@ void check_assign_sizes(
   }
 }
 
-// Checks that `value` has the correct size
+// Checks that `value` has a compatible size with this `index`
 //
 // Note that `index` must have already been converted to positive integer indices
 // with `vec_as_location()`, because that can change its size.
 //
 // Note that `index` can be a `compact_seq()`, so we need `vec_subscript_size()`.
-void check_value_recyclable(
+//
+// `size` is the total output size.
+void check_recyclable_against_index(
   r_obj* value,
   r_obj* index,
-  r_ssize x_size,
+  r_ssize size,
   enum assignment_slice_value slice_value,
   enum vctrs_index_style index_style,
   struct vctrs_arg* p_value_arg,
@@ -910,7 +912,7 @@ void check_value_recyclable(
     }
     break;
   }
-  case ASSIGNMENT_SLICE_VALUE_yes: check_size = x_size; break;
+  case ASSIGNMENT_SLICE_VALUE_yes: check_size = size; break;
   default: r_stop_unreachable();
   }
 
@@ -961,7 +963,7 @@ r_obj* ffi_assign_seq(
   // Cast `value` and check that it can recycle
   value = KEEP(vec_cast(value, x, vec_args.value, vec_args.x, call));
 
-  check_value_recyclable(
+  check_recyclable_against_index(
     value,
     index,
     x_size,
