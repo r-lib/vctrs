@@ -9,6 +9,7 @@ r_obj* ffi_list_combine(
   r_obj* ffi_size,
   r_obj* ffi_default,
   r_obj* ffi_unmatched,
+  r_obj* ffi_slice_xs,
   r_obj* ffi_ptype,
   r_obj* ffi_name_spec,
   r_obj* ffi_name_repair,
@@ -27,7 +28,14 @@ r_obj* ffi_list_combine(
   struct r_lazy error_call = { .x = r_syms.error_call, .env = ffi_frame };
 
   const r_ssize size = r_arg_as_ssize(ffi_size, "size");
+
   const enum list_combine_unmatched unmatched = parse_unmatched(ffi_unmatched, error_call);
+
+  // On the R side it's `slice_x` to go with `x`, but on the C side we use `xs`
+  const enum assignment_slice_value slice_xs =
+    r_arg_as_bool(ffi_slice_xs, "slice_x") ?
+    ASSIGNMENT_SLICE_VALUE_yes :
+    ASSIGNMENT_SLICE_VALUE_no;
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(
     ffi_name_repair,
@@ -43,6 +51,7 @@ r_obj* ffi_list_combine(
     size,
     ffi_default,
     unmatched,
+    slice_xs,
     ffi_ptype,
     ffi_name_spec,
     &name_repair_opts,
@@ -62,6 +71,7 @@ r_obj* list_combine(
   r_ssize size,
   r_obj* default_,
   enum list_combine_unmatched unmatched,
+  enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
@@ -76,28 +86,28 @@ r_obj* list_combine(
       S3_FALLBACK_true
   };
 
-  // `list_combine_impl()` supports `vec_c()` and `list_unchop()`, which use
-  // some utilities not allowed by what `list_combine()` is really meant for
-  // these days. We do an internal check to make sure that `list_combine()`
-  // itself is being called correctly. This can be hit by users so we provide
-  // reasonable error messages.
-  if (indices == r_null) {
-    // `vec_c()` and `list_unchop()` use this to sequentially combine `xs`,
-    // but `list_combine()` requires `indices` to be a list
-    obj_check_list(indices, p_indices_arg, error_call);
-  }
+  // `list_combine_impl()` supports `NULL` `indices` for `vec_c()` and
+  // `list_unchop()`, which `list_combine()` does not, so we early check here
+  // for that. This can technically be hit by users so we want a good error
+  // message. `vec_c()` and `list_unchop()` use this to sequentially combine
+  // `xs`, but `list_combine()` requires `indices` to be a list.
+  obj_check_list(indices, p_indices_arg, error_call);
 
-  bool has_indices = true;
-  bool has_default = default_ != r_null;
+  const enum vctrs_index_style indices_style = compute_indices_style(indices, size);
+
+  const bool has_indices = true;
+  const bool has_default = default_ != r_null;
 
   return list_combine_impl(
     xs,
     has_indices,
     indices,
+    indices_style,
     size,
     has_default,
     default_,
     unmatched,
+    slice_xs,
     ptype,
     name_spec,
     p_name_repair_opts,
@@ -183,15 +193,19 @@ r_obj* list_combine_for_list_unchop(
   struct vctrs_arg* p_default_arg = vec_args.empty;
 
   enum list_combine_unmatched unmatched = LIST_COMBINE_UNMATCHED_default;
+  const enum assignment_slice_value slice_xs = ASSIGNMENT_SLICE_VALUE_no;
+  const enum vctrs_index_style indices_style = VCTRS_INDEX_STYLE_location;
 
   r_obj* out = KEEP(list_combine_impl(
     xs,
     has_indices,
     indices,
+    indices_style,
     size,
     has_default,
     default_,
     unmatched,
+    slice_xs,
     ptype,
     name_spec,
     p_name_repair_opts,
@@ -252,10 +266,12 @@ r_obj* list_combine_impl(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
   enum list_combine_unmatched unmatched,
+  enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
@@ -300,7 +316,7 @@ r_obj* list_combine_impl(
     }
   }
 
-  if (has_indices) {
+  if (has_indices && indices_style == VCTRS_INDEX_STYLE_location) {
     // Validate and convert `indices` if they exist.
     //
     // Note that we don't allow an individual `index` vector to change size
@@ -312,6 +328,10 @@ r_obj* list_combine_impl(
     // - We don't allow negative or zero indices (these change the size).
     // - We don't allow oob indices (makes no sense since we inferred the size from lengths).
     // - Numeric `NA` propagates.
+    //
+    // There is nothing to validate for condition indices, they are logical vectors
+    // where all 3 possible values are handled and we've already checked their sizes
+    // match `size` in `compute_indices_style()`.
     indices = KEEP_N(list_as_locations(indices, size, r_null), &n_protect);
   }
 
@@ -329,7 +349,7 @@ r_obj* list_combine_impl(
     if (!has_indices) {
       r_stop_internal("`indices` should have been required if `unmatched` was set.");
     }
-    check_any_unmatched(indices, size, error_call);
+    check_any_unmatched(indices, indices_style, size, error_call);
     break;
   }
   default: {
@@ -356,9 +376,11 @@ r_obj* list_combine_impl(
       xs,
       has_indices,
       indices,
+      indices_style,
       size,
       has_default,
       default_,
+      slice_xs,
       ptype,
       name_spec,
       p_name_repair_opts,
@@ -376,9 +398,11 @@ r_obj* list_combine_impl(
       xs,
       has_indices,
       indices,
+      indices_style,
       size,
       has_default,
       default_,
+      slice_xs,
       name_spec,
       p_xs_arg,
       p_indices_arg,
@@ -444,8 +468,8 @@ r_obj* list_combine_impl(
  const struct vec_proxy_assign_opts proxy_assign_opts = {
     .ownership = VCTRS_OWNERSHIP_deep,
     .recursively_proxied = true,
-    .slice_value = ASSIGNMENT_SLICE_VALUE_no,
-    .index_style = VCTRS_INDEX_STYLE_location,
+    .slice_value = slice_xs,
+    .index_style = indices_style,
     .assign_names = assign_names,
     .ignore_outer_names = true,
     .call = error_call
@@ -512,16 +536,24 @@ r_obj* list_combine_impl(
       init_compact_seq(v_index, start, index_size, true);
     }
 
-    // When we have `indices`, `x` should be size 1 or `index_size`
+    // When we have `indices`, `x`'s size must be compatible with the `index`'s
+    // size. This is dependent on `slice_xs` and `indices_style`.
     //
     // When we don't have `indices`, we derive the index sizes from
-    // `x` itself so there is no reason to check the size.
+    // `x` itself so there is no reason to recheck the size.
     //
     // We don't actually recycle `x` because both `vec_proxy_assign_opts()` and
-    // `chr_assign()` efficiently recycle size 1 inputs, but we do check that
-    // `x` is recyclable to the right size.
+    // `chr_assign()` efficiently recycle size 1 inputs.
     if (has_indices) {
-      vec_check_recyclable(x, index_size, p_x_arg, error_call);
+      check_recyclable_against_index(
+        x,
+        index,
+        size,
+        slice_xs,
+        indices_style,
+        p_x_arg,
+        error_call
+      );
     }
 
     // Handle optional names assignment
@@ -541,8 +573,8 @@ r_obj* list_combine_impl(
             index,
             x_names,
             VCTRS_OWNERSHIP_deep,
-            ASSIGNMENT_SLICE_VALUE_no,
-            VCTRS_INDEX_STYLE_location
+            slice_xs,
+            indices_style
           );
           KEEP_AT(out_names, out_names_pi);
         }
@@ -576,7 +608,7 @@ r_obj* list_combine_impl(
     default_cast_opts.p_x_arg = p_default_arg;
 
     // Compute `default` condition index
-    index = compute_default_index(indices, size);
+    index = compute_default_index(indices, indices_style, size);
     KEEP_AT(index, index_pi);
 
     // `default` recycles against the output size, not the `index`
@@ -630,9 +662,11 @@ r_obj* list_combine_impl(
       xs,
       has_indices,
       indices,
+      indices_style,
       size,
       has_default,
       default_,
+      slice_xs,
       ptype,
       name_spec,
       p_name_repair_opts,
@@ -698,9 +732,11 @@ r_obj* list_combine_common_class_fallback(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
@@ -718,9 +754,11 @@ r_obj* list_combine_common_class_fallback(
       xs,
       has_indices,
       indices,
+      indices_style,
       size,
       has_default,
       default_,
+      slice_xs,
       name_spec,
       p_xs_arg,
       p_indices_arg,
@@ -756,10 +794,12 @@ r_obj* list_combine_common_class_fallback(
       xs,
       has_indices,
       indices,
+      indices_style,
       size,
       has_default,
       default_,
       unmatched,
+      slice_xs,
       ptype,
       name_spec,
       p_name_repair_opts,
@@ -804,9 +844,11 @@ void df_list_combine_common_class_fallback(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
@@ -846,9 +888,11 @@ void df_list_combine_common_class_fallback(
         xs_col,
         has_indices,
         indices,
+        indices_style,
         size,
         has_default,
         default_col,
+        slice_xs,
         ptype_col,
         name_spec,
         p_name_repair_opts,
@@ -868,9 +912,11 @@ void df_list_combine_common_class_fallback(
         xs_col,
         has_indices,
         indices,
+        indices_style,
         size,
         has_default,
         default_col,
+        slice_xs,
         ptype_col,
         name_spec,
         p_name_repair_opts,
@@ -951,9 +997,11 @@ r_obj* list_combine_homogeneous_fallback(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum assignment_slice_value slice_xs,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
   struct vctrs_arg* p_indices_arg,
@@ -964,9 +1012,11 @@ r_obj* list_combine_homogeneous_fallback(
     xs,
     has_indices,
     indices,
+    indices_style,
     size,
     has_default,
     default_,
+    slice_xs,
     name_spec,
     p_xs_arg,
     p_indices_arg,
@@ -1023,9 +1073,11 @@ r_obj* base_list_combine_fallback(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum assignment_slice_value slice_xs,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
   struct vctrs_arg* p_indices_arg,
@@ -1037,29 +1089,72 @@ r_obj* base_list_combine_fallback(
     return base_c_invoke(xs, name_spec, error_call);
   }
 
-  // Otherwise we have `indices`, we are going to need to:
-  // - Recycle each `xs` element to the size of the corresponding `indices` element
-  // - Sequentially combine all `xs`
-  // - Fallback slice the combined `xs` in an order determined by the `indices`
-  //   to mimic direct assignment using the `indices`
+  // Otherwise we have `indices`. We need to recreate a bunch of the "main" path
+  // logic, and then combine all `xs` together and reorder using the `indices`.
   //
-  // In the end we end up doing something like:
+  // We end up doing something like:
   //
   // ```
   // vec_slice_fallback(base_c(!!!xs), order(vec_c(!!!indices)))
   // ```
 
+  // Normalize `indices` to the location style, because that's what the fallback
+  // is designed to handle. It's also the style we convert `default` to.
+  switch (indices_style) {
+  case VCTRS_INDEX_STYLE_location: {
+    // Nothing to do, these are the "normalized" style used for the fallback
+    break;
+  }
+  case VCTRS_INDEX_STYLE_condition: {
+    indices_style = VCTRS_INDEX_STYLE_location;
+    indices = list_condition_to_location_indices(indices);
+    break;
+  }
+  default: r_stop_unreachable();
+  }
+  KEEP(indices);
+
+  // Normalize and check `xs` sizes
+  //
+  // - If `slice_xs = no`, each `x` must be size 1 or the size of the `index`
+  //   - Size 1 must be recycled up to the size of the `index`
+  // - If `slice_xs = yes`, each `x` must be size 1 or size `size`
+  //   - Size 1 must be recycled up to the size of the `index`
+  //   - Size `size` must be sliced down to the size of the `index`
+  switch (slice_xs) {
+  case ASSIGNMENT_SLICE_VALUE_no: {
+    xs = vec_recycle_xs_fallback(xs, indices, p_xs_arg, error_call);
+    break;
+  }
+  case ASSIGNMENT_SLICE_VALUE_yes: {
+    xs = vec_slice_xs_fallback(xs, indices, size, p_xs_arg, error_call);
+    break;
+  }
+  default: r_stop_unreachable();
+  }
+  KEEP(xs);
+
   if (has_default) {
-    // Materialize the `default`'s index
-    r_obj* default_index = KEEP(compute_default_index(indices, size));
+    // Materialize the `default`'s index in location style, as that is what
+    // we normalized `indices` to.
+    r_obj* default_index = KEEP(compute_default_index(indices, indices_style, size));
     default_index = KEEP(r_lgl_which(default_index, false));
 
     // `default` recycles against the output size
-    r_ssize default_size = vec_check_recyclable(default_, size, p_default_arg, error_call);
+    const r_ssize default_size = vec_size(default_);
+    const r_ssize default_index_size = r_length(default_index);
 
-    // Slice `default` "down" to the size of the index
-    if (default_size == size) {
+    // Other `xs` have been sliced already, we now need to sliced `default`,
+    // which is always provided in `slice_xs = yes` style.
+    if (default_size == 1) {
+      // Recycle "up" to the size of the index
+      default_ = vec_recycle_fallback(default_, default_index_size, p_default_arg, error_call);
+    } else if (default_size == size) {
+      // Slice "down" to the size of the index
       default_ = vec_slice_fallback(default_, default_index);
+    } else {
+      // `default` is the wrong size, error
+      vec_check_recyclable(default_, size, p_default_arg, error_call);
     }
     KEEP(default_);
 
@@ -1071,11 +1166,6 @@ r_obj* base_list_combine_fallback(
   }
   KEEP(xs);
   KEEP(indices);
-
-  // Recycle each `x` element to the size of its `index`
-  //
-  // - Done after `default` is pushed, so it recycles size 1 `default` too
-  xs = KEEP(vec_recycle_xs_fallback(xs, indices, p_xs_arg, error_call));
 
   // Remove all `NULL`s from `xs` and their corresponding slot in `indices`.
   //
@@ -1102,7 +1192,7 @@ r_obj* base_list_combine_fallback(
 
   out = vec_slice_fallback(out, index);
 
-  FREE(7);
+  FREE(8);
   return out;
 }
 
@@ -1260,6 +1350,8 @@ r_obj* build_fallback_index(r_obj* indices, r_ssize size, struct r_lazy error_ca
 /**
  * Recycles each element of `xs` to match the size
  * of the corresponding `indices` index.
+ *
+ * Used for `slice_xs = no`.
  */
 static
 r_obj* vec_recycle_xs_fallback(
@@ -1293,6 +1385,85 @@ r_obj* vec_recycle_xs_fallback(
 
   FREE(2);
   return xs;
+}
+
+/**
+ * Slices each element of `xs` to match the size
+ * of the corresponding `indices` index.
+ *
+ * Used for `slice_xs = yes`.
+ */
+static
+r_obj* vec_slice_xs_fallback(
+  r_obj* xs,
+  r_obj* indices,
+  r_ssize size,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy error_call
+) {
+  r_ssize xs_size = vec_size(xs);
+  r_obj* xs_names = r_names(xs);
+  xs = KEEP(r_clone_referenced(xs));
+
+  r_ssize i = 0;
+
+  struct vctrs_arg* p_x_arg = new_subscript_arg(
+    p_xs_arg,
+    xs_names,
+    xs_size,
+    &i
+  );
+  KEEP(p_x_arg->shelter);
+
+  r_obj* const* v_xs = r_list_cbegin(xs);
+  r_obj* const* v_indices = r_list_cbegin(indices);
+
+  for (; i < xs_size; ++i) {
+    r_obj* x = v_xs[i];
+    r_obj* index = v_indices[i];
+
+    const r_ssize x_size = vec_size(x);
+    const r_ssize index_size = r_length(index);
+
+    if (x_size == 1) {
+      // Recycle "up" to the size of the index
+      x = vec_recycle_fallback(x, index_size, p_x_arg, error_call);
+    } else if (x_size == size) {
+      // Slice "down" to the size of the index
+      x = vec_slice_fallback(x, index);
+    } else {
+      // `x` is the wrong size, error
+      vec_check_recyclable(x, size, p_x_arg, error_call);
+    }
+
+    r_list_poke(xs, i, x);
+  }
+
+  FREE(2);
+  return xs;
+}
+
+// Converts `VCTRS_INDEX_STYLE_condition` indices to
+// `VCTRS_INDEX_STYLE_location` indices for the fallback.
+static
+r_obj* list_condition_to_location_indices(r_obj* indices) {
+  // We probably don't own these, the user provides them.
+  indices = KEEP(r_clone_referenced(indices));
+
+  const r_ssize indices_size = r_length(indices);
+  r_obj* const* v_indices = r_list_cbegin(indices);
+
+  // Because we want `c(FALSE, NA, TRUE)` to become `c(NA, TRUE)`
+  // for assignment and size checking purposes
+  const bool na_propagate = true;
+
+  for (r_ssize i = 0; i < indices_size; ++i) {
+    r_obj* index = v_indices[i];
+    r_list_poke(indices, i, r_lgl_which(index, na_propagate));
+  }
+
+  FREE(1);
+  return indices;
 }
 
 // Determines if the vector `x` implements an S3/S4 method for the `c()` generic
@@ -1342,13 +1513,43 @@ enum list_combine_unmatched parse_unmatched(r_obj* unmatched, struct r_lazy erro
 
 // -------------------------------------------------------------------------------------------
 
+/**
+ * Compute the `indices` index style
+ *
+ * The index style is "all or nothing" for simplicity.
+ *
+ * - If all index vectors are simple logical condition index vectors, we use
+ *   `VCTRS_INDEX_STYLE_condition`.
+ * - Otherwise we use `VCTRS_INDEX_STYLE_location`, which then goes through
+ *   `list_as_locations()` which requires that all index vectors be positive
+ *   integer location vectors to begin with.
+ */
+static
+enum vctrs_index_style compute_indices_style(r_obj* indices, r_ssize size) {
+  r_obj* const* v_indices = r_list_cbegin(indices);
+  r_ssize indices_size = vec_size(indices);
+
+  for (r_ssize i = 0; i < indices_size; ++i) {
+    r_obj* index = v_indices[i];
+
+    if (!is_condition_index(index, size)) {
+      return VCTRS_INDEX_STYLE_location;
+    }
+  }
+
+  return VCTRS_INDEX_STYLE_condition;
+}
+
+// -------------------------------------------------------------------------------------------
+
 static
 void check_any_unmatched(
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   struct r_lazy error_call
 ) {
-  r_obj* default_index = KEEP(compute_default_index(indices, size));
+  r_obj* default_index = KEEP(compute_default_index(indices, indices_style, size));
 
   if (r_lgl_any(default_index)) {
     r_obj* loc = KEEP(r_lgl_which(default_index, false));
@@ -1380,6 +1581,7 @@ void stop_combine_unmatched(r_obj* loc, struct r_lazy error_call) {
 static
 r_obj* compute_default_index(
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size
 ) {
   const r_ssize indices_size = r_length(indices);
@@ -1391,20 +1593,42 @@ r_obj* compute_default_index(
   // Initialize mark everything as unmatched
   r_p_lgl_fill(v_out, 1, size);
 
-  // Unmark matched locations
-  for (r_ssize i = 0; i < indices_size; ++i) {
-    r_obj* index = v_indices[i];
+  // Unmark matched locations according to the index style
+  switch (indices_style) {
+  case VCTRS_INDEX_STYLE_location: {
+    for (r_ssize i = 0; i < indices_size; ++i) {
+      r_obj* index = v_indices[i];
+      const r_ssize index_size = r_length(index);
+      const int* v_index = r_int_cbegin(index);
 
-    const r_ssize index_size = r_length(index);
-    const int* v_index = r_int_cbegin(index);
+      for (r_ssize j = 0; j < index_size; ++j) {
+        const int elt = v_index[j];
 
-    for (r_ssize j = 0; j < index_size; ++j) {
-      const int loc = v_index[j];
-
-      if (loc != r_globals.na_int) {
-        v_out[loc - 1] = 0;
+        if (elt != r_globals.na_int) {
+          // If not `NA`, mark location as matched by at least 1 index
+          v_out[elt - 1] = 0;
+        }
       }
     }
+    break;
+  }
+  case VCTRS_INDEX_STYLE_condition: {
+    for (r_ssize i = 0; i < indices_size; ++i) {
+      r_obj* index = v_indices[i];
+      const int* v_index = r_lgl_cbegin(index);
+
+      for (r_ssize j = 0; j < size; ++j) {
+        const int elt = v_index[j];
+        // If `TRUE`, mark location as matched by at least 1 index.
+        // Specially optimized to be branchless, which does greatly help.
+        v_out[j] *= (elt != 1);
+      }
+    }
+    break;
+  }
+  default: {
+    r_stop_unreachable();
+  }
   }
 
   FREE(1);

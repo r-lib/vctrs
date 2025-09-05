@@ -3,10 +3,12 @@ r_obj* list_combine_impl(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
   enum list_combine_unmatched unmatched,
+  enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
@@ -25,9 +27,11 @@ r_obj* list_combine_common_class_fallback(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
   const struct name_repair_opts* p_name_repair_opts,
@@ -50,9 +54,11 @@ r_obj* list_combine_homogeneous_fallback(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum assignment_slice_value slice_xs,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
   struct vctrs_arg* p_indices_arg,
@@ -71,9 +77,11 @@ r_obj* base_list_combine_fallback(
   r_obj* xs,
   bool has_indices,
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum assignment_slice_value slice_xs,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
   struct vctrs_arg* p_indices_arg,
@@ -103,14 +111,30 @@ r_obj* vec_recycle_xs_fallback(
 );
 
 static
+r_obj* vec_slice_xs_fallback(
+  r_obj* xs,
+  r_obj* indices,
+  r_ssize size,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy error_call
+);
+
+static
+r_obj* list_condition_to_location_indices(r_obj* indices);
+
+static
 bool vec_implements_base_c(r_obj* x);
 
 static
 bool class_implements_base_c(r_obj* cls);
 
 static
+enum vctrs_index_style compute_indices_style(r_obj* indices, r_ssize size);
+
+static
 void check_any_unmatched(
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size,
   struct r_lazy error_call
 );
@@ -121,6 +145,7 @@ void stop_combine_unmatched(r_obj* loc, struct r_lazy error_call);
 static
 r_obj* compute_default_index(
   r_obj* indices,
+  enum vctrs_index_style indices_style,
   r_ssize size
 );
 

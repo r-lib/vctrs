@@ -15,13 +15,22 @@
 #'
 #' @param x A list of vectors.
 #'
-#'   Each element must be length 1 or the same length as its corresponding index
-#'   in `indices`.
+#'   If `slice_x = FALSE`, each element must be size 1 or the same size as its
+#'   corresponding index in `indices` after that index has been converted to
+#'   a positive integer location vector with [vec_as_location()].
+#'
+#'   If `slice_x = TRUE`, each element must be size 1 or size `size`.
 #'
 #' @param indices A list of indices.
 #'
-#'   Each index must be a positive integer vector specifying the locations to
-#'   place elements of `x`.
+#'   Indices can be provided in one of two forms:
+#'
+#'   - Positive integer vectors of locations less than or equal to `size`. Each
+#'     vector can be any size.
+#'
+#'   - Logical vectors of size `size` where `TRUE` denotes the location in the
+#'     output to assign to, and the location from the `x` element to pull from.
+#'     Both `NA` and `FALSE` are considered unmatched.
 #'
 #'   The size of `indices` must match the size of `x`.
 #'
@@ -40,6 +49,15 @@
 #'   - `"default"` to use `default` in unmatched locations.
 #'
 #'   - `"error"` to error when there are unmatched locations.
+#'
+#' @param slice_x A boolean.
+#'
+#'   If `TRUE`, each element of `x` is sliced by its corresponding index from
+#'   `indices` before being assigned into the output, which is effectively the
+#'   same as `map2(list(x, indices), function(x, index) vec_slice(x, index))`,
+#'   but is optimized to avoid materializing the slices.
+#'
+#'   See the `slice_value` argument of [vec_assign()] for more examples.
 #'
 #' @param ptype If `NULL`, the output type is determined by computing the common
 #'   type across all elements of `x` and `default`. Alternatively, you can
@@ -123,6 +141,7 @@ list_combine <- function(
   size,
   default = NULL,
   unmatched = "default",
+  slice_x = FALSE,
   ptype = NULL,
   name_spec = NULL,
   name_repair = c(
@@ -146,6 +165,7 @@ list_combine <- function(
     size,
     default,
     unmatched,
+    slice_x,
     ptype,
     name_spec,
     name_repair,

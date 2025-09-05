@@ -258,20 +258,25 @@ r_obj* vec_rbind(r_obj* xs,
     // This is not ideal!
     const bool has_indices = false;
     r_obj* indices = r_null;
+    const enum vctrs_index_style indices_style = VCTRS_INDEX_STYLE_location;
 
     const bool has_default = false;
     r_obj* default_ = r_null;
 
     struct vctrs_arg* p_indices_arg = vec_args.empty;
 
+    const enum assignment_slice_value slice_xs = ASSIGNMENT_SLICE_VALUE_no;
+
     df_list_combine_common_class_fallback(
       out,
       xs,
       has_indices,
       indices,
+      indices_style,
       n_rows,
       has_default,
       default_,
+      slice_xs,
       ptype,
       name_spec,
       name_repair,

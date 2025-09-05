@@ -113,12 +113,31 @@ test_that("preserves names when inputs are cast to a common type (#1689)", {
     ),
     "a"
   )
+  expect_named(
+    list_combine(
+      list(c(a = 1)),
+      indices = list(TRUE),
+      ptype = integer(),
+      size = 1
+    ),
+    "a"
+  )
 
   # With `default`
   expect_named(
     list_combine(
       list(c(a = 1)),
       indices = list(1),
+      default = c(b = 0),
+      ptype = integer(),
+      size = 2
+    ),
+    c("a", "b")
+  )
+  expect_named(
+    list_combine(
+      list(c(a = 1)),
+      indices = list(c(TRUE, FALSE)),
       default = c(b = 0),
       ptype = integer(),
       size = 2
@@ -149,12 +168,39 @@ test_that("preserves names when inputs are cast to a common type (#1689)", {
     ),
     c("foo_a", "b")
   )
+  expect_named(
+    list_combine(
+      list(foo = c(a = 1)),
+      indices = list(c(TRUE, FALSE)),
+      default = c(b = 0),
+      ptype = integer(),
+      name_spec = name_spec,
+      size = 2
+    ),
+    c("foo_a", "b")
+  )
 
   # When `x` elements are recycled, names are also recycled
   x <- list(c(a = 1), c(b = 2))
-  indices <- list(1:2, 3:4)
   expect_named(
-    list_combine(x, indices = indices, size = 4, ptype = integer()),
+    list_combine(
+      x,
+      indices = list(1:2, 3:4),
+      size = 4,
+      ptype = integer()
+    ),
+    c("a", "a", "b", "b")
+  )
+  expect_named(
+    list_combine(
+      x,
+      indices = list(
+        c(TRUE, TRUE, FALSE, FALSE),
+        c(FALSE, FALSE, TRUE, TRUE)
+      ),
+      size = 4,
+      ptype = integer()
+    ),
     c("a", "a", "b", "b")
   )
 
@@ -163,6 +209,19 @@ test_that("preserves names when inputs are cast to a common type (#1689)", {
     list_combine(
       list(c(a = 1), c(b = 2)),
       indices = list(1, 3),
+      default = c(c = 0),
+      ptype = integer(),
+      size = 4
+    ),
+    c("a", "c", "b", "c")
+  )
+  expect_named(
+    list_combine(
+      list(c(a = 1), c(b = 2)),
+      indices = list(
+        c(TRUE, FALSE, FALSE, FALSE),
+        c(FALSE, FALSE, TRUE, FALSE)
+      ),
       default = c(c = 0),
       ptype = integer(),
       size = 4
@@ -1076,6 +1135,13 @@ test_that("list_combine() `unmatched = 'error'` doesn't error when all locations
     unmatched = "error",
     expect = 1:3
   )
+  expect_identical_list_combine(
+    x = list(1:3),
+    indices = list(c(TRUE, TRUE, TRUE)),
+    size = 3,
+    unmatched = "error",
+    expect = 1:3
+  )
 })
 
 test_that("list_combine() `unmatched = 'error'` doesn't error in the empty case", {
@@ -1105,11 +1171,32 @@ test_that("list_combine() `unmatched = 'error'` errors with unmatched `indices` 
     )
   })
   expect_snapshot(error = TRUE, {
+    # `NA` results in unmatched locations
+    list_combine(
+      list(1:9, 1:9),
+      indices = list(
+        c(TRUE, FALSE, NA, TRUE, FALSE, NA, TRUE, FALSE, NA),
+        c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, NA, NA, NA)
+      ),
+      size = 9,
+      unmatched = "error"
+    )
+  })
+  expect_snapshot(error = TRUE, {
     # Unused location
     list_combine(
       list(1, 3),
       indices = list(1, 3),
       size = 3,
+      unmatched = "error"
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    # Unused location
+    list_combine(
+      list(1, 1),
+      indices = list(c(TRUE, FALSE), c(TRUE, FALSE)),
+      size = 2,
       unmatched = "error"
     )
   })
@@ -1196,12 +1283,27 @@ test_that("`NA` indices are considered unmatched locations", {
     default = 0L,
     expect = c(1L, 0L, 3L)
   )
+  expect_identical_list_combine(
+    x = list(1L, 2:3),
+    indices = list(c(TRUE, FALSE, FALSE), c(FALSE, NA, TRUE)),
+    size = 3,
+    default = 0L,
+    expect = c(1L, 0L, 3L)
+  )
 
   # Which means this errors
   expect_snapshot(error = TRUE, {
     list_combine(
       x = list(1, 2:3),
       indices = list(1, c(NA, 3)),
+      size = 3,
+      unmatched = "error"
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      x = list(1, 2:3),
+      indices = list(c(TRUE, FALSE, FALSE), c(FALSE, NA, TRUE)),
       size = 3,
       unmatched = "error"
     )
@@ -1218,11 +1320,25 @@ test_that("`indices` corresponding to `NULL` values are considered matched", {
     default = 0,
     expect = c(1, NA, NA)
   )
+  expect_identical_list_combine(
+    x = list(1, NULL),
+    indices = list(c(TRUE, FALSE, FALSE), c(FALSE, TRUE, TRUE)),
+    size = 3,
+    default = 0,
+    expect = c(1, NA, NA)
+  )
 
   # Which means this is not an error
   expect_identical_list_combine(
     x = list(1, NULL),
     indices = list(1, c(2, 3)),
+    size = 3,
+    unmatched = "error",
+    expect = c(1, NA, NA)
+  )
+  expect_identical_list_combine(
+    x = list(1, NULL),
+    indices = list(c(TRUE, FALSE, FALSE), c(FALSE, TRUE, TRUE)),
     size = 3,
     unmatched = "error",
     expect = c(1, NA, NA)
@@ -1259,13 +1375,9 @@ test_that("`indices` must be a list", {
   })
 })
 
-test_that("`indices` must be a list of integers", {
+test_that("`indices` has a restricted type", {
   expect_error(
     list_combine(list(1), indices = list("x"), size = 1),
-    class = "vctrs_error_subscript_type"
-  )
-  expect_error(
-    list_combine(list(1), indices = list(TRUE), size = 1),
     class = "vctrs_error_subscript_type"
   )
   expect_error(
@@ -1492,30 +1604,92 @@ test_that("NULL is a valid index", {
 
 test_that("combining recycles elements of x to the size of the index", {
   x <- list(1, 2)
-  indices <- list(c(3, 4, 5), c(2, 1))
 
   expect_identical_list_combine(
     x = x,
-    indices = indices,
+    indices = list(c(3, 4, 5), c(2, 1)),
     size = 5,
+    expect = c(2, 2, 1, 1, 1)
+  )
+  expect_identical_list_combine(
+    x = x,
+    indices = list(
+      c(FALSE, FALSE, TRUE, TRUE, TRUE),
+      c(TRUE, TRUE, FALSE, FALSE, FALSE)
+    ),
+    size = 5,
+    expect = c(2, 2, 1, 1, 1)
+  )
+  expect_identical_list_combine(
+    x = x,
+    indices = list(c(3, 4, 5), c(2, 1)),
+    size = 5,
+    slice_x = TRUE,
+    expect = c(2, 2, 1, 1, 1)
+  )
+  expect_identical_list_combine(
+    x = x,
+    indices = list(
+      c(FALSE, FALSE, TRUE, TRUE, TRUE),
+      c(TRUE, TRUE, FALSE, FALSE, FALSE)
+    ),
+    size = 5,
+    slice_x = TRUE,
     expect = c(2, 2, 1, 1, 1)
   )
 
   x <- list(1:2)
-  indices <- list(1:3)
 
   expect_snapshot_list_combine(
     error = TRUE,
     x = x,
-    indices = indices,
-    size = 3
+    indices = list(1:3),
+    size = 4
   )
   expect_snapshot_list_combine(
     error = TRUE,
     x = x,
-    indices = indices,
-    size = 3,
+    indices = list(1:3),
+    size = 4,
     x_arg = "arg"
+  )
+
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = x,
+    indices = list(1:3),
+    size = 4,
+    slice_x = TRUE
+  )
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = x,
+    indices = list(1:3),
+    size = 4,
+    slice_x = TRUE,
+    x_arg = "arg"
+  )
+
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = x,
+    indices = list(c(TRUE, TRUE, TRUE, TRUE)),
+    size = 4
+  )
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = x,
+    indices = list(c(TRUE, TRUE, TRUE, TRUE)),
+    size = 4,
+    x_arg = "arg"
+  )
+
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = x,
+    indices = list(c(TRUE, TRUE, TRUE, TRUE)),
+    size = 4,
+    slice_x = TRUE
   )
 })
 
@@ -1901,4 +2075,135 @@ test_that("list_combine() does not support non-numeric S3 indices", {
       class = "vctrs_error_subscript_type"
     ))
   })
+})
+
+test_that("`list_combine()` with `slice_x = FALSE`", {
+  values <- list(1:2, 3:4)
+  size <- 4
+
+  indices <- list(
+    c(TRUE, FALSE, FALSE, TRUE),
+    c(FALSE, TRUE, TRUE, FALSE)
+  )
+  expect_identical_list_combine(
+    x = values,
+    indices = indices,
+    size = size,
+    expect = int(1, 3, 4, 2)
+  )
+
+  indices <- list(
+    c(1, 4),
+    c(2, 3)
+  )
+  expect_identical_list_combine(
+    x = values,
+    indices = indices,
+    size = size,
+    expect = int(1, 3, 4, 2)
+  )
+})
+
+test_that("`list_combine()` with `slice_x = FALSE` / recycling", {
+  values <- list(1L, 2L)
+  size <- 4
+
+  indices <- list(
+    c(TRUE, FALSE, FALSE, TRUE),
+    c(FALSE, TRUE, TRUE, FALSE)
+  )
+  expect_identical_list_combine(
+    x = values,
+    indices = indices,
+    size = size,
+    expect = int(1, 2, 2, 1)
+  )
+
+  indices <- list(
+    c(1, 4),
+    c(2, 3)
+  )
+  expect_identical_list_combine(
+    x = values,
+    indices = indices,
+    size = size,
+    expect = int(1, 2, 2, 1)
+  )
+})
+
+test_that("`list_combine()` with `slice_x = TRUE`", {
+  values <- list(1:4, 5:8)
+  size <- 4
+
+  indices <- list(
+    c(TRUE, FALSE, FALSE, TRUE),
+    c(FALSE, TRUE, TRUE, FALSE)
+  )
+  expect_identical_list_combine(
+    x = values,
+    indices = indices,
+    size = size,
+    slice_x = TRUE,
+    expect = int(1, 6, 7, 4)
+  )
+
+  indices <- list(
+    c(1, 4),
+    c(2, 3)
+  )
+  expect_identical_list_combine(
+    x = values,
+    indices = indices,
+    size = size,
+    slice_x = TRUE,
+    expect = int(1, 6, 7, 4)
+  )
+})
+
+test_that("`list_combine()` with `slice_x = TRUE` / recycling", {
+  values <- list(1L, 2L)
+  size <- 4
+
+  indices <- list(
+    c(TRUE, FALSE, FALSE, TRUE),
+    c(FALSE, TRUE, TRUE, FALSE)
+  )
+  expect_identical_list_combine(
+    x = values,
+    indices = indices,
+    size = size,
+    slice_x = TRUE,
+    expect = int(1, 2, 2, 1)
+  )
+
+  indices <- list(
+    c(1, 4),
+    c(2, 3)
+  )
+  expect_identical_list_combine(
+    x = values,
+    indices = indices,
+    size = size,
+    slice_x = TRUE,
+    expect = int(1, 2, 2, 1)
+  )
+})
+
+test_that("`list_combine()` with logical `indices` checks `indices` size", {
+  values <- list(1L, 2L)
+  indices <- list(
+    c(TRUE, FALSE, FALSE, TRUE),
+    c(FALSE, TRUE, TRUE, FALSE)
+  )
+  size <- 5
+
+  # This isn't the most obvious error but it is hard to know how to do better.
+  # Ideally it would report a size error for `indices`, right now it falls
+  # through to `list_as_locations()` which doesn't allow logical indices.
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = values,
+    indices = indices,
+    size = size
+  )
 })
