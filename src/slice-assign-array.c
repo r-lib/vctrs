@@ -98,42 +98,43 @@
 // -----------------------------------------------------------------------------
 
 // Strides information is not required here!
-#define ASSIGN_SHAPED_CONDITION_INDEX(                                 \
-  CTYPE,                                                               \
-  DEREF,                                                               \
-  CONST_DEREF,                                                         \
-  SLICE_VALUE,                                                         \
-  VALUE_LOC_POST_INDEX_INCREMENT,                                      \
-  VALUE_LOC_POST_SHAPE_INCREMENT                                       \
-)                                                                      \
-  r_obj* dim = PROTECT(vec_dim(proxy));                                \
-  const int* p_dim = INTEGER_RO(dim);                                  \
-  R_len_t dim_n = Rf_length(dim);                                      \
-  R_len_t shape_elem_n = vec_shape_elem_n(p_dim, dim_n);               \
-                                                                       \
-  R_len_t index_size = r_length(index);                                \
-  const int* p_index = r_int_cbegin(index);                            \
-                                                                       \
-  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership));          \
-  CTYPE* p_out = DEREF(out);                                           \
-  R_len_t out_loc = 0;                                                 \
-                                                                       \
-  const CTYPE* p_value = CONST_DEREF(value);                           \
-  R_len_t value_loc = 0;                                               \
-                                                                       \
-  for (R_len_t i = 0; i < shape_elem_n; ++i) {                         \
-    for (R_len_t index_loc = 0; index_loc < index_size; ++index_loc) { \
-      const int index_elt = p_index[index_loc];                        \
-      if (index_elt == 1) {                                            \
-        p_out[out_loc] = p_value[SLICE_VALUE ? out_loc : value_loc];   \
-      }                                                                \
-      ++out_loc;                                                       \
-      value_loc += VALUE_LOC_POST_INDEX_INCREMENT;                     \
-    }                                                                  \
-    value_loc += VALUE_LOC_POST_SHAPE_INCREMENT;                       \
-  }                                                                    \
-                                                                       \
-  UNPROTECT(2);                                                        \
+//
+// See `ASSIGN_CONDITION_INDEX` for rationale on using a ternary inside
+// the assignment loop to keep `p_out` "hot".
+#define ASSIGN_SHAPED_CONDITION_INDEX(                                                                 \
+  CTYPE,                                                                                               \
+  DEREF,                                                                                               \
+  CONST_DEREF,                                                                                         \
+  SLICE_VALUE,                                                                                         \
+  VALUE_LOC_POST_INDEX_INCREMENT,                                                                      \
+  VALUE_LOC_POST_SHAPE_INCREMENT                                                                       \
+)                                                                                                      \
+  r_obj* dim = PROTECT(vec_dim(proxy));                                                                \
+  const int* p_dim = INTEGER_RO(dim);                                                                  \
+  R_len_t dim_n = Rf_length(dim);                                                                      \
+  R_len_t shape_elem_n = vec_shape_elem_n(p_dim, dim_n);                                               \
+                                                                                                       \
+  R_len_t index_size = r_length(index);                                                                \
+  const int* p_index = r_int_cbegin(index);                                                            \
+                                                                                                       \
+  SEXP out = PROTECT(vec_clone_referenced(proxy, ownership));                                          \
+  CTYPE* p_out = DEREF(out);                                                                           \
+  R_len_t out_loc = 0;                                                                                 \
+                                                                                                       \
+  const CTYPE* p_value = CONST_DEREF(value);                                                           \
+  R_len_t value_loc = 0;                                                                               \
+                                                                                                       \
+  for (R_len_t i = 0; i < shape_elem_n; ++i) {                                                         \
+    for (R_len_t index_loc = 0; index_loc < index_size; ++index_loc) {                                 \
+      const int index_elt = p_index[index_loc];                                                        \
+      p_out[out_loc] = (index_elt == 1) ? p_value[SLICE_VALUE ? out_loc : value_loc] : p_out[out_loc]; \
+      ++out_loc;                                                                                       \
+      value_loc += VALUE_LOC_POST_INDEX_INCREMENT;                                                     \
+    }                                                                                                  \
+    value_loc += VALUE_LOC_POST_SHAPE_INCREMENT;                                                       \
+  }                                                                                                    \
+                                                                                                       \
+  UNPROTECT(2);                                                                                        \
   return out
 
 // -----------------------------------------------------------------------------
@@ -342,6 +343,9 @@ static inline SEXP raw_assign_shaped(
 // -----------------------------------------------------------------------------
 
 // Strides information is not required here!
+//
+// See `ASSIGN_BARRIER_CONDITION_INDEX` for rationale on NOT using a ternary
+// inside the assignment loop. The indirection of `SET()` makes it not worth it.
 #define ASSIGN_BARRIER_SHAPED_CONDITION_INDEX(                         \
   CTYPE,                                                               \
   CONST_DEREF,                                                         \

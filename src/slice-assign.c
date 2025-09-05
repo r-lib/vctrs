@@ -338,26 +338,72 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
     }                                                                            \
   }
 
-#define ASSIGN_CONDITION_INDEX(CTYPE, DEREF, CONST_DEREF, VALUE_INCR)   \
-  const r_ssize index_size = r_length(index);                           \
-  const int* index_data = r_lgl_cbegin(index);                          \
-                                                                        \
-  const CTYPE* value_data = CONST_DEREF(value);                         \
-                                                                        \
-  r_obj* out = KEEP(vec_clone_referenced(x, ownership));                \
-  CTYPE* out_data = DEREF(out);                                         \
-                                                                        \
-  r_ssize value_loc = 0;                                                \
-                                                                        \
-  for (r_ssize index_loc = 0; index_loc < index_size; ++index_loc) {    \
-    const int index_elt = index_data[index_loc];                        \
-    if (index_elt == 1) {                                               \
-      out_data[index_loc] = value_data[value_loc];                      \
-    }                                                                   \
-    value_loc += VALUE_INCR;                                            \
-  }                                                                     \
-                                                                        \
-  FREE(1);                                                              \
+/**
+ * The performance of this loop is very sensitive to the way the assignment is done
+ *
+ * For optimal average performance, we use:
+ *
+ * ```
+ * out_data[index_loc] = (index_elt == 1) ? value_data[value_loc] : out_data[index_loc];
+ * ```
+ *
+ * This seems to either:
+ * - Internally compile to something less branchy
+ * - Keep `out_data` "hot" at all times
+ *
+ * Compare that with this, which we used to do:
+ *
+ * ```
+ * if (index_elt == 1) {
+ *   out_data[index_loc] = value_data[value_loc];
+ * }
+ * ```
+ *
+ * This might look more efficient, but for a uniform random `index` it is significantly
+ * slower than the ternary style that keeps `out_data` "hot".
+ *
+ * For example, this "random" index of uniform `TRUE` and `FALSE` is MUCH faster with
+ * the ternary style (6.5ms ternary vs 33ms conditional).
+ *
+ * ```
+ * library(vctrs)
+ * set.seed(123)
+ * x <- sample(1e7)
+ * value <- sample(1e7)
+ * loc <- sample(c(TRUE, FALSE), 1e7, replace = TRUE)
+ * bench::mark(vec_assign(x, loc, value, slice_value = TRUE))
+ * ```
+ *
+ * If you change the `index` to this "mostly `TRUE`" index, then the conditional style
+ * is _slightly_ faster (7ms ternary vs 6ms conditional).
+ *
+ * ```
+ * loc <- sample(c(TRUE, rep(FALSE, 1000)), 1e7, replace = TRUE)
+ * ```
+ *
+ * Given these benchmarks, we prefer the more predictable and highly competitive
+ * average case performance of the ternary style. This ends up adding up to a big
+ * difference in `list_combine()` (used by `dplyr::if_else()` and `dplyr::case_when()`)
+ * where you end up hitting this loop once per expression.
+ */
+#define ASSIGN_CONDITION_INDEX(CTYPE, DEREF, CONST_DEREF, VALUE_INCR)                     \
+  const r_ssize index_size = r_length(index);                                             \
+  const int* index_data = r_lgl_cbegin(index);                                            \
+                                                                                          \
+  const CTYPE* value_data = CONST_DEREF(value);                                           \
+                                                                                          \
+  r_obj* out = KEEP(vec_clone_referenced(x, ownership));                                  \
+  CTYPE* out_data = DEREF(out);                                                           \
+                                                                                          \
+  r_ssize value_loc = 0;                                                                  \
+                                                                                          \
+  for (r_ssize index_loc = 0; index_loc < index_size; ++index_loc) {                      \
+    const int index_elt = index_data[index_loc];                                          \
+    out_data[index_loc] = (index_elt == 1) ? value_data[value_loc] : out_data[index_loc]; \
+    value_loc += VALUE_INCR;                                                              \
+  }                                                                                       \
+                                                                                          \
+  FREE(1);                                                                                \
   return out
 
 #define ASSIGN_CONDITION(CTYPE, DEREF, CONST_DEREF)                              \
@@ -507,6 +553,25 @@ r_obj* raw_assign(
     }                                                                          \
   }
 
+/**
+ * Unlike with `ASSIGN_CONDITION_INDEX`, here we prefer the conditional style
+ * of:
+ *
+ * ```
+ * if (index_elt == 1) {
+ *   SET(out, index_loc, value_data[value_loc]);
+ * }
+ * ```
+ *
+ * This ends up working better than the ternary style of:
+ *
+ * ```
+ * SET(out, index_loc, (index_elt == 1) ? value_data[value_loc]) : out_data[index_loc]);
+ * ```
+ *
+ * This is likely the case because we no longer gain benefits from keeping `out_data`
+ * "hot" due to the indirection required by the `SET()` function.
+ */
 #define ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, VALUE_INCR)     \
   const r_ssize index_size = r_length(index);                                   \
   const int* index_data = r_lgl_cbegin(index);                                  \
