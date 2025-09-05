@@ -374,7 +374,7 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
  * bench::mark(vec_assign(x, loc, value, slice_value = TRUE))
  * ```
  *
- * If you change the `index` to this "mostly `TRUE`" index, then the conditional style
+ * If you change the `index` to this "mostly `FALSE`" index, then the conditional style
  * is _slightly_ faster (7ms ternary vs 6ms conditional).
  *
  * ```
