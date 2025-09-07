@@ -265,6 +265,7 @@ r_obj* vec_rbind(r_obj* xs,
 
     struct vctrs_arg* p_indices_arg = vec_args.empty;
 
+    const enum list_combine_multiple multiple = LIST_COMBINE_MULTIPLE_last;
     const enum assignment_slice_value slice_xs = ASSIGNMENT_SLICE_VALUE_no;
 
     df_list_combine_common_class_fallback(
@@ -276,6 +277,7 @@ r_obj* vec_rbind(r_obj* xs,
       n_rows,
       has_default,
       default_,
+      multiple,
       slice_xs,
       ptype,
       name_spec,

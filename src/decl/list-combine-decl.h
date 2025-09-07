@@ -8,6 +8,7 @@ r_obj* list_combine_impl(
   bool has_default,
   r_obj* default_,
   enum list_combine_unmatched unmatched,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
@@ -31,6 +32,7 @@ r_obj* list_combine_common_class_fallback(
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
@@ -58,10 +60,10 @@ r_obj* list_combine_homogeneous_fallback(
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
-  struct vctrs_arg* p_indices_arg,
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 );
@@ -81,10 +83,10 @@ r_obj* base_list_combine_fallback(
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
-  struct vctrs_arg* p_indices_arg,
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 );

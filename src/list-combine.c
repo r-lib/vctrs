@@ -9,6 +9,7 @@ r_obj* ffi_list_combine(
   r_obj* ffi_size,
   r_obj* ffi_default,
   r_obj* ffi_unmatched,
+  r_obj* ffi_multiple,
   r_obj* ffi_slice_xs,
   r_obj* ffi_ptype,
   r_obj* ffi_name_spec,
@@ -29,7 +30,8 @@ r_obj* ffi_list_combine(
 
   const r_ssize size = r_arg_as_ssize(ffi_size, "size");
 
-  const enum list_combine_unmatched unmatched = parse_unmatched(ffi_unmatched, error_call);
+  const enum list_combine_unmatched unmatched = parse_list_combine_unmatched(ffi_unmatched, error_call);
+  const enum list_combine_multiple multiple = parse_list_combine_multiple(ffi_multiple, error_call);
 
   // On the R side it's `slice_x` to go with `x`, but on the C side we use `xs`
   const enum assignment_slice_value slice_xs =
@@ -51,6 +53,7 @@ r_obj* ffi_list_combine(
     size,
     ffi_default,
     unmatched,
+    multiple,
     slice_xs,
     ffi_ptype,
     ffi_name_spec,
@@ -71,6 +74,7 @@ r_obj* list_combine(
   r_ssize size,
   r_obj* default_,
   enum list_combine_unmatched unmatched,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
@@ -107,6 +111,7 @@ r_obj* list_combine(
     has_default,
     default_,
     unmatched,
+    multiple,
     slice_xs,
     ptype,
     name_spec,
@@ -193,6 +198,7 @@ r_obj* list_combine_for_list_unchop(
   struct vctrs_arg* p_default_arg = vec_args.empty;
 
   enum list_combine_unmatched unmatched = LIST_COMBINE_UNMATCHED_default;
+  enum list_combine_multiple multiple = LIST_COMBINE_MULTIPLE_last;
   const enum assignment_slice_value slice_xs = ASSIGNMENT_SLICE_VALUE_no;
   const enum vctrs_index_style indices_style = VCTRS_INDEX_STYLE_location;
 
@@ -205,6 +211,7 @@ r_obj* list_combine_for_list_unchop(
     has_default,
     default_,
     unmatched,
+    multiple,
     slice_xs,
     ptype,
     name_spec,
@@ -271,6 +278,7 @@ r_obj* list_combine_impl(
   bool has_default,
   r_obj* default_,
   enum list_combine_unmatched unmatched,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
@@ -287,6 +295,15 @@ r_obj* list_combine_impl(
 
   r_obj* const* v_xs = r_list_cbegin(xs);
   r_ssize xs_size = vec_size(xs);
+
+  // This is impossible with the exposed API, but let's sanity check
+  if (!has_indices) {
+    switch (multiple) {
+    case LIST_COMBINE_MULTIPLE_last: break;
+    case LIST_COMBINE_MULTIPLE_first: r_stop_internal("`multiple = 'first'` can't be set with sequential combination."); break;
+    default: r_stop_unreachable();
+    }
+  }
 
   if (has_indices) {
     // Apply size/type checking to `indices` before possibly early exiting from
@@ -380,6 +397,7 @@ r_obj* list_combine_impl(
       size,
       has_default,
       default_,
+      multiple,
       slice_xs,
       ptype,
       name_spec,
@@ -402,10 +420,10 @@ r_obj* list_combine_impl(
       size,
       has_default,
       default_,
+      multiple,
       slice_xs,
       name_spec,
       p_xs_arg,
-      p_indices_arg,
       p_default_arg,
       error_call
     );
@@ -480,13 +498,13 @@ r_obj* list_combine_impl(
   KEEP_HERE(out_names, &out_names_pi);
   ++n_protect;
 
-  r_ssize i = 0;
+  r_ssize xs_i = 0;
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(
     p_xs_arg,
     xs_names,
     xs_size,
-    &i
+    &xs_i
   );
   KEEP_N(p_x_arg->shelter, &n_protect);
 
@@ -518,8 +536,14 @@ r_obj* list_combine_impl(
     v_index = r_int_begin(index);
   }
 
-  for (; i < xs_size; ++i) {
-    x = v_xs[i];
+  for (r_ssize i = 0; i < xs_size; ++i) {
+    switch (multiple) {
+    case LIST_COMBINE_MULTIPLE_last: xs_i = i; break;
+    case LIST_COMBINE_MULTIPLE_first: xs_i = xs_size - 1 - i; break;
+    default: r_stop_unreachable();
+    }
+
+    x = v_xs[xs_i];
 
     if (x == r_null) {
       continue;
@@ -529,10 +553,10 @@ r_obj* list_combine_impl(
 
     // Advance `index`
     if (has_indices) {
-      index = r_list_get(indices, i);
+      index = r_list_get(indices, xs_i);
       index_size = r_length(index);
     } else {
-      index_size = v_xs_sizes[i];
+      index_size = v_xs_sizes[xs_i];
       init_compact_seq(v_index, start, index_size, true);
     }
 
@@ -558,7 +582,7 @@ r_obj* list_combine_impl(
 
     // Handle optional names assignment
     if (assign_names) {
-      r_obj* outer = xs_is_named ? r_chr_get(xs_names, i) : r_null;
+      r_obj* outer = xs_is_named ? r_chr_get(xs_names, xs_i) : r_null;
       r_obj* inner = KEEP(vec_names(x));
       r_obj* x_names = KEEP(apply_name_spec(name_spec, outer, inner, index_size));
 
@@ -666,6 +690,7 @@ r_obj* list_combine_impl(
       size,
       has_default,
       default_,
+      multiple,
       slice_xs,
       ptype,
       name_spec,
@@ -736,6 +761,7 @@ r_obj* list_combine_common_class_fallback(
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
@@ -758,10 +784,10 @@ r_obj* list_combine_common_class_fallback(
       size,
       has_default,
       default_,
+      multiple,
       slice_xs,
       name_spec,
       p_xs_arg,
-      p_indices_arg,
       p_default_arg,
       error_call
     );
@@ -799,6 +825,7 @@ r_obj* list_combine_common_class_fallback(
       has_default,
       default_,
       unmatched,
+      multiple,
       slice_xs,
       ptype,
       name_spec,
@@ -848,6 +875,7 @@ void df_list_combine_common_class_fallback(
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* ptype,
   r_obj* name_spec,
@@ -892,6 +920,7 @@ void df_list_combine_common_class_fallback(
         size,
         has_default,
         default_col,
+        multiple,
         slice_xs,
         ptype_col,
         name_spec,
@@ -916,6 +945,7 @@ void df_list_combine_common_class_fallback(
         size,
         has_default,
         default_col,
+        multiple,
         slice_xs,
         ptype_col,
         name_spec,
@@ -1001,10 +1031,10 @@ r_obj* list_combine_homogeneous_fallback(
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
-  struct vctrs_arg* p_indices_arg,
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 ) {
@@ -1016,10 +1046,10 @@ r_obj* list_combine_homogeneous_fallback(
     size,
     has_default,
     default_,
+    multiple,
     slice_xs,
     name_spec,
     p_xs_arg,
-    p_indices_arg,
     p_default_arg,
     error_call
   );
@@ -1077,10 +1107,10 @@ r_obj* base_list_combine_fallback(
   r_ssize size,
   bool has_default,
   r_obj* default_,
+  enum list_combine_multiple multiple,
   enum assignment_slice_value slice_xs,
   r_obj* name_spec,
   struct vctrs_arg* p_xs_arg,
-  struct vctrs_arg* p_indices_arg,
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 ) {
@@ -1133,6 +1163,27 @@ r_obj* base_list_combine_fallback(
   default: r_stop_unreachable();
   }
   KEEP(xs);
+
+  // Reverse `xs` and `indices` if required for `multiple`
+  //
+  // - Done after recycling/slicing of `xs` because `p_xs_arg` is used there
+  //   and we need to generate correct index locations in errors.
+  // - Done before `default` handling because `default` is always pushed
+  //   at the end.
+  switch (multiple) {
+  case LIST_COMBINE_MULTIPLE_last: {
+    // Nothing to do, this is the standard behavior
+    break;
+  }
+  case LIST_COMBINE_MULTIPLE_first: {
+    xs = KEEP(vec_reverse(xs));
+    indices = KEEP(vec_reverse(indices));
+    FREE(2);
+    break;
+  }
+  }
+  KEEP(xs);
+  KEEP(indices);
 
   if (has_default) {
     // Materialize the `default`'s index in location style, as that is what
@@ -1192,7 +1243,7 @@ r_obj* base_list_combine_fallback(
 
   out = vec_slice_fallback(out, index);
 
-  FREE(8);
+  FREE(10);
   return out;
 }
 
@@ -1495,7 +1546,7 @@ bool class_implements_base_c(r_obj* cls) {
 
 // -------------------------------------------------------------------------------------------
 
-enum list_combine_unmatched parse_unmatched(r_obj* unmatched, struct r_lazy error_call) {
+enum list_combine_unmatched parse_list_combine_unmatched(r_obj* unmatched, struct r_lazy error_call) {
   if (!r_is_string(unmatched)) {
     r_stop_internal("`unmatched` must be a string.");
   }
@@ -1508,6 +1559,22 @@ enum list_combine_unmatched parse_unmatched(r_obj* unmatched, struct r_lazy erro
   r_abort_lazy_call(
     error_call,
     "`unmatched` must be either \"default\" or \"error\"."
+  );
+}
+
+enum list_combine_multiple parse_list_combine_multiple(r_obj* multiple, struct r_lazy error_call) {
+  if (!r_is_string(multiple)) {
+    r_stop_internal("`multiple` must be a string.");
+  }
+
+  const char* c_multiple = r_chr_get_c_string(multiple, 0);
+
+  if (!strcmp(c_multiple, "last")) return LIST_COMBINE_MULTIPLE_last;
+  if (!strcmp(c_multiple, "first")) return LIST_COMBINE_MULTIPLE_first;
+
+  r_abort_lazy_call(
+    error_call,
+    "`multiple` must be either \"last\" or \"first\"."
   );
 }
 
