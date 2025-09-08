@@ -14,7 +14,7 @@ static
 r_obj* vec_proxy_assign_names(
   r_obj* proxy,
   r_obj* index,
-  r_obj* value,
+  r_obj* value_proxy,
   enum vctrs_ownership ownership,
   enum assignment_slice_value slice_value,
   enum vctrs_index_style index_style

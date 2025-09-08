@@ -1213,6 +1213,30 @@ test_that("can optionally assign names (OO case)", {
   )
 })
 
+test_that("assigning names clears existing names even if the new value doesn't have any (#2019)", {
+  x <- c(a = 1, b = 2)
+
+  # Keeps existing names
+  expect_identical(
+    vec_assign_params(x, 1L, 0),
+    c(a = 0, b = 2)
+  )
+  expect_identical(
+    vec_assign_params(x, 1L, c(c = 0)),
+    c(a = 0, b = 2)
+  )
+
+  # Clears or replaces names
+  expect_identical(
+    vec_assign_params(x, 1L, 0, assign_names = TRUE),
+    set_names(c(0, 2), c("", "b"))
+  )
+  expect_identical(
+    vec_assign_params(x, 1L, c(c = 0), assign_names = TRUE),
+    set_names(c(0, 2), c("c", "b"))
+  )
+})
+
 test_that("assignment requires that the value proxy is the same type as the output proxy", {
   x <- foobar(1)
   y <- foobar("a")
