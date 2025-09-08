@@ -586,22 +586,24 @@ r_obj* list_combine_impl(
       r_obj* inner = KEEP(vec_names(x));
       r_obj* x_names = KEEP(apply_name_spec(name_spec, outer, inner, index_size));
 
+      if (has_indices && x_names == r_null && out_names != r_null) {
+        // We don't have names on this element, but `out_names` will exist.
+        // Someone before us may have written to `out_names` at this `index` by
+        // providing an overlapping `index`, so we must clear that.
+        x_names = r_chrs.empty_string;
+      }
+
       if (x_names != r_null) {
         R_LAZY_ALLOC(out_names, out_names_pi, R_TYPE_character, size);
-
-        // If there is no name to assign, skip the assignment since
-        // `out_names` already contains empty strings
-        if (x_names != chrs_empty) {
-          out_names = chr_assign(
-            out_names,
-            index,
-            x_names,
-            VCTRS_OWNERSHIP_deep,
-            slice_xs,
-            indices_style
-          );
-          KEEP_AT(out_names, out_names_pi);
-        }
+        out_names = chr_assign(
+          out_names,
+          index,
+          x_names,
+          VCTRS_OWNERSHIP_deep,
+          slice_xs,
+          indices_style
+        );
+        KEEP_AT(out_names, out_names_pi);
       }
 
       FREE(2);
@@ -645,22 +647,23 @@ r_obj* list_combine_impl(
       r_obj* inner = KEEP(vec_names(default_));
       r_obj* x_names = KEEP(apply_name_spec(name_spec, outer, inner, size));
 
+      // `default` assigns at the unmatched locations, so there won't be
+      // anything to clear here, unlike in the main loop
+      // if (has_indices && x_names == r_null && out_names != r_null) {
+      //   x_names = r_chrs.empty_string;
+      // }
+
       if (x_names != r_null) {
         R_LAZY_ALLOC(out_names, out_names_pi, R_TYPE_character, size);
-
-        // If there is no name to assign, skip the assignment since
-        // `out_names` already contains empty strings
-        if (x_names != chrs_empty) {
-          out_names = chr_assign(
-            out_names,
-            index,
-            x_names,
-            VCTRS_OWNERSHIP_deep,
-            ASSIGNMENT_SLICE_VALUE_yes,
-            VCTRS_INDEX_STYLE_condition
-          );
-          KEEP_AT(out_names, out_names_pi);
-        }
+        out_names = chr_assign(
+          out_names,
+          index,
+          x_names,
+          VCTRS_OWNERSHIP_deep,
+          ASSIGNMENT_SLICE_VALUE_yes,
+          VCTRS_INDEX_STYLE_condition
+        );
+        KEEP_AT(out_names, out_names_pi);
       }
 
       FREE(2);

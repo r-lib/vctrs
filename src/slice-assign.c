@@ -769,19 +769,28 @@ static
 r_obj* vec_proxy_assign_names(
   r_obj* proxy,
   r_obj* index,
-  r_obj* value,
+  r_obj* value_proxy,
   enum vctrs_ownership ownership,
   enum assignment_slice_value slice_value,
   enum vctrs_index_style index_style
 ) {
-  r_obj* value_nms = KEEP(vec_names(value));
+  // Both of these inputs are assumed to be proxied already
+  r_obj* proxy_nms = KEEP(vec_proxy_names(proxy));
+  r_obj* value_nms = KEEP(vec_proxy_names(value_proxy));
 
-  if (value_nms == r_null) {
-    FREE(1);
+  if (proxy_nms == r_null && value_nms == r_null) {
+    // No names at all to worry about
+    FREE(2);
     return proxy;
   }
 
-  r_obj* proxy_nms = KEEP(vec_proxy_names(proxy));
+  if (value_nms == r_null) {
+    // If there are `proxy_nms` but no `value_nms`, we need clear any names at
+    // this `index`. This also clears when we freshly create `proxy_nms` which
+    // is a no-op, but that's okay, it keeps the logic simple.
+    value_nms = r_chrs.empty_string;
+  }
+
   if (proxy_nms == r_null) {
     proxy_nms = KEEP(r_alloc_character(vec_size(proxy)));
   } else {

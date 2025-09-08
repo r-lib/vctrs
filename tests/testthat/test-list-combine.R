@@ -1946,6 +1946,306 @@ test_that("assigning to the same location twice means last wins", {
   )
 })
 
+test_that("when assigning to the same location, names are continually overwritten (#2019)", {
+  expect_identical_list_combine(
+    x = list(
+      c(a = 1, b = 2),
+      c(c = 3, d = 4)
+    ),
+    indices = list(
+      c(1, 2),
+      c(1, 3)
+    ),
+    size = 3,
+    multiple = "last",
+    expect = c(c = 3, b = 2, d = 4)
+  )
+  expect_identical_list_combine(
+    x = list(
+      c(a = 1, b = 2),
+      c(c = 3, d = 4)
+    ),
+    indices = list(
+      c(1, 2),
+      c(1, 3)
+    ),
+    size = 3,
+    multiple = "first",
+    expect = c(a = 1, b = 2, d = 4)
+  )
+})
+
+test_that("df-cols: when assigning to the same location, names are continually overwritten (#2019)", {
+  expect_identical(
+    list_combine(
+      x = list(
+        data_frame(x = c(a = 1, b = 2), y = c("foo", "bar")),
+        data_frame(x = c(c = 0), y = "baz")
+      ),
+      indices = list(
+        c(1, 2),
+        1
+      ),
+      size = 2,
+      multiple = "last"
+    ),
+    data_frame(
+      x = c(c = 0, b = 2),
+      y = c("baz", "bar")
+    )
+  )
+  expect_identical(
+    list_combine(
+      x = list(
+        data_frame(x = c(a = 1, b = 2), y = c("foo", "bar")),
+        data_frame(x = c(c = 0), y = "baz")
+      ),
+      indices = list(
+        c(1, 2),
+        1
+      ),
+      size = 2,
+      multiple = "first"
+    ),
+    data_frame(
+      x = c(a = 1, b = 2),
+      y = c("foo", "bar")
+    )
+  )
+
+  # Homogenous fallback
+  expect_identical(
+    list_combine(
+      x = list(
+        data_frame(x = foobar(c(a = 1, b = 2)), y = c("foo", "bar")),
+        data_frame(x = foobar(c(c = 0)), y = "baz")
+      ),
+      indices = list(
+        c(1, 2),
+        1
+      ),
+      size = 2,
+      multiple = "last"
+    ),
+    data_frame(
+      x = foobar(c(c = 0, b = 2)),
+      y = c("baz", "bar")
+    )
+  )
+  expect_identical(
+    list_combine(
+      x = list(
+        data_frame(x = foobar(c(a = 1, b = 2)), y = c("foo", "bar")),
+        data_frame(x = foobar(c(c = 0)), y = "baz")
+      ),
+      indices = list(
+        c(1, 2),
+        1
+      ),
+      size = 2,
+      multiple = "first"
+    ),
+    data_frame(
+      x = foobar(c(a = 1, b = 2)),
+      y = c("foo", "bar")
+    )
+  )
+
+  # `c()` fallback
+  with_c_foobar({
+    expect_identical(
+      list_combine(
+        x = list(
+          data_frame(x = foobar(c(a = 1, b = 2)), y = c("foo", "bar")),
+          data_frame(x = foobar(c(c = 0)), y = "baz")
+        ),
+        indices = list(
+          c(1, 2),
+          1
+        ),
+        size = 2,
+        multiple = "last"
+      ),
+      data_frame(
+        x = foobar_c(c(c = 0, b = 2)),
+        y = c("baz", "bar")
+      )
+    )
+  })
+  with_c_foobar({
+    expect_identical(
+      list_combine(
+        x = list(
+          data_frame(x = foobar(c(a = 1, b = 2)), y = c("foo", "bar")),
+          data_frame(x = foobar(c(c = 0)), y = "baz")
+        ),
+        indices = list(
+          c(1, 2),
+          1
+        ),
+        size = 2,
+        multiple = "first"
+      ),
+      data_frame(
+        x = foobar_c(c(a = 1, b = 2)),
+        y = c("foo", "bar")
+      )
+    )
+  })
+})
+
+test_that("when assigning to the same location, names are cleared as needed (#2019)", {
+  expect_identical_list_combine(
+    x = list(
+      c(a = 1, b = 2),
+      c(3, 4)
+    ),
+    indices = list(
+      c(1, 2),
+      c(1, 3)
+    ),
+    size = 3,
+    multiple = "last",
+    expect = c(3, b = 2, 4)
+  )
+  expect_identical_list_combine(
+    x = list(
+      c(1, 2),
+      c(c = 3, d = 4)
+    ),
+    indices = list(
+      c(1, 2),
+      c(1, 3)
+    ),
+    size = 3,
+    multiple = "first",
+    expect = c(1, 2, d = 4)
+  )
+})
+
+test_that("df-cols: when assigning to the same location, names are cleared as needed (#2019)", {
+  # - 1st element has names
+  # - 2nd element doesn't have names, so `""` is used as the name to overwrite
+  #   the names written when inserting the 1st element
+  # - Reversed for `multiple = "first"`
+  expect_identical(
+    list_combine(
+      x = list(
+        data_frame(x = c(a = 1, b = 2), y = c("foo", "bar")),
+        data_frame(x = 0, y = "baz")
+      ),
+      indices = list(
+        c(1, 2),
+        1
+      ),
+      size = 2,
+      multiple = "last"
+    ),
+    data_frame(
+      x = set_names(c(0, 2), c("", "b")),
+      y = c("baz", "bar")
+    )
+  )
+  expect_identical(
+    list_combine(
+      x = list(
+        data_frame(x = c(1, 2), y = c("foo", "bar")),
+        data_frame(x = c(c = 0), y = "baz")
+      ),
+      indices = list(
+        c(1, 2),
+        1
+      ),
+      size = 2,
+      multiple = "first"
+    ),
+    data_frame(
+      x = set_names(c(1, 2), c("", "")),
+      y = c("foo", "bar")
+    )
+  )
+
+  # Homogenous fallback
+  expect_identical(
+    list_combine(
+      x = list(
+        data_frame(x = foobar(c(a = 1, b = 2)), y = c("foo", "bar")),
+        data_frame(x = foobar(0), y = "baz")
+      ),
+      indices = list(
+        c(1, 2),
+        1
+      ),
+      size = 2,
+      multiple = "last"
+    ),
+    data_frame(
+      x = foobar(set_names(c(0, 2), c("", "b"))),
+      y = c("baz", "bar")
+    )
+  )
+  expect_identical(
+    list_combine(
+      x = list(
+        data_frame(x = foobar(c(1, 2)), y = c("foo", "bar")),
+        data_frame(x = foobar(c(c = 0)), y = "baz")
+      ),
+      indices = list(
+        c(1, 2),
+        1
+      ),
+      size = 2,
+      multiple = "first"
+    ),
+    data_frame(
+      x = foobar(set_names(c(1, 2), c("", ""))),
+      y = c("foo", "bar")
+    )
+  )
+
+  # `c()` fallback
+  with_c_foobar({
+    expect_identical(
+      list_combine(
+        x = list(
+          data_frame(x = foobar(c(a = 1, b = 2)), y = c("foo", "bar")),
+          data_frame(x = foobar(0), y = "baz")
+        ),
+        indices = list(
+          c(1, 2),
+          1
+        ),
+        size = 2,
+        multiple = "last"
+      ),
+      data_frame(
+        x = foobar_c(set_names(c(0, 2), c("", "b"))),
+        y = c("baz", "bar")
+      )
+    )
+  })
+  with_c_foobar({
+    expect_identical(
+      list_combine(
+        x = list(
+          data_frame(x = foobar(c(1, 2)), y = c("foo", "bar")),
+          data_frame(x = foobar(c(c = 0)), y = "baz")
+        ),
+        indices = list(
+          c(1, 2),
+          1
+        ),
+        size = 2,
+        multiple = "first"
+      ),
+      data_frame(
+        x = foobar_c(set_names(c(1, 2), c("", ""))),
+        y = c("foo", "bar")
+      )
+    )
+  })
+})
+
 test_that("index values are validated", {
   x <- list(1, 2)
   indices1 <- list(4, 1)
