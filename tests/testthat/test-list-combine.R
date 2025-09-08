@@ -1271,6 +1271,12 @@ test_that("list_combine() `unmatched` is validated", {
   })
 })
 
+test_that("list_combine() `multiple` is validated", {
+  expect_snapshot(error = TRUE, {
+    list_combine(list(1), indices = list(1), size = 1, multiple = "a")
+  })
+})
+
 test_that("`NA` indices are considered unmatched locations", {
   # The `NA` index is considered "unmatched". It's the same as providing a
   # logical index with an `NA` in it, like indices in this case of: list(c(TRUE,
@@ -1399,11 +1405,39 @@ test_that("can combine with an AsIs list (#1463)", {
 
 test_that("can combine empty vectors", {
   expect_identical(
-    list_combine(list(), indices = list(), size = 0),
+    list_combine(
+      list(),
+      indices = list(),
+      size = 0
+    ),
     unspecified()
   )
   expect_identical(
-    list_combine(list(), indices = list(), size = 0, ptype = numeric()),
+    list_combine(
+      list(),
+      indices = list(),
+      size = 0,
+      multiple = "first"
+    ),
+    unspecified()
+  )
+  expect_identical(
+    list_combine(
+      list(),
+      indices = list(),
+      size = 0,
+      ptype = numeric()
+    ),
+    numeric()
+  )
+  expect_identical(
+    list_combine(
+      list(),
+      indices = list(),
+      size = 0,
+      ptype = numeric(),
+      multiple = "first"
+    ),
     numeric()
   )
 })
@@ -2205,5 +2239,249 @@ test_that("`list_combine()` with logical `indices` checks `indices` size", {
     x = values,
     indices = indices,
     size = size
+  )
+})
+
+test_that("`multiple` can let first index win", {
+  x <- list(
+    1:3,
+    4:6
+  )
+  indices <- list(
+    c(1, 2, 3),
+    c(2, 3, 4)
+  )
+  size <- 4
+
+  expect_identical_list_combine(
+    x = x,
+    indices = indices,
+    size = size,
+    multiple = "first",
+    expect = int(1, 2, 3, 6)
+  )
+  expect_identical_list_combine(
+    x = x,
+    indices = indices,
+    size = size,
+    multiple = "last",
+    expect = int(1, 4, 5, 6)
+  )
+})
+
+test_that("`multiple` works with data frames", {
+  x <- list(
+    data_frame(a = 1:3, b = foobar(4:6), c = foobar(c(7, 8, 9))),
+    data_frame(a = 4:6, b = foobar(7:9), c = foobar(c(10, 11, 12)))
+  )
+  indices <- list(
+    c(1, 2, 3),
+    c(2, 3, 4)
+  )
+  size <- 4
+
+  # Normal and homogeneous fallback mixed
+  expect_identical(
+    list_combine(
+      x = x,
+      indices = indices,
+      size = size,
+      multiple = "first"
+    ),
+    data_frame(
+      a = int(1, 2, 3, 6),
+      b = foobar(int(4, 5, 6, 9)),
+      c = foobar(dbl(7, 8, 9, 12))
+    )
+  )
+
+  # Normal and `c()` fallback mixed
+  with_c_foobar({
+    expect_identical(
+      list_combine(
+        x = x,
+        indices = indices,
+        size = size,
+        multiple = "first"
+      ),
+      data_frame(
+        a = int(1, 2, 3, 6),
+        b = foobar_c(int(4, 5, 6, 9)),
+        c = foobar_c(dbl(7, 8, 9, 12))
+      )
+    )
+  })
+})
+
+test_that("`multiple` works with data frame columns", {
+  x <- list(
+    data_frame(
+      a = 1:3,
+      b = data_frame(x = c("a", "b", "c"), y = foobar(4:6)),
+      c = foobar(c(7, 8, 9))
+    ),
+    data_frame(
+      a = 4:6,
+      b = data_frame(x = c("d", "e", "f"), y = foobar(7:9)),
+      c = foobar(c(10, 11, 12))
+    )
+  )
+  indices <- list(
+    c(1, 2, 3),
+    c(2, 3, 4)
+  )
+  size <- 4
+
+  # Normal and homogeneous fallback mixed
+  expect_identical(
+    list_combine(
+      x = x,
+      indices = indices,
+      size = size,
+      multiple = "first"
+    ),
+    data_frame(
+      a = int(1, 2, 3, 6),
+      b = data_frame(
+        x = c("a", "b", "c", "f"),
+        y = foobar(int(4, 5, 6, 9))
+      ),
+      c = foobar(dbl(7, 8, 9, 12))
+    )
+  )
+
+  # Normal and `c()` fallback mixed
+  with_c_foobar({
+    expect_identical(
+      list_combine(
+        x = x,
+        indices = indices,
+        size = size,
+        multiple = "first"
+      ),
+      data_frame(
+        a = int(1, 2, 3, 6),
+        b = data_frame(
+          x = c("a", "b", "c", "f"),
+          y = foobar_c(int(4, 5, 6, 9))
+        ),
+        c = foobar_c(dbl(7, 8, 9, 12))
+      )
+    )
+  })
+})
+
+test_that("`multiple` shows correctly indexed errors", {
+  # In fallback, reversal happens after recycling and slicing
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = list(1:2, 3L),
+    indices = list(1:3, 4),
+    size = 4,
+    multiple = "first"
+  )
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = list(1:2, 3L),
+    indices = list(1:3, 4),
+    size = 4,
+    multiple = "last"
+  )
+
+  # If there is only 1 issue in `x` sizes, they report consistently
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = list(1:4, 3:5),
+    indices = list(1:3, 4),
+    size = 4,
+    slice_x = TRUE,
+    multiple = "first"
+  )
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = list(1:4, 3:5),
+    indices = list(1:3, 4),
+    size = 4,
+    slice_x = TRUE,
+    multiple = "last"
+  )
+
+  # If there are multiple `x` issues, because we reverse the iteration
+  # order in the main path in the `multiple = "first"` case, we end up
+  # reporting the last problem first, while the fallback case still
+  # reports the fist problem first. The indices in the error are correct
+  # in both cases, so this inconsistency is allowed.
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = list(1:2, 3:5),
+    indices = list(1:3, 4),
+    size = 4,
+    slice_x = TRUE,
+    multiple = "first"
+  )
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = list(1:2, 3:5),
+    indices = list(1:3, 4),
+    size = 4,
+    slice_x = TRUE,
+    multiple = "last"
+  )
+})
+
+test_that("`multiple` also applies to names", {
+  expect_identical_list_combine(
+    x = list(c(a = 1, b = 2), c(c = 3)),
+    indices = list(1:2, 2),
+    size = 2,
+    multiple = "first",
+    expect = c(a = 1, b = 2)
+  )
+  expect_identical_list_combine(
+    x = list(c(a = 1, b = 2), c(c = 3)),
+    indices = list(1:2, 2),
+    size = 2,
+    multiple = "last",
+    expect = c(a = 1, c = 3)
+  )
+})
+
+test_that("`multiple` doesn't affect `default`", {
+  expect_identical_list_combine(
+    x = list(1:2, 4L),
+    indices = list(c(1, 4), 4),
+    size = 5,
+    multiple = "first",
+    default = 0L,
+    expect = int(1, 0, 0, 2, 0)
+  )
+  expect_identical_list_combine(
+    x = list(1:2, 4L),
+    indices = list(c(1, 4), 4),
+    size = 5,
+    multiple = "last",
+    default = 0L,
+    expect = int(1, 0, 0, 4, 0)
+  )
+})
+
+test_that("`multiple` doesn't apply WITHIN a single index", {
+  # You always get the last value within a single index vector.
+  # That possibly makes `multiple = "first"` a little confusing,
+  # but `multiple` is mostly useful with logical vectors anyways
+  # (case_when() style approach), so it doesn't matter much.
+  expect_identical_list_combine(
+    x = list(1:2, 3:4),
+    indices = list(c(1, 1), c(1, 1)),
+    size = 1,
+    multiple = "first",
+    expect = 2L
+  )
+  expect_identical_list_combine(
+    x = list(1:2, 3:4),
+    indices = list(c(1, 1), c(1, 1)),
+    size = 1,
+    multiple = "last",
+    expect = 4L
   )
 })

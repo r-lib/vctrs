@@ -50,6 +50,18 @@
 #'
 #'   - `"error"` to error when there are unmatched locations.
 #'
+#' @param multiple Handling of locations in the output matched by multiple
+#'   `indices`.
+#'
+#'   - `"last"` uses the value from the last matched index.
+#'
+#'   - `"first"` uses the value from the first matched index.
+#'
+#'   Note that `multiple` only applies across `indices`. Within a single index
+#'   if there are overlapping locations, then the last will always win. This can
+#'   only occur with integer `indices`, as you can't overlap within an index
+#'   when using logical `indices`.
+#'
 #' @param slice_x A boolean.
 #'
 #'   If `TRUE`, each element of `x` is sliced by its corresponding index from
@@ -87,9 +99,8 @@
 #' )
 #' list_combine(x, indices = indices, size = 8)
 #'
-#' # Overlapping `indices` are allowed. The output size is
-#' # computed as `sum(list_sizes(indices))` and the last
-#' # index "wins"
+#' # Overlapping `indices` are allowed.
+#' # The last match "wins" by default.
 #' x <- list(
 #'   1:3,
 #'   4:6
@@ -99,6 +110,10 @@
 #'   c(1, 2, 6)
 #' )
 #' list_combine(x, indices = indices, size = 6)
+#'
+#' # Use `multiple` to force the first match to win.
+#' # This is similar to how `dplyr::case_when()` works.
+#' list_combine(x, indices = indices, size = 6, multiple = "first")
 #'
 #' # Works with data frames as well.
 #' # Now how index 2 is not assigned to.
@@ -141,6 +156,7 @@ list_combine <- function(
   size,
   default = NULL,
   unmatched = "default",
+  multiple = "last",
   slice_x = FALSE,
   ptype = NULL,
   name_spec = NULL,
@@ -165,6 +181,7 @@ list_combine <- function(
     size,
     default,
     unmatched,
+    multiple,
     slice_x,
     ptype,
     name_spec,

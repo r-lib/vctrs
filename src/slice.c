@@ -453,6 +453,19 @@ r_obj* vec_slice_opts(r_obj* x,
   return out;
 }
 
+// Reverse a vector
+r_obj* vec_reverse(r_obj* x) {
+  const r_ssize size = vec_size(x);
+  const r_ssize start = (size == 0) ? 0 : size - 1;
+  const bool increasing = false;
+  r_obj* index = KEEP(compact_seq(start, size, increasing));
+
+  r_obj* out = vec_slice_unsafe(x, index);
+
+  FREE(1);
+  return out;
+}
+
 r_obj* vec_init(r_obj* x, r_ssize n) {
   obj_check_vector(x, vec_args.x, lazy_calls.vec_init);
 
