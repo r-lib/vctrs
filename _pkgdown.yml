@@ -64,6 +64,10 @@ reference:
   - vec_assign
   - vec_fill_missing
 
+- title: Recoding
+  contents:
+  - vec_case_when
+
 - title: Equality and ordering
   contents:
   - vec_equal

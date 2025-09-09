@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_case_when()` and `vec_replace_when()` for recoding and replacing using logical conditions (#2024).
+
 * `vec_equal()` now efficiently internally recycles `x` and `y` elements of size 1 (#2028).
 
 * `list_unchop()` now assigns names correctly when overlapping `indices` are involved (#2019).

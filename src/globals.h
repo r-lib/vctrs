@@ -6,6 +6,7 @@
 
 struct syms {
   r_obj* arg;
+  r_obj* cases_arg;
   r_obj* default_arg;
   r_obj* dot_arg;
   r_obj* dot_call;
@@ -19,6 +20,7 @@ struct syms {
   r_obj* times_arg;
   r_obj* to_arg;
   r_obj* value_arg;
+  r_obj* values_arg;
   r_obj* vec_default_cast;
   r_obj* vec_slice_dispatch_integer64;
   r_obj* vec_slice_fallback;
