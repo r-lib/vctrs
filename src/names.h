@@ -58,7 +58,7 @@ r_obj* vec_as_unique_names(r_obj* names, bool quiet);
 r_obj* r_seq_chr(const char* prefix, r_ssize n);
 r_obj* r_chr_paste_prefix(r_obj* names, const char* prefix, const char* sep);
 
-r_obj* vec_set_names(r_obj* x, r_obj* names);
+r_obj* vec_set_names(r_obj* x, r_obj* names, const enum vctrs_ownership ownership);
 r_obj* vec_proxy_set_names(r_obj* x, r_obj* names, const enum vctrs_ownership ownership);
 
 

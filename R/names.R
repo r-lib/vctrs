@@ -458,7 +458,7 @@ set_names_dispatch <- function(x, names) {
 #' @rdname vec_names
 #' @export
 vec_set_names <- function(x, names) {
-  .Call(vctrs_set_names, x, names)
+  .Call(ffi_vec_set_names, x, names)
 }
 
 #' Repair names with legacy method

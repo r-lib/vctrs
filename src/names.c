@@ -870,12 +870,17 @@ r_obj* vec_set_names_impl(r_obj* x, r_obj* names, bool proxy, const enum vctrs_o
   FREE(1);
   return x;
 }
-// [[ register() ]]
-r_obj* vec_set_names(r_obj* x, r_obj* names) {
-  return vec_set_names_impl(x, names, false, VCTRS_OWNERSHIP_foreign);
+
+r_obj* vec_set_names(r_obj* x, r_obj* names, const enum vctrs_ownership ownership) {
+  return vec_set_names_impl(x, names, false, ownership);
 }
 r_obj* vec_proxy_set_names(r_obj* x, r_obj* names, const enum vctrs_ownership ownership) {
   return vec_set_names_impl(x, names, true, ownership);
+}
+
+r_obj* ffi_vec_set_names(r_obj* x, r_obj* names) {
+  // Comes from the R side, so `VCTRS_OWNERSHIP_foreign`
+  return vec_set_names(x, names, VCTRS_OWNERSHIP_foreign);
 }
 
 

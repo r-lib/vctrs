@@ -706,13 +706,13 @@ r_obj* list_combine_impl(
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, p_name_repair_opts));
-    out = vec_set_names(out, out_names);
+    out = vec_set_names(out, out_names, restore_opts.ownership);
     FREE(1);
   } else if (!assign_names) {
     // FIXME: `vec_ptype2()` doesn't consistently zaps names, so `out`
     // might have been initialised with names. This branch can be
     // removed once #1020 is resolved.
-    out = vec_set_names(out, r_null);
+    out = vec_set_names(out, r_null, restore_opts.ownership);
   }
 
   FREE(n_protect);
