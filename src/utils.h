@@ -196,12 +196,6 @@ r_ssize vec_condition_subscript_sum(r_obj* x, bool na_true);
 
 bool is_integer64(SEXP x);
 
-void obj_check_bare_logical(
-  r_obj* x,
-  struct vctrs_arg* p_x_arg,
-  struct r_lazy call
-);
-
 bool lgl_any_na(SEXP x);
 
 SEXP colnames(SEXP x);

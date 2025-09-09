@@ -1067,36 +1067,6 @@ bool is_integer64(SEXP x) {
   return TYPEOF(x) == REALSXP && Rf_inherits(x, "integer64");
 }
 
-static inline
-void stop_bare_logical(
-  r_obj* x,
-  struct vctrs_arg* p_x_arg,
-  struct r_lazy call
-) {
-  r_abort_lazy_call(
-    call,
-    "%s must be a logical vector, not %s.",
-    vec_arg_format(p_x_arg),
-    r_obj_type_friendly(x)
-  );
-}
-
-void obj_check_bare_logical(
-  r_obj* x,
-  struct vctrs_arg* p_x_arg,
-  struct r_lazy call
-) {
-  if (r_typeof(x) != R_TYPE_logical) {
-    stop_bare_logical(x, p_x_arg, call);
-  }
-  if (r_is_object(x)) {
-    stop_bare_logical(x, p_x_arg, call);
-  }
-  if (has_dim(x)) {
-    stop_bare_logical(x, p_x_arg, call);
-  }
-}
-
 // [[ include("utils.h") ]]
 bool lgl_any_na(SEXP x) {
   R_xlen_t size = Rf_xlength(x);
