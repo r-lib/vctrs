@@ -1,5 +1,6 @@
 #include "list-combine.h"
 #include "vctrs.h"
+#include "vec-bool.h"
 
 #include "decl/list-combine-decl.h"
 
@@ -622,9 +623,12 @@ r_obj* list_combine_impl(
   }
 
   if (has_default) {
-    // `default` uses a slightly modified form of `proxy_assign_opts` and `cast_opts`
-    // - `default` is size 1 or size of the output, so uses `ASSIGNMENT_SLICE_VALUE_yes`.
-    // - `default`'s index is always built using a logical vector, so uses `VCTRS_INDEX_STYLE_condition`.
+    // `default` uses a slightly modified form of `proxy_assign_opts` and
+    // `cast_opts`
+    // - `default` is size 1 or size of the output, so uses
+    //   `ASSIGNMENT_SLICE_VALUE_yes`.
+    // - `default`'s index is always built using a special compact condition
+    //   vector, so uses `VCTRS_INDEX_STYLE_condition`.
     // - `default` has its own special `p_default_arg`.
     struct vec_proxy_assign_opts default_proxy_assign_opts = proxy_assign_opts;
     default_proxy_assign_opts.index_style = VCTRS_INDEX_STYLE_condition;
@@ -633,7 +637,7 @@ r_obj* list_combine_impl(
     struct cast_opts default_cast_opts = cast_opts;
     default_cast_opts.p_x_arg = p_default_arg;
 
-    // Compute `default` condition index
+    // Compute `default` compact condition index
     index = compute_default_index(indices, indices_style, size);
     KEEP_AT(index, index_pi);
 
@@ -647,12 +651,6 @@ r_obj* list_combine_impl(
       r_obj* inner = KEEP(vec_names(default_));
       r_obj* x_names = KEEP(apply_name_spec(name_spec, outer, inner, size));
 
-      // `default` assigns at the unmatched locations, so there won't be
-      // anything to clear here, unlike in the main loop
-      // if (has_indices && x_names == r_null && out_names != r_null) {
-      //   x_names = r_chrs.empty_string;
-      // }
-
       if (x_names != r_null) {
         R_LAZY_ALLOC(out_names, out_names_pi, R_TYPE_character, size);
         out_names = chr_assign(
@@ -660,8 +658,8 @@ r_obj* list_combine_impl(
           index,
           x_names,
           VCTRS_OWNERSHIP_deep,
-          ASSIGNMENT_SLICE_VALUE_yes,
-          VCTRS_INDEX_STYLE_condition
+          default_proxy_assign_opts.slice_value,
+          default_proxy_assign_opts.index_style
         );
         KEEP_AT(out_names, out_names_pi);
       }
@@ -1192,7 +1190,7 @@ r_obj* base_list_combine_fallback(
     // Materialize the `default`'s index in location style, as that is what
     // we normalized `indices` to.
     r_obj* default_index = KEEP(compute_default_index(indices, indices_style, size));
-    default_index = KEEP(r_lgl_which(default_index, false));
+    default_index = KEEP(compact_condition_materialize_location(default_index));
 
     // `default` recycles against the output size
     const r_ssize default_size = vec_size(default_);
@@ -1620,9 +1618,10 @@ void check_any_unmatched(
   struct r_lazy error_call
 ) {
   r_obj* default_index = KEEP(compute_default_index(indices, indices_style, size));
+  const bool* v_default_index = compact_condition_cbegin(default_index);
 
-  if (r_lgl_any(default_index)) {
-    r_obj* loc = KEEP(r_lgl_which(default_index, false));
+  if (p_bool_any(v_default_index, size)) {
+    r_obj* loc = KEEP(compact_condition_materialize_location(default_index));
     stop_combine_unmatched(loc, error_call);
   }
 
@@ -1648,6 +1647,7 @@ void stop_combine_unmatched(r_obj* loc, struct r_lazy error_call) {
   never_reached("stop_combine_unmatched");
 }
 
+// Returns a compact_condition index
 static
 r_obj* compute_default_index(
   r_obj* indices,
@@ -1657,11 +1657,11 @@ r_obj* compute_default_index(
   const r_ssize indices_size = r_length(indices);
   r_obj* const* v_indices = r_list_cbegin(indices);
 
-  r_obj* out = KEEP(r_alloc_logical(size));
-  int* v_out = r_lgl_begin(out);
+  r_obj* out = KEEP(new_compact_condition(size));
+  bool* v_out = compact_condition_begin(out);
 
   // Initialize mark everything as unmatched
-  r_p_lgl_fill(v_out, 1, size);
+  p_bool_fill(v_out, size, true);
 
   // Unmark matched locations according to the index style
   switch (indices_style) {
@@ -1676,7 +1676,7 @@ r_obj* compute_default_index(
 
         if (elt != r_globals.na_int) {
           // If not `NA`, mark location as matched by at least 1 index
-          v_out[elt - 1] = 0;
+          v_out[elt - 1] = false;
         }
       }
     }
@@ -1691,7 +1691,7 @@ r_obj* compute_default_index(
         const int elt = v_index[j];
         // If `TRUE`, mark location as matched by at least 1 index.
         // Specially optimized to be branchless, which does greatly help.
-        v_out[j] *= (elt != 1);
+        v_out[j] &= (elt != 1);
       }
     }
     break;
