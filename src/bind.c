@@ -347,8 +347,9 @@ r_obj* as_df_row_impl(r_obj* x,
     r_attrib_poke(x, r_syms.dim_names, r_null);
   }
 
-  // Remove names first as they are promoted to data frame column names
-  x = KEEP(vec_set_names(x, r_null));
+  // Remove names first as they are promoted to data frame column names.
+  // Can be a user side object, so use `VCTRS_OWNERSHIP_foreign`.
+  x = KEEP(vec_set_names(x, r_null, VCTRS_OWNERSHIP_foreign));
 
   x = KEEP(vec_chop_unsafe(x, r_null, r_null));
   r_attrib_poke_names(x, nms);

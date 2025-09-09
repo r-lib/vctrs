@@ -31,7 +31,7 @@ SEXP exp_vec_names(SEXP x) {
 }
 
 SEXP exp_vec_set_names(SEXP x, SEXP names) {
-  return vec_set_names(x, names);
+  return vec_set_names(x, names, VCTRS_OWNERSHIP_foreign);
 }
 
 SEXP exp_short_compact_seq(R_len_t start, R_len_t size, bool increasing) {
