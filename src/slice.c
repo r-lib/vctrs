@@ -57,7 +57,7 @@
 
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)               \
   if (!materialize && ALTREP(x)) {                                      \
-    r_obj* alt_subscript = KEEP(compact_materialize(subscript));        \
+    r_obj* alt_subscript = KEEP(vec_subscript_materialize(subscript));  \
     r_obj* out = ALTVEC_EXTRACT_SUBSET_PROXY(x, alt_subscript, r_null); \
     FREE(1);                                                            \
     if (out != NULL) {                                                  \
@@ -296,9 +296,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
       obj_check_vector(x, NULL, r_lazy_null);
     }
 
-    if (is_compact(subscript)) {
-      subscript = KEEP_N(compact_materialize(subscript), &nprot);
-    }
+    subscript = KEEP_N(vec_subscript_materialize(subscript), &nprot);
 
     r_obj* out;
 

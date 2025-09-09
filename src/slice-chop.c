@@ -458,10 +458,7 @@ r_obj* chop_fallback(r_obj* x, struct vctrs_chop_indices* p_indices) {
   for (r_ssize i = 0; i < out_size; ++i) {
     r_obj* index = indices_next(p_indices);
 
-    if (is_compact(index)) {
-      index = compact_materialize(index);
-    }
-    KEEP(index);
+    index = KEEP(vec_subscript_materialize(index));
 
     // Update `i` binding with the new index value
     r_env_poke(env, syms_i, index);
@@ -489,10 +486,7 @@ r_obj* chop_fallback_shaped(r_obj* x, struct vctrs_chop_indices* p_indices) {
   for (r_ssize i = 0; i < out_size; ++i) {
     r_obj* index = indices_next(p_indices);
 
-    if (is_compact(index)) {
-      index = compact_materialize(index);
-    }
-    KEEP(index);
+    index = KEEP(vec_subscript_materialize(index));
 
     // `vec_slice_fallback()` will also `vec_restore()` for us
     r_obj* elt = vec_slice_fallback(x, index);

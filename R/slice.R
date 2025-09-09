@@ -300,6 +300,19 @@ vec_assign_seq <- function(
   .Call(ffi_assign_seq, x, value, start, size, increasing, slice_value)
 }
 
+vec_assign_compact_condition <- function(
+  x,
+  i,
+  value,
+  slice_value = FALSE
+) {
+  .Call(ffi_assign_compact_condition, x, i, value, slice_value)
+}
+
+as_compact_condition <- function(x) {
+  .Call(ffi_as_compact_condition, x)
+}
+
 #' @param assign_names A boolean. If `TRUE`, will assign names from `value`
 #'   onto `x` as well.
 #'

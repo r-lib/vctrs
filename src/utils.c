@@ -1,6 +1,7 @@
 #include "vctrs-core.h"
 #include "vctrs.h"
 #include "type-data-frame.h"
+#include "vec-bool.h"
 #include <R_ext/Rdynload.h>
 
 // Initialised at load time
@@ -901,15 +902,123 @@ SEXP compact_rep_materialize(SEXP x) {
   return out;
 }
 
-bool is_compact(SEXP x) {
-  return is_compact_rep(x) || is_compact_seq(x);
+// Initialised at load time
+SEXP compact_condition_attrib = NULL;
+
+/**
+ * Compact condition index
+ *
+ * A condition index usable with `VCTRS_INDEX_STYLE_condition`
+ * that is backed by a RAWSXP bool array rather than a LGLSXP.
+ *
+ * Extremely useful when you only have `true` and `false` values
+ * and you construct the index at the C level (like `default`
+ * locations in `list_combine()`).
+ *
+ * Using a bool array is 4x less memory than a LGLSXP, and is
+ * faster due to being able to load more of the array into a
+ * single cache line.
+ */
+r_obj* new_compact_condition(R_xlen_t size) {
+  if (size < 0) {
+    r_stop_internal("Negative `size` in `compact_condition()`.");
+  }
+
+  r_obj* out = KEEP(r_alloc_raw(size * sizeof(bool)));
+
+  SET_ATTRIB(out, compact_condition_attrib);
+
+  FREE(1);
+  return out;
 }
 
-SEXP compact_materialize(SEXP x) {
+bool is_compact_condition(r_obj* x) {
+  return ATTRIB(x) == compact_condition_attrib;
+}
+
+r_ssize compact_condition_size(r_obj* x) {
+  // Should always be the same as the length, but you never know
+  return r_length(x) / sizeof(bool);
+}
+
+// Materializes as its corresponding logical index.
+// Maintains `index_style` of `VCTRS_INDEX_STYLE_condition`.
+r_obj* compact_condition_materialize(r_obj* x) {
+  const bool* v_x = compact_condition_cbegin(x);
+  const r_ssize size = compact_condition_size(x);
+
+  r_obj* out = KEEP(r_alloc_logical(size));
+  int* v_out = r_lgl_begin(out);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    v_out[i] = v_x[i];
+  }
+
+  FREE(1);
+  return out;
+}
+
+// Materializes as its corresponding `VCTRS_INDEX_STYLE_location` index
+r_obj* compact_condition_materialize_location(r_obj* x) {
+  const bool* v_x = compact_condition_cbegin(x);
+  const r_ssize size = compact_condition_size(x);
+  return p_bool_which(v_x, size);
+}
+
+bool* compact_condition_begin(r_obj* x) {
+  return (bool*) r_raw_begin(x);
+}
+const bool* compact_condition_cbegin(r_obj* x) {
+  return (const bool*) r_raw_cbegin(x);
+}
+
+r_ssize compact_condition_sum(r_obj* x) {
+  const bool* v_x = compact_condition_cbegin(x);
+  const r_ssize size = compact_condition_size(x);
+  return p_bool_sum(v_x, size);
+}
+
+// Exported for testing with `vec_assign_compact_condition()`
+r_obj* ffi_as_compact_condition(r_obj* x) {
+  if (r_typeof(x) != R_TYPE_logical) {
+    r_stop_internal("`x` must be a logical condition vector.");
+  }
+
+  const r_ssize size = r_length(x);
+  const int* v_x = r_lgl_cbegin(x);
+
+  r_obj* out = KEEP(new_compact_condition(size));
+  bool* v_out = compact_condition_begin(out);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    const int elt = v_x[i];
+
+    if (elt == r_globals.na_int) {
+      r_stop_internal("Can't use `NA` when creating a `compact_condition`.");
+    }
+
+    v_out[i] = elt;
+  }
+
+  FREE(1);
+  return out;
+}
+
+// Materialize the subscript as its corresponding `index_style`
+//
+// - integer -> `VCTRS_INDEX_STYLE_location`
+// - compact_rep -> `VCTRS_INDEX_STYLE_location`
+// - compact_seq -> `VCTRS_INDEX_STYLE_location`
+//
+// - logical -> `VCTRS_INDEX_STYLE_condition`
+// - compact_condition -> `VCTRS_INDEX_STYLE_condition`
+SEXP vec_subscript_materialize(SEXP x) {
   if (is_compact_rep(x)) {
     return compact_rep_materialize(x);
   } else if (is_compact_seq(x)) {
     return compact_seq_materialize(x);
+  } else if (is_compact_condition(x)) {
+    return compact_condition_materialize(x);
   } else {
     return x;
   }
@@ -920,8 +1029,18 @@ R_len_t vec_subscript_size(SEXP x) {
     return r_int_get(x, 1);
   } else if (is_compact_seq(x)) {
     return r_int_get(x, 1);
+  } else if (is_compact_condition(x)) {
+    return compact_condition_size(x);
   } else {
     return vec_size(x);
+  }
+}
+
+r_ssize vec_condition_subscript_sum(r_obj* x, bool na_true) {
+  if (is_compact_condition(x)) {
+    return compact_condition_sum(x);
+  } else {
+    return r_lgl_sum(x, na_true);
   }
 }
 
@@ -1918,6 +2037,10 @@ void vctrs_init_utils(SEXP ns) {
   compact_rep_attrib = Rf_cons(R_NilValue, R_NilValue);
   R_PreserveObject(compact_rep_attrib);
   SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
+
+  compact_condition_attrib = Rf_cons(R_NilValue, R_NilValue);
+  R_PreserveObject(compact_condition_attrib);
+  SET_TAG(compact_condition_attrib, Rf_install("vctrs_compact_condition"));
 
   {
     SEXP result_names = PROTECT(Rf_allocVector(STRSXP, 2));

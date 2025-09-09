@@ -260,7 +260,7 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
   r_obj* out = r_null;
 
   if (vec_requires_fallback(value, value_info)) {
-    index = KEEP_N(compact_materialize(index), &n_protect);
+    index = KEEP_N(vec_subscript_materialize(index), &n_protect);
     out = KEEP_N(vec_assign_fallback(proxy, index, value, opts_copy.slice_value, opts_copy.index_style), &n_protect);
   } else if (has_dim(proxy)) {
     out = KEEP_N(vec_assign_shaped(proxy, index, value_info.proxy, opts_copy.ownership, opts_copy.slice_value, opts_copy.index_style), &n_protect);
@@ -386,9 +386,18 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
  * difference in `list_combine()` (used by `dplyr::if_else()` and `dplyr::case_when()`)
  * where you end up hitting this loop once per expression.
  */
-#define ASSIGN_CONDITION_INDEX(CTYPE, DEREF, CONST_DEREF, VALUE_INCR)                     \
-  const r_ssize index_size = r_length(index);                                             \
-  const int* index_data = r_lgl_cbegin(index);                                            \
+#define ASSIGN_CONDITION_IMPL(                                                            \
+  CTYPE,                                                                                  \
+  DEREF,                                                                                  \
+  CONST_DEREF,                                                                            \
+  VALUE_INCR,                                                                             \
+  INDEX_CTYPE,                                                                            \
+  INDEX_SIZE,                                                                             \
+  INDEX_CONST_DEREF,                                                                      \
+  INDEX_ELT_CMP                                                                           \
+)                                                                                         \
+  const r_ssize index_size = INDEX_SIZE(index);                                           \
+  const INDEX_CTYPE* index_data = INDEX_CONST_DEREF(index);                               \
                                                                                           \
   const CTYPE* value_data = CONST_DEREF(value);                                           \
                                                                                           \
@@ -398,22 +407,60 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
   r_ssize value_loc = 0;                                                                  \
                                                                                           \
   for (r_ssize index_loc = 0; index_loc < index_size; ++index_loc) {                      \
-    const int index_elt = index_data[index_loc];                                          \
-    out_data[index_loc] = (index_elt == 1) ? value_data[value_loc] : out_data[index_loc]; \
+    const INDEX_CTYPE index_elt = index_data[index_loc];                                  \
+    out_data[index_loc] = (INDEX_ELT_CMP) ? value_data[value_loc] : out_data[index_loc];  \
     value_loc += VALUE_INCR;                                                              \
   }                                                                                       \
                                                                                           \
   FREE(1);                                                                                \
   return out
 
+#define ASSIGN_CONDITION_INDEX(                                        \
+  CTYPE,                                                               \
+  DEREF,                                                               \
+  CONST_DEREF,                                                         \
+  VALUE_INCR                                                           \
+)                                                                      \
+  ASSIGN_CONDITION_IMPL(                                               \
+    CTYPE,                                                             \
+    DEREF,                                                             \
+    CONST_DEREF,                                                       \
+    VALUE_INCR,                                                        \
+    int,                                                               \
+    r_length,                                                          \
+    r_lgl_cbegin,                                                      \
+    index_elt == 1                                                     \
+  )                                                                    \
+
+#define ASSIGN_CONDITION_COMPACT(                                      \
+  CTYPE,                                                               \
+  DEREF,                                                               \
+  CONST_DEREF,                                                         \
+  VALUE_INCR                                                           \
+)                                                                      \
+  ASSIGN_CONDITION_IMPL(                                               \
+    CTYPE,                                                             \
+    DEREF,                                                             \
+    CONST_DEREF,                                                       \
+    VALUE_INCR,                                                        \
+    bool,                                                              \
+    compact_condition_size,                                            \
+    compact_condition_cbegin,                                          \
+    index_elt                                                          \
+  )                                                                    \
+
 #define ASSIGN_CONDITION(CTYPE, DEREF, CONST_DEREF)                              \
   const r_ssize value_size = r_length(value);                                    \
   check_assign_sizes(x, index, value_size, slice_value, index_style);            \
                                                                                  \
-  if (is_compact_seq(index)) {                                                   \
-    r_stop_internal(                                                             \
-      "Compact sequence `index` are not supported in the condition path."        \
-    );                                                                           \
+  if (is_compact_condition(index)) {                                             \
+    if (value_size == 1) {                                                       \
+      ASSIGN_CONDITION_COMPACT(CTYPE, DEREF, CONST_DEREF, 0);                    \
+    } else if (should_slice_value(slice_value)) {                                \
+      ASSIGN_CONDITION_COMPACT(CTYPE, DEREF, CONST_DEREF, 1);                    \
+    } else {                                                                     \
+      ASSIGN_CONDITION_COMPACT(CTYPE, DEREF, CONST_DEREF, index_elt);            \
+    }                                                                            \
   } else {                                                                       \
     if (value_size == 1) {                                                       \
       ASSIGN_CONDITION_INDEX(CTYPE, DEREF, CONST_DEREF, 0);                      \
@@ -554,7 +601,7 @@ r_obj* raw_assign(
   }
 
 /**
- * Unlike with `ASSIGN_CONDITION_INDEX`, here we prefer the conditional style
+ * Unlike with `ASSIGN_CONDITION_IMPL`, here we prefer the conditional style
  * of:
  *
  * ```
@@ -572,9 +619,18 @@ r_obj* raw_assign(
  * This is likely the case because we no longer gain benefits from keeping `out_data`
  * "hot" due to the indirection required by the `SET()` function.
  */
-#define ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, VALUE_INCR)     \
-  const r_ssize index_size = r_length(index);                                   \
-  const int* index_data = r_lgl_cbegin(index);                                  \
+#define ASSIGN_BARRIER_CONDITION_IMPL(                                          \
+  CTYPE,                                                                        \
+  CONST_DEREF,                                                                  \
+  SET,                                                                          \
+  VALUE_INCR,                                                                   \
+  INDEX_CTYPE,                                                                  \
+  INDEX_SIZE,                                                                   \
+  INDEX_CONST_DEREF,                                                            \
+  INDEX_ELT_CMP                                                                 \
+)                                                                               \
+  const r_ssize index_size = INDEX_SIZE(index);                                 \
+  const INDEX_CTYPE* index_data = INDEX_CONST_DEREF(index);                     \
                                                                                 \
   CTYPE const* value_data = CONST_DEREF(value);                                 \
                                                                                 \
@@ -583,8 +639,8 @@ r_obj* raw_assign(
   r_ssize value_loc = 0;                                                        \
                                                                                 \
   for (r_ssize index_loc = 0; index_loc < index_size; ++index_loc) {            \
-    const int index_elt = index_data[index_loc];                                \
-    if (index_elt == 1) {                                                       \
+    const INDEX_CTYPE index_elt = index_data[index_loc];                        \
+    if (INDEX_ELT_CMP) {                                                        \
       SET(out, index_loc, value_data[value_loc]);                               \
     }                                                                           \
     value_loc += VALUE_INCR;                                                    \
@@ -593,22 +649,60 @@ r_obj* raw_assign(
   FREE(1);                                                                      \
   return out
 
-#define ASSIGN_BARRIER_CONDITION(CTYPE, CONST_DEREF, SET)                      \
-  const r_ssize value_size = r_length(value);                                  \
-  check_assign_sizes(x, index, value_size, slice_value, index_style);          \
-                                                                               \
-  if (is_compact_seq(index)) {                                                 \
-    r_stop_internal(                                                           \
-      "Compact sequence `index` are not supported in the condition path."      \
-    );                                                                         \
-  } else {                                                                     \
-    if (value_size == 1) {                                                     \
-      ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, 0);              \
-    } else if (should_slice_value(slice_value)) {                              \
-      ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, 1);              \
-    } else {                                                                   \
-      ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, index_elt != 0); \
-    }                                                                          \
+#define ASSIGN_BARRIER_CONDITION_INDEX(                                \
+  CTYPE,                                                               \
+  CONST_DEREF,                                                         \
+  SET,                                                                 \
+  VALUE_INCR                                                           \
+)                                                                      \
+  ASSIGN_BARRIER_CONDITION_IMPL(                                       \
+    CTYPE,                                                             \
+    CONST_DEREF,                                                       \
+    SET,                                                               \
+    VALUE_INCR,                                                        \
+    int,                                                               \
+    r_length,                                                          \
+    r_lgl_cbegin,                                                      \
+    index_elt == 1                                                     \
+  )                                                                    \
+
+#define ASSIGN_BARRIER_CONDITION_COMPACT(                              \
+  CTYPE,                                                               \
+  CONST_DEREF,                                                         \
+  SET,                                                                 \
+  VALUE_INCR                                                           \
+)                                                                      \
+  ASSIGN_BARRIER_CONDITION_IMPL(                                       \
+    CTYPE,                                                             \
+    CONST_DEREF,                                                       \
+    SET,                                                               \
+    VALUE_INCR,                                                        \
+    bool,                                                              \
+    compact_condition_size,                                            \
+    compact_condition_cbegin,                                          \
+    index_elt                                                          \
+  )                                                                    \
+
+#define ASSIGN_BARRIER_CONDITION(CTYPE, CONST_DEREF, SET)                       \
+  const r_ssize value_size = r_length(value);                                   \
+  check_assign_sizes(x, index, value_size, slice_value, index_style);           \
+                                                                                \
+  if (is_compact_condition(index)) {                                            \
+    if (value_size == 1) {                                                      \
+      ASSIGN_BARRIER_CONDITION_COMPACT(CTYPE, CONST_DEREF, SET, 0);             \
+    } else if (should_slice_value(slice_value)) {                               \
+      ASSIGN_BARRIER_CONDITION_COMPACT(CTYPE, CONST_DEREF, SET, 1);             \
+    } else {                                                                    \
+      ASSIGN_BARRIER_CONDITION_COMPACT(CTYPE, CONST_DEREF, SET, index_elt);     \
+    }                                                                           \
+  } else {                                                                      \
+    if (value_size == 1) {                                                      \
+      ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, 0);               \
+    } else if (should_slice_value(slice_value)) {                               \
+      ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, 1);               \
+    } else {                                                                    \
+      ASSIGN_BARRIER_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, index_elt != 0);  \
+    }                                                                           \
   }
 
 #define ASSIGN_BARRIER(CTYPE, CONST_DEREF, SET)                         \
@@ -916,7 +1010,7 @@ void check_recyclable_against_index(
   case ASSIGNMENT_SLICE_VALUE_no: {
     switch (index_style) {
     case VCTRS_INDEX_STYLE_location: check_size = vec_subscript_size(index); break;
-    case VCTRS_INDEX_STYLE_condition: check_size = r_lgl_sum(index, true); break;
+    case VCTRS_INDEX_STYLE_condition: check_size = vec_condition_subscript_sum(index, true); break;
     default: r_stop_unreachable();
     }
     break;
@@ -987,6 +1081,65 @@ r_obj* ffi_assign_seq(
   r_obj* out = vec_restore_opts(proxy, x, &restore_opts);
 
   FREE(4);
+  return out;
+}
+
+// Exported for testing
+// [[ register() ]]
+r_obj* ffi_assign_compact_condition(
+  r_obj* x,
+  r_obj* index,
+  r_obj* value,
+  r_obj* ffi_slice_value
+) {
+  struct r_lazy call = r_lazy_null;
+
+  const enum assignment_slice_value slice_value =
+    r_arg_as_bool(ffi_slice_value, "slice_value") ?
+    ASSIGNMENT_SLICE_VALUE_yes :
+    ASSIGNMENT_SLICE_VALUE_no;
+
+  if (!is_compact_condition(index)) {
+    r_stop_internal("`index` must be a `compact_condition`.");
+  }
+
+  const enum vctrs_index_style index_style = VCTRS_INDEX_STYLE_condition;
+
+  // Comes from the R side, so not owned, and not proxying recursively
+  const struct vec_proxy_assign_opts assign_opts = {
+    .x_arg = vec_args.x,
+    .value_arg = vec_args.value,
+    .call = call,
+    .slice_value = slice_value,
+    .index_style = index_style,
+    .ownership = VCTRS_OWNERSHIP_foreign,
+    .recursively_proxied = false
+  };
+  struct vec_restore_opts restore_opts = {
+    .ownership = VCTRS_OWNERSHIP_foreign,
+    .recursively_proxied = false
+  };
+
+  const r_ssize x_size = vec_size(x);
+
+  // Cast `value` and check that it can recycle
+  value = KEEP(vec_cast(value, x, vec_args.value, vec_args.x, call));
+
+  check_recyclable_against_index(
+    value,
+    index,
+    x_size,
+    assign_opts.slice_value,
+    assign_opts.index_style,
+    assign_opts.value_arg,
+    assign_opts.call
+  );
+
+  r_obj* proxy = KEEP(vec_proxy(x));
+  proxy = KEEP(vec_proxy_assign_opts(proxy, index, value, &assign_opts));
+  r_obj* out = vec_restore_opts(proxy, x, &restore_opts);
+
+  FREE(3);
   return out;
 }
 

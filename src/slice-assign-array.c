@@ -99,23 +99,27 @@
 
 // Strides information is not required here!
 //
-// See `ASSIGN_CONDITION_INDEX` for rationale on using a ternary inside
+// See `ASSIGN_CONDITION_IMPL` for rationale on using a ternary inside
 // the assignment loop to keep `p_out` "hot".
-#define ASSIGN_SHAPED_CONDITION_INDEX(                                                                 \
+#define ASSIGN_SHAPED_CONDITION_IMPL(                                                                  \
   CTYPE,                                                                                               \
   DEREF,                                                                                               \
   CONST_DEREF,                                                                                         \
   SLICE_VALUE,                                                                                         \
   VALUE_LOC_POST_INDEX_INCREMENT,                                                                      \
-  VALUE_LOC_POST_SHAPE_INCREMENT                                                                       \
+  VALUE_LOC_POST_SHAPE_INCREMENT,                                                                      \
+  INDEX_CTYPE,                                                                                         \
+  INDEX_SIZE,                                                                                          \
+  INDEX_CONST_DEREF,                                                                                   \
+  INDEX_ELT_CMP                                                                                        \
 )                                                                                                      \
   r_obj* dim = PROTECT(vec_dim(proxy));                                                                \
   const int* p_dim = INTEGER_RO(dim);                                                                  \
   R_len_t dim_n = Rf_length(dim);                                                                      \
   R_len_t shape_elem_n = vec_shape_elem_n(p_dim, dim_n);                                               \
                                                                                                        \
-  R_len_t index_size = r_length(index);                                                                \
-  const int* p_index = r_int_cbegin(index);                                                            \
+  R_len_t index_size = INDEX_SIZE(index);                                                              \
+  const INDEX_CTYPE* p_index = INDEX_CONST_DEREF(index);                                               \
                                                                                                        \
   SEXP out = PROTECT(vec_clone_referenced(proxy, ownership));                                          \
   CTYPE* p_out = DEREF(out);                                                                           \
@@ -126,8 +130,8 @@
                                                                                                        \
   for (R_len_t i = 0; i < shape_elem_n; ++i) {                                                         \
     for (R_len_t index_loc = 0; index_loc < index_size; ++index_loc) {                                 \
-      const int index_elt = p_index[index_loc];                                                        \
-      p_out[out_loc] = (index_elt == 1) ? p_value[SLICE_VALUE ? out_loc : value_loc] : p_out[out_loc]; \
+      const INDEX_CTYPE index_elt = p_index[index_loc];                                                \
+      p_out[out_loc] = (INDEX_ELT_CMP) ? p_value[SLICE_VALUE ? out_loc : value_loc] : p_out[out_loc];  \
       ++out_loc;                                                                                       \
       value_loc += VALUE_LOC_POST_INDEX_INCREMENT;                                                     \
     }                                                                                                  \
@@ -136,6 +140,48 @@
                                                                                                        \
   UNPROTECT(2);                                                                                        \
   return out
+
+#define ASSIGN_SHAPED_CONDITION_INDEX(                                                                 \
+  CTYPE,                                                                                               \
+  DEREF,                                                                                               \
+  CONST_DEREF,                                                                                         \
+  SLICE_VALUE,                                                                                         \
+  VALUE_LOC_POST_INDEX_INCREMENT,                                                                      \
+  VALUE_LOC_POST_SHAPE_INCREMENT                                                                       \
+)                                                                                                      \
+  ASSIGN_SHAPED_CONDITION_IMPL(                                                                        \
+    CTYPE,                                                                                             \
+    DEREF,                                                                                             \
+    CONST_DEREF,                                                                                       \
+    SLICE_VALUE,                                                                                       \
+    VALUE_LOC_POST_INDEX_INCREMENT,                                                                    \
+    VALUE_LOC_POST_SHAPE_INCREMENT,                                                                    \
+    int,                                                                                               \
+    r_length,                                                                                          \
+    r_lgl_cbegin,                                                                                      \
+    index_elt == 1                                                                                     \
+  )                                                                                                    \
+
+#define ASSIGN_SHAPED_CONDITION_COMPACT(                                                               \
+  CTYPE,                                                                                               \
+  DEREF,                                                                                               \
+  CONST_DEREF,                                                                                         \
+  SLICE_VALUE,                                                                                         \
+  VALUE_LOC_POST_INDEX_INCREMENT,                                                                      \
+  VALUE_LOC_POST_SHAPE_INCREMENT                                                                       \
+)                                                                                                      \
+  ASSIGN_SHAPED_CONDITION_IMPL(                                                                        \
+    CTYPE,                                                                                             \
+    DEREF,                                                                                             \
+    CONST_DEREF,                                                                                       \
+    SLICE_VALUE,                                                                                       \
+    VALUE_LOC_POST_INDEX_INCREMENT,                                                                    \
+    VALUE_LOC_POST_SHAPE_INCREMENT,                                                                    \
+    bool,                                                                                              \
+    compact_condition_size,                                                                            \
+    compact_condition_cbegin,                                                                          \
+    index_elt                                                                                          \
+  )                                                                                                    \
 
 // -----------------------------------------------------------------------------
 
@@ -165,10 +211,14 @@
   const r_ssize value_size = vec_size(value);                                             \
   check_assign_sizes(proxy, index, value_size, slice_value, index_style);                 \
                                                                                           \
-  if (is_compact_seq(index)) {                                                            \
-    r_stop_internal(                                                                      \
-      "Compact sequence `index` are not supported in the condition path."                 \
-    );                                                                                    \
+  if (is_compact_condition(index)) {                                                      \
+    if (value_size == 1) {                                                                \
+      ASSIGN_SHAPED_CONDITION_COMPACT(CTYPE, DEREF, CONST_DEREF, false, 0, 1);            \
+    } else if (should_slice_value(slice_value)) {                                         \
+      ASSIGN_SHAPED_CONDITION_COMPACT(CTYPE, DEREF, CONST_DEREF, true, 0, 0);             \
+    } else {                                                                              \
+      ASSIGN_SHAPED_CONDITION_COMPACT(CTYPE, DEREF, CONST_DEREF, false, index_elt, 0);    \
+    }                                                                                     \
   } else {                                                                                \
     if (value_size == 1) {                                                                \
       ASSIGN_SHAPED_CONDITION_INDEX(CTYPE, DEREF, CONST_DEREF, false, 0, 1);              \
@@ -247,6 +297,8 @@ static inline SEXP raw_assign_shaped(
 #undef ASSIGN_SHAPED_LOCATION_INDEX
 #undef ASSIGN_SHAPED_CONDITION
 #undef ASSIGN_SHAPED_CONDITION_INDEX
+#undef ASSIGN_SHAPED_CONDITION_COMPACT
+#undef ASSIGN_SHAPED_CONDITION_IMPL
 
 // -----------------------------------------------------------------------------
 
@@ -344,23 +396,27 @@ static inline SEXP raw_assign_shaped(
 
 // Strides information is not required here!
 //
-// See `ASSIGN_BARRIER_CONDITION_INDEX` for rationale on NOT using a ternary
+// See `ASSIGN_BARRIER_CONDITION_IMPL` for rationale on NOT using a ternary
 // inside the assignment loop. The indirection of `SET()` makes it not worth it.
-#define ASSIGN_BARRIER_SHAPED_CONDITION_INDEX(                         \
+#define ASSIGN_BARRIER_SHAPED_CONDITION_IMPL(                          \
   CTYPE,                                                               \
   CONST_DEREF,                                                         \
   SET,                                                                 \
   SLICE_VALUE,                                                         \
   VALUE_LOC_POST_INDEX_INCREMENT,                                      \
-  VALUE_LOC_POST_SHAPE_INCREMENT                                       \
+  VALUE_LOC_POST_SHAPE_INCREMENT,                                      \
+  INDEX_CTYPE,                                                         \
+  INDEX_SIZE,                                                          \
+  INDEX_CONST_DEREF,                                                   \
+  INDEX_ELT_CMP                                                        \
 )                                                                      \
   r_obj* dim = PROTECT(vec_dim(proxy));                                \
   const int* p_dim = INTEGER_RO(dim);                                  \
   R_len_t dim_n = Rf_length(dim);                                      \
   R_len_t shape_elem_n = vec_shape_elem_n(p_dim, dim_n);               \
                                                                        \
-  R_len_t index_size = r_length(index);                                \
-  const int* p_index = r_int_cbegin(index);                            \
+  R_len_t index_size = INDEX_SIZE(index);                              \
+  const INDEX_CTYPE* p_index = INDEX_CONST_DEREF(index);               \
                                                                        \
   SEXP out = PROTECT(vec_clone_referenced(proxy, ownership));          \
   R_len_t out_loc = 0;                                                 \
@@ -370,8 +426,8 @@ static inline SEXP raw_assign_shaped(
                                                                        \
   for (R_len_t i = 0; i < shape_elem_n; ++i) {                         \
     for (R_len_t index_loc = 0; index_loc < index_size; ++index_loc) { \
-      const int index_elt = p_index[index_loc];                        \
-      if (index_elt == 1) {                                            \
+      const INDEX_CTYPE index_elt = p_index[index_loc];                \
+      if (INDEX_ELT_CMP) {                                             \
         SET(out, out_loc, p_value[SLICE_VALUE ? out_loc : value_loc]); \
       }                                                                \
       ++out_loc;                                                       \
@@ -382,6 +438,48 @@ static inline SEXP raw_assign_shaped(
                                                                        \
   UNPROTECT(2);                                                        \
   return out
+
+#define ASSIGN_BARRIER_SHAPED_CONDITION_INDEX(                         \
+  CTYPE,                                                               \
+  CONST_DEREF,                                                         \
+  SET,                                                                 \
+  SLICE_VALUE,                                                         \
+  VALUE_LOC_POST_INDEX_INCREMENT,                                      \
+  VALUE_LOC_POST_SHAPE_INCREMENT                                       \
+)                                                                      \
+  ASSIGN_BARRIER_SHAPED_CONDITION_IMPL(                                \
+    CTYPE,                                                             \
+    CONST_DEREF,                                                       \
+    SET,                                                               \
+    SLICE_VALUE,                                                       \
+    VALUE_LOC_POST_INDEX_INCREMENT,                                    \
+    VALUE_LOC_POST_SHAPE_INCREMENT,                                    \
+    int,                                                               \
+    r_length,                                                          \
+    r_lgl_cbegin,                                                      \
+    index_elt == 1                                                     \
+  )                                                                    \
+
+#define ASSIGN_BARRIER_SHAPED_CONDITION_COMPACT(                       \
+  CTYPE,                                                               \
+  CONST_DEREF,                                                         \
+  SET,                                                                 \
+  SLICE_VALUE,                                                         \
+  VALUE_LOC_POST_INDEX_INCREMENT,                                      \
+  VALUE_LOC_POST_SHAPE_INCREMENT                                       \
+)                                                                      \
+  ASSIGN_BARRIER_SHAPED_CONDITION_IMPL(                                \
+    CTYPE,                                                             \
+    CONST_DEREF,                                                       \
+    SET,                                                               \
+    SLICE_VALUE,                                                       \
+    VALUE_LOC_POST_INDEX_INCREMENT,                                    \
+    VALUE_LOC_POST_SHAPE_INCREMENT,                                    \
+    bool,                                                              \
+    compact_condition_size,                                            \
+    compact_condition_cbegin,                                          \
+    index_elt                                                          \
+  )                                                                    \
 
 // -----------------------------------------------------------------------------
 
@@ -411,10 +509,14 @@ static inline SEXP raw_assign_shaped(
   const r_ssize value_size = vec_size(value);                                                   \
   check_assign_sizes(proxy, index, value_size, slice_value, index_style);                       \
                                                                                                 \
-  if (is_compact_seq(index)) {                                                                  \
-    r_stop_internal(                                                                            \
-      "Compact sequence `index` are not supported in the condition path."                       \
-    );                                                                                          \
+  if (is_compact_condition(index)) {                                                            \
+    if (value_size == 1) {                                                                      \
+      ASSIGN_BARRIER_SHAPED_CONDITION_COMPACT(CTYPE, CONST_DEREF, SET, false, 0, 1);            \
+    } else if (should_slice_value(slice_value)) {                                               \
+      ASSIGN_BARRIER_SHAPED_CONDITION_COMPACT(CTYPE, CONST_DEREF, SET, true, 0, 0);             \
+    } else {                                                                                    \
+      ASSIGN_BARRIER_SHAPED_CONDITION_COMPACT(CTYPE, CONST_DEREF, SET, false, index_elt, 0);    \
+    }                                                                                           \
   } else {                                                                                      \
     if (value_size == 1) {                                                                      \
       ASSIGN_BARRIER_SHAPED_CONDITION_INDEX(CTYPE, CONST_DEREF, SET, false, 0, 1);              \
@@ -463,6 +565,8 @@ static SEXP list_assign_shaped(
 #undef ASSIGN_BARRIER_SHAPED_LOCATION_INDEX
 #undef ASSIGN_BARRIER_SHAPED_CONDITION
 #undef ASSIGN_BARRIER_SHAPED_CONDITION_INDEX
+#undef ASSIGN_BARRIER_SHAPED_CONDITION_COMPACT
+#undef ASSIGN_BARRIER_SHAPED_CONDITION_IMPL
 
 // -----------------------------------------------------------------------------
 

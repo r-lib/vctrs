@@ -1572,3 +1572,251 @@ test_that("can assign object of any dimensionality with compact seqs", {
   expect_identical(vec_assign_seq(x3, 2, start, size, increasing), array(rep(c(2, 2, 1), 20), dim = c(3, 4, 5)))
   expect_identical(vec_assign_seq(x4, 2, start, size, increasing), array(rep(c(2, 2, 1), 120), dim = c(3, 4, 5, 6)))
 })
+
+# vec_assign + compact_condition -----------------------------------------------
+
+test_that("can assign base vectors with compact conditions", {
+  i <- c(FALSE, TRUE, TRUE)
+  i_compact <- as_compact_condition(i)
+
+  x <- c(FALSE, FALSE, FALSE)
+  value <- c(TRUE, NA, TRUE)
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, c(FALSE, NA, TRUE))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- c(1L, 2L, 3L)
+  value <- c(4L, 5L, 6L)
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, c(1L, 5L, 6L))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- c(1, 2, 3)
+  value <- c(4, 5, 6)
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, c(1, 5, 6))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- c(1i, 2i, 3i)
+  value <- c(4i, 5i, 6i)
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, c(1i, 5i, 6i))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- c("1", "2", "3")
+  value <- c("4", "5", "6")
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, c("1", "5", "6"))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- raw2(1, 2, 3)
+  value <- raw2(4, 5, 6)
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, raw2(1, 5, 6))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- list(1, 2, 3)
+  value <- list(4, 5, 6)
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, list(1, 5, 6))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+})
+
+test_that("can assign shaped base vectors with compact conditions", {
+  i <- c(FALSE, TRUE, TRUE)
+  i_compact <- as_compact_condition(i)
+
+  mat <- as.matrix
+
+  x <- mat(c(FALSE, FALSE, FALSE))
+  value <- mat(c(TRUE, NA, TRUE))
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, mat(c(FALSE, NA, TRUE)))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(c(1L, 2L, 3L))
+  value <- mat(c(4L, 5L, 6L))
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, mat(c(1L, 5L, 6L)))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(c(1, 2, 3))
+  value <- mat(c(4, 5, 6))
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, mat(c(1, 5, 6)))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(c(1i, 2i, 3i))
+  value <- mat(c(4i, 5i, 6i))
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, mat(c(1i, 5i, 6i)))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(c("1", "2", "3"))
+  value <- mat(c("4", "5", "6"))
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, mat(c("1", "5", "6")))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(raw2(1, 2, 3))
+  value <- mat(raw2(4, 5, 6))
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, mat(raw2(1, 5, 6)))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+
+  x <- mat(list(1, 2, 3))
+  value <- mat(list(4, 5, 6))
+  value_sliced <- vec_slice(value, i)
+  y <- vec_assign_compact_condition(x, i_compact, value_sliced)
+  expect_identical(y, mat(list(1, 5, 6)))
+  expect_identical(
+    vec_assign_compact_condition(x, i_compact, value, slice_value = TRUE),
+    y
+  )
+})
+
+test_that("can assign shaped base vectors with compact conditions and recycled `value`", {
+  i <- as_compact_condition(c(FALSE, TRUE, TRUE))
+  mat <- as.matrix
+
+  expect_identical(
+    vec_assign_compact_condition(mat(lgl(1, 0, 1)), i, NA),
+    mat(lgl(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(int(1, 2, 3)), i, NA),
+    mat(int(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(dbl(1, 2, 3)), i, NA),
+    mat(dbl(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(cpl2(1, 2, 3)), i, NA),
+    mat(cpl2(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(chr("1", "2", "3")), i, NA),
+    mat(chr("1", NA, NA))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(raw2(1, 2, 3)), i, raw2(1)),
+    mat(raw2(1, 1, 1))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(list(1, 2, 3)), i, NA),
+    mat(list(1, NULL, NULL))
+  )
+})
+
+test_that("can assign shaped base vectors with size 0 compact conditions", {
+  i <- as_compact_condition(logical())
+  mat <- as.matrix
+
+  expect_identical(
+    vec_assign_compact_condition(mat(lgl(1, 0, 1)), i, NA),
+    mat(mat(lgl(1, 0, 1)))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(int(1, 2, 3)), i, NA),
+    mat(int(1, 2, 3))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(dbl(1, 2, 3)), i, NA),
+    mat(dbl(1, 2, 3))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(cpl(1, 2, 3)), i, NA),
+    mat(cpl(1, 2, 3))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(chr("1", "2", "3")), i, NA),
+    mat(chr("1", "2", "3"))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(raw2(1, 2, 3)), i, raw2(1)),
+    mat(raw2(1, 2, 3))
+  )
+  expect_identical(
+    vec_assign_compact_condition(mat(list(1, 2, 3)), i, NA),
+    mat(list(1, 2, 3))
+  )
+})
+
+test_that("can assign object of any dimensionality with compact conditions", {
+  x1 <- ones(3)
+  x2 <- ones(3, 4)
+  x3 <- ones(3, 4, 5)
+  x4 <- ones(3, 4, 5, 6)
+
+  i <- as_compact_condition(c(TRUE, TRUE, FALSE))
+
+  expect_identical(
+    vec_assign_compact_condition(x1, i, 2),
+    array(rep(c(2, 2, 1), 1), dim = 3)
+  )
+  expect_identical(
+    vec_assign_compact_condition(x2, i, 2),
+    array(rep(c(2, 2, 1), 4), dim = c(3, 4))
+  )
+  expect_identical(
+    vec_assign_compact_condition(x3, i, 2),
+    array(rep(c(2, 2, 1), 20), dim = c(3, 4, 5))
+  )
+  expect_identical(
+    vec_assign_compact_condition(x4, i, 2),
+    array(rep(c(2, 2, 1), 120), dim = c(3, 4, 5, 6))
+  )
+})
