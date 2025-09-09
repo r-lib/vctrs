@@ -66,14 +66,12 @@ void r_init_library_globals_syms(void) {
   r_syms.colon2 = R_DoubleColonSymbol;
   r_syms.colon3 = R_TripleColonSymbol;
   r_syms.condition = r_sym("condition");
-  r_syms.default_arg = r_sym("default_arg");
   r_syms.dots = R_DotsSymbol;
   r_syms.error = r_sym("error");
   r_syms.error_arg = r_sym("error_arg");
   r_syms.error_call = r_sym("error_call");
   r_syms.error_call_flag = r_sym(".__error_call__.");
   r_syms.expr = r_sym("expr");
-  r_syms.indices_arg = r_sym("indices_arg");
   r_syms.interrupt = r_sym("interrupt");
   r_syms.missing = R_MissingArg;
   r_syms.message = r_sym("message");
@@ -97,7 +95,6 @@ void r_init_library_globals_syms(void) {
   r_syms.w = r_sym("w");
   r_syms.wholeSrcref = r_sym("wholeSrcref");
   r_syms.x = r_sym("x");
-  r_syms.x_arg = r_sym("x_arg");
   r_syms.y = r_sym("y");
   r_syms.z = r_sym("z");
 }

@@ -18,13 +18,13 @@ r_obj* ffi_list_combine(
   r_obj* ffi_frame
 ) {
   // On the R side it's `x_arg` to go with `x`, but on the C side we use `xs`
-  struct r_lazy xs_arg_lazy = { .x = r_syms.x_arg, .env = ffi_frame };
+  struct r_lazy xs_arg_lazy = { .x = syms.x_arg, .env = ffi_frame };
   struct vctrs_arg xs_arg = new_lazy_arg(&xs_arg_lazy);
 
-  struct r_lazy indices_arg_lazy = { .x = r_syms.indices_arg, .env = ffi_frame };
+  struct r_lazy indices_arg_lazy = { .x = syms.indices_arg, .env = ffi_frame };
   struct vctrs_arg indices_arg = new_lazy_arg(&indices_arg_lazy);
 
-  struct r_lazy default_arg_lazy = { .x = r_syms.default_arg, .env = ffi_frame };
+  struct r_lazy default_arg_lazy = { .x = syms.default_arg, .env = ffi_frame };
   struct vctrs_arg default_arg = new_lazy_arg(&default_arg_lazy);
 
   struct r_lazy error_call = { .x = r_syms.error_call, .env = ffi_frame };

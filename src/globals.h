@@ -6,11 +6,13 @@
 
 struct syms {
   r_obj* arg;
+  r_obj* default_arg;
   r_obj* dot_arg;
   r_obj* dot_call;
   r_obj* dot_error_arg;
   r_obj* dot_error_call;
   r_obj* haystack_arg;
+  r_obj* indices_arg;
   r_obj* needles_arg;
   r_obj* recurse;
   r_obj* repair_arg;
