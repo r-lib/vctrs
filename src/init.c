@@ -81,6 +81,7 @@ extern r_obj* ffi_vec_bare_df_restore(r_obj*, r_obj*);
 extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_assign_compact_condition(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern r_obj* ffi_as_df_row(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_outer_names(r_obj*, r_obj*, r_obj*);
@@ -161,6 +162,7 @@ extern r_obj* ffi_vec_set_union(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_set_symmetric_difference(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_expand_grid(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_list_combine(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_as_compact_condition(r_obj* x);
 
 
 // Maturing
@@ -268,6 +270,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_recycle",                               (DL_FUNC) &ffi_recycle, 3},
   {"ffi_assign",                                (DL_FUNC) &ffi_assign, 5},
   {"ffi_assign_seq",                            (DL_FUNC) &ffi_assign_seq, 6},
+  {"ffi_assign_compact_condition",              (DL_FUNC) &ffi_assign_compact_condition, 4},
   {"vctrs_set_attributes",                      (DL_FUNC) &vctrs_set_attributes, 2},
   {"ffi_as_df_row",                             (DL_FUNC) &ffi_as_df_row, 3},
   {"ffi_outer_names",                           (DL_FUNC) &ffi_outer_names, 3},
@@ -352,6 +355,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_set_symmetric_difference",          (DL_FUNC) &ffi_vec_set_symmetric_difference, 4},
   {"ffi_vec_expand_grid",                       (DL_FUNC) &ffi_vec_expand_grid, 4},
   {"ffi_list_combine",                          (DL_FUNC) &ffi_list_combine, 11},
+  {"ffi_as_compact_condition",                  (DL_FUNC) &ffi_as_compact_condition, 1},
   {"ffi_exp_vec_cast",                          (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };

@@ -179,7 +179,7 @@ static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
   // If using a compact rep/seq, the `steps` won't be used, but we still
   // need to put something in the struct
   SEXP steps;
-  if (is_compact(index)) {
+  if (is_compact_rep(index) || is_compact_seq(index)) {
     steps = r_globals.empty_int;
   } else {
     steps = vec_steps(p_index, index_n);

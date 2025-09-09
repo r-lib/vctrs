@@ -183,9 +183,16 @@ void init_compact_rep(int* p, R_len_t i, R_len_t n);
 SEXP compact_rep(R_len_t i, R_len_t n);
 bool is_compact_rep(SEXP x);
 
-bool is_compact(SEXP x);
-SEXP compact_materialize(SEXP x);
+r_obj* new_compact_condition(R_xlen_t size);
+bool is_compact_condition(r_obj* x);
+r_ssize compact_condition_size(r_obj* x);
+bool* compact_condition_begin(r_obj* x);
+const bool* compact_condition_cbegin(r_obj* x);
+r_obj* compact_condition_materialize_location(r_obj* x);
+
+SEXP vec_subscript_materialize(SEXP x);
 R_len_t vec_subscript_size(SEXP x);
+r_ssize vec_condition_subscript_sum(r_obj* x, bool na_true);
 
 bool is_integer64(SEXP x);
 
