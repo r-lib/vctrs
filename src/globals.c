@@ -54,6 +54,7 @@ void vctrs_init_globals(r_obj* ns) {
   syms.dot_call = r_sym(".call");
   syms.dot_error_arg = r_sym(".error_arg");
   syms.dot_error_call = r_sym(".error_call");
+  syms.from_arg = r_sym("from_arg");
   syms.haystack_arg = r_sym("haystack_arg");
   syms.indices_arg = r_sym("indices_arg");
   syms.needles_arg = r_sym("needles_arg");
@@ -98,5 +99,4 @@ void vctrs_init_globals(r_obj* ns) {
   INIT_CALL(vec_recycle_common);
   INIT_CALL(vec_size);
   INIT_CALL(vec_size_common);
-  INIT_CALL(list_all_size);
 }

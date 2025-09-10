@@ -113,37 +113,40 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
 }
 
 r_obj* ffi_list_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
+  struct r_lazy error_call = {.x = frame, .env = r_null };
+
   // This is an internal error
-  obj_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
+  obj_check_list(xs, vec_args.x, error_call);
 
   r_ssize size = r_arg_as_ssize(ffi_size, "size");
 
-  return r_lgl(list_all_size(xs, size));
+  return r_lgl(list_all_size(xs, size, vec_args.x, error_call));
 }
 
-static
-bool list_all_size(r_obj* xs, r_ssize size) {
+bool list_all_size(
+  r_obj* xs,
+  r_ssize size,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy call
+) {
   if (r_typeof(xs) != R_TYPE_list) {
-    r_stop_unexpected_type(r_typeof(xs));
+   r_stop_unexpected_type(r_typeof(xs));
   }
 
   r_ssize i = 0;
 
-  r_ssize xs_size = r_length(xs);
+  const r_ssize xs_size = r_length(xs);
   r_obj* xs_names = r_names(xs);
   r_obj* const* v_xs = r_list_cbegin(xs);
 
-  struct vctrs_arg* p_x_arg = new_subscript_arg(vec_args.x, xs_names, xs_size, &i);
+  struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
   KEEP(p_x_arg->shelter);
 
   bool out = true;
 
   for (; i < xs_size; ++i) {
     r_obj* x = v_xs[i];
-
-    // Scalar list elements throw an error internal to `list_all_size()`
-    r_ssize x_size = vec_size_3(x, p_x_arg, lazy_calls.list_all_size);
-
+    const r_ssize x_size = vec_size_3(x, p_x_arg, call);
     if (x_size != size) {
       out = false;
       break;

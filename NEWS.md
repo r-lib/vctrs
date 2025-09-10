@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_recode_values()` and `vec_replace_values()` for recoding and replacing values. In particular, this makes it easy to recode a vector using a lookup table (#2027).
+
 * `vec_equal()` now efficiently internally recycles `x` and `y` elements of size 1 (#2028).
 
 * `list_unchop()` now assigns names correctly when overlapping `indices` are involved (#2019).
