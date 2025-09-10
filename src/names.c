@@ -1021,6 +1021,7 @@ r_obj* vctrs_validate_minimal_names(r_obj* names, r_obj* n_) {
   return names;
 }
 
+r_obj* name_spec_inner = NULL;
 
 struct name_repair_opts unique_repair_default_opts;
 struct name_repair_opts unique_repair_silent_opts;
@@ -1040,6 +1041,9 @@ void vctrs_init_names(r_obj* ns) {
   syms_glue_as_name_spec = r_sym("glue_as_name_spec");
   fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
   syms_internal_spec = r_sym("_spec");
+
+  name_spec_inner = r_chr("inner");
+  r_preserve(name_spec_inner);
 
   unique_repair_default_opts.type = NAME_REPAIR_unique;
   unique_repair_default_opts.fn = r_null;
