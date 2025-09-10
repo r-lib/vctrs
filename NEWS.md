@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_recode_values()` and `vec_replace_values()` for recoding and replacing values. In particular, this makes it easy to recode a vector using a lookup table (#2027).
+
 * New `vec_case_when()` and `vec_replace_when()` for recoding and replacing using logical conditions (#2024).
 
 * `vec_equal()` now efficiently internally recycles `x` and `y` elements of size 1 (#2028).

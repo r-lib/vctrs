@@ -98,6 +98,14 @@ SEXP vec_match(SEXP needles, SEXP haystack) {
   return vec_match_params(needles, haystack, true, NULL, NULL, r_lazy_null);
 }
 
+SEXP vec_in(
+  SEXP needles,
+  SEXP haystack,
+  bool na_equal,
+  struct vctrs_arg* p_needles_arg,
+  struct vctrs_arg* p_haystack_arg,
+  struct r_lazy call
+);
 
 bool is_data_frame(SEXP x);
 
