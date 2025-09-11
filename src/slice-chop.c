@@ -529,10 +529,15 @@ r_obj* list_as_locations(r_obj* indices, r_ssize n, r_obj* names, bool allow_com
   for (r_ssize i = 0; i < size; ++i) {
     r_obj* index = v_indices[i];
 
-    if (allow_compact && is_compact_seq(index)) {
-      // Allow `compact_seq` to pass through untouched,
-      // assume caller can handle them natively
-      continue;
+    if (is_compact_seq(index)) {
+      if (allow_compact) {
+        // Allow `compact_seq` to pass through untouched,
+        // assume caller can handle them natively
+        continue;
+      } else {
+        // We don't want them to slip through when not handled natively
+        r_stop_internal("`compact_seq` are not allowed.");
+      }
     }
 
     index = vec_as_location_opts(index, n, names, &opts);

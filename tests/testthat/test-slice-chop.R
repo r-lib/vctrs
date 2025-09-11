@@ -414,6 +414,12 @@ test_that("data frames with 0 columns retain the right number of rows with compa
   expect_identical(out, c(0L, 2L, 1L))
 })
 
+test_that("`vec_chop()` can't take `compact_seq()` indices directly", {
+  expect_snapshot(error = TRUE, transform = scrub_internal_error_line_number, {
+    vec_chop(1:2, indices = list(compact_seq(1, 2)))
+  })
+})
+
 # list_unchop --------------------------------------------------------------
 
 test_that("`x` must be a list", {

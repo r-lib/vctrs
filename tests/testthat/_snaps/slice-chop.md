@@ -116,6 +116,17 @@
       * ..1 = list(1)
       i Did you forget to name an argument?
 
+# `vec_chop()` can't take `compact_seq()` indices directly
+
+    Code
+      vec_chop(1:2, indices = list(compact_seq(1, 2)))
+    Condition
+      Error in `vec_chop()`:
+      ! `compact_seq` are not allowed.
+      i In file 'slice-chop.c' at line <scrubbed>.
+      i This is an internal error that was detected in the vctrs package.
+        Please report it at <https://github.com/r-lib/vctrs/issues> with a reprex (<https://tidyverse.org/help/>) and the full backtrace.
+
 # `x` must be a list
 
     Code
