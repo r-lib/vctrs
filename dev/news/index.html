@@ -40,7 +40,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p><code><a href="../reference/vec_chop.html">list_unchop()</a></code> now assigns names correctly when overlapping <code>indices</code> are involved (<a href="https://github.com/r-lib/vctrs/issues/2019" class="external-link">#2019</a>).</p></li>
+<ul><li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> now efficiently internally recycles <code>x</code> and <code>y</code> elements of size 1 (<a href="https://github.com/r-lib/vctrs/issues/2028" class="external-link">#2028</a>).</p></li>
+<li><p><code><a href="../reference/vec_chop.html">list_unchop()</a></code> now assigns names correctly when overlapping <code>indices</code> are involved (<a href="https://github.com/r-lib/vctrs/issues/2019" class="external-link">#2019</a>).</p></li>
 <li><p>New <code>.name_spec = "inner"</code> option for <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_chop.html">list_unchop()</a></code>, and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>. This efficiently ignores all outer names, while retaining any inner names (<a href="https://github.com/r-lib/vctrs/issues/1988" class="external-link">#1988</a>).</p></li>
 <li><p><code><a href="../reference/vec_chop.html">list_unchop()</a></code> now works in an edge case with a single <code>NA</code> recycled to size 0 (<a href="https://github.com/r-lib/vctrs/issues/1989" class="external-link">#1989</a>).</p></li>
 <li><p><code><a href="../reference/vec_chop.html">list_unchop()</a></code> now efficiently internally recycles <code>x</code> elements of size 1 (<a href="https://github.com/r-lib/vctrs/issues/2013" class="external-link">#2013</a>).</p></li>
