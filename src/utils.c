@@ -811,6 +811,15 @@ void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
   p[2] = step;
 }
 
+// Exported for testing with `list_combine()`
+r_obj* ffi_compact_seq(r_obj* ffi_start, r_obj* ffi_size, r_obj* ffi_increasing) {
+  return compact_seq(
+    r_arg_as_ssize(ffi_start, "start"),
+    r_arg_as_ssize(ffi_size, "size"),
+    r_arg_as_bool(ffi_increasing, "increasing")
+  );
+}
+
 // Returns a compact sequence that `vec_slice()` understands
 // The sequence is generally generated as `[start, start +/- size)`
 // If `size == 0` a 0-length sequence is generated

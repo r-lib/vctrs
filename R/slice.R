@@ -300,6 +300,11 @@ vec_assign_seq <- function(
   .Call(ffi_assign_seq, x, value, start, size, increasing, slice_value)
 }
 
+# `start` is 0-based
+compact_seq <- function(start, size, increasing = TRUE) {
+  .Call(ffi_compact_seq, start, size, increasing)
+}
+
 vec_assign_compact_condition <- function(
   x,
   i,
