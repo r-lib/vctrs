@@ -58,6 +58,7 @@ struct vec_args {
   struct vctrs_arg* n;
   struct vctrs_arg* value;
   struct vctrs_arg* x;
+  struct vctrs_arg* y;
   struct vctrs_arg* indices;
   struct vctrs_arg* sizes;
   struct vctrs_arg* ptype;

@@ -3,12 +3,27 @@
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_equal(SEXP x, SEXP y, bool na_equal);
-
 // [[ register() ]]
-SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal) {
-  bool c_na_equal = r_bool_as_int(na_equal);
-  return vec_equal(x, y, c_na_equal);
+SEXP ffi_vec_equal(
+  SEXP ffi_x,
+  SEXP ffi_y,
+  SEXP ffi_na_equal,
+  SEXP ffi_ptype,
+  SEXP ffi_frame
+) {
+  struct r_lazy error_call = { .x = ffi_frame, .env = r_null };
+
+  const bool na_equal = r_arg_as_bool(ffi_na_equal, "na_equal");
+
+  return vec_equal(
+    ffi_x,
+    ffi_y,
+    na_equal,
+    ffi_ptype,
+    vec_args.x,
+    vec_args.y,
+    error_call
+  );
 }
 
 static inline SEXP lgl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
@@ -20,23 +35,45 @@ static inline SEXP raw_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
 static inline SEXP list_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
 static inline SEXP df_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
 
-/*
- * Recycling and casting is done at the R level
- */
-static
-SEXP vec_equal(SEXP x, SEXP y, bool na_equal) {
+SEXP vec_equal(
+  SEXP x,
+  SEXP y,
+  bool na_equal,
+  SEXP ptype,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy error_call
+) {
+  SEXP args = PROTECT(r_alloc_list(2));
+  r_list_poke(args, 0, x);
+  r_list_poke(args, 1, y);
+
+  SEXP names = r_alloc_character(2);
+  r_attrib_poke_names(args, names);
+  SEXP x_name = PROTECT(vctrs_arg(p_x_arg));
+  SEXP y_name = PROTECT(vctrs_arg(p_y_arg));
+  r_chr_poke(names, 0, r_chr_get(x_name, 0));
+  r_chr_poke(names, 1, r_chr_get(y_name, 0));
+
+  args = PROTECT(vec_cast_common(args, ptype, vec_args.empty, error_call));
+
+  struct size_common_opts size_common_opts = {
+    vec_args.empty,
+    error_call
+  };
+  const R_len_t size = vec_size_common_opts(args, -1, &size_common_opts);
+  args = PROTECT(vec_recycle_common_opts(args, size, &size_common_opts));
+
+  x = r_list_get(args, 0);
+  y = r_list_get(args, 1);
+
   SEXP x_proxy = PROTECT(vec_proxy_equal(x));
   SEXP y_proxy = PROTECT(vec_proxy_equal(y));
 
   x_proxy = PROTECT(vec_normalize_encoding(x_proxy));
   y_proxy = PROTECT(vec_normalize_encoding(y_proxy));
 
-  R_len_t size = vec_size(x_proxy);
   enum vctrs_type type = vec_proxy_typeof(x_proxy);
-
-  if (type != vec_proxy_typeof(y_proxy) || size != vec_size(y_proxy)) {
-    Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths.");
-  }
 
   SEXP out;
 
@@ -49,11 +86,11 @@ SEXP vec_equal(SEXP x, SEXP y, bool na_equal) {
   case VCTRS_TYPE_raw: out = raw_equal(x_proxy, y_proxy, size, na_equal); break;
   case VCTRS_TYPE_list: out = list_equal(x_proxy, y_proxy, size, na_equal); break;
   case VCTRS_TYPE_dataframe: out = df_equal(x_proxy, y_proxy, size, na_equal); break;
-  case VCTRS_TYPE_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal()`.");
+  case VCTRS_TYPE_scalar: r_abort_lazy_call(error_call, "Can't compare scalars with `vec_equal()`.");
   default: stop_unimplemented_vctrs_type("vec_equal", type);
   }
 
-  UNPROTECT(4);
+  UNPROTECT(9);
   return out;
 }
 
