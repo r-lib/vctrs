@@ -347,10 +347,14 @@ r_obj* list_combine_impl(
     // - We don't allow oob indices (makes no sense since we inferred the size from lengths).
     // - Numeric `NA` propagates.
     //
+    // Note that `compact_seq()` objects are valid `index` values for
+    // `list_combine()`. We have tests to ensure it can handle them!
+    //
     // There is nothing to validate for condition indices, they are logical vectors
     // where all 3 possible values are handled and we've already checked their sizes
     // match `size` in `compute_indices_style()`.
-    indices = KEEP_N(list_as_locations(indices, size, r_null), &n_protect);
+    const bool allow_compact = true;
+    indices = KEEP_N(list_as_locations(indices, size, r_null, allow_compact), &n_protect);
   }
 
   // Perform `unmatched` check
@@ -555,7 +559,7 @@ r_obj* list_combine_impl(
     // Advance `index`
     if (has_indices) {
       index = r_list_get(indices, xs_i);
-      index_size = r_length(index);
+      index_size = vec_subscript_size(index);
     } else {
       index_size = v_xs_sizes[xs_i];
       init_compact_seq(v_index, start, index_size, true);
@@ -1133,7 +1137,7 @@ r_obj* base_list_combine_fallback(
   // is designed to handle. It's also the style we convert `default` to.
   switch (indices_style) {
   case VCTRS_INDEX_STYLE_location: {
-    // Nothing to do, these are the "normalized" style used for the fallback
+    indices = list_location_to_location_indices(indices);
     break;
   }
   case VCTRS_INDEX_STYLE_condition: {
@@ -1495,6 +1499,46 @@ r_obj* vec_slice_xs_fallback(
   return xs;
 }
 
+// Converts compact `VCTRS_INDEX_STYLE_location` indices to
+// materialized `VCTRS_INDEX_STYLE_location` indices for the fallback.
+static
+r_obj* list_location_to_location_indices(r_obj* indices) {
+  // Only clone if at least one index is compact, which is rare
+  bool has_compact = false;
+
+  const r_ssize indices_size = r_length(indices);
+  r_obj* const* v_indices = r_list_cbegin(indices);
+
+  for (r_ssize i = 0; i < indices_size; ++i) {
+    r_obj* index = v_indices[i];
+
+    if (is_compact_seq(index)) {
+      has_compact = true;
+      break;
+    }
+  }
+
+  if (!has_compact) {
+    // Nothing to do, we are already in expanded location form
+    return indices;
+  }
+
+  // We probably don't own these, the user provides them.
+  indices = KEEP(r_clone_referenced(indices));
+  v_indices = r_list_cbegin(indices);
+
+  for (r_ssize i = 0; i < indices_size; ++i) {
+    r_obj* index = v_indices[i];
+
+    if (is_compact_seq(index)) {
+      r_list_poke(indices, i, vec_subscript_materialize(index));
+    }
+  }
+
+  FREE(1);
+  return indices;
+}
+
 // Converts `VCTRS_INDEX_STYLE_condition` indices to
 // `VCTRS_INDEX_STYLE_location` indices for the fallback.
 static
@@ -1668,15 +1712,30 @@ r_obj* compute_default_index(
   case VCTRS_INDEX_STYLE_location: {
     for (r_ssize i = 0; i < indices_size; ++i) {
       r_obj* index = v_indices[i];
-      const r_ssize index_size = r_length(index);
-      const int* v_index = r_int_cbegin(index);
 
-      for (r_ssize j = 0; j < index_size; ++j) {
-        const int elt = v_index[j];
+      if (is_compact_seq(index)) {
+        const int* v_index = r_int_cbegin(index);
+        const r_ssize start = v_index[0];
+        const r_ssize size = v_index[1];
+        const r_ssize step = v_index[2];
 
-        if (elt != r_globals.na_int) {
-          // If not `NA`, mark location as matched by at least 1 index
-          v_out[elt - 1] = false;
+        r_ssize loc = start;
+
+        for (r_ssize j = 0; j < size; ++j) {
+          v_out[loc] = false;
+          loc += step;
+        }
+      } else {
+        const r_ssize size = r_length(index);
+        const int* v_index = r_int_cbegin(index);
+
+        for (r_ssize j = 0; j < size; ++j) {
+          const int loc = v_index[j];
+
+          if (loc != r_globals.na_int) {
+            // If not `NA`, mark location as matched by at least 1 index
+            v_out[loc - 1] = false;
+          }
         }
       }
     }

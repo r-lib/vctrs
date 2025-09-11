@@ -177,7 +177,8 @@ r_obj* vec_chop(r_obj* x, r_obj* indices, r_obj* sizes) {
   }
 
   if (indices != r_null) {
-    indices = list_as_locations(indices, n, names);
+    const bool allow_compact = false;
+    indices = list_as_locations(indices, n, names, allow_compact);
   }
   KEEP(indices);
 
@@ -501,7 +502,7 @@ r_obj* chop_fallback_shaped(r_obj* x, struct vctrs_chop_indices* p_indices) {
 
 // -----------------------------------------------------------------------------
 
-r_obj* list_as_locations(r_obj* indices, r_ssize n, r_obj* names) {
+r_obj* list_as_locations(r_obj* indices, r_ssize n, r_obj* names, bool allow_compact) {
   if (r_typeof(indices) != R_TYPE_list) {
     r_abort_lazy_call(r_lazy_null, "`indices` must be a list of index values, or `NULL`.");
   }
@@ -527,6 +528,13 @@ r_obj* list_as_locations(r_obj* indices, r_ssize n, r_obj* names) {
 
   for (r_ssize i = 0; i < size; ++i) {
     r_obj* index = v_indices[i];
+
+    if (allow_compact && is_compact_seq(index)) {
+      // Allow `compact_seq` to pass through untouched,
+      // assume caller can handle them natively
+      continue;
+    }
+
     index = vec_as_location_opts(index, n, names, &opts);
     r_list_poke(indices, i, index);
   }

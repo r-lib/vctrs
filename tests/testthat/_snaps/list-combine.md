@@ -1307,3 +1307,75 @@
       Error in `list_combine()`:
       ! Can't recycle `x[[1]]` (size 2) to size 4.
 
+# `compact_seq()` `indices` work with `unmatched`
+
+    Code
+      list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
+        multiple = multiple, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Location 3 is unmatched.
+
+---
+
+    Code
+      list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
+        unmatched = unmatched, multiple = multiple, slice_x = slice_x, ptype = ptype,
+        name_spec = name_spec, name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Location 3 is unmatched.
+
+---
+
+    Code
+      list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
+        unmatched = unmatched, multiple = multiple, slice_x = slice_x, ptype = ptype,
+        name_spec = name_spec, name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Location 3 is unmatched.
+
+---
+
+    Code
+      list_combine(x, indices = indices, size = size, default = default, unmatched = unmatched,
+        multiple = multiple, slice_x = slice_x, ptype = ptype, name_spec = name_spec,
+        name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Locations 2 and 3 are unmatched.
+
+---
+
+    Code
+      list_combine(x_foobar, indices = indices, size = size, default = default_foobar,
+        unmatched = unmatched, multiple = multiple, slice_x = slice_x, ptype = ptype,
+        name_spec = name_spec, name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Locations 2 and 3 are unmatched.
+
+---
+
+    Code
+      list_combine(x_foobar_c, indices = indices, size = size, default = default_foobar_c,
+        unmatched = unmatched, multiple = multiple, slice_x = slice_x, ptype = ptype,
+        name_spec = name_spec, name_repair = name_repair, x_arg = x_arg, indices_arg = indices_arg,
+        default_arg = default_arg)
+    Condition
+      Error in `list_combine()`:
+      ! Each location must be matched.
+      x Locations 2 and 3 are unmatched.
+

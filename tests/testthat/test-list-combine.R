@@ -2785,3 +2785,52 @@ test_that("`multiple` doesn't apply WITHIN a single index", {
     expect = 4L
   )
 })
+
+test_that("`compact_seq()` work as `indices`", {
+  expect_identical_list_combine(
+    x = list(1:3, 4:5),
+    indices = list(compact_seq(2, 3), compact_seq(0, 2)),
+    size = 5,
+    expect = int(4:5, 1:3)
+  )
+  expect_identical_list_combine(
+    x = list(1:3, 4L),
+    indices = list(compact_seq(2, 3), 1),
+    size = 5,
+    expect = int(4, NA, 1:3)
+  )
+})
+
+test_that("`compact_seq()` `indices` work with `unmatched`", {
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = list(1:2, 4:5),
+    indices = list(compact_seq(3, 2), compact_seq(0, 2)),
+    size = 5,
+    unmatched = "error"
+  )
+  expect_snapshot_list_combine(
+    error = TRUE,
+    x = list(1:2, 4L),
+    indices = list(compact_seq(3, 2), 1),
+    size = 5,
+    unmatched = "error"
+  )
+})
+
+test_that("`compact_seq()` `indices` work with `default`", {
+  expect_identical_list_combine(
+    x = list(1:2, 4:5),
+    indices = list(compact_seq(3, 2), compact_seq(0, 2)),
+    size = 5,
+    default = 0L,
+    expect = int(4:5, 0L, 1:2)
+  )
+  expect_identical_list_combine(
+    x = list(1:2, 4L),
+    indices = list(compact_seq(3, 2), 1),
+    size = 5,
+    default = 0L,
+    expect = int(4L, 0L, 0L, 1:2)
+  )
+})

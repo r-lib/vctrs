@@ -122,6 +122,8 @@ r_obj* vec_slice_xs_fallback(
 );
 
 static
+r_obj* list_location_to_location_indices(r_obj* indices);
+static
 r_obj* list_condition_to_location_indices(r_obj* indices);
 
 static
