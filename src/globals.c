@@ -81,6 +81,7 @@ void vctrs_init_globals(r_obj* ns) {
   INIT_ARG(n);
   INIT_ARG(value);
   INIT_ARG(x);
+  INIT_ARG(y);
   INIT_ARG(indices);
   INIT_ARG(sizes);
   INIT_ARG(ptype);

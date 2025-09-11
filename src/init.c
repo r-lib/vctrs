@@ -27,7 +27,7 @@ extern SEXP vec_split(SEXP, SEXP);
 extern SEXP vctrs_group_id(SEXP);
 extern SEXP vctrs_group_rle(SEXP);
 extern SEXP vec_group_loc(SEXP);
-extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
+extern SEXP ffi_vec_equal(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern r_obj* ffi_vec_detect_missing(r_obj*);
 extern r_obj* ffi_vec_any_missing(r_obj* x);
 extern r_obj* ffi_vec_compare(r_obj*, r_obj*, r_obj*);
@@ -219,7 +219,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_dim",                                 (DL_FUNC) &vctrs_dim, 1},
   {"vctrs_dim_n",                               (DL_FUNC) &vctrs_dim_n, 1},
   {"vctrs_is_unspecified",                      (DL_FUNC) &vctrs_is_unspecified, 1},
-  {"vctrs_equal",                               (DL_FUNC) &vctrs_equal, 3},
+  {"ffi_vec_equal",                             (DL_FUNC) &ffi_vec_equal, 5},
   {"ffi_vec_detect_missing",                    (DL_FUNC) &ffi_vec_detect_missing, 1},
   {"ffi_vec_any_missing",                       (DL_FUNC) &ffi_vec_any_missing, 1},
   {"ffi_vec_compare",                           (DL_FUNC) &ffi_vec_compare, 3},

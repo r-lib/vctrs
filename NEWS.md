@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_equal()` now efficiently internally recycles `x` and `y` elements of size 1 (#2028).
+
 * `list_unchop()` now assigns names correctly when overlapping `indices` are involved (#2019).
 
 * New `.name_spec = "inner"` option for `vec_c()`, `list_unchop()`, and `vec_rbind()`. This efficiently ignores all outer names, while retaining any inner names (#1988).

@@ -5,6 +5,16 @@
 #include "missing.h"
 #include "poly-op.h"
 
+SEXP vec_equal(
+  SEXP x,
+  SEXP y,
+  bool na_equal,
+  SEXP ptype,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy error_call
+);
+
 // equal_object() never propagates missingness, so
 // it can return a `bool`
 bool equal_object(SEXP x, SEXP y);
