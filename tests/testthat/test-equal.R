@@ -197,6 +197,43 @@ test_that("vec_equal() silently falls back to base data frame", {
   ))
 })
 
+test_that("recycling works in all cases", {
+  # Both size 1 is its own path. Both "recycle".
+  x <- 1
+  y <- 1
+  expect_identical(vec_equal(x, y), TRUE)
+
+  x <- 1
+  y <- 1:2
+  expect_identical(vec_equal(x, y), c(TRUE, FALSE))
+
+  x <- 1:2
+  y <- 1
+  expect_identical(vec_equal(x, y), c(TRUE, FALSE))
+
+  x <- 1:2
+  y <- 1:2
+  expect_identical(vec_equal(x, y), c(TRUE, TRUE))
+
+  # Again, with data frames
+
+  x <- data.frame(x = 1, y = 2)
+  y <- data.frame(x = 1, y = 2)
+  expect_identical(vec_equal(x, y), TRUE)
+
+  x <- data.frame(x = 1, y = 2)
+  y <- data.frame(x = 1:2, y = 2:3)
+  expect_identical(vec_equal(x, y), c(TRUE, FALSE))
+
+  x <- data.frame(x = 1:2, y = 2:3)
+  y <- data.frame(x = 1, y = 2)
+  expect_identical(vec_equal(x, y), c(TRUE, FALSE))
+
+  x <- data.frame(x = 1:2, y = 2:3)
+  y <- data.frame(x = 1:2, y = 2:3)
+  expect_identical(vec_equal(x, y), c(TRUE, TRUE))
+})
+
 # object ------------------------------------------------------------------
 
 test_that("can compare NULL",{
