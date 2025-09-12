@@ -528,37 +528,66 @@ void vec_match_loop_propagate(
 
 #undef VEC_MATCH_LOOP_PROPAGATE
 
-// [[ register() ]]
 SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
-  struct r_lazy call = { .x = frame, .env = r_null };
-
-  int nprot = 0;
-  bool na_equal = r_bool_as_int(na_equal_);
-
-  int _;
-
   struct r_lazy needles_arg_ = { .x = syms.needles_arg, .env = frame };
   struct vctrs_arg needles_arg = new_lazy_arg(&needles_arg_);
 
   struct r_lazy haystack_arg_ = { .x = syms.haystack_arg, .env = frame };
   struct vctrs_arg haystack_arg = new_lazy_arg(&haystack_arg_);
 
-  SEXP type = vec_ptype2_params(needles, haystack,
-                                &needles_arg, &haystack_arg,
-                                call,
-                                &_);
+  struct r_lazy call = { .x = frame, .env = r_null };
+
+  return vec_in(
+    needles,
+    haystack,
+    r_bool_as_int(na_equal_),
+    &needles_arg,
+    &haystack_arg,
+    call
+  );
+}
+
+// [[ register() ]]
+SEXP vec_in(
+  SEXP needles,
+  SEXP haystack,
+  bool na_equal,
+  struct vctrs_arg* p_needles_arg,
+  struct vctrs_arg* p_haystack_arg,
+  struct r_lazy call
+) {
+  int nprot = 0;
+
+  int _;
+
+  SEXP type = vec_ptype2_params(
+    needles,
+    haystack,
+    p_needles_arg,
+    p_haystack_arg,
+    call,
+    &_
+  );
   PROTECT_N(type, &nprot);
 
-  needles = vec_cast_params(needles, type,
-                            &needles_arg, vec_args.empty,
-                            call,
-                            S3_FALLBACK_false);
+  needles = vec_cast_params(
+    needles,
+    type,
+    p_needles_arg,
+    vec_args.empty,
+    call,
+    S3_FALLBACK_false
+  );
   PROTECT_N(needles, &nprot);
 
-  haystack = vec_cast_params(haystack, type,
-                             &haystack_arg, vec_args.empty,
-                             call,
-                             S3_FALLBACK_false);
+  haystack = vec_cast_params(
+    haystack,
+    type,
+    p_haystack_arg,
+    vec_args.empty,
+    call,
+    S3_FALLBACK_false
+  );
   PROTECT_N(haystack, &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
