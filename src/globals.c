@@ -49,6 +49,7 @@ void vctrs_init_globals(r_obj* ns) {
 
   // Symbols -----------------------------------------------------------
   syms.arg = r_sym("arg");
+  syms.cases_arg = r_sym("cases_arg");
   syms.default_arg = r_sym("default_arg");
   syms.dot_arg = r_sym(".arg");
   syms.dot_call = r_sym(".call");
@@ -62,6 +63,7 @@ void vctrs_init_globals(r_obj* ns) {
   syms.times_arg = r_sym("times_arg");
   syms.to_arg = r_sym("to_arg");
   syms.value_arg = r_sym("value_arg");
+  syms.values_arg = r_sym("values_arg");
   syms.x_arg = r_sym("x_arg");
   syms.y_arg = r_sym("y_arg");
 
