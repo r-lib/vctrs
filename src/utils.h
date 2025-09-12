@@ -228,6 +228,7 @@ SEXP r_seq(R_len_t from, R_len_t to);
 bool r_int_any_na(SEXP x);
 
 bool r_lgl_any(r_obj* x);
+r_obj* r_lgl_invert(r_obj* x);
 
 R_len_t r_chr_find(SEXP x, SEXP value);
 

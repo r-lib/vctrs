@@ -1246,6 +1246,22 @@ bool r_lgl_any(r_obj* x) {
   return false;
 }
 
+// Like `!x` at the R level
+r_obj* r_lgl_invert(r_obj* x) {
+  const r_ssize size = r_length(x);
+  const int* v_x = r_lgl_cbegin(x);
+
+  r_obj* out = KEEP(r_alloc_logical(size));
+  int* v_out = r_lgl_begin(out);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    const int elt = v_x[i];
+    v_out[i] = (elt == r_globals.na_lgl) ? r_globals.na_lgl : !elt;
+  }
+
+  FREE(1);
+  return out;
+}
 
 int r_chr_max_len(SEXP x) {
   R_len_t n = Rf_length(x);
@@ -1604,8 +1620,14 @@ SEXP vctrs_shared_empty_str = NULL;
 SEXP vctrs_shared_empty_date = NULL;
 
 Rcomplex vctrs_shared_na_cpl;
-SEXP vctrs_shared_na_lgl = NULL;
-SEXP vctrs_shared_na_list = NULL;
+
+SEXP vctrs_shared_missing_lgl = NULL;
+SEXP vctrs_shared_missing_int = NULL;
+SEXP vctrs_shared_missing_dbl = NULL;
+SEXP vctrs_shared_missing_cpl = NULL;
+SEXP vctrs_shared_missing_raw = NULL;
+SEXP vctrs_shared_missing_chr = NULL;
+SEXP vctrs_shared_missing_list = NULL;
 
 SEXP vctrs_shared_zero_int = NULL;
 
@@ -1933,11 +1955,27 @@ void vctrs_init_utils(SEXP ns) {
   vctrs_shared_na_cpl.i = NA_REAL;
   vctrs_shared_na_cpl.r = NA_REAL;
 
-  vctrs_shared_na_lgl = r_new_shared_vector(LGLSXP, 1);
-  LOGICAL(vctrs_shared_na_lgl)[0] = NA_LOGICAL;
+  vctrs_shared_missing_lgl = r_new_shared_vector(LGLSXP, 1);
+  LOGICAL(vctrs_shared_missing_lgl)[0] = NA_LOGICAL;
 
-  vctrs_shared_na_list = r_new_shared_vector(VECSXP, 1);
-  SET_VECTOR_ELT(vctrs_shared_na_list, 0, R_NilValue);
+  vctrs_shared_missing_int = r_new_shared_vector(INTSXP, 1);
+  INTEGER(vctrs_shared_missing_int)[0] = NA_INTEGER;
+
+  vctrs_shared_missing_dbl = r_new_shared_vector(REALSXP, 1);
+  REAL(vctrs_shared_missing_dbl)[0] = NA_REAL;
+
+  vctrs_shared_missing_cpl = r_new_shared_vector(CPLXSXP, 1);
+  COMPLEX(vctrs_shared_missing_cpl)[0] = vctrs_shared_na_cpl;
+
+  // No actual `NA` value for raw, but we always use `0`
+  vctrs_shared_missing_raw = r_new_shared_vector(RAWSXP, 1);
+  RAW(vctrs_shared_missing_raw)[0] = 0;
+
+  vctrs_shared_missing_chr = r_new_shared_vector(STRSXP, 1);
+  SET_STRING_ELT(vctrs_shared_missing_chr, 0, NA_STRING);
+
+  vctrs_shared_missing_list = r_new_shared_vector(VECSXP, 1);
+  SET_VECTOR_ELT(vctrs_shared_missing_list, 0, R_NilValue);
 
   vctrs_shared_zero_int = r_new_shared_vector(INTSXP, 1);
   INTEGER(vctrs_shared_zero_int)[0] = 0;

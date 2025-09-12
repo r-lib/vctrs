@@ -168,6 +168,7 @@ extern r_obj* ffi_vec_case_when(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, 
 extern r_obj* ffi_vec_replace_when(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_recode_values(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_replace_values(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_if_else(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -366,6 +367,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_replace_when",                      (DL_FUNC) &ffi_vec_replace_when, 4},
   {"ffi_vec_recode_values",                     (DL_FUNC) &ffi_vec_recode_values, 9},
   {"ffi_vec_replace_values",                    (DL_FUNC) &ffi_vec_replace_values, 6},
+  {"ffi_vec_if_else",                           (DL_FUNC) &ffi_vec_if_else, 6},
   {"ffi_exp_vec_cast",                          (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };

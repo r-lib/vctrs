@@ -66,6 +66,7 @@ reference:
 
 - title: Recoding
   contents:
+  - vec_if_else
   - vec_case_when
   - vec_recode_values
 
