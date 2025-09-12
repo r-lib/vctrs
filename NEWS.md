@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_if_else()` for performing a vectorized if-else. It is exactly the same as `dplyr::if_else()`, but much faster and memory efficient (#2030).
+
 * `vec_equal()` now efficiently internally recycles `x` and `y` elements of size 1 (#2028).
 
 * `list_unchop()` now assigns names correctly when overlapping `indices` are involved (#2019).
