@@ -100,6 +100,13 @@ r_obj* vec_assign_shaped(
 
 bool is_condition_index(r_obj* index, r_ssize size);
 
+void list_check_all_condition_indices(
+  r_obj* xs,
+  r_ssize size,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy call
+);
+
 void check_recyclable_against_index(
   r_obj* value,
   r_obj* index,

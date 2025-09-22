@@ -940,6 +940,63 @@ bool is_condition_index(r_obj* index, r_ssize size) {
   return true;
 }
 
+static
+void check_condition_index(
+  r_obj* x,
+  r_ssize size,
+  struct vctrs_arg* p_x_arg,
+  struct r_lazy call
+) {
+  if (is_condition_index(x, size)) {
+    return;
+  }
+
+  // If it's a size issue, report that
+  if (r_length(x) != size) {
+    r_abort_lazy_call(
+      call,
+      "%s must be size %" R_PRI_SSIZE ", not size %" R_PRI_SSIZE ".",
+      vec_arg_format(p_x_arg),
+      size,
+      r_length(x)
+    );
+  }
+
+  // Otherwise it's a type issue
+  r_abort_lazy_call(
+    call,
+    "%s must be a logical vector, not %s.",
+    vec_arg_format(p_x_arg),
+    r_obj_type_friendly(x)
+  );
+}
+
+void list_check_all_condition_indices(
+  r_obj* xs,
+  r_ssize size,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy call
+) {
+  if (r_typeof(xs) != R_TYPE_list) {
+   r_stop_unexpected_type(r_typeof(xs));
+  }
+
+  r_ssize i = 0;
+
+  const r_ssize xs_size = r_length(xs);
+  r_obj* xs_names = r_names(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
+
+  struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
+  KEEP(p_x_arg->shelter);
+
+  for (; i < xs_size; ++i) {
+    check_condition_index(v_xs[i], size, p_x_arg, call);
+  }
+
+  FREE(1);
+}
+
 // Cheap internal checks done right before assignment to avoid R crashes in corrupt cases
 void check_assign_sizes(
   r_obj* x,
