@@ -7,19 +7,23 @@
 struct syms {
   r_obj* arg;
   r_obj* cases_arg;
+  r_obj* condition_arg;
   r_obj* default_arg;
   r_obj* dot_arg;
   r_obj* dot_call;
   r_obj* dot_error_arg;
   r_obj* dot_error_call;
+  r_obj* false_arg;
   r_obj* from_arg;
   r_obj* haystack_arg;
+  r_obj* missing_arg;
   r_obj* indices_arg;
   r_obj* needles_arg;
   r_obj* recurse;
   r_obj* repair_arg;
   r_obj* times_arg;
   r_obj* to_arg;
+  r_obj* true_arg;
   r_obj* value_arg;
   r_obj* values_arg;
   r_obj* vec_default_cast;
@@ -95,8 +99,14 @@ extern r_obj* vctrs_shared_empty_date;
 extern r_obj* vctrs_shared_empty_uns;
 
 extern Rcomplex vctrs_shared_na_cpl;
-extern r_obj* vctrs_shared_na_lgl;
-extern r_obj* vctrs_shared_na_list;
+
+extern r_obj* vctrs_shared_missing_lgl;
+extern r_obj* vctrs_shared_missing_int;
+extern r_obj* vctrs_shared_missing_dbl;
+extern r_obj* vctrs_shared_missing_cpl;
+extern r_obj* vctrs_shared_missing_raw;
+extern r_obj* vctrs_shared_missing_chr;
+extern r_obj* vctrs_shared_missing_list;
 
 
 #endif

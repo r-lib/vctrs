@@ -79,7 +79,7 @@ r_obj* vec_rbind(r_obj* xs,
     return new_data_frame(r_globals.empty_list, 0);
   }
   if (r_typeof(ptype) == R_TYPE_logical && !n_cols) {
-    ptype = as_df_row_impl(vctrs_shared_na_lgl,
+    ptype = as_df_row_impl(vctrs_shared_missing_lgl,
                            name_repair,
                            error_call);
     KEEP_N(ptype, &n_prot);

@@ -940,7 +940,6 @@ bool is_condition_index(r_obj* index, r_ssize size) {
   return true;
 }
 
-static
 void check_condition_index(
   r_obj* x,
   r_ssize size,
