@@ -130,7 +130,7 @@ bool list_all_size(
   struct r_lazy call
 ) {
   if (r_typeof(xs) != R_TYPE_list) {
-   r_stop_unexpected_type(r_typeof(xs));
+    r_stop_unexpected_type(r_typeof(xs));
   }
 
   r_ssize i = 0;
