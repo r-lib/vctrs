@@ -5,6 +5,7 @@ r_obj* generic_if_else(
   r_obj* false_,
   r_obj* missing,
   r_obj* ptype,
+  r_ssize size,
   struct vctrs_arg* p_true_arg,
   struct vctrs_arg* p_false_arg,
   struct vctrs_arg* p_missing_arg,
@@ -18,6 +19,7 @@ r_obj* atomic_if_else(
   r_obj* false_,
   r_obj* missing,
   r_obj* ptype,
+  r_ssize size,
   struct vctrs_arg* p_true_arg,
   struct vctrs_arg* p_false_arg,
   struct vctrs_arg* p_missing_arg,
@@ -60,6 +62,3 @@ r_obj* ptype_finalize(
   struct vctrs_arg* p_missing_arg,
   struct r_lazy error_call
 );
-
-static
-void check_logical(r_obj* x, struct vctrs_arg* p_x_arg, struct r_lazy error_call);

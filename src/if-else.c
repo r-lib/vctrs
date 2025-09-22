@@ -52,7 +52,8 @@ r_obj* vec_if_else(
   struct r_lazy error_call
 ) {
   obj_check_vector(condition, p_condition_arg, error_call);
-  check_logical(condition, p_condition_arg, error_call);
+  const r_ssize size = r_length(condition);
+  check_condition_index(condition, size, p_condition_arg, error_call);
 
   const bool has_missing = missing != r_null;
 
@@ -83,6 +84,7 @@ r_obj* vec_if_else(
       false_,
       missing,
       ptype,
+      size,
       p_true_arg,
       p_false_arg,
       p_missing_arg,
@@ -96,6 +98,7 @@ r_obj* vec_if_else(
       false_,
       missing,
       ptype,
+      size,
       p_true_arg,
       p_false_arg,
       p_missing_arg,
@@ -114,13 +117,12 @@ r_obj* generic_if_else(
   r_obj* false_,
   r_obj* missing,
   r_obj* ptype,
+  r_ssize size,
   struct vctrs_arg* p_true_arg,
   struct vctrs_arg* p_false_arg,
   struct vctrs_arg* p_missing_arg,
   struct r_lazy error_call
 ) {
-  const r_ssize size = r_length(condition);
-
   r_obj* cases = KEEP(r_alloc_list(2));
   r_list_poke(cases, 0, condition);
   // TODO: This is another place where we could use a compact-condition
@@ -188,6 +190,7 @@ r_obj* atomic_if_else(
   r_obj* false_,
   r_obj* missing,
   r_obj* ptype,
+  r_ssize size,
   struct vctrs_arg* p_true_arg,
   struct vctrs_arg* p_false_arg,
   struct vctrs_arg* p_missing_arg,
@@ -196,12 +199,10 @@ r_obj* atomic_if_else(
 ) {
   int n_prot = 0;
 
-  const r_ssize condition_size = r_length(condition);
-
   // `true`, `false`, and `missing` must all recycle to the size of `condition`
-  const r_ssize true_size = vec_check_recyclable(true_, condition_size, p_true_arg, error_call);
-  const r_ssize false_size = vec_check_recyclable(false_, condition_size, p_false_arg, error_call);
-  const r_ssize missing_size = has_missing ? vec_check_recyclable(missing, condition_size, p_missing_arg, error_call) : 0;
+  const r_ssize true_size = vec_check_recyclable(true_, size, p_true_arg, error_call);
+  const r_ssize false_size = vec_check_recyclable(false_, size, p_false_arg, error_call);
+  const r_ssize missing_size = has_missing ? vec_check_recyclable(missing, size, p_missing_arg, error_call) : 0;
 
   // Grab names before casting as casting may drop them
   // https://github.com/r-lib/vctrs/issues/623
@@ -254,7 +255,7 @@ r_obj* atomic_if_else(
     true_,
     false_,
     missing,
-    condition_size,
+    size,
     true_size,
     false_size,
     missing_size,
@@ -576,25 +577,4 @@ r_obj* ptype_finalize(
 
   FREE(n_prot);
   return ptype;
-}
-
-// TODO!: Use `check_condition_index()` from the `vec_case_when()` PR over this
-static
-void check_logical(r_obj* x, struct vctrs_arg* p_x_arg, struct r_lazy error_call) {
-  if (r_typeof(x) != R_TYPE_logical || r_is_object(x)) {
-    r_abort_lazy_call(
-      error_call,
-      "%s must be a logical vector, not %s.",
-      vec_arg_format(p_x_arg),
-      r_obj_type_friendly(x)
-    );
-  }
-
-  if (has_dim(x)) {
-    r_abort_lazy_call(
-      error_call,
-      "%s can't be an array.",
-      vec_arg_format(p_x_arg)
-    );
-  }
 }
