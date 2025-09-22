@@ -28,3 +28,4 @@
 ^\.vscode$
 ^CRAN-SUBMISSION$
 ^pkgdown$
+^[.]?air[.]toml$
