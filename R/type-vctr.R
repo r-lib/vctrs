@@ -64,10 +64,12 @@
 #' @export
 #' @keywords internal
 #' @aliases vctr
-new_vctr <- function(.data,
-                     ...,
-                     class = character(),
-                     inherit_base_type = NULL) {
+new_vctr <- function(
+  .data,
+  ...,
+  class = character(),
+  inherit_base_type = NULL
+) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
@@ -137,12 +139,14 @@ vec_cast.vctrs_vctr <- function(x, to, ...) {
   UseMethod("vec_cast.vctrs_vctr")
 }
 
-vctr_cast <- function(x,
-                      to,
-                      ...,
-                      x_arg = "",
-                      to_arg = "",
-                      call = caller_env()) {
+vctr_cast <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  call = caller_env()
+) {
   # These are not strictly necessary, but make bootstrapping a new class
   # a bit simpler
   if (is.object(x)) {
@@ -233,8 +237,9 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
   stopifnot(length(differences) == 1L, differences >= 1L)
 
   n <- vec_size(x)
-  if (lag * differences >= n)
+  if (lag * differences >= n) {
     return(vec_slice(x, 0L))
+  }
 
   out <- x
   for (i in seq_len(differences)) {
@@ -355,11 +360,13 @@ as.data.frame2 <- function(x) {
 }
 
 #' @export
-as.data.frame.vctrs_vctr <- function(x,
-                                     row.names = NULL,
-                                     optional = FALSE,
-                                     ...,
-                                     nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")) {
+as.data.frame.vctrs_vctr <- function(
+  x,
+  row.names = NULL,
+  optional = FALSE,
+  ...,
+  nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
+) {
   force(nm)
 
   if (has_dim(x)) {
@@ -755,18 +762,20 @@ new_hidden <- function(x = double()) {
 format.hidden <- function(x, ...) rep("xxx", length(x))
 
 local_hidden <- function(frame = caller_env()) {
-  local_bindings(.env = global_env(), .frame = frame,
-    vec_ptype2.hidden.hidden  = function(x, y, ...) new_hidden(),
-    vec_ptype2.hidden.double  = function(x, y, ...) new_hidden(),
-    vec_ptype2.double.hidden  = function(x, y, ...) new_hidden(),
+  local_bindings(
+    .env = global_env(),
+    .frame = frame,
+    vec_ptype2.hidden.hidden = function(x, y, ...) new_hidden(),
+    vec_ptype2.hidden.double = function(x, y, ...) new_hidden(),
+    vec_ptype2.double.hidden = function(x, y, ...) new_hidden(),
     vec_ptype2.hidden.logical = function(x, y, ...) new_hidden(),
     vec_ptype2.logical.hidden = function(x, y, ...) new_hidden(),
 
-    vec_cast.hidden.hidden   = function(x, to, ...) x,
-    vec_cast.hidden.double   = function(x, to, ...) new_hidden(vec_data(x)),
-    vec_cast.double.hidden   = function(x, to, ...) vec_data(x),
-    vec_cast.hidden.logical  = function(x, to, ...) new_hidden(as.double(x)),
-    vec_cast.logical.hidden  = function(x, to, ...) as.logical(vec_data(x))
+    vec_cast.hidden.hidden = function(x, to, ...) x,
+    vec_cast.hidden.double = function(x, to, ...) new_hidden(vec_data(x)),
+    vec_cast.double.hidden = function(x, to, ...) vec_data(x),
+    vec_cast.hidden.logical = function(x, to, ...) new_hidden(as.double(x)),
+    vec_cast.logical.hidden = function(x, to, ...) as.logical(vec_data(x))
   )
 }
 

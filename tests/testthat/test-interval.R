@@ -3,7 +3,7 @@
 
 test_that("can compute groups", {
   x <- data_frame(
-    start = c(1L, 9L,  2L, 2L, 10L),
+    start = c(1L, 9L, 2L, 2L, 10L),
     end = c(5L, 11L, 6L, 8L, 12L)
   )
 
@@ -43,7 +43,7 @@ test_that("missing intervals are retained", {
 
   expect_identical(
     vec_interval_groups(x$start, x$end),
-    x[1,]
+    x[1, ]
   )
 
   x <- data_frame(start = c(3, NA, 2, NA), end = c(5, NA, 3, NA))
@@ -92,7 +92,7 @@ test_that("max endpoint is retained even if it isn't the last in the group", {
 
 test_that("can locate groups", {
   x <- data_frame(
-    start = c(1L, 9L,  2L, 2L, 10L),
+    start = c(1L, 9L, 2L, 2L, 10L),
     end = c(5L, 11L, 6L, 8L, 12L)
   )
 
@@ -230,8 +230,14 @@ test_that("treats NA and NaN as equivalent with doubles", {
 })
 
 test_that("recognizes missing rows in data frames", {
-  start <- data_frame(year = c(2019, NA, NA, 2019, 2019), month = c(12, NA, NA, 12, 12))
-  end <- data_frame(year = c(2020, NA, NA, 2020, 2020), month = c(2, NA, NA, 11, 12))
+  start <- data_frame(
+    year = c(2019, NA, NA, 2019, 2019),
+    month = c(12, NA, NA, 12, 12)
+  )
+  end <- data_frame(
+    year = c(2020, NA, NA, 2020, 2020),
+    month = c(2, NA, NA, 11, 12)
+  )
   x <- data_frame(start = start, end = end)
 
   out <- vec_interval_locate_groups(x$start, x$end)
@@ -248,7 +254,10 @@ test_that("works on various types", {
   x <- data_frame(start = c(1.5, 2, 3.1, NA), end = c(1.7, 3.2, 4.5, NA))
 
   out <- vec_interval_locate_groups(x$start, x$end)
-  expect_identical(out$key, data_frame(start = c(1.5, 2, NA), end = c(1.7, 4.5, NA)))
+  expect_identical(
+    out$key,
+    data_frame(start = c(1.5, 2, NA), end = c(1.7, 4.5, NA))
+  )
   expect_identical(out$loc, list(1L, 2:3, 4L))
 
   out <- vec_interval_locate_groups(x$start, x$end, missing = "drop")
@@ -258,7 +267,10 @@ test_that("works on various types", {
   x <- data_frame(start = c("a", "c", "f", NA), end = c("b", "g", "h", NA))
 
   out <- vec_interval_locate_groups(x$start, x$end)
-  expect_identical(out$key, data_frame(start = c("a", "c", NA), end = c("b", "h", NA)))
+  expect_identical(
+    out$key,
+    data_frame(start = c("a", "c", NA), end = c("b", "h", NA))
+  )
   expect_identical(out$loc, list(1L, 2:3, 4L))
 
   out <- vec_interval_locate_groups(x$start, x$end, missing = "drop")
@@ -288,13 +300,24 @@ test_that("can keep abutting intervals separate", {
 
   out <- vec_interval_locate_groups(x$start, x$end, abutting = FALSE)
 
-  expect_identical(out$key, data_frame(start = c(0L, 1L, 2L), end = c(1L, 2L, 3L)))
+  expect_identical(
+    out$key,
+    data_frame(start = c(0L, 1L, 2L), end = c(1L, 2L, 3L))
+  )
   expect_identical(out$loc, list(2L, 1L, 3L))
 })
 
 test_that("`missing` is validated", {
-  expect_snapshot((expect_error(vec_interval_locate_groups(1, 2, missing = "s"))))
-  expect_snapshot((expect_error(vec_interval_locate_groups(1, 2, missing = c("group", "drop")))))
+  expect_snapshot(
+    (expect_error(vec_interval_locate_groups(1, 2, missing = "s")))
+  )
+  expect_snapshot(
+    (expect_error(vec_interval_locate_groups(
+      1,
+      2,
+      missing = c("group", "drop")
+    )))
+  )
 })
 
 test_that("common type is taken", {
@@ -410,17 +433,26 @@ test_that("works if both `lower` and `upper` are after any values", {
 
 test_that("works with only NA and `lower`", {
   x <- data_frame(start = NA_integer_, end = NA_integer_)
-  expect_identical(vec_interval_complement(x$start, x$end, lower = 5L), data_frame(start = integer(), end = integer()))
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 5L),
+    data_frame(start = integer(), end = integer())
+  )
 })
 
 test_that("works with only NA and `upper`", {
   x <- data_frame(start = NA_integer_, end = NA_integer_)
-  expect_identical(vec_interval_complement(x$start, x$end, upper = 5L), data_frame(start = integer(), end = integer()))
+  expect_identical(
+    vec_interval_complement(x$start, x$end, upper = 5L),
+    data_frame(start = integer(), end = integer())
+  )
 })
 
 test_that("works with only NA and both `lower` and `upper`", {
   x <- data_frame(start = NA_integer_, end = NA_integer_)
-  expect_identical(vec_interval_complement(x$start, x$end, lower = 2L, upper = 5L), data_frame(start = 2L, end = 5L))
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 2L, upper = 5L),
+    data_frame(start = 2L, end = 5L)
+  )
 })
 
 test_that("works with `lower` that is on the max set value", {
@@ -550,8 +582,16 @@ test_that("`lower` and `upper` can't contain missing values", {
 
     start <- data_frame(x = 1, y = 2)
     end <- data_frame(x = 1, y = 3)
-    (expect_error(vec_interval_complement(start, end, lower = data_frame(x = 1, y = NA))))
-    (expect_error(vec_interval_complement(start, end, upper = data_frame(x = 1, y = NA))))
+    (expect_error(vec_interval_complement(
+      start,
+      end,
+      lower = data_frame(x = 1, y = NA)
+    )))
+    (expect_error(vec_interval_complement(
+      start,
+      end,
+      upper = data_frame(x = 1, y = NA)
+    )))
   })
 })
 
@@ -560,7 +600,7 @@ test_that("`lower` and `upper` can't contain missing values", {
 
 test_that("can locate containers", {
   x <- data_frame(
-    start = c(1L, 9L,  2L, 2L, 10L),
+    start = c(1L, 9L, 2L, 2L, 10L),
     end = c(5L, 12L, 6L, 8L, 12L)
   )
 
@@ -637,8 +677,14 @@ test_that("treats NA and NaN as equivalent with doubles", {
 })
 
 test_that("recognizes missing rows in data frames", {
-  start <- data_frame(year = c(2019, NA, NA, 2019, 2019), month = c(12, NA, NA, 12, 12))
-  end <- data_frame(year = c(2020, NA, NA, 2020, 2020), month = c(2, NA, NA, 11, 12))
+  start <- data_frame(
+    year = c(2019, NA, NA, 2019, 2019),
+    month = c(12, NA, NA, 12, 12)
+  )
+  end <- data_frame(
+    year = c(2020, NA, NA, 2020, 2020),
+    month = c(2, NA, NA, 11, 12)
+  )
   x <- data_frame(start = start, end = end)
 
   expect_identical(
@@ -653,12 +699,18 @@ test_that("duplicate containers return the first", {
 })
 
 test_that("works on various types", {
-  x <- data_frame(start = c(1.5, 3, NA, 1.6, NA), end = c(1.7, 3.1, NA, 3.2, NA))
+  x <- data_frame(
+    start = c(1.5, 3, NA, 1.6, NA),
+    end = c(1.7, 3.1, NA, 3.2, NA)
+  )
 
   out <- vec_interval_locate_containers(x$start, x$end)
   expect_identical(out, c(1L, 4L, 3L))
 
-  x <- data_frame(start = c("a", "a", NA, "f", NA), end = c("b", "g", NA, "h", NA))
+  x <- data_frame(
+    start = c("a", "a", NA, "f", NA),
+    end = c("b", "g", NA, "h", NA)
+  )
 
   out <- vec_interval_locate_containers(x$start, x$end)
   expect_identical(out, c(2L, 4L, 3L))

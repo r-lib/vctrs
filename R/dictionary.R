@@ -58,7 +58,10 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
     # Order by descending count, but ascending original location.
     # This retains stable ordering in case of ties in the `count`.
     # Need `vec_order_radix()` to handle different `direction`s.
-    loc <- vec_order_radix(info[c("count", "loc")], direction = c("desc", "asc"))
+    loc <- vec_order_radix(
+      info[c("count", "loc")],
+      direction = c("desc", "asc")
+    )
     info <- vec_slice(info, loc)
   }
 
@@ -252,24 +255,28 @@ vec_unique_count <- function(x) {
 #'
 #' # Only the first index of duplicates is returned
 #' vec_match(c("a", "b"), c("a", "b", "a", "b"))
-vec_match <- function(needles,
-                      haystack,
-                      ...,
-                      na_equal = TRUE,
-                      needles_arg = "",
-                      haystack_arg = "") {
+vec_match <- function(
+  needles,
+  haystack,
+  ...,
+  na_equal = TRUE,
+  needles_arg = "",
+  haystack_arg = ""
+) {
   check_dots_empty0(...)
   .Call(vctrs_match, needles, haystack, na_equal, environment())
 }
 
 #' @export
 #' @rdname vec_match
-vec_in <- function(needles,
-                   haystack,
-                   ...,
-                   na_equal = TRUE,
-                   needles_arg = "",
-                   haystack_arg = "") {
+vec_in <- function(
+  needles,
+  haystack,
+  ...,
+  na_equal = TRUE,
+  needles_arg = "",
+  haystack_arg = ""
+) {
   check_dots_empty0(...)
   .Call(vctrs_in, needles, haystack, na_equal, environment())
 }

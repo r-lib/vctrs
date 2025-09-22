@@ -8,7 +8,7 @@ encodings <- function(bytes = FALSE) {
   out <- list(utf8 = utf8, unknown = unknown, latin1 = latin1)
 
   if (bytes) {
-    out <- list2(!!! out, bytes = encoding_bytes())
+    out <- list2(!!!out, bytes = encoding_bytes())
   }
 
   out

@@ -1,4 +1,3 @@
-
 parens <- function(x, left = TRUE) {
   x_lines <- strsplit(x, "\n")
   x_lines <- map(x_lines, paren, left = left)

@@ -1,4 +1,3 @@
-
 # `numeric_version` from base ----------------------------------------
 
 #' @export

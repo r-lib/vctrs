@@ -1,4 +1,3 @@
-
 test_that("can split empty vector", {
   out <- vec_split(integer(), character())
 
@@ -13,10 +12,13 @@ test_that("split data frame with data frame", {
 
   expect_s3_class(out, "data.frame")
   expect_equal(out$key, data.frame(x = c(1, 2), y = c(1, 1)))
-  expect_equal(out$val, list(
-    data.frame(x = c(1, 1), y = c(1, 1)),
-    data.frame(x = 2, y = 1)
-  ))
+  expect_equal(
+    out$val,
+    list(
+      data.frame(x = c(1, 1), y = c(1, 1)),
+      data.frame(x = 2, y = 1)
+    )
+  )
 })
 
 test_that("x and by must be same size", {
@@ -44,4 +46,3 @@ test_that("`key` and `value` retain names", {
   expect_identical(split$val[[1]], c(a = 1, c = 1, a = 1))
   expect_identical(split$val[[2]], c(b = 2))
 })
-

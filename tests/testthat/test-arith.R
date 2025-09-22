@@ -1,4 +1,3 @@
-
 test_that("logical/integer/numeric works", {
   expect_equal(vec_arith("+", TRUE, TRUE), 2L)
   expect_equal(vec_arith("+", TRUE, 1L), 2L)

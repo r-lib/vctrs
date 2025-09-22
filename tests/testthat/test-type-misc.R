@@ -1,4 +1,3 @@
-
 test_that("`numeric_version` is a vector (#723)", {
   x <- numeric_version("0.1.0")
   y <- numeric_version("0.2.0")
@@ -84,8 +83,14 @@ test_that("`numeric_version` proxy handles pseudo-`NA`", {
 })
 
 test_that("`numeric_version` works with functions using the equality proxy", {
-  x <- numeric_version(c("1.2-3", "1.21.1", "1_1", "0.5", "1.3"), strict = FALSE)
-  y <- numeric_version(c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"), strict = FALSE)
+  x <- numeric_version(
+    c("1.2-3", "1.21.1", "1_1", "0.5", "1.3"),
+    strict = FALSE
+  )
+  y <- numeric_version(
+    c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"),
+    strict = FALSE
+  )
 
   expect_identical(vec_unique(x), x)
   expect_identical(vec_unique(y), y[c(1, 3, 4)])
@@ -93,12 +98,21 @@ test_that("`numeric_version` works with functions using the equality proxy", {
   expect_identical(vec_detect_missing(y), c(FALSE, FALSE, TRUE, FALSE, TRUE))
 
   expect_identical(vec_equal(x, y), c(FALSE, TRUE, NA, TRUE, NA))
-  expect_identical(vec_equal(x, y, na_equal = TRUE), c(FALSE, TRUE, TRUE, TRUE, FALSE))
+  expect_identical(
+    vec_equal(x, y, na_equal = TRUE),
+    c(FALSE, TRUE, TRUE, TRUE, FALSE)
+  )
 })
 
 test_that("`numeric_version` works with functions using the comparison proxy", {
-  x <- numeric_version(c("1.2-3", "1.21.1", "1_1", "0.5", "1.3"), strict = FALSE)
-  y <- numeric_version(c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"), strict = FALSE)
+  x <- numeric_version(
+    c("1.2-3", "1.21.1", "1_1", "0.5", "1.3"),
+    strict = FALSE
+  )
+  y <- numeric_version(
+    c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"),
+    strict = FALSE
+  )
 
   expect_identical(vec_compare(x, y), c(-1L, 0L, NA, 0L, NA))
   expect_identical(vec_compare(x, y, na_equal = TRUE), c(-1L, 0L, 0L, 0L, 1L))
@@ -112,14 +126,23 @@ test_that("`numeric_version` works with functions using the comparison proxy", {
 })
 
 test_that("`numeric_version` works with functions using the order proxy (tidyverse/dplyr#6680)", {
-  x <- numeric_version(c("1.2-3", "1.21.1", "1_1", "0.5", "1.30"), strict = FALSE)
-  y <- numeric_version(c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"), strict = FALSE)
+  x <- numeric_version(
+    c("1.2-3", "1.21.1", "1_1", "0.5", "1.30"),
+    strict = FALSE
+  )
+  y <- numeric_version(
+    c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"),
+    strict = FALSE
+  )
 
   expect_identical(vec_order(y), c(4L, 1L, 2L, 3L, 5L))
   expect_identical(vec_order_radix(y), c(4L, 1L, 2L, 3L, 5L))
 
   expect_identical(vec_order(y, na_value = "smallest"), c(3L, 5L, 4L, 1L, 2L))
-  expect_identical(vec_order_radix(y, na_value = "smallest"), c(3L, 5L, 4L, 1L, 2L))
+  expect_identical(
+    vec_order_radix(y, na_value = "smallest"),
+    c(3L, 5L, 4L, 1L, 2L)
+  )
 
   expect_identical(
     vec_locate_matches(x, y),
@@ -181,19 +204,28 @@ test_that("`omit` class is numeric (#1160)", {
   x <- c(NA, 1:3, NA)
   omit <- attr(na.omit(x), "na.action")
 
-  expect_identical(vec_ptype_common(omit, omit), structure(int(), class = "omit"))
+  expect_identical(
+    vec_ptype_common(omit, omit),
+    structure(int(), class = "omit")
+  )
   expect_identical(vec_ptype_common(1.5, omit), dbl())
   expect_identical(vec_ptype_common(omit, 1L), int())
 
   expect_identical(vec_cast_common(omit, omit), list(omit, omit))
   expect_identical(vec_cast_common(omit, 1L), list(unstructure(omit), 1L))
-  expect_identical(vec_cast_common(1.5, omit), list(1.5, unstructure(as.double(omit))))
+  expect_identical(
+    vec_cast_common(1.5, omit),
+    list(1.5, unstructure(as.double(omit)))
+  )
 
   expect_error(vec_cast(1L, omit), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast(1.0, omit), class = "vctrs_error_incompatible_type")
 
   expect_identical(vec_slice(omit, 1), structure(1L, class = "omit"))
-  expect_identical(vec_c(omit, omit), structure(c(1L, 5L, 1L, 5L), class = "omit"))
+  expect_identical(
+    vec_c(omit, omit),
+    structure(c(1L, 5L, 1L, 5L), class = "omit")
+  )
   expect_identical(vec_c(omit, omit, 10L), c(1L, 5L, 1L, 5L, 10L))
 
   expect_identical(vec_slice(x, omit), x[omit])
@@ -203,19 +235,28 @@ test_that("`exclude` class is numeric (#1160)", {
   x <- c(NA, 1:3, NA)
   exc <- attr(na.exclude(x), "na.action")
 
-  expect_identical(vec_ptype_common(exc, exc), structure(int(), class = "exclude"))
+  expect_identical(
+    vec_ptype_common(exc, exc),
+    structure(int(), class = "exclude")
+  )
   expect_identical(vec_ptype_common(1.5, exc), dbl())
   expect_identical(vec_ptype_common(exc, 1L), int())
 
   expect_identical(vec_cast_common(exc, exc), list(exc, exc))
   expect_identical(vec_cast_common(exc, 1L), list(unstructure(exc), 1L))
-  expect_identical(vec_cast_common(1.5, exc), list(1.5, unstructure(as.double(exc))))
+  expect_identical(
+    vec_cast_common(1.5, exc),
+    list(1.5, unstructure(as.double(exc)))
+  )
 
   expect_error(vec_cast(1L, exc), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast(1.0, exc), class = "vctrs_error_incompatible_type")
 
   expect_identical(vec_slice(exc, 1), structure(1L, class = "exclude"))
-  expect_identical(vec_c(exc, exc), structure(c(1L, 5L, 1L, 5L), class = "exclude"))
+  expect_identical(
+    vec_c(exc, exc),
+    structure(c(1L, 5L, 1L, 5L), class = "exclude")
+  )
   expect_identical(vec_c(exc, exc, 10L), c(1L, 5L, 1L, 5L, 10L))
 
   expect_identical(vec_slice(x, exc), x[exc])

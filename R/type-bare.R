@@ -130,7 +130,6 @@ vec_ptype2.complex.double <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 
 
-
 # Character
 
 #' @method vec_ptype2.character character
@@ -177,12 +176,14 @@ vec_cast.logical.logical <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.logical integer
-vec_cast.logical.integer <- function(x,
-                                     to,
-                                     ...,
-                                     x_arg = "",
-                                     to_arg = "",
-                                     call = caller_env()) {
+vec_cast.logical.integer <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  call = caller_env()
+) {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(
     out,
@@ -204,12 +205,14 @@ vec_cast.logical.integer <- function(x,
 }
 #' @export
 #' @method vec_cast.logical double
-vec_cast.logical.double <- function(x,
-                                    to,
-                                    ...,
-                                    x_arg = "",
-                                    to_arg = "",
-                                    call = caller_env()) {
+vec_cast.logical.double <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  call = caller_env()
+) {
   out <- vec_coerce_bare(x, "logical")
   out <- shape_broadcast(
     out,
@@ -250,12 +253,14 @@ vec_cast.integer.integer <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.integer double
-vec_cast.integer.double <- function(x,
-                                    to,
-                                    ...,
-                                    x_arg = "",
-                                    to_arg = "",
-                                    call = caller_env()) {
+vec_cast.integer.double <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  call = caller_env()
+) {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
   x_na <- is.na(x)
   lossy <- (out != x & !x_na) | xor(x_na, is.na(out))

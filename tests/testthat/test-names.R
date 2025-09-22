@@ -28,7 +28,10 @@ test_that("vec_names() dispatches", {
 test_that("vec_names2() repairs names", {
   expect_identical(vec_names2(1:2), c("", ""))
   expect_identical(vec_names2(1:2, repair = "unique"), c("...1", "...2"))
-  expect_identical(vec_names2(set_names(1:2, c("_foo", "_bar")), repair = "universal"), c("._foo", "._bar"))
+  expect_identical(
+    vec_names2(set_names(1:2, c("_foo", "_bar")), repair = "universal"),
+    c("._foo", "._bar")
+  )
 })
 
 test_that("vec_names2() treats data frames and arrays as vectors", {
@@ -42,8 +45,14 @@ test_that("vec_names2() treats data frames and arrays as vectors", {
 })
 
 test_that("vec_names2() accepts and checks repair function", {
-  expect_identical(vec_names2(1:2, repair = function(nms) rep_along(nms, "foo")), c("foo", "foo"))
-  expect_error(vec_names2(1:2, repair = function(nms) "foo"), "length 1 instead of length 2")
+  expect_identical(
+    vec_names2(1:2, repair = function(nms) rep_along(nms, "foo")),
+    c("foo", "foo")
+  )
+  expect_error(
+    vec_names2(1:2, repair = function(nms) "foo"),
+    "length 1 instead of length 2"
+  )
 })
 
 test_that("vec_names2() repairs names before invoking repair function", {
@@ -52,8 +61,14 @@ test_that("vec_names2() repairs names before invoking repair function", {
 })
 
 test_that("vec_names2() result is correct for *_quiet repair", {
-  expect_identical(vec_names2(1:2, repair = "unique"), vec_names2(1:2, repair = "unique_quiet"))
-  expect_identical(vec_names2(1:2, repair = "universal"), vec_names2(1:2, repair = "universal_quiet"))
+  expect_identical(
+    vec_names2(1:2, repair = "unique"),
+    vec_names2(1:2, repair = "unique_quiet")
+  )
+  expect_identical(
+    vec_names2(1:2, repair = "universal"),
+    vec_names2(1:2, repair = "universal_quiet")
+  )
 })
 
 # vec_as_names() -----------------------------------------------------------
@@ -71,9 +86,18 @@ test_that("vec_as_names() validates `repair`", {
 
 test_that("vec_as_names() repairs names", {
   expect_identical(vec_as_names(chr(NA, NA)), c("", ""))
-  expect_identical(vec_as_names(chr(NA, NA), repair = "unique"), c("...1", "...2"))
-  expect_identical(vec_as_names(chr("_foo", "_bar"), repair = "universal"), c("._foo", "._bar"))
-  expect_identical(vec_as_names(chr("a", "b"), repair = "check_unique"), c("a", "b"))
+  expect_identical(
+    vec_as_names(chr(NA, NA), repair = "unique"),
+    c("...1", "...2")
+  )
+  expect_identical(
+    vec_as_names(chr("_foo", "_bar"), repair = "universal"),
+    c("._foo", "._bar")
+  )
+  expect_identical(
+    vec_as_names(chr("a", "b"), repair = "check_unique"),
+    c("a", "b")
+  )
 })
 
 test_that("vec_as_names() checks unique names", {
@@ -122,7 +146,10 @@ test_that("vec_as_names() accepts and checks repair function", {
     ~ rep_along(.x, local_obj)
   })
   expect_identical(vec_as_names(c("", ""), repair = f), c("foo", "foo"))
-  expect_snapshot(error = TRUE, my_vec_as_names(c("", ""), my_repair = function(nms) "foo"))
+  expect_snapshot(
+    error = TRUE,
+    my_vec_as_names(c("", ""), my_repair = function(nms) "foo")
+  )
 })
 
 test_that("vec_as_names() repairs names before invoking repair function", {
@@ -169,10 +196,22 @@ test_that("validate_minimal_names() checks names", {
 test_that("validate_unique() checks unique names", {
   expect_snapshot({
     (expect_error(validate_unique(chr(NA)), "`NA`"))
-    (expect_error(validate_unique(chr("")), class = "vctrs_error_names_cannot_be_empty"))
-    (expect_error(validate_unique(chr("a", "a")), class = "vctrs_error_names_must_be_unique"))
-    (expect_error(validate_unique(chr("..1")), class = "vctrs_error_names_cannot_be_dot_dot"))
-    (expect_error(validate_unique(chr("...")), class = "vctrs_error_names_cannot_be_dot_dot"))
+    (expect_error(
+      validate_unique(chr("")),
+      class = "vctrs_error_names_cannot_be_empty"
+    ))
+    (expect_error(
+      validate_unique(chr("a", "a")),
+      class = "vctrs_error_names_must_be_unique"
+    ))
+    (expect_error(
+      validate_unique(chr("..1")),
+      class = "vctrs_error_names_cannot_be_dot_dot"
+    ))
+    (expect_error(
+      validate_unique(chr("...")),
+      class = "vctrs_error_names_cannot_be_dot_dot"
+    ))
   })
 })
 
@@ -206,15 +245,24 @@ test_that("vec_as_names() evaluates repair_arg lazily", {
 
 test_that("vec_repair_names() repairs names", {
   expect_identical(vec_repair_names(1:2), set_names(1:2, c("", "")))
-  expect_identical(vec_repair_names(1:2, "unique"), set_names(1:2, c("...1", "...2")))
-  expect_identical(vec_repair_names(set_names(1:2, c("_foo", "_bar")), "universal"), set_names(1:2, c("._foo", "._bar")))
+  expect_identical(
+    vec_repair_names(1:2, "unique"),
+    set_names(1:2, c("...1", "...2"))
+  )
+  expect_identical(
+    vec_repair_names(set_names(1:2, c("_foo", "_bar")), "universal"),
+    set_names(1:2, c("._foo", "._bar"))
+  )
 })
 
 test_that("vec_repair_names() handles data frames and arrays", {
   df <- data.frame(x = 1:2)
   expect_identical(vec_repair_names(df), df)
   expect_identical(row.names(vec_repair_names(as.matrix(df))), c("", ""))
-  expect_identical(row.names(vec_repair_names(as.matrix(df), "unique")), c("...1", "...2"))
+  expect_identical(
+    row.names(vec_repair_names(as.matrix(df), "unique")),
+    c("...1", "...2")
+  )
 })
 
 # vec_set_names() -----------------------------------------------------------
@@ -248,7 +296,11 @@ test_that("vec_set_names() doesn't alter names", {
   expect_equal(vec_names2(x), "a")
   expect_equal(colnames(x), "x")
 
-  y <- array(1:4, dim = c(1, 2, 2), dimnames = list(rows = "a", one = 1:2, two = 1:2))
+  y <- array(
+    1:4,
+    dim = c(1, 2, 2),
+    dimnames = list(rows = "a", one = 1:2, two = 1:2)
+  )
   vec_set_names(y, "y")
   expect_equal(vec_names2(y), "a")
   vec_set_names(y, NULL)
@@ -415,9 +467,18 @@ test_that("as_unique_names() strips positional suffixes, re-applies as needed", 
 
   expect_identical(as_unique_names("a...1"), "a")
   expect_identical(as_unique_names(c("a...2", "a")), c("a...1", "a...2"))
-  expect_identical(as_unique_names(c("a...3", "a", "a")), c("a...1", "a...2", "a...3"))
-  expect_identical(as_unique_names(c("a...2", "a", "a")), c("a...1", "a...2", "a...3"))
-  expect_identical(as_unique_names(c("a...2", "a...2", "a...2")), c("a...1", "a...2", "a...3"))
+  expect_identical(
+    as_unique_names(c("a...3", "a", "a")),
+    c("a...1", "a...2", "a...3")
+  )
+  expect_identical(
+    as_unique_names(c("a...2", "a", "a")),
+    c("a...1", "a...2", "a...3")
+  )
+  expect_identical(
+    as_unique_names(c("a...2", "a...2", "a...2")),
+    c("a...1", "a...2", "a...3")
+  )
 })
 
 test_that("as_unique_names() is idempotent", {
@@ -439,28 +500,32 @@ test_that("unique-ification has an 'algebraic'-y property", {
   ## fix names on each, catenate, fix the whole
   z1 <- as_unique_names(
     c(
-      as_unique_names(x), as_unique_names(y)
+      as_unique_names(x),
+      as_unique_names(y)
     )
   )
 
   ## fix names on x, catenate, fix the whole
   z2 <- as_unique_names(
     c(
-      as_unique_names(x), y
+      as_unique_names(x),
+      y
     )
   )
 
   ## fix names on y, catenate, fix the whole
   z3 <- as_unique_names(
     c(
-      x, as_unique_names(y)
+      x,
+      as_unique_names(y)
     )
   )
 
   ## catenate, fix the whole
   z4 <- as_unique_names(
     c(
-      x, y
+      x,
+      y
     )
   )
 
@@ -496,7 +561,10 @@ test_that("universal names are not changed", {
 
 test_that("as_universal_names() is idempotent", {
   x <- c(NA, "", "x", "x", "a1:", "_x_y}")
-  expect_identical(as_universal_names(x), as_universal_names(as_universal_names(x)))
+  expect_identical(
+    as_universal_names(x),
+    as_universal_names(as_universal_names(x))
+  )
 })
 
 test_that("dupes get a suffix", {
@@ -554,7 +622,16 @@ test_that("'...j' gets stripped then names are modified", {
 
 test_that("complicated inputs", {
   expect_equal(
-    as_universal_names(c("", ".", NA, "if...4", "if", "if...8", "for", "if){]1")),
+    as_universal_names(c(
+      "",
+      ".",
+      NA,
+      "if...4",
+      "if",
+      "if...8",
+      "for",
+      "if){]1"
+    )),
     c("...1", ".", "...3", ".if...4", ".if...5", ".if...6", ".for", "if...1")
   )
 })
@@ -573,13 +650,22 @@ test_that("quiet", {
 
 test_that("unique then universal is universal, with shuffling", {
   x <- c("", ".2", "..3", "...4", "....5", ".....6", "......7", "...")
-  expect_identical(as_universal_names(as_unique_names(x)), as_universal_names(x))
+  expect_identical(
+    as_universal_names(as_unique_names(x)),
+    as_universal_names(x)
+  )
 
   x2 <- x[c(7L, 4L, 3L, 6L, 5L, 1L, 2L, 8L)]
-  expect_identical(as_universal_names(as_unique_names(x2)), as_universal_names(x2))
+  expect_identical(
+    as_universal_names(as_unique_names(x2)),
+    as_universal_names(x2)
+  )
 
   x3 <- x[c(3L, 2L, 4L, 6L, 8L, 1L, 5L, 7L)]
-  expect_identical(as_universal_names(as_unique_names(x3)), as_universal_names(x3))
+  expect_identical(
+    as_universal_names(as_unique_names(x3)),
+    as_universal_names(x3)
+  )
 })
 
 test_that("zero-length inputs given character names", {
@@ -599,7 +685,10 @@ test_that("messages by default", {
 })
 
 test_that("quiet = TRUE", {
-  expect_message(vec_repair_names(set_names(1, ""), "universal", quiet = TRUE), NA)
+  expect_message(
+    vec_repair_names(set_names(1, ""), "universal", quiet = TRUE),
+    NA
+  )
 })
 
 test_that("non-universal names", {
@@ -614,8 +703,8 @@ test_that("non-universal names", {
 
 test_that("make_syntactic(): empty or NA", {
   expect_syntactic(
-      c("", NA_character_),
-      c(".", ".")
+    c("", NA_character_),
+    c(".", ".")
   )
 })
 
@@ -628,63 +717,63 @@ test_that("make_syntactic(): reserved words", {
 
 test_that("make_syntactic(): underscore", {
   expect_syntactic(
-    c( "_",  "_1",  "_a}"),
+    c("_", "_1", "_a}"),
     c("._", "._1", "._a.")
   )
 })
 
 test_that("make_syntactic(): dots", {
   expect_syntactic(
-    c(".", "..",  "...", "...."),
+    c(".", "..", "...", "...."),
     c(".", "..", "....", "....")
   )
 })
 
 test_that("make_syntactic(): number", {
   expect_syntactic(
-      c(   "0",    "1",    "22",    "333"),
-      c("...0", "...1", "...22", "...333")
+    c("0", "1", "22", "333"),
+    c("...0", "...1", "...22", "...333")
   )
 })
 
 test_that("make_syntactic(): number then character", {
   expect_syntactic(
-    c(  "0a",   "1b",   "22c",   "333d"),
+    c("0a", "1b", "22c", "333d"),
     c("..0a", "..1b", "..22c", "..333d")
   )
 })
 
 test_that("make_syntactic(): number then non-character", {
   expect_syntactic(
-    c(  "0)",   "1&",   "22*",   "333@"),
+    c("0)", "1&", "22*", "333@"),
     c("..0.", "..1.", "..22.", "..333.")
   )
 })
 
 test_that("make_syntactic(): dot then number", {
   expect_syntactic(
-    c(  ".0",   ".1",   ".22",   ".333"),
+    c(".0", ".1", ".22", ".333"),
     c("...0", "...1", "...22", "...333")
   )
 })
 
 test_that("make_syntactic(): dot then number then character", {
   expect_syntactic(
-    c( ".0a",  ".1b",  ".22c",  ".333d"),
+    c(".0a", ".1b", ".22c", ".333d"),
     c("..0a", "..1b", "..22c", "..333d")
   )
 })
 
 test_that("make_syntactic(): dot then number then non-character", {
   expect_syntactic(
-    c( ".0)",  ".1&",  ".22*",  ".333@"),
+    c(".0)", ".1&", ".22*", ".333@"),
     c("..0.", "..1.", "..22.", "..333.")
   )
 })
 
 test_that("make_syntactic(): dot dot then number", {
   expect_syntactic(
-    c( "..0",  "..1",  "..22",  "..333"),
+    c("..0", "..1", "..22", "..333"),
     c("...0", "...1", "...22", "...333")
   )
 })
@@ -767,7 +856,11 @@ test_that("Name repair works with non-UTF-8 names", {
 test_that("names cannot be empty", {
   expect_error_cnd(
     stop_names_cannot_be_empty(c("", "")),
-    class = c("vctrs_error_names_cannot_be_empty", "vctrs_error_names", "vctrs_error"),
+    class = c(
+      "vctrs_error_names_cannot_be_empty",
+      "vctrs_error_names",
+      "vctrs_error"
+    ),
     message = "Names can't be empty.",
     names = c("", "")
   )
@@ -776,7 +869,11 @@ test_that("names cannot be empty", {
 test_that("names cannot be dot dot", {
   expect_error_cnd(
     stop_names_cannot_be_dot_dot(c("..1", "..2")),
-    class = c("vctrs_error_names_cannot_be_dot_dot", "vctrs_error_names", "vctrs_error"),
+    class = c(
+      "vctrs_error_names_cannot_be_dot_dot",
+      "vctrs_error_names",
+      "vctrs_error"
+    ),
     message = "Names can't be of the form `...` or `..j`.",
     names = c("..1", "..2")
   )
@@ -785,7 +882,11 @@ test_that("names cannot be dot dot", {
 test_that("names must be unique", {
   expect_error_cnd(
     stop_names_must_be_unique(c("x", "y", "y", "x")),
-    class = c("vctrs_error_names_must_be_unique", "vctrs_error_names", "vctrs_error"),
+    class = c(
+      "vctrs_error_names_must_be_unique",
+      "vctrs_error_names",
+      "vctrs_error"
+    ),
     message = "Names must be unique.",
     names = c("x", "y", "y", "x")
   )
@@ -796,10 +897,22 @@ test_that("names must be unique", {
 
 test_that("vec_as_names_legacy() works", {
   expect_identical(vec_as_names_legacy(chr()), chr())
-  expect_identical(vec_as_names_legacy(c("a", "a", "", "")), c("a", "a1", "V1", "V2"))
-  expect_identical(vec_as_names_legacy(c("a", "a", "", ""), sep = "_"), c("a", "a_1", "V_1", "V_2"))
-  expect_identical(vec_as_names_legacy(c("a", "a", "", ""), prefix = "foo"), c("a", "a1", "foo1", "foo2"))
-  expect_identical(vec_as_names_legacy(c("a", "a", "", ""), prefix = "foo", sep = "_"), c("a", "a_1", "foo_1", "foo_2"))
+  expect_identical(
+    vec_as_names_legacy(c("a", "a", "", "")),
+    c("a", "a1", "V1", "V2")
+  )
+  expect_identical(
+    vec_as_names_legacy(c("a", "a", "", ""), sep = "_"),
+    c("a", "a_1", "V_1", "V_2")
+  )
+  expect_identical(
+    vec_as_names_legacy(c("a", "a", "", ""), prefix = "foo"),
+    c("a", "a1", "foo1", "foo2")
+  )
+  expect_identical(
+    vec_as_names_legacy(c("a", "a", "", ""), prefix = "foo", sep = "_"),
+    c("a", "a_1", "foo_1", "foo_2")
+  )
 
   # From tibble
   expect_identical(vec_as_names_legacy(c("x", "x")), c("x", "x1"))
@@ -820,7 +933,10 @@ test_that("NULL name specs works with scalars", {
   expect_named(vec_c(foo = set_names(dbl())), chr())
   expect_named(vec_c(foo = set_names(dbl()), bar = set_names(dbl())), chr())
 
-  expect_error(apply_name_spec(NULL, "foo", c("a", "b")), "vector of length > 1")
+  expect_error(
+    apply_name_spec(NULL, "foo", c("a", "b")),
+    "vector of length > 1"
+  )
   expect_error(apply_name_spec(NULL, "foo", NULL, 2L), "vector of length > 1")
 
   expect_snapshot({
@@ -839,22 +955,44 @@ test_that("function name spec is applied", {
   expect_identical(apply_name_spec(spec, "foo", NULL, 1L), "foo")
   expect_named(vec_c(foo = 1, .name_spec = spec), "foo")
 
-  expect_identical(apply_name_spec(spec, "foo", c("a", "b")), c("foo_a", "foo_b"))
-  expect_named(vec_c(foo = c(a = 1, b = 2), .name_spec = spec), c("foo_a", "foo_b"))
+  expect_identical(
+    apply_name_spec(spec, "foo", c("a", "b")),
+    c("foo_a", "foo_b")
+  )
+  expect_named(
+    vec_c(foo = c(a = 1, b = 2), .name_spec = spec),
+    c("foo_a", "foo_b")
+  )
 
   expect_identical(apply_name_spec(spec, "foo", NULL, 2L), c("foo:1", "foo:2"))
   expect_named(vec_c(foo = 1:2, .name_spec = spec), c("foo:1", "foo:2"))
 })
 
 test_that("can pass lambda formula as name spec", {
-  expect_named(vec_c(foo = c(a = 1, b = 2), .name_spec = ~ paste(.x, .y, sep = "_")), c("foo_a", "foo_b"))
-  expect_error(vec_c(foo = c(a = 1, b = 2), .name_spec = env()), "Can't convert `.name_spec`", fixed = TRUE)
+  expect_named(
+    vec_c(foo = c(a = 1, b = 2), .name_spec = ~ paste(.x, .y, sep = "_")),
+    c("foo_a", "foo_b")
+  )
+  expect_error(
+    vec_c(foo = c(a = 1, b = 2), .name_spec = env()),
+    "Can't convert `.name_spec`",
+    fixed = TRUE
+  )
 })
 
 test_that("can pass glue string as name spec", {
-  expect_named(vec_c(foo = c(a = 1, b = 2), .name_spec = "{outer}_{inner}"), c("foo_a", "foo_b"))
-  expect_named(vec_c(foo = 1:2, .name_spec = "{outer}_{inner}"), c("foo_1", "foo_2"))
-  expect_error(vec_c(foo = c(a = 1, b = 2), .name_spec = c("a", "b")), "single string")
+  expect_named(
+    vec_c(foo = c(a = 1, b = 2), .name_spec = "{outer}_{inner}"),
+    c("foo_a", "foo_b")
+  )
+  expect_named(
+    vec_c(foo = 1:2, .name_spec = "{outer}_{inner}"),
+    c("foo_1", "foo_2")
+  )
+  expect_error(
+    vec_c(foo = c(a = 1, b = 2), .name_spec = c("a", "b")),
+    "single string"
+  )
 })
 
 test_that("can pass 'inner' string as name spec", {

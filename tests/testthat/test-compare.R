@@ -1,4 +1,3 @@
-
 test_that("inputs must be vectors", {
   expect_error(vec_compare(NULL, 1), class = "vctrs_error_scalar_type")
   expect_error(vec_compare(1, NULL), class = "vctrs_error_scalar_type")
@@ -94,11 +93,17 @@ test_that("C code doesn't crash with bad inputs", {
   # Names are not checked, as `vec_cast_common()` should take care of the type.
   # So if `vec_cast_common()` is not called, or is improperly specified, then
   # this could result in false equality.
-  expect_equal(.Call(ffi_vec_compare, df, setNames(df, c("x", "z")), TRUE), c(0, 0, 0))
+  expect_equal(
+    .Call(ffi_vec_compare, df, setNames(df, c("x", "z")), TRUE),
+    c(0, 0, 0)
+  )
 
   df1 <- new_data_frame(list(x = 1:3, y = c(1, 1, 1)))
   df2 <- new_data_frame(list(y = 1:2, x = 1:2))
-  expect_error(.Call(ffi_vec_compare, df1, df2, TRUE), "must have the same types and lengths")
+  expect_error(
+    .Call(ffi_vec_compare, df1, df2, TRUE),
+    "must have the same types and lengths"
+  )
 })
 
 test_that("xtfrm.vctrs_vctr works for variety of base classes", {
@@ -143,7 +148,11 @@ test_that("vec_proxy_compare() preserves data frames and vectors", {
 
 test_that("vec_proxy_compare() handles data frame with a POSIXlt column", {
   df <- data.frame(times = 1:5, x = 1:5)
-  df$times <- as.POSIXlt(seq.Date(as.Date("2019-12-30"), as.Date("2020-01-03"), by = "day"))
+  df$times <- as.POSIXlt(seq.Date(
+    as.Date("2019-12-30"),
+    as.Date("2020-01-03"),
+    by = "day"
+  ))
 
   df2 <- df
   df2$times <- vec_proxy_compare(df$times)
@@ -155,7 +164,11 @@ test_that("vec_proxy_compare() handles data frame with a POSIXlt column", {
 })
 
 test_that("vec_proxy_compare.POSIXlt() correctly orders (#720)", {
-  dates <- as.POSIXlt(seq.Date(as.Date("2019-12-30"), as.Date("2020-01-03"), by = "day"))
+  dates <- as.POSIXlt(seq.Date(
+    as.Date("2019-12-30"),
+    as.Date("2020-01-03"),
+    by = "day"
+  ))
   expect_equal(vec_order(dates), 1:5)
 })
 
@@ -208,7 +221,10 @@ test_that("error is thrown when comparing complexes (#1655)", {
 
 test_that("error is thrown when comparing lists", {
   expect_error(vec_compare(list(), list()), class = "vctrs_error_unsupported")
-  expect_error(.Call(ffi_vec_compare, list(), list(), FALSE), "Can't compare lists")
+  expect_error(
+    .Call(ffi_vec_compare, list(), list(), FALSE),
+    "Can't compare lists"
+  )
 })
 
 test_that("error is thrown when comparing data frames with list columns", {
@@ -220,7 +236,10 @@ test_that("error is thrown when comparing data frames with list columns", {
 test_that("error is thrown when comparing scalars", {
   x <- new_sclr(x = 1)
   expect_error(vec_compare(x, x), class = "vctrs_error_scalar_type")
-  expect_error(.Call(ffi_vec_compare, x, x, FALSE), class = "vctrs_error_scalar_type")
+  expect_error(
+    .Call(ffi_vec_compare, x, x, FALSE),
+    class = "vctrs_error_scalar_type"
+  )
 })
 
 test_that("`na_equal` is validated", {
@@ -271,7 +290,10 @@ test_that("comparison is known to fail when comparing bytes to other encodings",
 test_that("can compare unspecified", {
   expect_equal(vec_compare(NA, NA), NA_integer_)
   expect_equal(vec_compare(NA, NA, na_equal = TRUE), 0)
-  expect_equal(vec_compare(c(NA, NA), unspecified(2)), c(NA_integer_, NA_integer_))
+  expect_equal(
+    vec_compare(c(NA, NA), unspecified(2)),
+    c(NA_integer_, NA_integer_)
+  )
 })
 
 test_that("can't supply NA as `na_equal`", {

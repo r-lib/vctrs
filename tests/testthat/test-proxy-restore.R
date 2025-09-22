@@ -1,16 +1,27 @@
-
 test_that("default vec_restore() restores attributes except names", {
   to <- structure(NA, foo = "foo", bar = "bar")
-  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+  expect_identical(
+    vec_restore.default(NA, to),
+    structure(NA, foo = "foo", bar = "bar")
+  )
 
   to <- structure(NA, names = "a", foo = "foo", bar = "bar")
-  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+  expect_identical(
+    vec_restore.default(NA, to),
+    structure(NA, foo = "foo", bar = "bar")
+  )
 
   to <- structure(NA, foo = "foo", names = "a", bar = "bar")
-  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+  expect_identical(
+    vec_restore.default(NA, to),
+    structure(NA, foo = "foo", bar = "bar")
+  )
 
   to <- structure(NA, foo = "foo", bar = "bar", names = "a")
-  expect_identical(vec_restore.default(NA, to), structure(NA, foo = "foo", bar = "bar"))
+  expect_identical(
+    vec_restore.default(NA, to),
+    structure(NA, foo = "foo", bar = "bar")
+  )
 })
 
 test_that("default vec_restore() restores objectness", {
@@ -21,7 +32,10 @@ test_that("default vec_restore() restores objectness", {
 })
 
 test_that("data frame vec_restore() checks type", {
-  expect_error(vec_restore(NA, mtcars), "Attempt to restore data frame from a logical")
+  expect_error(
+    vec_restore(NA, mtcars),
+    "Attempt to restore data frame from a logical"
+  )
 })
 
 test_that("data frame restore forces character column names", {
@@ -108,7 +122,13 @@ test_that("attributes are properly restored when they contain special attributes
   expect_identical(attributes(out), exp)
 
   # Was broken by #943
-  x <- structure(list(), foo = TRUE, names = chr(), row.names = int(), bar = TRUE)
+  x <- structure(
+    list(),
+    foo = TRUE,
+    names = chr(),
+    row.names = int(),
+    bar = TRUE
+  )
   out <- vec_restore_default(list(), x)
   expect_identical(attributes(out), exp)
 })

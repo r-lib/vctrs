@@ -48,7 +48,9 @@ vec_ptype_full.vctrs_partial_frame <- function(x, ...) {
 
   types <- map_chr(both, vec_ptype_full)
   needs_indent <- grepl("\n", types)
-  types[needs_indent] <- map(types[needs_indent], function(x) indent(paste0("\n", x), 4))
+  types[needs_indent] <- map(types[needs_indent], function(x) {
+    indent(paste0("\n", x), 4)
+  })
 
   source <- c(rep(" {partial}", length(x$partial)), rep("", length(x$learned)))
   names <- paste0("  ", format(names(both)))

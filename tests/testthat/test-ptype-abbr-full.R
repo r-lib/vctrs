@@ -1,4 +1,3 @@
-
 test_that("input must be a vector", {
   expect_error(vec_ptype_abbr(sum), "Not a vector")
   expect_error(vec_ptype_full(sum), "Not a vector")
@@ -17,7 +16,6 @@ test_that("non objects default to type + shape", {
   expect_equal(vec_ptype_full(ones(10)), "double[1d]")
   expect_equal(vec_ptype_full(ones(0, 10)), "double[,10]")
   expect_equal(vec_ptype_full(ones(10, 0)), "double[,0]")
-
 })
 
 test_that("non objects can omit shape", {
@@ -46,12 +44,21 @@ test_that("complex and factor as expected (#323)", {
 
 test_that("named lists are always tagged (#322)", {
   expect_identical(vec_ptype_abbr(list(x = 1, y = 2)), "named list")
-  expect_identical(vec_ptype_abbr(list(x = 1, y = 2), prefix_named = TRUE), "named list")
+  expect_identical(
+    vec_ptype_abbr(list(x = 1, y = 2), prefix_named = TRUE),
+    "named list"
+  )
 })
 
 test_that("named atomics are tagged optionally (#781)", {
-  expect_identical(vec_ptype_abbr(c(x = 1, y = 2), prefix_named = TRUE), "named dbl")
-  expect_identical(vec_ptype_abbr(c(x = 1L, y = 2L), prefix_named = TRUE), "named int")
+  expect_identical(
+    vec_ptype_abbr(c(x = 1, y = 2), prefix_named = TRUE),
+    "named dbl"
+  )
+  expect_identical(
+    vec_ptype_abbr(c(x = 1L, y = 2L), prefix_named = TRUE),
+    "named int"
+  )
 })
 
 test_that("vec_ptype_abbr() adds named tag in case of row names", {

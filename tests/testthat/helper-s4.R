@@ -1,4 +1,3 @@
-
 .rando <- setClass(
   "vctrs_rando",
   contains = "numeric",
@@ -44,7 +43,12 @@ local_c_counts <- function(frame = caller_env()) {
 
 local_s4_method <- function(generic, signature, method, frame = caller_env()) {
   methods::setMethod(generic, signature, method)
-  exit_expr <- call2(methods::removeMethod, generic, signature, where = topenv(frame))
+  exit_expr <- call2(
+    methods::removeMethod,
+    generic,
+    signature,
+    where = topenv(frame)
+  )
   local_exit(exit_expr, frame = frame)
 }
 with_s4_method <- function(generic, signature, method, expr) {

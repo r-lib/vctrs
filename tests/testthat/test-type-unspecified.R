@@ -1,4 +1,3 @@
-
 test_that("unknown type is idempotent", {
   types <- list(
     unspecified(),
@@ -39,8 +38,14 @@ test_that("common type of unspecified and NULL is unspecified", {
 })
 
 test_that("cannot take the common type of unspecified and a scalar list", {
-  expect_error(vec_ptype2(unspecified(), foobar()), class = "vctrs_error_scalar_type")
-  expect_error(vec_ptype2(foobar(), unspecified()), class = "vctrs_error_scalar_type")
+  expect_error(
+    vec_ptype2(unspecified(), foobar()),
+    class = "vctrs_error_scalar_type"
+  )
+  expect_error(
+    vec_ptype2(foobar(), unspecified()),
+    class = "vctrs_error_scalar_type"
+  )
 })
 
 test_that("subsetting works", {
@@ -96,7 +101,10 @@ test_that("tibble::type_sum() knows about unspecified", {
 
 test_that("casting to a scalar type errors", {
   expect_error(vec_cast(NA, quote(x)), class = "vctrs_error_scalar_type")
-  expect_error(vec_cast(unspecified(1), quote(x)), class = "vctrs_error_scalar_type")
+  expect_error(
+    vec_cast(unspecified(1), quote(x)),
+    class = "vctrs_error_scalar_type"
+  )
 })
 
 test_that("monitoring test - can cast to unspecified from unspecified", {

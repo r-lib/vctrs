@@ -1,4 +1,3 @@
-
 test_that("vec_data() preserves names (#245)", {
   x <- set_names(letters, LETTERS)
   expect_identical(vec_names(x), vec_names(vec_data(x)))
@@ -105,7 +104,9 @@ test_that("vec_proxy_equal() defaults to vec_proxy() and vec_proxy_compare() def
   expect_identical(vec_proxy_equal(x), foobar_proxy(x))
   expect_identical(vec_proxy_compare(x), foobar_proxy(x))
 
-  local_methods(vec_proxy_equal.vctrs_foobar = function(x, ...) foobar_proxy(letters[x]))
+  local_methods(vec_proxy_equal.vctrs_foobar = function(x, ...) {
+    foobar_proxy(letters[x])
+  })
 
   expect_identical(vec_proxy_equal(x), data_frame(x = letters[3:1], y = 1:3))
   expect_identical(vec_proxy_compare(x), data_frame(x = letters[3:1], y = 1:3))
@@ -135,7 +136,9 @@ test_that("equal/compare/order proxy methods that return 1 column data frames ar
 
   local_methods(
     vec_proxy_equal.custom = function(x, ...) data_frame(a = equal),
-    vec_proxy_order.custom = function(x, ...) data_frame(col = data_frame(a = order))
+    vec_proxy_order.custom = function(x, ...) {
+      data_frame(col = data_frame(a = order))
+    }
   )
 
   expect_identical(vec_proxy_equal(x), equal)

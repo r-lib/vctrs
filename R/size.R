@@ -87,11 +87,13 @@ vec_size <- function(x) {
 
 #' @export
 #' @rdname vec_size
-vec_size_common <- function(...,
-                            .size = NULL,
-                            .absent = 0L,
-                            .arg = "",
-                            .call = caller_env()) {
+vec_size_common <- function(
+  ...,
+  .size = NULL,
+  .absent = 0L,
+  .arg = "",
+  .call = caller_env()
+) {
   .External2(ffi_size_common, .size, .absent)
 }
 
@@ -152,8 +154,6 @@ vec_init_along <- function(x, y = x) {
   vec_slice(x, rep_len(NA_integer_, vec_size(y)))
 }
 
-vec_as_short_length <- function(n,
-                                arg = caller_arg(n),
-                                call = caller_env()) {
+vec_as_short_length <- function(n, arg = caller_arg(n), call = caller_env()) {
   .Call(ffi_as_short_length, n, environment())
 }

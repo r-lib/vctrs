@@ -110,7 +110,7 @@ test_that("assingment can increase size of vector", {
   x <- list_of(x = 1)
   x[[2]] <- 2
   x$z <- 3
-  x[4:5] <- c(4,5)
+  x[4:5] <- c(4, 5)
 
   expect_length(x, 5)
 })
@@ -201,7 +201,10 @@ test_that("lossy casts generate warning (no longer the case)", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), list_of(1)), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(factor("a"), list_of(1)),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("list_of() has as.character() method (tidyverse/tidyr#654)", {

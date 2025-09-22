@@ -103,5 +103,9 @@ new_group_rle <- function(group, length, n) {
     abort("`group` and `length` must have the same size.")
   }
 
-  new_rcrd(list(group = group, length = length), n = n, class = "vctrs_group_rle")
+  new_rcrd(
+    list(group = group, length = length),
+    n = n,
+    class = "vctrs_group_rle"
+  )
 }

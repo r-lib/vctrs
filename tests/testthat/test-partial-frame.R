@@ -1,4 +1,3 @@
-
 test_that("has ok print method", {
   pf <- vec_ptype2(partial_frame(x = 1L), data.frame(y = 2))
   expect_snapshot(pf)
@@ -44,8 +43,14 @@ test_that("can assert partial frames based on column type", {
 
 test_that("incompatible data frames are an error", {
   df <- data.frame(y = 1)
-  expect_error(vec_ptype2(df, partial_frame(y = chr())), class = "vctrs_error_incompatible_type")
-  expect_error(new_partial_frame(df, data.frame(y = chr())), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_ptype2(df, partial_frame(y = chr())),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    new_partial_frame(df, data.frame(y = chr())),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("dispatch is symmetric with tibbles", {

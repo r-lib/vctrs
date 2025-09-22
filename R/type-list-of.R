@@ -52,7 +52,12 @@ as_list_of.list <- function(x, ..., .ptype = NULL) {
 #' @param class Optional subclass name
 #' @keywords internal
 #' @export
-new_list_of <- function(x = list(), ptype = logical(), ..., class = character()) {
+new_list_of <- function(
+  x = list(),
+  ptype = logical(),
+  ...,
+  class = character()
+) {
   if (!obj_is_list(x)) {
     abort("`x` must be a list.")
   }
@@ -89,8 +94,9 @@ vec_proxy.vctrs_list_of <- function(x, ...) {
 
 #' @export
 obj_print_data.vctrs_list_of <- function(x, ...) {
-  if (length(x) == 0)
+  if (length(x) == 0) {
     return()
+  }
 
   print(vec_data(x))
 }
@@ -175,7 +181,13 @@ vec_ptype2.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 #' @method vec_ptype2.vctrs_list_of vctrs_list_of
 #' @export
-vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2.vctrs_list_of.vctrs_list_of <- function(
+  x,
+  y,
+  ...,
+  x_arg = "",
+  y_arg = ""
+) {
   x_ptype <- attr(x, "ptype", exact = TRUE)
   y_ptype <- attr(y, "ptype", exact = TRUE)
   if (identical(x_ptype, y_ptype)) {
@@ -212,7 +224,12 @@ vec_cast.vctrs_list_of <- function(x, to, ...) {
 
 #' @export
 #' @method vec_cast.vctrs_list_of vctrs_list_of
-vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ..., call = caller_env()) {
+vec_cast.vctrs_list_of.vctrs_list_of <- function(
+  x,
+  to,
+  ...,
+  call = caller_env()
+) {
   x_ptype <- attr(x, "ptype", exact = TRUE)
   to_ptype <- attr(to, "ptype", exact = TRUE)
 
@@ -228,11 +245,11 @@ vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ..., call = caller_env()
 }
 
 #' @export
-vec_cast.list.vctrs_list_of <-function(x, to, ...) {
- list_of_unstructure(x)
+vec_cast.list.vctrs_list_of <- function(x, to, ...) {
+  list_of_unstructure(x)
 }
 #' @export
-vec_cast.vctrs_list_of.list <-function(x, to, ..., call = caller_env()) {
+vec_cast.vctrs_list_of.list <- function(x, to, ..., call = caller_env()) {
   list_as_list_of(
     x,
     attr(to, "ptype"),

@@ -13,7 +13,13 @@ test_that("works with atomic input of various types", {
   expect_identical(vec_identify_runs(c(TRUE, TRUE, FALSE, FALSE, TRUE)), expect)
   expect_identical(vec_identify_runs(c(1L, 1L, 2L, 2L, 3L)), expect)
   expect_identical(vec_identify_runs(c(1, 1, 2, 2, 3)), expect)
-  expect_identical(vec_identify_runs(complex(real = c(1, 1, 2, 2, 2), imaginary = c(1, 1, 2, 2, 3))), expect)
+  expect_identical(
+    vec_identify_runs(complex(
+      real = c(1, 1, 2, 2, 2),
+      imaginary = c(1, 1, 2, 2, 3)
+    )),
+    expect
+  )
   expect_identical(vec_identify_runs(c("a", "a", "b", "b", "c")), expect)
   expect_identical(vec_identify_runs(as.raw(c(1, 1, 2, 2, 3))), expect)
   expect_identical(vec_identify_runs(list(1, 1, 2, 2, 3)), expect)
@@ -79,11 +85,23 @@ test_that("works with columns of various types", {
 
   expect <- structure(c(1L, 1L, 2L, 2L, 3L), n = 3L)
 
-  expect_identical(vec_identify_runs(add_col(c(TRUE, TRUE, FALSE, FALSE, TRUE))), expect)
+  expect_identical(
+    vec_identify_runs(add_col(c(TRUE, TRUE, FALSE, FALSE, TRUE))),
+    expect
+  )
   expect_identical(vec_identify_runs(add_col(c(1L, 1L, 2L, 2L, 3L))), expect)
   expect_identical(vec_identify_runs(add_col(c(1, 1, 2, 2, 3))), expect)
-  expect_identical(vec_identify_runs(add_col(complex(real = c(1, 1, 2, 2, 2), imaginary = c(1, 1, 2, 2, 3)))), expect)
-  expect_identical(vec_identify_runs(add_col(c("a", "a", "b", "b", "c"))), expect)
+  expect_identical(
+    vec_identify_runs(add_col(complex(
+      real = c(1, 1, 2, 2, 2),
+      imaginary = c(1, 1, 2, 2, 3)
+    ))),
+    expect
+  )
+  expect_identical(
+    vec_identify_runs(add_col(c("a", "a", "b", "b", "c"))),
+    expect
+  )
   expect_identical(vec_identify_runs(add_col(as.raw(c(1, 1, 2, 2, 3)))), expect)
   expect_identical(vec_identify_runs(add_col(list(1, 1, 2, 2, 3))), expect)
 })
@@ -101,7 +119,13 @@ test_that("works with atomic input of various types", {
   expect_identical(vec_run_sizes(c(TRUE, TRUE, FALSE, FALSE, TRUE)), expect)
   expect_identical(vec_run_sizes(c(1L, 1L, 2L, 2L, 3L)), expect)
   expect_identical(vec_run_sizes(c(1, 1, 2, 2, 3)), expect)
-  expect_identical(vec_run_sizes(complex(real = c(1, 1, 2, 2, 2), imaginary = c(1, 1, 2, 2, 3))), expect)
+  expect_identical(
+    vec_run_sizes(complex(
+      real = c(1, 1, 2, 2, 2),
+      imaginary = c(1, 1, 2, 2, 3)
+    )),
+    expect
+  )
   expect_identical(vec_run_sizes(c("a", "a", "b", "b", "c")), expect)
   expect_identical(vec_run_sizes(as.raw(c(1, 1, 2, 2, 3))), expect)
   expect_identical(vec_run_sizes(list(1, 1, 2, 2, 3)), expect)
@@ -162,10 +186,19 @@ test_that("works with columns of various types", {
 
   expect <- c(2L, 2L, 1L)
 
-  expect_identical(vec_run_sizes(add_col(c(TRUE, TRUE, FALSE, FALSE, TRUE))), expect)
+  expect_identical(
+    vec_run_sizes(add_col(c(TRUE, TRUE, FALSE, FALSE, TRUE))),
+    expect
+  )
   expect_identical(vec_run_sizes(add_col(c(1L, 1L, 2L, 2L, 3L))), expect)
   expect_identical(vec_run_sizes(add_col(c(1, 1, 2, 2, 3))), expect)
-  expect_identical(vec_run_sizes(add_col(complex(real = c(1, 1, 2, 2, 2), imaginary = c(1, 1, 2, 2, 3)))), expect)
+  expect_identical(
+    vec_run_sizes(add_col(complex(
+      real = c(1, 1, 2, 2, 2),
+      imaginary = c(1, 1, 2, 2, 3)
+    ))),
+    expect
+  )
   expect_identical(vec_run_sizes(add_col(c("a", "a", "b", "b", "c"))), expect)
   expect_identical(vec_run_sizes(add_col(as.raw(c(1, 1, 2, 2, 3)))), expect)
   expect_identical(vec_run_sizes(add_col(list(1, 1, 2, 2, 3))), expect)

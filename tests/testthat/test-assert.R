@@ -1,4 +1,3 @@
-
 test_that("basic assert is idempotent", {
   x <- new_vctr(1:4)
 
@@ -168,8 +167,8 @@ test_that("obj_check_vector() error respects `arg` and `call`", {
 })
 
 test_that("vec_assert() uses friendly type in error messages", {
-   # Friendly type will be generated in rlang in the future. Upstream
-   # changes should not cause CRAN failures.
+  # Friendly type will be generated in rlang in the future. Upstream
+  # changes should not cause CRAN failures.
   skip_on_cran()
   expect_error(vec_assert(function() NULL), class = "vctrs_error_scalar_type")
 })
@@ -218,7 +217,10 @@ test_that("unspecified is finalised before assertion", {
   expect_true(vec_is(data.frame(x = NA), data.frame(x = lgl())))
 
   expect_error(regexp = NA, vec_assert(NA, TRUE))
-  expect_error(regexp = NA, vec_assert(data.frame(x = NA), data.frame(x = lgl())))
+  expect_error(
+    regexp = NA,
+    vec_assert(data.frame(x = NA), data.frame(x = lgl()))
+  )
 })
 
 test_that("assertion failures are explained", {
@@ -229,7 +231,10 @@ test_that("assertion failures are explained", {
 
   expect_snapshot(error = TRUE, vec_assert(lgl(), factor()))
   expect_snapshot(error = TRUE, vec_assert(lgl(), factor(levels = "foo")))
-  expect_snapshot(error = TRUE, vec_assert(factor(levels = "bar"), factor(levels = "foo")))
+  expect_snapshot(
+    error = TRUE,
+    vec_assert(factor(levels = "bar"), factor(levels = "foo"))
+  )
 
   expect_snapshot(error = TRUE, vec_assert(factor(), chr()))
 
@@ -240,13 +245,25 @@ test_that("assertion failures are explained", {
   expect_snapshot(error = TRUE, vec_assert(data.frame(), chr()))
 
   expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), chr()))
-  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), data.frame(x = "foo")))
-  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), data.frame(x = "foo", y = 2)))
+  expect_snapshot(
+    error = TRUE,
+    vec_assert(data.frame(x = 1), data.frame(x = "foo"))
+  )
+  expect_snapshot(
+    error = TRUE,
+    vec_assert(data.frame(x = 1), data.frame(x = "foo", y = 2))
+  )
 
   expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), chr()))
 
-  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo")))
-  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
+  expect_snapshot(
+    error = TRUE,
+    vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo"))
+  )
+  expect_snapshot(
+    error = TRUE,
+    vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2))
+  )
 })
 
 test_that("vec_assert() validates `size` (#1470)", {

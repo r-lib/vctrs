@@ -25,13 +25,15 @@
 #'   informative error.
 #' @keywords internal
 #' @export
-vec_as_subscript <- function(i,
-                             ...,
-                             logical = c("cast", "error"),
-                             numeric = c("cast", "error"),
-                             character = c("cast", "error"),
-                             arg = NULL,
-                             call = caller_env()) {
+vec_as_subscript <- function(
+  i,
+  ...,
+  logical = c("cast", "error"),
+  numeric = c("cast", "error"),
+  character = c("cast", "error"),
+  arg = NULL,
+  call = caller_env()
+) {
   check_dots_empty0(...)
 
   .Call(
@@ -43,12 +45,7 @@ vec_as_subscript <- function(i,
     frame = environment()
   )
 }
-vec_as_subscript_result <- function(i,
-                                    arg,
-                                    call,
-                                    logical,
-                                    numeric,
-                                    character) {
+vec_as_subscript_result <- function(i, arg, call, logical, numeric, character) {
   .Call(
     ffi_as_subscript_result,
     i = i,
@@ -62,12 +59,14 @@ vec_as_subscript_result <- function(i,
 
 #' @rdname vec_as_subscript
 #' @export
-vec_as_subscript2 <- function(i,
-                              ...,
-                              numeric = c("cast", "error"),
-                              character = c("cast", "error"),
-                              arg = NULL,
-                              call = caller_env()) {
+vec_as_subscript2 <- function(
+  i,
+  ...,
+  numeric = c("cast", "error"),
+  character = c("cast", "error"),
+  arg = NULL,
+  call = caller_env()
+) {
   check_dots <- function(..., logical = "error", call = caller_env()) {
     if (!is_string(logical, "error")) {
       abort(
@@ -87,11 +86,13 @@ vec_as_subscript2 <- function(i,
     character = character
   ))
 }
-vec_as_subscript2_result <- function(i,
-                                     arg,
-                                     call,
-                                     numeric = "cast",
-                                     character = "cast") {
+vec_as_subscript2_result <- function(
+  i,
+  arg,
+  call,
+  numeric = "cast",
+  character = "cast"
+) {
   numeric <- arg_match0(numeric, c("cast", "error"))
   character <- arg_match0(character, c("cast", "error"))
 
@@ -115,8 +116,16 @@ vec_as_subscript2_result <- function(i,
 
 
 subscript_type_opts <- c("logical", "numeric", "character")
-subscript_type_opts_indefinite_singular <- c("a logical flag", "a location", "a name")
-subscript_type_opts_indefinite_plural <- c("logical flags", "locations", "names")
+subscript_type_opts_indefinite_singular <- c(
+  "a logical flag",
+  "a location",
+  "a name"
+)
+subscript_type_opts_indefinite_plural <- c(
+  "logical flags",
+  "locations",
+  "names"
+)
 
 as_opts_subscript_type <- function(x, arg = NULL) {
   if (inherits(x, "vctrs_opts_subscript_type")) {
@@ -137,10 +146,7 @@ as_opts_subscript2_type <- function(x, arg = NULL) {
 }
 
 
-stop_subscript <- function(i,
-                           ...,
-                           class = NULL,
-                           call = caller_env()) {
+stop_subscript <- function(i, ..., class = NULL, call = caller_env()) {
   abort(
     class = c(class, "vctrs_error_subscript"),
     i = i,
@@ -155,13 +161,15 @@ new_error_subscript <- function(class = NULL, i, ...) {
     ...
   )
 }
-new_error_subscript_type <- function(i,
-                                     logical = "cast",
-                                     numeric = "cast",
-                                     character = "cast",
-                                     ...,
-                                     call = NULL,
-                                     class = NULL) {
+new_error_subscript_type <- function(
+  i,
+  logical = "cast",
+  numeric = "cast",
+  character = "cast",
+  ...,
+  call = NULL,
+  class = NULL
+) {
   new_error_subscript(
     class = c(class, "vctrs_error_subscript_type"),
     i = i,
@@ -224,9 +232,7 @@ cnd_subscript_expected_types <- function(cnd) {
   types[allowed]
 }
 
-new_error_subscript_size <- function(i,
-                                     ...,
-                                     class = NULL) {
+new_error_subscript_size <- function(i, ..., class = NULL) {
   new_error_subscript(
     class = c(class, "vctrs_error_subscript_size"),
     i = i,
@@ -238,10 +244,7 @@ cnd_header.vctrs_error_subscript_size <- function(cnd, ...) {
   cnd_header.vctrs_error_subscript_type(cnd, ...)
 }
 
-new_error_subscript2_type <- function(i,
-                                      numeric,
-                                      character,
-                                      ...) {
+new_error_subscript2_type <- function(i, numeric, character, ...) {
   new_error_subscript_type(
     i = i,
     logical = "error",
@@ -257,7 +260,9 @@ cnd_body_subscript_dim <- function(cnd, ...) {
 
   dim <- length(dim(cnd$i))
   if (dim < 2) {
-    abort("Internal error: Unexpected dimensionality in `cnd_body_subcript_dim()`.")
+    abort(
+      "Internal error: Unexpected dimensionality in `cnd_body_subcript_dim()`."
+    )
   }
   if (dim == 2) {
     shape <- "a matrix"
@@ -289,7 +294,8 @@ cnd_subscript_element <- function(cnd, capital = FALSE) {
       table = c("Table", "Tables")
     )
   } else {
-    switch(elt,
+    switch(
+      elt,
       element = c("element", "elements"),
       row = c("row", "rows"),
       column = c("column", "columns"),
@@ -330,9 +336,14 @@ cnd_subscript_element_cli <- function(n, cnd, capital = FALSE) {
 }
 
 subscript_actions <- c(
-  "select", "subset", "extract",
-  "assign", "rename", "relocate",
-  "remove", "negate"
+  "select",
+  "subset",
+  "extract",
+  "assign",
+  "rename",
+  "relocate",
+  "remove",
+  "negate"
 )
 cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   action <- cnd$subscript_action
@@ -384,7 +395,9 @@ cnd_subscript_type <- function(cnd) {
   type <- cnd$subscript_type
 
   if (!is_string(type, c("logical", "numeric", "character"))) {
-    abort("Internal error: `cnd$subscript_type` must be `logical`, `numeric`, or `character`.")
+    abort(
+      "Internal error: `cnd$subscript_type` must be `logical`, `numeric`, or `character`."
+    )
   }
 
   type

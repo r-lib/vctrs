@@ -1,4 +1,3 @@
-
 test_that("Casting to named argument mentions 'match type <foo>'", {
   expect_snapshot(error = TRUE, vec_cast(1, "", x_arg = "foo", to_arg = "bar"))
   expect_snapshot(error = TRUE, vec_cast(1, "", x_arg = "foo"))
@@ -19,7 +18,10 @@ test_that("casting requires vectors", {
   expect_error(vec_cast(quote(name), NULL), class = "vctrs_error_scalar_type")
   expect_error(vec_cast(quote(name), NA), class = "vctrs_error_scalar_type")
   expect_error(vec_cast(quote(name), list()), class = "vctrs_error_scalar_type")
-  expect_error(vec_cast(quote(name), quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(
+    vec_cast(quote(name), quote(name)),
+    class = "vctrs_error_scalar_type"
+  )
 })
 
 test_that("casting between `NULL` and partial types is allowed", {
@@ -27,7 +29,7 @@ test_that("casting between `NULL` and partial types is allowed", {
   expect_identical(vec_cast(partial_factor(), NULL), partial_factor())
 })
 
-test_that("dimensionality matches output" ,{
+test_that("dimensionality matches output", {
   x1 <- matrix(TRUE, nrow = 1, ncol = 1)
   x2 <- matrix(1, nrow = 0, ncol = 2)
   expect_dim(vec_cast(x1, x2), c(1, 2))
@@ -119,10 +121,22 @@ test_that("can suppress cast errors selectively", {
   expect_error(regexp = NA, allow_lossy_cast(f()))
   expect_error(regexp = NA, allow_lossy_cast(f(), x_ptype = factor("a")))
   expect_error(regexp = NA, allow_lossy_cast(f(), to_ptype = factor("b")))
-  expect_error(regexp = NA, allow_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("b")))
-  expect_error(allow_lossy_cast(f(), x_ptype = factor("c")), class = "vctrs_error_cast_lossy")
-  expect_error(allow_lossy_cast(f(), x_ptype = factor("b"), to_ptype = factor("a")), class = "vctrs_error_cast_lossy")
-  expect_error(allow_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("c")), class = "vctrs_error_cast_lossy")
+  expect_error(
+    regexp = NA,
+    allow_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("b"))
+  )
+  expect_error(
+    allow_lossy_cast(f(), x_ptype = factor("c")),
+    class = "vctrs_error_cast_lossy"
+  )
+  expect_error(
+    allow_lossy_cast(f(), x_ptype = factor("b"), to_ptype = factor("a")),
+    class = "vctrs_error_cast_lossy"
+  )
+  expect_error(
+    allow_lossy_cast(f(), x_ptype = factor("a"), to_ptype = factor("c")),
+    class = "vctrs_error_cast_lossy"
+  )
 })
 
 test_that("can signal deprecation warnings for lossy casts", {
@@ -144,8 +158,15 @@ test_that("can signal deprecation warnings for lossy casts", {
     (expect_warning(expect_true(lossy_cast())))
   })
   expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast())))
-  expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
-  expect_warning(expect_true(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
+  expect_warning(
+    regexp = NA,
+    expect_true(allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar")))
+  )
+  expect_warning(expect_true(allow_lossy_cast(
+    lossy_cast(),
+    factor("bar"),
+    double()
+  )))
 })
 
 
@@ -183,14 +204,22 @@ test_that("vec_ptype_common() optionally falls back to base class", {
   expect_true(is_common_class_fallback(common_sentinel))
   expect_identical(fallback_class(common_sentinel), "vctrs_foobar")
 
-  common_sentinel <- vec_ptype_common_opts(x_df, y_df, .opts = full_fallback_opts())
+  common_sentinel <- vec_ptype_common_opts(
+    x_df,
+    y_df,
+    .opts = full_fallback_opts()
+  )
   expect_true(is_common_class_fallback(common_sentinel$x))
   expect_identical(fallback_class(common_sentinel$x), "vctrs_foobar")
 
   common <- vec_cast_common_opts(x = x, y = y, .opts = full_fallback_opts())
   expect_identical(common, list(x = x, y = y))
 
-  common <- vec_cast_common_opts(x = x_df, y = y_df, .opts = full_fallback_opts())
+  common <- vec_cast_common_opts(
+    x = x_df,
+    y = y_df,
+    .opts = full_fallback_opts()
+  )
   expect_identical(common, list(x = x_df, y = y_df))
 })
 

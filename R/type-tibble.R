@@ -1,11 +1,6 @@
 #' @rdname df_ptype2
 #' @export
-tib_ptype2 <- function(x,
-                       y,
-                       ...,
-                       x_arg = "",
-                       y_arg = "",
-                       call = caller_env()) {
+tib_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "", call = caller_env()) {
   .Call(
     ffi_tib_ptype2,
     x = x,
@@ -17,12 +12,7 @@ tib_ptype2 <- function(x,
 }
 #' @rdname df_ptype2
 #' @export
-tib_cast <- function(x,
-                     to,
-                     ...,
-                     x_arg = "",
-                     to_arg = "",
-                     call = caller_env()) {
+tib_cast <- function(x, to, ..., x_arg = "", to_arg = "", call = caller_env()) {
   .Call(
     ffi_tib_cast,
     x = x,

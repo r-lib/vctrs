@@ -1,4 +1,3 @@
-
 expect_drop <- function(x, value) {
   drop <- dplyr::group_by_drop_default(x)
   if (value) {

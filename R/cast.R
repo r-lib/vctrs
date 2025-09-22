@@ -66,12 +66,14 @@
 #'
 #' # Cast to common type
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
-vec_cast <- function(x,
-                     to,
-                     ...,
-                     x_arg = caller_arg(x),
-                     to_arg = "",
-                     call = caller_env()) {
+vec_cast <- function(
+  x,
+  to,
+  ...,
+  x_arg = caller_arg(x),
+  to_arg = "",
+  call = caller_env()
+) {
   if (!missing(...)) {
     check_ptype2_dots_empty(...)
   }
@@ -82,12 +84,14 @@ vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {
   UseMethod("vec_cast", to)
 }
 
-vec_cast_dispatch_native <- function(x,
-                                     to,
-                                     ...,
-                                     x_arg = "",
-                                     to_arg = "",
-                                     call = caller_env()) {
+vec_cast_dispatch_native <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  call = caller_env()
+) {
   .Call(
     ffi_cast_dispatch_native,
     x,
@@ -101,24 +105,25 @@ vec_cast_dispatch_native <- function(x,
 
 #' @export
 #' @rdname vec_cast
-vec_cast_common <- function(...,
-                            .to = NULL,
-                            .arg = "",
-                            .call = caller_env()) {
+vec_cast_common <- function(..., .to = NULL, .arg = "", .call = caller_env()) {
   .External2(ffi_cast_common, .to)
 }
-vec_cast_common_opts <- function(...,
-                                 .to = NULL,
-                                 .opts = fallback_opts(),
-                                 .arg = "",
-                                 .call = caller_env()) {
+vec_cast_common_opts <- function(
+  ...,
+  .to = NULL,
+  .opts = fallback_opts(),
+  .arg = "",
+  .call = caller_env()
+) {
   .External2(ffi_cast_common_opts, .to, .opts)
 }
-vec_cast_common_params <- function(...,
-                                   .to = NULL,
-                                   .s3_fallback = NULL,
-                                   .arg = "",
-                                   .call = caller_env()) {
+vec_cast_common_params <- function(
+  ...,
+  .to = NULL,
+  .s3_fallback = NULL,
+  .arg = "",
+  .call = caller_env()
+) {
   opts <- fallback_opts(
     s3_fallback = .s3_fallback
   )
@@ -130,10 +135,12 @@ vec_cast_common_params <- function(...,
     .call = .call
   )
 }
-vec_cast_common_fallback <- function(...,
-                                     .to = NULL,
-                                     .arg = "",
-                                     .call = caller_env()) {
+vec_cast_common_fallback <- function(
+  ...,
+  .to = NULL,
+  .arg = "",
+  .call = caller_env()
+) {
   vec_cast_common_opts(
     ...,
     .to = .to,
@@ -146,12 +153,14 @@ vec_cast_common_fallback <- function(...,
 #' @rdname vec_default_ptype2
 #' @inheritParams vec_cast
 #' @export
-vec_default_cast <- function(x,
-                             to,
-                             ...,
-                             x_arg = "",
-                             to_arg = "",
-                             call = caller_env()) {
+vec_default_cast <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  call = caller_env()
+) {
   if (is_asis(x)) {
     return(vec_cast_from_asis(
       x,
@@ -171,7 +180,10 @@ vec_default_cast <- function(x,
     ))
   }
 
-  if (inherits(to, "vctrs_vctr") && !inherits(to, c("vctrs_rcrd", "vctrs_list_of"))) {
+  if (
+    inherits(to, "vctrs_vctr") &&
+      !inherits(to, c("vctrs_rcrd", "vctrs_list_of"))
+  ) {
     return(vctr_cast(
       x,
       to,
@@ -237,7 +249,8 @@ vec_default_cast <- function(x,
 }
 
 is_bare_df <- function(x) {
-  inherits_only(x, "data.frame") || inherits_only(x, c("tbl_df", "tbl", "data.frame"))
+  inherits_only(x, "data.frame") ||
+    inherits_only(x, c("tbl_df", "tbl", "data.frame"))
 }
 
 is_informative_error_vctrs_error_cast_lossy <- function(x, ...) {

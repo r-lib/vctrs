@@ -3,26 +3,53 @@ test_that("can rank with different types of `ties`", {
 
   expect_identical(vec_rank(x, ties = "min"), rank(x, ties.method = "min"))
   expect_identical(vec_rank(x, ties = "max"), rank(x, ties.method = "max"))
-  expect_identical(vec_rank(x, ties = "sequential"), rank(x, ties.method = "first"))
+  expect_identical(
+    vec_rank(x, ties = "sequential"),
+    rank(x, ties.method = "first")
+  )
   expect_identical(vec_rank(x, ties = "dense"), c(2L, 3L, 1L, 1L, 2L))
 })
 
 test_that("can rank in descending order", {
   x <- c(2L, 5L, 1L, 1L, 2L)
 
-  expect_identical(vec_rank(x, ties = "min", direction = "desc"), rank(-x, ties.method = "min"))
-  expect_identical(vec_rank(x, ties = "max", direction = "desc"), rank(-x, ties.method = "max"))
-  expect_identical(vec_rank(x, ties = "sequential", direction = "desc"), rank(-x, ties.method = "first"))
-  expect_identical(vec_rank(x, ties = "dense", direction = "desc"), c(2L, 1L, 3L, 3L, 2L))
+  expect_identical(
+    vec_rank(x, ties = "min", direction = "desc"),
+    rank(-x, ties.method = "min")
+  )
+  expect_identical(
+    vec_rank(x, ties = "max", direction = "desc"),
+    rank(-x, ties.method = "max")
+  )
+  expect_identical(
+    vec_rank(x, ties = "sequential", direction = "desc"),
+    rank(-x, ties.method = "first")
+  )
+  expect_identical(
+    vec_rank(x, ties = "dense", direction = "desc"),
+    c(2L, 1L, 3L, 3L, 2L)
+  )
 })
 
 test_that("can rank incomplete values with `NA`", {
   x <- c(2, NA, 4, NaN, 4, 2, NA)
 
-  expect_identical(vec_rank(x, ties = "min", incomplete = "na"), rank(x, ties.method = "min", na.last = "keep"))
-  expect_identical(vec_rank(x, ties = "max", incomplete = "na"), rank(x, ties.method = "max", na.last = "keep"))
-  expect_identical(vec_rank(x, ties = "sequential", incomplete = "na"), rank(x, ties.method = "first", na.last = "keep"))
-  expect_identical(vec_rank(x, ties = "dense", incomplete = "na"), c(1L, NA, 2L, NA, 2L, 1L, NA))
+  expect_identical(
+    vec_rank(x, ties = "min", incomplete = "na"),
+    rank(x, ties.method = "min", na.last = "keep")
+  )
+  expect_identical(
+    vec_rank(x, ties = "max", incomplete = "na"),
+    rank(x, ties.method = "max", na.last = "keep")
+  )
+  expect_identical(
+    vec_rank(x, ties = "sequential", incomplete = "na"),
+    rank(x, ties.method = "first", na.last = "keep")
+  )
+  expect_identical(
+    vec_rank(x, ties = "dense", incomplete = "na"),
+    c(1L, NA, 2L, NA, 2L, 1L, NA)
+  )
 
   # NaN are treated as missing, regardless of whether or not they are distinct from NA_real_
   expect_identical(
@@ -40,12 +67,24 @@ test_that("when ranking incomplete values, all NA (or NaN) values get the same r
   # this is in contrast to rank(), which treats all NA (NaN) as different
   x <- c(1, NA, 3, NaN, NA, 1, NaN)
 
-  expect_identical(vec_rank(x, na_value = "largest"), c(1L, 4L, 3L, 4L, 4L, 1L, 4L))
-  expect_identical(vec_rank(x, na_value = "smallest"), c(5L, 1L, 7L, 1L, 1L, 5L, 1L))
+  expect_identical(
+    vec_rank(x, na_value = "largest"),
+    c(1L, 4L, 3L, 4L, 4L, 1L, 4L)
+  )
+  expect_identical(
+    vec_rank(x, na_value = "smallest"),
+    c(5L, 1L, 7L, 1L, 1L, 5L, 1L)
+  )
 
   # If distinct, NaN are always ranked between real numbers and NA_real_
-  expect_identical(vec_rank(x, na_value = "largest", nan_distinct = TRUE), c(1L, 6L, 3L, 4L, 6L, 1L, 4L))
-  expect_identical(vec_rank(x, na_value = "smallest", nan_distinct = TRUE), c(5L, 1L, 7L, 3L, 1L, 5L, 3L))
+  expect_identical(
+    vec_rank(x, na_value = "largest", nan_distinct = TRUE),
+    c(1L, 6L, 3L, 4L, 6L, 1L, 4L)
+  )
+  expect_identical(
+    vec_rank(x, na_value = "smallest", nan_distinct = TRUE),
+    c(5L, 1L, 7L, 3L, 1L, 5L, 3L)
+  )
 })
 
 test_that("ranks character vectors in the C locale", {
@@ -69,7 +108,10 @@ test_that("works with data frames with 0 columns and >0 rows (#1863)", {
 
   expect_identical(vec_rank(df, ties = "min"), c(1L, 1L, 1L, 1L, 1L))
   expect_identical(vec_rank(df, ties = "sequential"), c(1L, 2L, 3L, 4L, 5L))
-  expect_identical(vec_rank(df, ties = "sequential", direction = "desc"), c(1L, 2L, 3L, 4L, 5L))
+  expect_identical(
+    vec_rank(df, ties = "sequential", direction = "desc"),
+    c(1L, 2L, 3L, 4L, 5L)
+  )
 })
 
 test_that("works with data frames with 0 columns and 0 rows (#1863)", {
@@ -101,7 +143,10 @@ test_that("incompleteness is respected in data frames and rcrds", {
   )
 
   expect_identical(vec_rank(df, incomplete = "na"), c(NA, NA, NA, 1L))
-  expect_identical(vec_rank(df, incomplete = "na", direction = "desc"), c(NA, NA, NA, 1L))
+  expect_identical(
+    vec_rank(df, incomplete = "na", direction = "desc"),
+    c(NA, NA, NA, 1L)
+  )
 
   x <- new_rcrd(list(
     x = c(1, 1, NA, NA, 1),
@@ -132,7 +177,12 @@ test_that("can control `na_value` per column", {
     c(1L, NA, NA, NA, NA)
   )
   expect_identical(
-    vec_rank(df, na_value = c("largest", "smallest"), incomplete = "na", direction = "desc"),
+    vec_rank(
+      df,
+      na_value = c("largest", "smallest"),
+      incomplete = "na",
+      direction = "desc"
+    ),
     c(1L, NA, NA, NA, NA)
   )
 })

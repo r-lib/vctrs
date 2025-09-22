@@ -23,6 +23,5 @@ base_order <- function(x, na.last = TRUE, decreasing = FALSE) {
 
   args <- c(x, args, method)
 
-
   rlang::exec("order", !!!args)
 }

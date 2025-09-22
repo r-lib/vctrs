@@ -1,4 +1,3 @@
-
 test_that("basics", {
   x <- rando(10)
 
@@ -34,8 +33,14 @@ test_that("vec_ptype2 for rando works", {
   expect_error(vec_ptype2(x, ""), class = "vctrs_error_incompatible_type")
   expect_error(vec_ptype2("", x), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_ptype2(data.frame(), x), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(x, data.frame()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_ptype2(data.frame(), x),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(x, data.frame()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("vec_ptype_abbr.rando", {

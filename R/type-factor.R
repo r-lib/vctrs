@@ -16,7 +16,12 @@
 #' @param ...,class Used to for subclasses.
 #' @keywords internal
 #' @export
-new_factor <- function(x = integer(), levels = character(), ..., class = character()) {
+new_factor <- function(
+  x = integer(),
+  levels = character(),
+  ...,
+  class = character()
+) {
   stopifnot(is.integer(x))
   stopifnot(is.character(levels))
 
@@ -142,13 +147,15 @@ fct_cast <- function(x, to, ..., call = caller_env()) {
   fct_cast_impl(x, to, ..., ordered = FALSE, call = call)
 }
 
-fct_cast_impl <- function(x,
-                          to,
-                          ...,
-                          x_arg = "",
-                          to_arg = "",
-                          ordered = FALSE,
-                          call = caller_env()) {
+fct_cast_impl <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  ordered = FALSE,
+  call = caller_env()
+) {
   if (length(levels(to)) == 0L) {
     levels <- levels(x)
     if (is.null(levels)) {
@@ -189,7 +196,7 @@ vec_cast.factor.factor <- function(x, to, ...) {
   fct_cast(x, to, ...)
 }
 #' @export
-vec_cast.factor.character <-function(x, to, ...) {
+vec_cast.factor.character <- function(x, to, ...) {
   fct_cast(x, to, ...)
 }
 #' @export
@@ -215,7 +222,7 @@ vec_cast.ordered.ordered <- function(x, to, ...) {
 }
 
 #' @export
-vec_cast.ordered.character <-function(x, to, ...) {
+vec_cast.ordered.character <- function(x, to, ...) {
   ord_cast(x, to, ...)
 }
 #' @export

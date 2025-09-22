@@ -57,11 +57,13 @@
 #'   invisibly.
 #' @keywords internal
 #' @export
-vec_assert <- function(x,
-                       ptype = NULL,
-                       size = NULL,
-                       arg = caller_arg(x),
-                       call = caller_env()) {
+vec_assert <- function(
+  x,
+  ptype = NULL,
+  size = NULL,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
   if (!obj_is_vector(x)) {
     stop_scalar_type(x, arg, call = call)
   }
@@ -104,10 +106,7 @@ vec_assert <- function(x,
 }
 
 # Also thrown from C
-stop_assert_size <- function(actual,
-                             required,
-                             arg,
-                             call = caller_env()) {
+stop_assert_size <- function(actual, required, arg, call = caller_env()) {
   if (!nzchar(arg)) {
     arg <- "Input"
   } else {
@@ -125,10 +124,12 @@ stop_assert_size <- function(actual,
   )
 }
 
-stop_assert <- function(message = NULL,
-                        class = NULL,
-                        ...,
-                        call = caller_env()) {
+stop_assert <- function(
+  message = NULL,
+  class = NULL,
+  ...,
+  call = caller_env()
+) {
   stop_vctrs(
     message,
     class = c(class, "vctrs_error_assert"),
@@ -273,21 +274,20 @@ obj_is_vector <- function(x) {
 
 #' @export
 #' @rdname vector-checks
-obj_check_vector <- function(x,
-                             ...,
-                             arg = caller_arg(x),
-                             call = caller_env()) {
+obj_check_vector <- function(x, ..., arg = caller_arg(x), call = caller_env()) {
   check_dots_empty0(...)
   invisible(.Call(ffi_obj_check_vector, x, environment()))
 }
 
 #' @export
 #' @rdname vector-checks
-vec_check_size <- function(x,
-                           size,
-                           ...,
-                           arg = caller_arg(x),
-                           call = caller_env()) {
+vec_check_size <- function(
+  x,
+  size,
+  ...,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
   check_dots_empty0(...)
   invisible(.Call(ffi_vec_check_size, x, size, environment()))
 }
@@ -342,10 +342,7 @@ obj_is_list <- function(x) {
 }
 #' @rdname obj_is_list
 #' @export
-obj_check_list <- function(x,
-                           ...,
-                           arg = caller_arg(x),
-                           call = caller_env()) {
+obj_check_list <- function(x, ..., arg = caller_arg(x), call = caller_env()) {
   check_dots_empty0(...)
   invisible(.Call(ffi_check_list, x, environment()))
 }
@@ -358,10 +355,12 @@ list_all_vectors <- function(x) {
 
 #' @rdname obj_is_list
 #' @export
-list_check_all_vectors <- function(x,
-                                   ...,
-                                   arg = caller_arg(x),
-                                   call = caller_env()) {
+list_check_all_vectors <- function(
+  x,
+  ...,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
   check_dots_empty0(...)
   invisible(.Call(ffi_list_check_all_vectors, x, environment()))
 }
@@ -374,11 +373,13 @@ list_all_size <- function(x, size) {
 
 #' @rdname obj_is_list
 #' @export
-list_check_all_size <- function(x,
-                                size,
-                                ...,
-                                arg = caller_arg(x),
-                                call = caller_env()) {
+list_check_all_size <- function(
+  x,
+  size,
+  ...,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
   check_dots_empty0(...)
   invisible(.Call(ffi_list_check_all_size, x, size, environment()))
 }

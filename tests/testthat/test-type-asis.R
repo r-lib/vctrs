@@ -12,7 +12,10 @@ test_that("AsIs class stripped from I()", {
   df <- data.frame(x = 1, y = 1:2)
   class(df) <- c("myclass", "data.frame")
 
-  expect_equal(vec_ptype_full(I(df)), "I<myclass<\n  x: double\n  y: integer\n>>")
+  expect_equal(
+    vec_ptype_full(I(df)),
+    "I<myclass<\n  x: double\n  y: integer\n>>"
+  )
   expect_equal(vec_ptype_full(I(df[1])), "I<myclass<x:double>>")
   expect_equal(vec_ptype_full(I(df[0])), "I<myclass<>>")
 })
@@ -59,7 +62,10 @@ test_that("can take the common type of identical AsIs objects", {
 
 test_that("AsIs objects throw ptype2 errors with their underlying types", {
   expect_snapshot({
-    (expect_error(vec_ptype2(I(1), I("x")), class = "vctrs_error_incompatible_type"))
+    (expect_error(
+      vec_ptype2(I(1), I("x")),
+      class = "vctrs_error_incompatible_type"
+    ))
   })
 })
 
@@ -78,7 +84,10 @@ test_that("can cast one AsIs to another AsIs", {
 
 test_that("AsIs objects throw cast errors with their underlying types", {
   expect_snapshot({
-    (expect_error(vec_cast(I(1), I(factor("x"))), class = "vctrs_error_incompatible_type"))
+    (expect_error(
+      vec_cast(I(1), I(factor("x"))),
+      class = "vctrs_error_incompatible_type"
+    ))
   })
 })
 

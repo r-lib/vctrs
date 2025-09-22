@@ -194,7 +194,7 @@ vec_slice_fallback_integer64 <- function(x, i) {
   }
 
   if (d == 2) {
-    out[is_na,] <- bit64::NA_integer64_
+    out[is_na, ] <- bit64::NA_integer64_
   } else {
     eval_bare(expr(out[is_na, !!!miss_args] <- bit64::NA_integer64_))
   }

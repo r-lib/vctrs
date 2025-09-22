@@ -59,7 +59,9 @@ vec_arith.default <- function(op, x, y, ...) {
 vec_arith.logical <- function(op, x, y, ...) UseMethod("vec_arith.logical", y)
 #' @method vec_arith.logical default
 #' @export
-vec_arith.logical.default <- function(op, x, y, ...) stop_incompatible_op(op, x, y)
+vec_arith.logical.default <- function(op, x, y, ...) {
+  stop_incompatible_op(op, x, y)
+}
 #' @method vec_arith.logical logical
 #' @export
 vec_arith.logical.logical <- function(op, x, y, ...) vec_arith_base(op, x, y)
@@ -74,7 +76,9 @@ vec_arith.logical.numeric <- function(op, x, y, ...) vec_arith_base(op, x, y)
 vec_arith.numeric <- function(op, x, y, ...) UseMethod("vec_arith.numeric", y)
 #' @method vec_arith.numeric default
 #' @export
-vec_arith.numeric.default <- function(op, x, y, ...) stop_incompatible_op(op, x, y)
+vec_arith.numeric.default <- function(op, x, y, ...) {
+  stop_incompatible_op(op, x, y)
+}
 #' @method vec_arith.numeric logical
 #' @export
 vec_arith.numeric.logical <- function(op, x, y, ...) vec_arith_base(op, x, y)
