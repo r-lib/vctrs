@@ -286,9 +286,3 @@ test_that("`vec_rbind()` doesn't leak common type fallbacks (#1331)", {
     data_frame(id = rep(1:2, each = 2), geo = rep(sf$geo, 2))
   )
 })
-
-# Local Variables:
-# indent-tabs-mode: t
-# ess-indent-offset: 4
-# tab-width: 4
-# End:
