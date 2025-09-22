@@ -12,6 +12,7 @@ struct syms {
   r_obj* dot_call;
   r_obj* dot_error_arg;
   r_obj* dot_error_call;
+  r_obj* from_arg;
   r_obj* haystack_arg;
   r_obj* indices_arg;
   r_obj* needles_arg;
@@ -79,7 +80,6 @@ struct lazy_calls {
   struct r_lazy vec_recycle_common;
   struct r_lazy vec_size;
   struct r_lazy vec_size_common;
-  struct r_lazy list_all_size;
 };
 
 extern struct syms syms;
