@@ -2,7 +2,6 @@
 #include "vctrs.h"
 #include "decl/arg-counter-decl.h"
 
-
 static
 struct counters* new_counters(r_obj* names,
                               struct vctrs_arg* p_curr_arg,
@@ -73,43 +72,22 @@ void counters_shift(struct counters* p_counters) {
   p_counters->curr = p_counters->next;
 }
 
-
-// Reduce `impl` with argument counters
-
 r_obj* reduce(r_obj* current,
               struct vctrs_arg* p_current_arg,
               struct vctrs_arg* p_parent_arg,
               r_obj* rest,
               r_obj* (*impl)(r_obj* current, r_obj* next, struct counters* counters, void* data),
               void* data) {
-  struct counters* p_counters = new_counters(r_names(rest),
-                                             p_current_arg,
-                                             p_parent_arg);
-  KEEP(p_counters->shelter);
-
-  r_obj* out = reduce_impl(current,
-                           rest,
-                           p_parent_arg,
-                           p_counters,
-                           impl,
-                           data);
-
-  FREE(1);
-  return out;
-}
-
-static
-r_obj* reduce_impl(r_obj* current,
-                   r_obj* rest,
-                   struct vctrs_arg* p_parent_arg,
-                   struct counters* counters,
-                   r_obj* (*impl)(r_obj* current,
-                                  r_obj* next,
-                                  struct counters* counters,
-                                  void* data),
-                   void* data) {
-  r_ssize n = r_length(rest);
+  const r_ssize n = r_length(rest);
+  r_obj* names = r_names(rest);
   r_obj* const* v_rest = r_list_cbegin(rest);
+
+  struct counters* counters = new_counters(
+    names,
+    p_current_arg,
+    p_parent_arg
+  );
+  KEEP(counters->shelter);
 
   r_keep_loc current_pi;
   KEEP_HERE(current, &current_pi);
@@ -121,6 +99,6 @@ r_obj* reduce_impl(r_obj* current,
     counters_inc(counters);
   }
 
-  FREE(1);
+  FREE(2);
   return current;
 }
