@@ -47,7 +47,7 @@ struct counters* new_counters(r_obj* names,
   return p_counters;
 }
 
-static
+static inline
 void counters_inc(struct counters* counters) {
   ++(counters->next);
   ++(counters->names_next);
@@ -114,10 +114,11 @@ r_obj* reduce_impl(r_obj* current,
   r_keep_loc current_pi;
   KEEP_HERE(current, &current_pi);
 
-  for (r_ssize i = 0; i < n; ++i, counters_inc(counters)) {
+  for (r_ssize i = 0; i < n; ++i) {
     r_obj* next = v_rest[i];
     current = impl(current, next, counters, data);
     KEEP_AT(current, current_pi);
+    counters_inc(counters);
   }
 
   FREE(1);
