@@ -1,6 +1,5 @@
 #include "arg-counter.h"
 #include "vctrs.h"
-#include "decl/arg-counter-decl.h"
 
 static
 struct counters* new_counters(r_obj* names,
