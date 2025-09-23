@@ -127,29 +127,29 @@ test_that("vec_ptype() errors on scalar lists", {
 })
 
 test_that("can retrieve type info", {
-  exp <- list(type = "integer", proxy_method = NULL)
+  exp <- list(type = "integer", had_proxy_method = FALSE)
   expect_identical(vec_type_info(1:3), exp)
 
-  exp <- list(type = "s3", proxy_method = NULL)
+  exp <- list(type = "s3", had_proxy_method = FALSE)
   expect_identical(vec_type_info(~foo), exp)
 
   x <- as.POSIXlt(new_datetime(0))
-  exp <- list(type = "s3", proxy_method = vec_proxy.POSIXlt)
+  exp <- list(type = "s3", had_proxy_method = TRUE)
   expect_identical(vec_type_info(x), exp)
 })
 
 test_that("can retrieve proxy info", {
-  exp <- list(type = "integer", proxy_method = NULL, proxy = 1:3)
+  exp <- list(type = "integer", had_proxy_method = FALSE, proxy = 1:3)
   expect_identical(vec_proxy_info(1:3), exp)
 
-  exp <- list(type = "scalar", proxy_method = NULL, proxy = ~foo)
+  exp <- list(type = "scalar", had_proxy_method = FALSE, proxy = ~foo)
   expect_identical(vec_proxy_info(~foo), exp)
 
   x <- as.POSIXlt(new_datetime(0))
   proxy <- new_data_frame(unclass(x))
   exp <- list(
     type = "dataframe",
-    proxy_method = vec_proxy.POSIXlt,
+    had_proxy_method = TRUE,
     proxy = proxy
   )
   expect_identical(vec_proxy_info(x), exp)

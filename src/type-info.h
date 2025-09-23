@@ -19,20 +19,35 @@ enum vctrs_type {
 };
 
 /**
- * @member type If `proxy_method` was found, the vector type of the
+ * Proxy info
+ *
+ * @member proxy If a `proxy_method` was found, the result of invoking
+ *   the method. Otherwise, the original data.
+ * @member type If a `proxy_method` was found, the vector type of the
  *   proxy data. Otherwise, the vector type of the original data.
  *   This is never `vctrs_type_s3`.
- * @member proxy_method The function of the `vec_proxy()` method, if
- *   any. This method is looked up with [vec_proxy_method()].
- * @member proxy If `proxy_method` was found, the result of invoking
- *   the method. Otherwise, the original data.
+ * @member had_proxy_method Whether or not a `proxy_method` was found,
+ *   which is looked up by [vec_proxy_method()].
+ *
+ * NOTE: Resist the urge to add a `shelter` here. `vec_proxy_info()` is called
+ * in EXTREMELY tight loops, like `list_sizes()`, `vec_size_common()`, and
+ * `vec_ptype_common()`. The overhead of creating and protecting a `shelter`
+ * list is very noticeable! Instead use `KEEP_1_PROXY_INFO()` or
+ * `KEEP_N_PROXY_INFO()` (#2042).
  */
 struct vctrs_proxy_info {
-  r_obj* shelter;
-  enum vctrs_type type;
-  r_obj* proxy_method;
   r_obj* proxy;
+  enum vctrs_type type;
+  bool had_proxy_method;
 };
+
+#define KEEP_1_PROXY_INFO(INFO) do { \
+  KEEP(INFO.proxy);                  \
+} while (0)
+
+#define KEEP_N_PROXY_INFO(INFO, P_N_PROTECT) do { \
+  KEEP_N(INFO.proxy, P_N_PROTECT);                \
+} while (0)
 
 /**
  * Return type information of a vector's proxy

@@ -3,40 +3,39 @@
 
 struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info;
-  info.shelter = KEEP(r_alloc_list(2));
 
-  info.proxy_method = r_is_object(x) ? vec_proxy_method(x) : r_null;
-  r_list_poke(info.shelter, 0, info.proxy_method);
+  // Avoid `KEEP(x_proxy_method)` if not required! This does help with
+  // performance, since this is called in such a tight loop.
+  //
+  // `vec_proxy_method()` itself may also return `r_null`
+  r_obj* x_proxy_method = r_is_object(x) ? vec_proxy_method(x) : r_null;
 
-  if (info.proxy_method == r_null) {
-    info.type = vec_base_typeof(x, false);
+  if (x_proxy_method == r_null) {
     info.proxy = x;
+    info.type = vec_base_typeof(x, false);
+    info.had_proxy_method = false;
   } else {
-    r_obj* proxy = KEEP(vec_proxy_invoke(x, info.proxy_method));
-    info.type = vec_base_typeof(proxy, true);
-    info.proxy = proxy;
-    FREE(1);
+    KEEP(x_proxy_method);
+    info.proxy = KEEP(vec_proxy_invoke(x, x_proxy_method));
+    info.type = vec_base_typeof(info.proxy, true);
+    info.had_proxy_method = true;
+    FREE(2);
   }
-  r_list_poke(info.shelter, 1, info.proxy);
 
-  FREE(1);
   return info;
 }
 
 // Type info of `x`
 //
 // Does not take the proxy, so can return `VCTRS_TYPE_s3`, unlike `vec_proxy_info()`.
-// Returns the `proxy_method`, if any, for testing purposes.
 //
 // [[ register() ]]
 r_obj* ffi_type_info(r_obj* x) {
-  r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "" }));
+  r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "had_proxy_method", "" }));
 
   const enum vctrs_type type = vec_typeof(x);
   r_list_poke(out, 0, r_chr(vec_type_as_str(type)));
-
-  // Roughly mimics `vec_proxy_2()`
-  r_list_poke(out, 1, (type == VCTRS_TYPE_s3) ? vec_proxy_method(x) : r_null);
+  r_list_poke(out, 1, r_lgl(vec_proxy_method(x) != r_null));
 
   FREE(1);
   return out;
@@ -44,11 +43,11 @@ r_obj* ffi_type_info(r_obj* x) {
 // [[ register() ]]
 r_obj* ffi_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
-  KEEP(info.shelter);
+  KEEP_1_PROXY_INFO(info);
 
-  r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "proxy", "" }));
+  r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "had_proxy_method", "proxy", "" }));
   r_list_poke(out, 0, r_chr(vec_type_as_str(info.type)));
-  r_list_poke(out, 1, info.proxy_method);
+  r_list_poke(out, 1, r_lgl(info.had_proxy_method));
   r_list_poke(out, 2, info.proxy);
 
   FREE(2);
