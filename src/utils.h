@@ -203,7 +203,6 @@ r_obj* colnames2(r_obj* x);
 
 extern bool (*rlang_is_splice_box)(SEXP);
 extern SEXP (*rlang_unbox)(SEXP);
-extern SEXP (*rlang_env_dots_values)(SEXP);
 extern SEXP (*rlang_env_dots_list)(SEXP);
 
 void* r_vec_deref_barrier(SEXP x);
