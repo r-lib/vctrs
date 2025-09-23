@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_unchop()` is now more performant when combining many small objects together (#2034, #2035).
+
 * New `vec_if_else()` for performing a vectorized if-else. It is exactly the same as `dplyr::if_else()`, but much faster and memory efficient (#2030).
 
 * New `vec_recode_values()` and `vec_replace_values()` for recoding and replacing values. In particular, this makes it easy to recode a vector using a lookup table (#2027).
