@@ -1,6 +1,6 @@
 # vctrs (development version)
 
-* `list_unchop()` is now more performant when combining many small objects together (#2034, #2035).
+* `list_unchop()` is now more performant when combining many small objects together (#2034, #2035, #2041).
 
 * New `vec_if_else()` for performing a vectorized if-else. It is exactly the same as `dplyr::if_else()`, but much faster and memory efficient (#2030).
 
