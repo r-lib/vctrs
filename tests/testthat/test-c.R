@@ -633,6 +633,13 @@ test_that("calls cast method even with empty objects", {
   })
 })
 
+test_that("can handle spliced lists (#1578)", {
+  expect_identical(
+    vec_c(!!!list(foo = 1), !!!list(bar = 2)),
+    c(foo = 1, bar = 2)
+  )
+})
+
 # Golden tests -------------------------------------------------------
 
 test_that("concatenation performs expected allocations", {
