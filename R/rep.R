@@ -86,24 +86,28 @@ NULL
 
 #' @rdname vec-rep
 #' @export
-vec_rep <- function(x,
-                    times,
-                    ...,
-                    error_call = current_env(),
-                    x_arg = "x",
-                    times_arg = "times") {
+vec_rep <- function(
+  x,
+  times,
+  ...,
+  error_call = current_env(),
+  x_arg = "x",
+  times_arg = "times"
+) {
   check_dots_empty0(...)
   .Call(ffi_vec_rep, x, times, environment())
 }
 
 #' @rdname vec-rep
 #' @export
-vec_rep_each <- function(x,
-                         times,
-                         ...,
-                         error_call = current_env(),
-                         x_arg = "x",
-                         times_arg = "times") {
+vec_rep_each <- function(
+  x,
+  times,
+  ...,
+  error_call = current_env(),
+  x_arg = "x",
+  times_arg = "times"
+) {
   check_dots_empty0(...)
   .Call(ffi_vec_rep_each, x, times, environment())
 }

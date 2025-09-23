@@ -1,4 +1,3 @@
-
 expect_lossy_cast <- function(expr) {
   cnd <- NULL
 

@@ -108,22 +108,28 @@ vec_ptype <- function(x, ..., x_arg = "", call = caller_env()) {
 
 #' @export
 #' @rdname vec_ptype
-vec_ptype_common <- function(...,
-                             .ptype = NULL,
-                             .arg = "",
-                             .call = caller_env()) {
+vec_ptype_common <- function(
+  ...,
+  .ptype = NULL,
+  .arg = "",
+  .call = caller_env()
+) {
   .External2(ffi_ptype_common, .ptype)
 }
-vec_ptype_common_opts <- function(...,
-                                  .ptype = NULL,
-                                  .opts = fallback_opts(),
-                                  .call = caller_env()) {
+vec_ptype_common_opts <- function(
+  ...,
+  .ptype = NULL,
+  .opts = fallback_opts(),
+  .call = caller_env()
+) {
   .External2(ffi_ptype_common_opts, .ptype, .opts)
 }
-vec_ptype_common_params <- function(...,
-                                    .ptype = NULL,
-                                    .s3_fallback = NULL,
-                                    .call = caller_env()) {
+vec_ptype_common_params <- function(
+  ...,
+  .ptype = NULL,
+  .s3_fallback = NULL,
+  .call = caller_env()
+) {
   opts <- fallback_opts(
     s3_fallback = .s3_fallback
   )
@@ -134,9 +140,11 @@ vec_ptype_common_params <- function(...,
     .call = .call
   )
 }
-vec_ptype_common_fallback <- function(...,
-                                      .ptype = NULL,
-                                      .call = caller_env()) {
+vec_ptype_common_fallback <- function(
+  ...,
+  .ptype = NULL,
+  .call = caller_env()
+) {
   vec_ptype_common_opts(
     ...,
     .ptype = .ptype,
@@ -184,7 +192,9 @@ vec_ptype_show <- function(...) {
 
     steps <- apply(lines, 1, function(x) do.call(cbind, x))
     if (is.list(steps)) {
-      step_lines <- unlist(lapply(steps, function(x) apply(x, 1, paste0, collapse = "")))
+      step_lines <- unlist(lapply(steps, function(x) {
+        apply(x, 1, paste0, collapse = "")
+      }))
     } else {
       step_lines <- apply(steps, 2, paste0, collapse = "")
     }

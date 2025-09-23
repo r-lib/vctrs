@@ -52,10 +52,12 @@
 #'   x = data_frame(a = 1:2, b = 3:4),
 #'   y = 1:4
 #' )
-vec_expand_grid <- function(...,
-                            .vary = "slowest",
-                            .name_repair = "check_unique",
-                            .error_call = current_env()) {
+vec_expand_grid <- function(
+  ...,
+  .vary = "slowest",
+  .name_repair = "check_unique",
+  .error_call = current_env()
+) {
   .vary <- arg_match0(
     arg = .vary,
     values = c("slowest", "fastest"),

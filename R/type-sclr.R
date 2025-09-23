@@ -44,13 +44,13 @@ as.list.vctrs_sclr <- function(x, ...) {
 }
 
 #' @export
-as.data.frame.vctrs_sclr <- function(x,
-                                     row.names = NULL,
-                                     optional = FALSE,
-                                     ...,
-                                     nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
-                                     ) {
-
+as.data.frame.vctrs_sclr <- function(
+  x,
+  row.names = NULL,
+  optional = FALSE,
+  ...,
+  nm = paste(deparse(substitute(x), width.cutoff = 500L), collapse = " ")
+) {
   force(nm)
   cols <- list(list(x))
   if (!optional) {
@@ -191,4 +191,3 @@ summary.vctrs_sclr <- function(object, ...) {
   stop_unimplemented(object, "summary")
   # nocov end
 }
-

@@ -1,4 +1,3 @@
-
 test_that("slice-assign throws error with non-vector inputs", {
   x <- environment()
   expect_error(vec_slice(x, 1L) <- 1L, class = "vctrs_error_scalar_type")
@@ -7,7 +6,10 @@ test_that("slice-assign throws error with non-vector inputs", {
 test_that("slice-assign throws error with non-vector `value`", {
   x <- 1L
   expect_error(vec_slice(x, 1L) <- NULL, class = "vctrs_error_scalar_type")
-  expect_error(vec_slice(x, 1L) <- environment(), class = "vctrs_error_scalar_type")
+  expect_error(
+    vec_slice(x, 1L) <- environment(),
+    class = "vctrs_error_scalar_type"
+  )
 })
 
 test_that("assign throws error with non-vector `value`", {
@@ -422,16 +424,37 @@ test_that("can assign object of any dimensionality", {
   x3 <- ones(3, 4, 5)
   x4 <- ones(3, 4, 5, 6)
 
-  expect_identical(vec_assign(x1, 1L, 2L), array(rep(c(2, 1, 1), 1),  dim = 3))
-  expect_identical(vec_assign(x2, 1L, 2L), array(rep(c(2, 1, 1), 3),  dim = c(3, 4)))
-  expect_identical(vec_assign(x3, 1L, 2L), array(rep(c(2, 1, 1), 12), dim = c(3, 4, 5)))
-  expect_identical(vec_assign(x4, 1L, 2L), array(rep(c(2, 1, 1), 60), dim = c(3, 4, 5, 6)))
+  expect_identical(vec_assign(x1, 1L, 2L), array(rep(c(2, 1, 1), 1), dim = 3))
+  expect_identical(
+    vec_assign(x2, 1L, 2L),
+    array(rep(c(2, 1, 1), 3), dim = c(3, 4))
+  )
+  expect_identical(
+    vec_assign(x3, 1L, 2L),
+    array(rep(c(2, 1, 1), 12), dim = c(3, 4, 5))
+  )
+  expect_identical(
+    vec_assign(x4, 1L, 2L),
+    array(rep(c(2, 1, 1), 60), dim = c(3, 4, 5, 6))
+  )
 
   # With recycling of `value`
-  expect_identical(vec_assign(x1, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 1),  dim = 3))
-  expect_identical(vec_assign(x2, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 3),  dim = c(3, 4)))
-  expect_identical(vec_assign(x3, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 12), dim = c(3, 4, 5)))
-  expect_identical(vec_assign(x4, c(3L, 2L), 2L), array(rep(c(1, 2, 2), 60), dim = c(3, 4, 5, 6)))
+  expect_identical(
+    vec_assign(x1, c(3L, 2L), 2L),
+    array(rep(c(1, 2, 2), 1), dim = 3)
+  )
+  expect_identical(
+    vec_assign(x2, c(3L, 2L), 2L),
+    array(rep(c(1, 2, 2), 3), dim = c(3, 4))
+  )
+  expect_identical(
+    vec_assign(x3, c(3L, 2L), 2L),
+    array(rep(c(1, 2, 2), 12), dim = c(3, 4, 5))
+  )
+  expect_identical(
+    vec_assign(x4, c(3L, 2L), 2L),
+    array(rep(c(1, 2, 2), 60), dim = c(3, 4, 5, 6))
+  )
 })
 
 test_that("can assign object of any dimensionality with logical indices", {
@@ -458,22 +481,22 @@ test_that("can assign object of any dimensionality with logical indices", {
   y <- vec_assign(x1, condition, vec_slice(value, condition))
   z <- vec_assign(x1, condition, value, slice_value = TRUE)
   expect_identical(y, z)
-  expect_identical(y, array(rep(c(2, 1, 1, 5), 1),  dim = dim(x1)))
+  expect_identical(y, array(rep(c(2, 1, 1, 5), 1), dim = dim(x1)))
 
   y <- vec_assign(x1_list, condition, vec_slice(value_list, condition))
   z <- vec_assign(x1_list, condition, value_list, slice_value = TRUE)
   expect_identical(y, z)
-  expect_identical(y, array(rep(list(2, 1, 1, 5), 1),  dim = dim(x1_list)))
+  expect_identical(y, array(rep(list(2, 1, 1, 5), 1), dim = dim(x1_list)))
 
   y <- vec_assign(x2, condition, vec_slice(value, condition))
   z <- vec_assign(x2, condition, value, slice_value = TRUE)
   expect_identical(y, z)
-  expect_identical(y, array(rep(c(2, 1, 1, 5), 4),  dim = dim(x2)))
+  expect_identical(y, array(rep(c(2, 1, 1, 5), 4), dim = dim(x2)))
 
   y <- vec_assign(x2_list, condition, vec_slice(value_list, condition))
   z <- vec_assign(x2_list, condition, value_list, slice_value = TRUE)
   expect_identical(y, z)
-  expect_identical(y, array(rep(list(2, 1, 1, 5), 4),  dim = dim(x2_list)))
+  expect_identical(y, array(rep(list(2, 1, 1, 5), 4), dim = dim(x2_list)))
 
   y <- vec_assign(x3, condition, vec_slice(value, condition))
   z <- vec_assign(x3, condition, value, slice_value = TRUE)
@@ -502,22 +525,22 @@ test_that("can assign object of any dimensionality with logical indices", {
   y <- vec_assign(x1, condition, value)
   z <- vec_assign(x1, condition, value, slice_value = TRUE)
   expect_identical(y, z)
-  expect_identical(y, array(rep(c(2, 1, 1, 2), 1),  dim = dim(x1)))
+  expect_identical(y, array(rep(c(2, 1, 1, 2), 1), dim = dim(x1)))
 
   y <- vec_assign(x1_list, condition, value_list)
   z <- vec_assign(x1_list, condition, value_list, slice_value = TRUE)
   expect_identical(y, z)
-  expect_identical(y, array(rep(list(2, 1, 1, 2), 1),  dim = dim(x1_list)))
+  expect_identical(y, array(rep(list(2, 1, 1, 2), 1), dim = dim(x1_list)))
 
   y <- vec_assign(x2, condition, value)
   z <- vec_assign(x2, condition, value, slice_value = TRUE)
   expect_identical(y, z)
-  expect_identical(y, array(rep(c(2, 1, 1, 2), 4),  dim = dim(x2)))
+  expect_identical(y, array(rep(c(2, 1, 1, 2), 4), dim = dim(x2)))
 
   y <- vec_assign(x2_list, condition, value_list)
   z <- vec_assign(x2_list, condition, value_list, slice_value = TRUE)
   expect_identical(y, z)
-  expect_identical(y, array(rep(list(2, 1, 1, 2), 4),  dim = dim(x2_list)))
+  expect_identical(y, array(rep(list(2, 1, 1, 2), 4), dim = dim(x2_list)))
 
   y <- vec_assign(x3, condition, value)
   z <- vec_assign(x3, condition, value, slice_value = TRUE)
@@ -545,7 +568,10 @@ test_that("atomics can't be assigned in lists", {
   expect_error(vec_slice(x, 1) <- 1, class = "vctrs_error_incompatible_type")
   expect_error(vec_assign(x, 1, 2), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_slice(x, 1) <- "foo", class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_slice(x, 1) <- "foo",
+    class = "vctrs_error_incompatible_type"
+  )
   expect_error(vec_assign(x, 1, "foo"), class = "vctrs_error_incompatible_type")
 })
 
@@ -639,7 +665,10 @@ test_that("assign ignores NA in logical subsetting", {
   expect_equal(vec_assign(x, x > 0, 1, slice_value = TRUE), c(NA, 1, 1))
 
   expect_equal(vec_assign(x, x > 0, c(NA, 2:1)), c(NA, 2, 1))
-  expect_equal(vec_assign(x, x > 0, c(NA, 2:1), slice_value = TRUE), c(NA, 2, 1))
+  expect_equal(
+    vec_assign(x, x > 0, c(NA, 2:1), slice_value = TRUE),
+    c(NA, 2, 1)
+  )
 })
 
 test_that("assign with arrays ignores NA in logical subsetting", {
@@ -756,7 +785,10 @@ test_that("a coercible RHS is cast to LHS before assignment (#140)", {
   x <- matrix(1:4, 2)
   vec_slice(x, 1) <- matrix(c(FALSE, FALSE), 1)
   expect_identical(x, matrix(int(0, 2, 0, 4), 2))
-  expect_error(vec_assign(x, 1, matrix(c("", ""), 1)), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_assign(x, 1, matrix(c("", ""), 1)),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("slice-assign takes the proxy", {
@@ -823,7 +855,10 @@ test_that("can't use names to assign with an unnamed object", {
 
 test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
   obj <- foobar(c("foo", "bar", "baz"))
-  expect_error(vec_slice(obj, 1:2) <- TRUE, class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_slice(obj, 1:2) <- TRUE,
+    class = "vctrs_error_incompatible_type"
+  )
 
   vec_slice(obj, 1:2) <- foobar("quux")
 
@@ -840,7 +875,9 @@ test_that("slice-assign falls back to `[<-` when proxy is not implemented", {
     vec_ptype2.logical.vctrs_foobar = function(...) foobar(""),
     vec_ptype2.vctrs_foobar = function(...) foobar(""),
     vec_cast.vctrs_foobar = function(...) NULL,
-    vec_cast.vctrs_foobar.logical = function(x, to, ...) foobar(rep("", length(x)))
+    vec_cast.vctrs_foobar.logical = function(x, to, ...) {
+      foobar(rep("", length(x)))
+    }
   )
 
   obj <- foobar(c("foo", "bar", "baz"))
@@ -863,8 +900,14 @@ test_that("vec_assign() can always assign unspecified values into foreign vector
   expect_identical(vec_assign(obj, 1, NA), expect)
   expect_identical(vec_assign(obj, 1, unspecified(1)), expect)
 
-  expect_identical(vec_assign(obj, 1, c(NA, NA, NA), slice_value = TRUE), expect)
-  expect_identical(vec_assign(obj, 1, unspecified(3), slice_value = TRUE), expect)
+  expect_identical(
+    vec_assign(obj, 1, c(NA, NA, NA), slice_value = TRUE),
+    expect
+  )
+  expect_identical(
+    vec_assign(obj, 1, unspecified(3), slice_value = TRUE),
+    expect
+  )
 })
 
 test_that("slice-assign casts to `to` before falling back to `[<-` (#443)", {
@@ -914,7 +957,12 @@ test_that("index and value are sliced before falling back", {
 
   # With condition vector and `slice_value = TRUE`
   expect_identical(
-    vec_assign(lhs, c(NA, FALSE, TRUE, NA, TRUE), foobar(int(6:10)), slice_value = TRUE),
+    vec_assign(
+      lhs,
+      c(NA, FALSE, TRUE, NA, TRUE),
+      foobar(int(6:10)),
+      slice_value = TRUE
+    ),
     foobar(int(1, 2, 8, 4, 10))
   )
 })
@@ -957,7 +1005,7 @@ test_that("can assign to data frame with `slice_value`", {
 
 test_that("can assign to a data frame with matrix columns (#625)", {
   df <- tibble(x = 1:2, y = matrix(1:4, nrow = 2))
-  expect_identical(vec_assign(df, 2L, df[1,]), vec_slice(df, c(1, 1)))
+  expect_identical(vec_assign(df, 2L, df[1, ]), vec_slice(df, c(1, 1)))
 })
 
 test_that("assigning to a factor doesn't produce corrupt levels (#853)", {
@@ -1086,9 +1134,18 @@ test_that("names are not assigned by default", {
     mat_out
   )
 
-  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
-  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c("quux"))
-  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out), row.names = c("foo", "bar", "baz"))
+  nested_x <- new_data_frame(
+    list(df = df_x, mat = mat_x, vec = vec_x),
+    row.names = c("foo", "bar", "baz")
+  )
+  nested_y <- new_data_frame(
+    list(df = df_y, mat = mat_y, vec = vec_y),
+    row.names = c("quux")
+  )
+  nested_out <- new_data_frame(
+    list(df = df_out, mat = mat_out, vec = vec_out),
+    row.names = c("foo", "bar", "baz")
+  )
   expect_identical(
     vec_assign(nested_x, 2, nested_y),
     nested_out
@@ -1106,7 +1163,10 @@ test_that("can optionally assign names", {
 
   df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
   df_y <- new_data_frame(list(x = 4L), row.names = "FOO")
-  df_out <- new_data_frame(list(x = c(1L, 4L, 3L)), row.names = c("a", "FOO", "c"))
+  df_out <- new_data_frame(
+    list(x = c(1L, 4L, 3L)),
+    row.names = c("a", "FOO", "c")
+  )
   expect_identical(
     vec_assign_params(df_x, 2, df_y, assign_names = TRUE),
     df_out
@@ -1120,9 +1180,18 @@ test_that("can optionally assign names", {
     mat_out
   )
 
-  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
-  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c("quux"))
-  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out), row.names = c("foo", "quux", "baz"))
+  nested_x <- new_data_frame(
+    list(df = df_x, mat = mat_x, vec = vec_x),
+    row.names = c("foo", "bar", "baz")
+  )
+  nested_y <- new_data_frame(
+    list(df = df_y, mat = mat_y, vec = vec_y),
+    row.names = c("quux")
+  )
+  nested_out <- new_data_frame(
+    list(df = df_out, mat = mat_out, vec = vec_out),
+    row.names = c("foo", "quux", "baz")
+  )
 
   expect_identical(
     vec_assign_params(nested_x, 2, nested_y, assign_names = TRUE),
@@ -1147,7 +1216,10 @@ test_that("can optionally assign names with `slice_value`", {
 
   df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
   df_y <- new_data_frame(list(x = 4:6), row.names = c("FOO", "BAR", "BAZ"))
-  df_out <- new_data_frame(list(x = c(1L, 5L, 6L)), row.names = c("a", "BAR", "BAZ"))
+  df_out <- new_data_frame(
+    list(x = c(1L, 5L, 6L)),
+    row.names = c("a", "BAR", "BAZ")
+  )
   expect_identical(
     vec_assign_params(
       df_x,
@@ -1173,9 +1245,18 @@ test_that("can optionally assign names with `slice_value`", {
     mat_out
   )
 
-  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
-  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c(c("x", "y", "z")))
-  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out), row.names = c("foo", "y", "z"))
+  nested_x <- new_data_frame(
+    list(df = df_x, mat = mat_x, vec = vec_x),
+    row.names = c("foo", "bar", "baz")
+  )
+  nested_y <- new_data_frame(
+    list(df = df_y, mat = mat_y, vec = vec_y),
+    row.names = c(c("x", "y", "z"))
+  )
+  nested_out <- new_data_frame(
+    list(df = df_out, mat = mat_out, vec = vec_out),
+    row.names = c("foo", "y", "z")
+  )
 
   expect_identical(
     vec_assign_params(
@@ -1195,17 +1276,30 @@ test_that("can optionally assign names (OO case)", {
 
   # `set_names()` must be on the inside, otherwise the POSIXlt object
   # gets a `balanced` attribute of `NA`
-  oo_x <- as_posixlt(set_names(c("2020-01-01", "2020-01-02", "2020-01-03"), letters[1:3]))
+  oo_x <- as_posixlt(set_names(
+    c("2020-01-01", "2020-01-02", "2020-01-03"),
+    letters[1:3]
+  ))
   oo_y <- as_posixlt(c(FOO = "2020-01-04"))
-  oo_out <- as_posixlt(c(a = "2020-01-01", FOO = "2020-01-04", c = "2020-01-03"))
+  oo_out <- as_posixlt(c(
+    a = "2020-01-01",
+    FOO = "2020-01-04",
+    c = "2020-01-03"
+  ))
   expect_identical(
     vec_assign_params(oo_x, 2, oo_y, assign_names = TRUE),
     oo_out
   )
 
-  nested_x <- new_data_frame(list(oo = oo_x), row.names = c("foo", "bar", "baz"))
+  nested_x <- new_data_frame(
+    list(oo = oo_x),
+    row.names = c("foo", "bar", "baz")
+  )
   nested_y <- new_data_frame(list(oo = oo_y), row.names = c("quux"))
-  nested_out <- new_data_frame(list(oo = oo_out), row.names = c("foo", "quux", "baz"))
+  nested_out <- new_data_frame(
+    list(oo = oo_out),
+    row.names = c("foo", "quux", "baz")
+  )
 
   expect_identical(
     vec_assign_params(nested_x, 2, nested_y, assign_names = TRUE),
@@ -1515,13 +1609,34 @@ test_that("can assign shaped base vectors with compact seqs and recycled `value`
   size <- 2L
   increasing <- TRUE
   mat <- as.matrix
-  expect_identical(vec_assign_seq(mat(lgl(1, 0, 1)), NA, start, size, increasing), mat(lgl(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(int(1, 2, 3)), NA, start, size, increasing), mat(int(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(cpl2(1, 2, 3)), NA, start, size, increasing), mat(cpl2(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", NA, NA)))
-  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 1, 1)))
-  expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))
+  expect_identical(
+    vec_assign_seq(mat(lgl(1, 0, 1)), NA, start, size, increasing),
+    mat(lgl(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(int(1, 2, 3)), NA, start, size, increasing),
+    mat(int(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing),
+    mat(dbl(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(cpl2(1, 2, 3)), NA, start, size, increasing),
+    mat(cpl2(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing),
+    mat(chr("1", NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing),
+    mat(raw2(1, 1, 1))
+  )
+  expect_identical(
+    vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing),
+    mat(list(1, NULL, NULL))
+  )
 })
 
 test_that("can assign shaped base vectors with decreasing compact seqs and recycled `value`", {
@@ -1530,13 +1645,34 @@ test_that("can assign shaped base vectors with decreasing compact seqs and recyc
   size <- 2L
   increasing <- FALSE
   mat <- as.matrix
-  expect_identical(vec_assign_seq(mat(lgl(1, 0, 1)), NA, start, size, increasing), mat(lgl(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(int(1, 2, 3)), NA, start, size, increasing), mat(int(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(cpl2(1, 2, 3)), NA, start, size, increasing), mat(cpl2(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", NA, NA)))
-  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 1, 1)))
-  expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))
+  expect_identical(
+    vec_assign_seq(mat(lgl(1, 0, 1)), NA, start, size, increasing),
+    mat(lgl(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(int(1, 2, 3)), NA, start, size, increasing),
+    mat(int(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing),
+    mat(dbl(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(cpl2(1, 2, 3)), NA, start, size, increasing),
+    mat(cpl2(1, NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing),
+    mat(chr("1", NA, NA))
+  )
+  expect_identical(
+    vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing),
+    mat(raw2(1, 1, 1))
+  )
+  expect_identical(
+    vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing),
+    mat(list(1, NULL, NULL))
+  )
 })
 
 test_that("can assign shaped base vectors with size 0 compact seqs", {
@@ -1546,13 +1682,34 @@ test_that("can assign shaped base vectors with size 0 compact seqs", {
   increasing <- TRUE
   mat <- as.matrix
 
-  expect_identical(vec_assign_seq(mat(lgl(1, 0, 1)), NA, start, size, increasing), mat(mat(lgl(1, 0, 1))))
-  expect_identical(vec_assign_seq(mat(int(1, 2, 3)), NA, start, size, increasing), mat(int(1, 2, 3)))
-  expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, 2, 3)))
-  expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, 2, 3)))
-  expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", "2", "3")))
-  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 2, 3)))
-  expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, 2, 3)))
+  expect_identical(
+    vec_assign_seq(mat(lgl(1, 0, 1)), NA, start, size, increasing),
+    mat(mat(lgl(1, 0, 1)))
+  )
+  expect_identical(
+    vec_assign_seq(mat(int(1, 2, 3)), NA, start, size, increasing),
+    mat(int(1, 2, 3))
+  )
+  expect_identical(
+    vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing),
+    mat(dbl(1, 2, 3))
+  )
+  expect_identical(
+    vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing),
+    mat(cpl(1, 2, 3))
+  )
+  expect_identical(
+    vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing),
+    mat(chr("1", "2", "3"))
+  )
+  expect_identical(
+    vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing),
+    mat(raw2(1, 2, 3))
+  )
+  expect_identical(
+    vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing),
+    mat(list(1, 2, 3))
+  )
 })
 
 test_that("can assign object of any dimensionality with compact seqs", {
@@ -1567,10 +1724,22 @@ test_that("can assign object of any dimensionality with compact seqs", {
   increasing <- TRUE
   mat <- as.matrix
 
-  expect_identical(vec_assign_seq(x1, 2, start, size, increasing), array(rep(c(2, 2, 1), 1), dim = 3))
-  expect_identical(vec_assign_seq(x2, 2, start, size, increasing), array(rep(c(2, 2, 1), 4), dim = c(3, 4)))
-  expect_identical(vec_assign_seq(x3, 2, start, size, increasing), array(rep(c(2, 2, 1), 20), dim = c(3, 4, 5)))
-  expect_identical(vec_assign_seq(x4, 2, start, size, increasing), array(rep(c(2, 2, 1), 120), dim = c(3, 4, 5, 6)))
+  expect_identical(
+    vec_assign_seq(x1, 2, start, size, increasing),
+    array(rep(c(2, 2, 1), 1), dim = 3)
+  )
+  expect_identical(
+    vec_assign_seq(x2, 2, start, size, increasing),
+    array(rep(c(2, 2, 1), 4), dim = c(3, 4))
+  )
+  expect_identical(
+    vec_assign_seq(x3, 2, start, size, increasing),
+    array(rep(c(2, 2, 1), 20), dim = c(3, 4, 5))
+  )
+  expect_identical(
+    vec_assign_seq(x4, 2, start, size, increasing),
+    array(rep(c(2, 2, 1), 120), dim = c(3, 4, 5, 6))
+  )
 })
 
 # vec_assign + compact_condition -----------------------------------------------

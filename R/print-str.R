@@ -38,8 +38,9 @@ obj_print_data <- function(x, ...) {
 
 #' @export
 obj_print_data.default <- function(x, ...) {
-  if (length(x) == 0)
+  if (length(x) == 0) {
     return(invisible(x))
+  }
 
   out <- stats::setNames(format(x), names(x))
   print(out, quote = FALSE)
@@ -95,12 +96,10 @@ obj_str_data.default <- function(x, ...) {
   }
 }
 
-obj_str_recursive <- function(x, ...,
-                              indent.str = "",
-                              nest.lev = 0) {
-
-  if (nest.lev != 0L)
+obj_str_recursive <- function(x, ..., indent.str = "", nest.lev = 0) {
+  if (nest.lev != 0L) {
     cat(" ")
+  }
   cat_line(glue::glue("{vec_ptype_abbr(x)} [1:{vec_size(x)}] "))
 
   utils::str(
@@ -112,9 +111,7 @@ obj_str_recursive <- function(x, ...,
   )
 }
 
-obj_str_leaf <- function(x, ...,
-                         indent.str = "",
-                         width = getOption("width")) {
+obj_str_leaf <- function(x, ..., indent.str = "", width = getOption("width")) {
   width <- width - nchar(indent.str) - 2
 
   # Avoid spending too much time formatting elements that won't see
@@ -138,15 +135,14 @@ obj_str_footer <- function(x, ...) {
 }
 
 #' @export
-obj_str_footer.default <- function(x, ...,
-                                   indent.str = "",
-                                   nest.lev = 0) {
+obj_str_footer.default <- function(x, ..., indent.str = "", nest.lev = 0) {
   attr <- attributes(x)
   attr[["class"]] <- NULL
   attr[["names"]] <- NULL
 
-  if (length(attr) == 0)
+  if (length(attr) == 0) {
     return(invisible(x))
+  }
 
   if (!is.list(x)) {
     indent.str <- paste0(" ", indent.str)

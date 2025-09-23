@@ -75,11 +75,25 @@ test_that("`.name_repair` isn't affected by `.vary`", {
   expect <- vec_as_names(c("a", "b", "a", "z"), repair = "unique_quiet")
 
   expect_named(
-    vec_expand_grid(a = 1, b = 2, a = 3, z = 4, .vary = "slowest", .name_repair = "unique_quiet"),
+    vec_expand_grid(
+      a = 1,
+      b = 2,
+      a = 3,
+      z = 4,
+      .vary = "slowest",
+      .name_repair = "unique_quiet"
+    ),
     expect
   )
   expect_named(
-    vec_expand_grid(a = 1, b = 2, a = 3, z = 4, .vary = "fastest", .name_repair = "unique_quiet"),
+    vec_expand_grid(
+      a = 1,
+      b = 2,
+      a = 3,
+      z = 4,
+      .vary = "fastest",
+      .name_repair = "unique_quiet"
+    ),
     expect
   )
 })
@@ -87,7 +101,11 @@ test_that("`.name_repair` isn't affected by `.vary`", {
 test_that("can use `.name_repair`", {
   expect_identical(
     vec_expand_grid(a = 1:2, a = 2:3, .name_repair = "minimal"),
-    data_frame(a = c(1L, 1L, 2L, 2L), a = c(2L, 3L, 2L, 3L), .name_repair = "minimal")
+    data_frame(
+      a = c(1L, 1L, 2L, 2L),
+      a = c(2L, 3L, 2L, 3L),
+      .name_repair = "minimal"
+    )
   )
 })
 

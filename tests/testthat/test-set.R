@@ -177,7 +177,10 @@ test_that("does minimal name repair on duplicate names", {
 })
 
 test_that("returns elements in order they first appear in `x` and `y`", {
-  expect_identical(vec_set_union(c(3, 1, 2, 3), c(4, 2, 5, 4)), c(3, 1, 2, 4, 5))
+  expect_identical(
+    vec_set_union(c(3, 1, 2, 3), c(4, 2, 5, 4)),
+    c(3, 1, 2, 4, 5)
+  )
 })
 
 test_that("returns unique elements", {
@@ -226,8 +229,14 @@ test_that("works with data frames", {
     b = c("b", "b", "d", "d")
   )
 
-  expect_identical(vec_set_union(x, y), vec_c(vec_slice(x, c(1, 2, 4)), vec_slice(y, c(2, 4))))
-  expect_identical(vec_set_union(y, x), vec_c(vec_slice(y, c(1, 2, 3, 4)), vec_slice(x, 1)))
+  expect_identical(
+    vec_set_union(x, y),
+    vec_c(vec_slice(x, c(1, 2, 4)), vec_slice(y, c(2, 4)))
+  )
+  expect_identical(
+    vec_set_union(y, x),
+    vec_c(vec_slice(y, c(1, 2, 3, 4)), vec_slice(x, 1))
+  )
 })
 
 test_that("works with rcrds", {
@@ -240,8 +249,14 @@ test_that("works with rcrds", {
     b = c("b", "b", "d", "d")
   ))
 
-  expect_identical(vec_set_union(x, y), vec_c(vec_slice(x, c(1, 2, 4)), vec_slice(y, c(2, 4))))
-  expect_identical(vec_set_union(y, x), vec_c(vec_slice(y, c(1, 2, 3, 4)), vec_slice(x, 1)))
+  expect_identical(
+    vec_set_union(x, y),
+    vec_c(vec_slice(x, c(1, 2, 4)), vec_slice(y, c(2, 4)))
+  )
+  expect_identical(
+    vec_set_union(y, x),
+    vec_c(vec_slice(y, c(1, 2, 3, 4)), vec_slice(x, 1))
+  )
 })
 
 # vec_set_symmetric_difference --------------------------------------------
@@ -257,18 +272,30 @@ test_that("retains names of `x` and `y` elements", {
 })
 
 test_that("returns elements in order they first appear in `x` and `y`", {
-  expect_identical(vec_set_symmetric_difference(c(3, 1, 2, 3), c(4, 2, 5, 4)), c(3, 1, 4, 5))
+  expect_identical(
+    vec_set_symmetric_difference(c(3, 1, 2, 3), c(4, 2, 5, 4)),
+    c(3, 1, 4, 5)
+  )
 })
 
 test_that("returns unique elements", {
-  expect_identical(vec_set_symmetric_difference(c(1, 2, 1, 4), c(4, 5, 5)), c(1, 2, 5))
+  expect_identical(
+    vec_set_symmetric_difference(c(1, 2, 1, 4), c(4, 5, 5)),
+    c(1, 2, 5)
+  )
 })
 
 test_that("works with character vectors of different encodings", {
   encs <- encodings()
   # Always returns UTF-8
-  expect_identical(vec_set_symmetric_difference(encs$utf8, encs$latin1), character())
-  expect_identical(vec_set_symmetric_difference(encs$latin1, encs$utf8), character())
+  expect_identical(
+    vec_set_symmetric_difference(encs$utf8, encs$latin1),
+    character()
+  )
+  expect_identical(
+    vec_set_symmetric_difference(encs$latin1, encs$utf8),
+    character()
+  )
 })
 
 test_that("has consistency with `NA` values", {
@@ -278,8 +305,14 @@ test_that("has consistency with `NA` values", {
   expect_identical(vec_set_symmetric_difference(c(NaN, 1), NaN), 1)
   expect_identical(vec_set_symmetric_difference(c(1, NaN), NaN), 1)
 
-  expect_identical(vec_set_symmetric_difference(NA_real_, NaN), c(NA_real_, NaN))
-  expect_identical(vec_set_symmetric_difference(NaN, NA_real_), c(NaN, NA_real_))
+  expect_identical(
+    vec_set_symmetric_difference(NA_real_, NaN),
+    c(NA_real_, NaN)
+  )
+  expect_identical(
+    vec_set_symmetric_difference(NaN, NA_real_),
+    c(NaN, NA_real_)
+  )
 })
 
 test_that("works with complex missing values", {
@@ -347,12 +380,18 @@ test_that("works with package version columns of data frames (#1837)", {
   }
 
   x <- package_frame(c("4.0", "2.0"))
-  y <- package_frame(c("1.0", "3.0" ,"4.0"))
+  y <- package_frame(c("1.0", "3.0", "4.0"))
 
   expect_identical(vec_set_intersect(x, y), package_frame("4.0"))
   expect_identical(vec_set_difference(x, y), package_frame("2.0"))
-  expect_identical(vec_set_union(x, y), package_frame(c("4.0", "2.0", "1.0", "3.0")))
-  expect_identical(vec_set_symmetric_difference(x, y), package_frame(c("2.0", "1.0", "3.0")))
+  expect_identical(
+    vec_set_union(x, y),
+    package_frame(c("4.0", "2.0", "1.0", "3.0"))
+  )
+  expect_identical(
+    vec_set_symmetric_difference(x, y),
+    package_frame(c("2.0", "1.0", "3.0"))
+  )
 })
 
 test_that("errors nicely if common type can't be taken", {
@@ -389,7 +428,10 @@ test_that("`ptype` is respected", {
   expect_identical(vec_set_intersect(1, 1, ptype = integer()), 1L)
   expect_identical(vec_set_difference(1, 1, ptype = integer()), integer())
   expect_identical(vec_set_union(1, 2, ptype = integer()), c(1L, 2L))
-  expect_identical(vec_set_symmetric_difference(1, 2, ptype = integer()), c(1L, 2L))
+  expect_identical(
+    vec_set_symmetric_difference(1, 2, ptype = integer()),
+    c(1L, 2L)
+  )
 
   expect_snapshot(error = TRUE, {
     vec_set_intersect(1, 1.5, ptype = integer())

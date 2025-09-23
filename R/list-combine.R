@@ -193,7 +193,12 @@ list_combine <- fn_inline_formals(list_combine, "name_repair")
 
 # ------------------------------------------------------------------------------
 
-stop_combine <- function(message = NULL, class = NULL, ..., call = caller_env()) {
+stop_combine <- function(
+  message = NULL,
+  class = NULL,
+  ...,
+  call = caller_env()
+) {
   stop_vctrs(
     message = message,
     class = c(class, "vctrs_error_combine"),

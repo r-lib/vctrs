@@ -1,4 +1,3 @@
-
 # These tests check the rational type from the S3 vignette
 
 test_that("equality proxy is taken (#375)", {

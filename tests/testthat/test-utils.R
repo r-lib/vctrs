@@ -1,4 +1,3 @@
-
 test_that("names preserved if outer name is missing", {
   x <- c("a", "z", "")
 
@@ -43,7 +42,9 @@ test_that("df_has_base_subset() detects `[` methods", {
   expect_true(df_has_base_subset(foobar(mtcars)))
 
   out <- with_methods(
-    `[.vctrs_foobar` = function(x, i, ...) structure(NextMethod(), dispatched = TRUE),
+    `[.vctrs_foobar` = function(x, i, ...) {
+      structure(NextMethod(), dispatched = TRUE)
+    },
     df_has_base_subset(foobar(mtcars))
   )
   expect_false(out)

@@ -7,7 +7,7 @@ new_shape <- function(type, shape = integer()) {
   structure(type, dim = c(0L, shape))
 }
 
-vec_shaped_ptype  <- function(ptype, x, y, ..., x_arg = "", y_arg = "") {
+vec_shaped_ptype <- function(ptype, x, y, ..., x_arg = "", y_arg = "") {
   check_dots_empty0(...)
   .Call(ffi_vec_shaped_ptype, ptype, x, y, environment())
 }
@@ -18,12 +18,7 @@ vec_shape2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 
 # Should take same signature as `vec_cast()`
-shape_broadcast <- function(x,
-                            to,
-                            ...,
-                            x_arg,
-                            to_arg,
-                            call = caller_env()) {
+shape_broadcast <- function(x, to, ..., x_arg, to_arg, call = caller_env()) {
   if (is.null(x) || is.null(to)) {
     return(x)
   }

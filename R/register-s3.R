@@ -90,7 +90,6 @@ s3_register <- function(generic, class, method = NULL) {
     method_fn <- get_method(method)
     stopifnot(is.function(method_fn))
 
-
     # Only register if generic can be accessed
     if (exists(generic, envir)) {
       registerS3method(generic, class, method_fn, envir = envir)
@@ -104,7 +103,10 @@ s3_register <- function(generic, class, method = NULL) {
           package
         ),
         "i" = "This message is only shown to developers using devtools.",
-        "i" = sprintf("Do you need to update %s to the latest version?", package)
+        "i" = sprintf(
+          "Do you need to update %s to the latest version?",
+          package
+        )
       ))
     }
   }
@@ -139,9 +141,11 @@ s3_register <- function(generic, class, method = NULL) {
   )
 
   # Only use rlang if it is fully loaded (#1482)
-  if (try_rlang &&
-        requireNamespace("rlang", quietly = TRUE) &&
-        environmentIsLocked(asNamespace("rlang"))) {
+  if (
+    try_rlang &&
+      requireNamespace("rlang", quietly = TRUE) &&
+      environmentIsLocked(asNamespace("rlang"))
+  ) {
     switch(
       fn,
       is_interactive = return(rlang::is_interactive)
@@ -215,6 +219,5 @@ knitr_local_registration <- function(generic, class, env = caller_env()) {
   old <- env_bind(global_env(), !!name := method)
   knitr_defer(env_bind(global_env(), !!!old))
 }
-
 
 # nocov end

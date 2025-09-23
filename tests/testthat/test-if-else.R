@@ -2,7 +2,7 @@ test_that("`condition` must be a condition vector", {
   # No scalars
   expect_snapshot_vec_if_else(
     error = TRUE,
-    condition = lm(1~1),
+    condition = lm(1 ~ 1),
     true = 1,
     false = 2
   )
@@ -363,7 +363,10 @@ test_that("missing value fall through is right for all atomic types", {
   expect_identical(vec_if_else(NA, TRUE, TRUE), NA)
   expect_identical(vec_if_else(NA, 1L, 1L), NA_integer_)
   expect_identical(vec_if_else(NA, 1, 1), NA_real_)
-  expect_identical(vec_if_else(NA, cpl(1), cpl(1)), complex(real = NA, imaginary = NA))
+  expect_identical(
+    vec_if_else(NA, cpl(1), cpl(1)),
+    complex(real = NA, imaginary = NA)
+  )
   expect_identical(vec_if_else(NA, as.raw(1), as.raw(1)), as.raw(0))
   expect_identical(vec_if_else(NA, "1", "1"), NA_character_)
   expect_identical(vec_if_else(NA, list(1), list(1)), list(NULL))

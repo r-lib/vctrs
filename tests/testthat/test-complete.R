@@ -60,7 +60,13 @@ test_that("works with various types", {
   expect_identical(vec_detect_complete(c(TRUE, TRUE, NA, FALSE, NA)), expect)
   expect_identical(vec_detect_complete(c(1L, 1L, NA, 2L, NA)), expect)
   expect_identical(vec_detect_complete(c(1, 1, NA, 2, NA)), expect)
-  expect_identical(vec_detect_complete(complex(real = c(1, 1, NA, 2, 2), imaginary = c(1, 1, 2, 2, NA))), expect)
+  expect_identical(
+    vec_detect_complete(complex(
+      real = c(1, 1, NA, 2, 2),
+      imaginary = c(1, 1, 2, 2, NA)
+    )),
+    expect
+  )
   expect_identical(vec_detect_complete(c("a", "a", NA, "b", NA)), expect)
   expect_identical(vec_detect_complete(list(1, 1, NULL, 2, NULL)), expect)
 
@@ -95,15 +101,36 @@ test_that("can have rcrd fields of all types", {
 
   expect <- c(TRUE, TRUE, FALSE, TRUE, FALSE)
 
-  expect_identical(vec_detect_complete(make_rcrd(c(TRUE, TRUE, NA, FALSE, NA))), expect)
-  expect_identical(vec_detect_complete(make_rcrd(c(1L, 1L, NA, 2L, NA))), expect)
+  expect_identical(
+    vec_detect_complete(make_rcrd(c(TRUE, TRUE, NA, FALSE, NA))),
+    expect
+  )
+  expect_identical(
+    vec_detect_complete(make_rcrd(c(1L, 1L, NA, 2L, NA))),
+    expect
+  )
   expect_identical(vec_detect_complete(make_rcrd(c(1, 1, NA, 2, NA))), expect)
-  expect_identical(vec_detect_complete(make_rcrd(complex(real = c(1, 1, NA, 2, 2), imaginary = c(1, 1, 2, 2, NA)))), expect)
-  expect_identical(vec_detect_complete(make_rcrd(c("a", "a", NA, "b", NA))), expect)
-  expect_identical(vec_detect_complete(make_rcrd(list(1, 1, NULL, 2, NULL))), expect)
+  expect_identical(
+    vec_detect_complete(make_rcrd(complex(
+      real = c(1, 1, NA, 2, 2),
+      imaginary = c(1, 1, 2, 2, NA)
+    ))),
+    expect
+  )
+  expect_identical(
+    vec_detect_complete(make_rcrd(c("a", "a", NA, "b", NA))),
+    expect
+  )
+  expect_identical(
+    vec_detect_complete(make_rcrd(list(1, 1, NULL, 2, NULL))),
+    expect
+  )
 
   # No missing raw value
-  expect_identical(vec_detect_complete(make_rcrd(as.raw(c(1, 1, 2, 2, 3)))), rep(TRUE, 5))
+  expect_identical(
+    vec_detect_complete(make_rcrd(as.raw(c(1, 1, 2, 2, 3)))),
+    rep(TRUE, 5)
+  )
 })
 
 test_that("works with arrays", {

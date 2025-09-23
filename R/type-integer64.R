@@ -157,4 +157,3 @@ as_data_frame_from_array <- function(x) {
 
   new_data_frame(out, n = n_row)
 }
-

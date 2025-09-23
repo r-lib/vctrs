@@ -1,4 +1,3 @@
-
 test_that("ptype2 base methods are not inherited", {
   ptypes <- vec_remove(base_empty_types, c("null", "dataframe"))
   for (ptype in ptypes) {
@@ -38,14 +37,33 @@ test_that("array dimensions are preserved", {
 test_that("vec_shaped_ptype()", {
   int <- function(...) array(NA_integer_, c(...))
 
-  expect_identical(vec_shaped_ptype(integer(), int(5), int(10)), new_shape(integer()))
-  expect_identical(vec_shaped_ptype(integer(), int(5, 1), int(10, 1)), new_shape(integer(), 1))
-  expect_identical(vec_shaped_ptype(integer(), int(5, 1, 2), int(10, 1, 2)), new_shape(integer(), 1:2))
+  expect_identical(
+    vec_shaped_ptype(integer(), int(5), int(10)),
+    new_shape(integer())
+  )
+  expect_identical(
+    vec_shaped_ptype(integer(), int(5, 1), int(10, 1)),
+    new_shape(integer(), 1)
+  )
+  expect_identical(
+    vec_shaped_ptype(integer(), int(5, 1, 2), int(10, 1, 2)),
+    new_shape(integer(), 1:2)
+  )
 })
 
 test_that("vec_shaped_ptype() evaluates arg lazily", {
-  expect_silent(vec_shaped_ptype(integer(), int(5), int(10), x_arg = print("oof")))
-  expect_silent(vec_shaped_ptype(integer(), int(5), int(10), y_arg = print("oof")))
+  expect_silent(vec_shaped_ptype(
+    integer(),
+    int(5),
+    int(10),
+    x_arg = print("oof")
+  ))
+  expect_silent(vec_shaped_ptype(
+    integer(),
+    int(5),
+    int(10),
+    y_arg = print("oof")
+  ))
 })
 
 # vec_cast() --------------------------------------------------------------
@@ -68,10 +86,22 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(dbl(1, 0), logical()), exp)
 
   # These used to be allowed
-  expect_error(vec_cast(chr("T", "F"), logical()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(chr("TRUE", "FALSE"), logical()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(chr("true", "false"), logical()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(list(1, 0), logical()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(chr("T", "F"), logical()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(chr("TRUE", "FALSE"), logical()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(chr("true", "false"), logical()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(list(1, 0), logical()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("NA casts work as expected", {
@@ -97,26 +127,57 @@ test_that("Shaped NA casts work as expected", {
   expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
 
   # These used to be allowed
-  expect_error(vec_cast(mat(chr(NA)), to_mat), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(mat(chr(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(mat(list(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("lossy casts generate warning", {
-  expect_lossy(vec_cast(int(2L, 1L), lgl()), lgl(TRUE, TRUE), x = int(),  to = lgl())
-  expect_lossy(vec_cast(dbl(2, 1), lgl()), lgl(TRUE, TRUE), x = dbl(),  to = lgl())
+  expect_lossy(
+    vec_cast(int(2L, 1L), lgl()),
+    lgl(TRUE, TRUE),
+    x = int(),
+    to = lgl()
+  )
+  expect_lossy(
+    vec_cast(dbl(2, 1), lgl()),
+    lgl(TRUE, TRUE),
+    x = dbl(),
+    to = lgl()
+  )
 
   # These used to be allowed
-  expect_error(vec_cast(chr("x", "TRUE"), lgl()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(chr("t", "T"), lgl()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(chr("f", "F"), lgl()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(list(c(TRUE, FALSE), TRUE), lgl()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(chr("x", "TRUE"), lgl()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(chr("t", "T"), lgl()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(chr("f", "F"), lgl()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(list(c(TRUE, FALSE), TRUE), lgl()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), logical()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(factor("a"), logical()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
-test_that("dimensionality matches output" ,{
+test_that("dimensionality matches output", {
   x1 <- matrix(TRUE, nrow = 1, ncol = 1)
   x2 <- matrix(1, nrow = 0, ncol = 2)
   expect_dim(vec_cast(x1, x2), c(1, 2))
@@ -140,8 +201,14 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(dbl(1, 2), integer()), int(1L, 2L))
 
   # These used to be allowed
-  expect_error(vec_cast(chr("1", "2"), integer()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(list(1L, 2L), integer()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(chr("1", "2"), integer()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(list(1L, 2L), integer()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("NA casts work as expected", {
@@ -167,21 +234,43 @@ test_that("Shaped NA casts work as expected", {
   expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
 
   # These used to be allowed
-  expect_error(vec_cast(mat(chr(NA)), to_mat), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(mat(chr(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(mat(list(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("lossy casts generate error", {
-  expect_lossy(vec_cast(c(2.5, 2), int()),     int(2, 2), x = dbl(), to = int())
-  expect_lossy(vec_cast(c(.Machine$integer.max + 1, 1), int()),  int(NA, 1L), x = dbl(), to = int())
-  expect_lossy(vec_cast(c(-.Machine$integer.max - 1, 1), int()), int(NA, 1L), x = dbl(), to = int())
+  expect_lossy(vec_cast(c(2.5, 2), int()), int(2, 2), x = dbl(), to = int())
+  expect_lossy(
+    vec_cast(c(.Machine$integer.max + 1, 1), int()),
+    int(NA, 1L),
+    x = dbl(),
+    to = int()
+  )
+  expect_lossy(
+    vec_cast(c(-.Machine$integer.max - 1, 1), int()),
+    int(NA, 1L),
+    x = dbl(),
+    to = int()
+  )
 
   # These used to be allowed
-  expect_error(vec_cast(c("2.5", "2"), int()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(c("2.5", "2"), int()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), integer()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(factor("a"), integer()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 
@@ -194,8 +283,14 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(dbl(1, 1.5), double()), dbl(1, 1.5))
 
   # These used to be allowed
-  expect_error(vec_cast(chr("1", "1.5"), double()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(list(1, 1.5), double()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(chr("1", "1.5"), double()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(list(1, 1.5), double()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("NA casts work as expected", {
@@ -221,12 +316,21 @@ test_that("Shaped NA casts work as expected", {
   expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
 
   # These used to be allowed
-  expect_error(vec_cast(mat(chr(NA)), to_mat), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(mat(chr(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(mat(list(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(factor("a"), double()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(factor("a"), double()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 
@@ -239,7 +343,10 @@ test_that("safe casts to complex works", {
   expect_identical(vec_cast(dbl(1, 1.5), cpl()), cpl(1, 1.5))
 
   # This used to be allowed
-  expect_error(vec_cast(list(1, 1.5), cpl()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(list(1, 1.5), cpl()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("NA casts work as expected", {
@@ -269,7 +376,10 @@ test_that("NA casts work as expected", {
   expect_identical(is.na(vec_cast(dbl(NA), cpl())), TRUE)
 
   # This used to be allowed
-  expect_error(vec_cast(list(NA), cpl()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(list(NA), cpl()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("Shaped NA casts work as expected", {
@@ -297,7 +407,10 @@ test_that("Shaped NA casts work as expected", {
   expect_identical(is.na(vec_cast(mat(dbl(NA)), to_mat)), matrix(TRUE))
 
   # This used to be allowed
-  expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(mat(list(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("complex is coercible to numeric types", {
@@ -316,8 +429,14 @@ test_that("complex is coercible to numeric types", {
 })
 
 test_that("complex is not coercible to logical", {
-  expect_error(vec_ptype2(cpl(), lgl()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(lgl(), cpl()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_ptype2(cpl(), lgl()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(lgl(), cpl()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 
@@ -328,8 +447,14 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(NA, character()), NA_character_)
 
   # These used to be allowed
-  expect_error(vec_cast(lgl(TRUE, FALSE), character()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(list("x", "y"), character()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(lgl(TRUE, FALSE), character()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(list("x", "y"), character()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("NA casts work as expected", {
@@ -353,16 +478,31 @@ test_that("Shaped NA casts work as expected", {
   expect_equal(vec_cast(mat(chr(NA)), to_mat), exp_mat)
 
   # These used to be allowed
-  expect_error(vec_cast(mat(lgl(NA)), to_mat), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(mat(int(NA)), to_mat), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(mat(dbl(NA)), to_mat), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(mat(lgl(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(mat(int(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(mat(dbl(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(mat(list(NA)), to_mat),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("difftime does not get special treatment", {
   dt1 <- as.difftime(600, units = "secs")
   # This used to be allowed
-  expect_error(vec_cast(dt1, character()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(dt1, character()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 
@@ -372,12 +512,21 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, raw()), NULL)
 
   # This used to be allowed
-  expect_error(vec_cast(list(raw(1)), raw()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(list(raw(1)), raw()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(raw(1), double()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(double(1), raw()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(raw(1), double()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(double(1), raw()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("can sort raw", {
@@ -413,7 +562,7 @@ test_that("safe casts work as expected", {
   expect_error(vec_cast(1:2, list()), class = "vctrs_error_incompatible_type")
 })
 
-test_that("dimensionality matches to" ,{
+test_that("dimensionality matches to", {
   x1 <- matrix(TRUE, nrow = 1, ncol = 1)
   x2 <- matrix(1L, nrow = 0, ncol = 2)
   expect_dim(vec_cast(x1, x2), c(1, 2))

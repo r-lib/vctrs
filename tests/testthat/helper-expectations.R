@@ -12,7 +12,10 @@ expect_lossy <- function(expr, result, x = NULL, to = NULL) {
 }
 
 expect_args <- function(x, y, x_arg, y_arg) {
-  err <- catch_cnd(vec_ptype2(x, y, x_arg = x_arg, y_arg = y_arg), classes = "vctrs_error_incompatible_type")
+  err <- catch_cnd(
+    vec_ptype2(x, y, x_arg = x_arg, y_arg = y_arg),
+    classes = "vctrs_error_incompatible_type"
+  )
   expect_true(!is_null(err))
 
   expect_true(grepl(paste0("combine `", x_arg, "`"), err$message, fixed = TRUE))
@@ -71,8 +74,19 @@ expect_syntactic <- function(name, exp_syn_name) {
   expect_identical(syn_name, make.names(syn_name))
 }
 
-expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) {
-  cnd <- expect_error(object, regexp = message, class = class[[1]], fixed = .fixed)
+expect_error_cnd <- function(
+  object,
+  class,
+  message = NULL,
+  ...,
+  .fixed = TRUE
+) {
+  cnd <- expect_error(
+    object,
+    regexp = message,
+    class = class[[1]],
+    fixed = .fixed
+  )
   expect_true(inherits_all(cnd, class))
 
   exp_fields <- list2(...)
@@ -82,5 +96,9 @@ expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) 
 
 scrub_internal_error_line_number <- function(x) {
   # Because it varies by OS
-  sub(pattern = "at line [[:digit:]]+", replacement = "at line <scrubbed>", x = x)
+  sub(
+    pattern = "at line [[:digit:]]+",
+    replacement = "at line <scrubbed>",
+    x = x
+  )
 }

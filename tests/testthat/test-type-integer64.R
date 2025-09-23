@@ -1,4 +1,3 @@
-
 test_that("casting of integer64 works", {
   x <- bit64::as.integer64(1:10)
   expect_equal(vec_cast(x, bit64::integer64()), x)
@@ -10,17 +9,29 @@ test_that("casting of integer64 works", {
   expect_equal(vec_cast(as.numeric(1:10), bit64::integer64()), x)
 
   expect_equal(vec_cast(x, logical()), rep(TRUE, 10L))
-  expect_equal(vec_cast(c(TRUE, FALSE), bit64::integer64()), bit64::as.integer64(c(1, 0)))
+  expect_equal(
+    vec_cast(c(TRUE, FALSE), bit64::integer64()),
+    bit64::as.integer64(c(1, 0))
+  )
 
   expect_equal(vec_cast(NA, bit64::integer64()), bit64::as.integer64(NA))
-  expect_equal(vec_cast(unspecified(2), bit64::integer64()), bit64::as.integer64(c(NA, NA)))
+  expect_equal(
+    vec_cast(unspecified(2), bit64::integer64()),
+    bit64::as.integer64(c(NA, NA))
+  )
 
   expect_error(vec_cast(x, factor()), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast(factor(), x), class = "vctrs_error_incompatible_type")
 
   # These used to be allowed
-  expect_error(vec_cast(x, character()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(as.character(1:10), bit64::integer64()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(x, character()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(as.character(1:10), bit64::integer64()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("vec_ptype2 for integer64 works", {
@@ -45,8 +56,14 @@ test_that("vec_ptype2 for integer64 works", {
   expect_error(vec_ptype2(x, ""), class = "vctrs_error_incompatible_type")
   expect_error(vec_ptype2("", x), class = "vctrs_error_incompatible_type")
 
-  expect_error(vec_ptype2(data.frame(), x), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(x, data.frame()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_ptype2(data.frame(), x),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(x, data.frame()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("vec_ptype_abbr.integer64", {
@@ -176,7 +193,10 @@ test_that("equality proxy on >=2-D input converts to data frame and proxies each
 test_that("can detect missing values with integer64 (#1304)", {
   x <- bit64::as.integer64(c(NA, NA, 2, NA, 2, 2))
 
-  expect_identical(vec_detect_missing(x), c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))
+  expect_identical(
+    vec_detect_missing(x),
+    c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE)
+  )
 
   dim(x) <- c(3, 2)
   expect_identical(vec_detect_missing(x), c(TRUE, FALSE, FALSE))
@@ -212,7 +232,10 @@ test_that("integer64 <-> data frame works as expected", {
   x <- bit64::as.integer64(c(-2, -1, 0, 1))
   proxy <- integer64_proxy(x)
 
-  expect_identical(proxy$left, c(2147483647, 2147483647, 2147483648, 2147483648))
+  expect_identical(
+    proxy$left,
+    c(2147483647, 2147483647, 2147483648, 2147483648)
+  )
   expect_identical(proxy$right, c(4294967294, 4294967295, 0, 1))
   expect_identical(integer64_restore(proxy), x)
 

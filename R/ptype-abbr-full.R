@@ -49,7 +49,9 @@ vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   method <- s3_method_specific(x, "vec_ptype_abbr", ns = "vctrs")
   abbr <- method(x, ...)
 
-  named <- if ((prefix_named || is_bare_list(x)) && !is.null(vec_names(x))) "named "
+  named <- if ((prefix_named || is_bare_list(x)) && !is.null(vec_names(x))) {
+    "named "
+  }
   shape <- if (suffix_shape) vec_ptype_shape(x)
   abbr <- paste0(named, abbr, shape)
 
@@ -95,25 +97,36 @@ vec_ptype_full_data_frame <- function(x, ...) {
   if (length(x) == 0) {
     return(paste0(class(x)[[1]], "<>"))
   } else if (length(x) == 1) {
-    return(paste0(class(x)[[1]], "<", names(x), ":", vec_ptype_full(x[[1]]), ">"))
+    return(paste0(
+      class(x)[[1]],
+      "<",
+      names(x),
+      ":",
+      vec_ptype_full(x[[1]]),
+      ">"
+    ))
   }
 
   # Needs to handle recursion with indenting
   types <- map_chr(x, vec_ptype_full)
   needs_indent <- grepl("\n", types)
-  types[needs_indent] <- map(types[needs_indent], function(x) indent(paste0("\n", x), 4))
+  types[needs_indent] <- map(types[needs_indent], function(x) {
+    indent(paste0("\n", x), 4)
+  })
 
   names <- paste0("  ", format(names(x)))
 
   paste0(
-    class(x)[[1]], "<\n",
+    class(x)[[1]],
+    "<\n",
     paste0(names, ": ", types, collapse = "\n"),
     "\n>"
   )
 }
 
 vec_ptype_abbr_bare <- function(x, ...) {
-  switch(typeof(x),
+  switch(
+    typeof(x),
     list = "list",
     logical = "lgl",
     integer = "int",

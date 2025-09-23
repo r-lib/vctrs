@@ -50,14 +50,38 @@ test_that("missings are filled correctly", {
 test_that("`max_fill` limits the sequential fill amount", {
   x <- c(NA, NA, 1, NA, NA, NA, 3, NA, NA)
 
-  expect_identical(vec_fill_missing(x, "down", max_fill = 1), c(NA, NA, 1, 1, NA, NA, 3, 3, NA))
-  expect_identical(vec_fill_missing(x, "downup", max_fill = 1), c(NA, 1, 1, 1, NA, NA, 3, 3, NA))
-  expect_identical(vec_fill_missing(x, "down", max_fill = 2), c(NA, NA, 1, 1, 1, NA, 3, 3, 3))
-  expect_identical(vec_fill_missing(x, "downup", max_fill = 2), c(1, 1, 1, 1, 1, NA, 3, 3, 3))
-  expect_identical(vec_fill_missing(x, "up", max_fill = 1), c(NA, 1, 1, NA, NA, 3, 3, NA, NA))
-  expect_identical(vec_fill_missing(x, "updown", max_fill = 1), c(NA, 1, 1, NA, NA, 3, 3, 3, NA))
-  expect_identical(vec_fill_missing(x, "up", max_fill = 2), c(1, 1, 1, NA, 3, 3, 3, NA, NA))
-  expect_identical(vec_fill_missing(x, "updown", max_fill = 2), c(1, 1, 1, NA, 3, 3, 3, 3, 3))
+  expect_identical(
+    vec_fill_missing(x, "down", max_fill = 1),
+    c(NA, NA, 1, 1, NA, NA, 3, 3, NA)
+  )
+  expect_identical(
+    vec_fill_missing(x, "downup", max_fill = 1),
+    c(NA, 1, 1, 1, NA, NA, 3, 3, NA)
+  )
+  expect_identical(
+    vec_fill_missing(x, "down", max_fill = 2),
+    c(NA, NA, 1, 1, 1, NA, 3, 3, 3)
+  )
+  expect_identical(
+    vec_fill_missing(x, "downup", max_fill = 2),
+    c(1, 1, 1, 1, 1, NA, 3, 3, 3)
+  )
+  expect_identical(
+    vec_fill_missing(x, "up", max_fill = 1),
+    c(NA, 1, 1, NA, NA, 3, 3, NA, NA)
+  )
+  expect_identical(
+    vec_fill_missing(x, "updown", max_fill = 1),
+    c(NA, 1, 1, NA, NA, 3, 3, 3, NA)
+  )
+  expect_identical(
+    vec_fill_missing(x, "up", max_fill = 2),
+    c(1, 1, 1, NA, 3, 3, 3, NA, NA)
+  )
+  expect_identical(
+    vec_fill_missing(x, "updown", max_fill = 2),
+    c(1, 1, 1, NA, 3, 3, 3, 3, 3)
+  )
 })
 
 test_that("fills data frames", {
@@ -83,6 +107,12 @@ test_that("validates `direction`", {
 test_that("validates `max_fill`", {
   expect_error(vec_fill_missing(1, max_fill = -1), "`max_fill` must be")
   expect_error(vec_fill_missing(1, max_fill = c(1L, 2L)), "`max_fill` must be")
-  expect_error(vec_fill_missing(1, max_fill = NA_integer_), "`max_fill` must be")
-  expect_error(vec_fill_missing(1, max_fill = "x"), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_fill_missing(1, max_fill = NA_integer_),
+    "`max_fill` must be"
+  )
+  expect_error(
+    vec_fill_missing(1, max_fill = "x"),
+    class = "vctrs_error_incompatible_type"
+  )
 })

@@ -111,7 +111,10 @@ test_that("`.absent` must be supplied when `...` is empty", {
 test_that("`.absent` must be a length 1 integer if provided", {
   expect_snapshot({
     (expect_error(vec_size_common(.absent = 1), "must be a single integer"))
-    (expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer"))
+    (expect_error(
+      vec_size_common(.absent = c(1L, 2L)),
+      "must be a single integer"
+    ))
   })
 })
 
@@ -126,8 +129,14 @@ test_that("size 1 is overshadowed by any other size", {
 
 test_that("if not size 1, sizes must be identical", {
   expect_equal(vec_size_common(integer(), integer()), 0)
-  expect_error(vec_size_common(1:2, integer()), class = "vctrs_error_incompatible_size")
-  expect_error(vec_size_common(1:2, 1:3), class = "vctrs_error_incompatible_size")
+  expect_error(
+    vec_size_common(1:2, integer()),
+    class = "vctrs_error_incompatible_size"
+  )
+  expect_error(
+    vec_size_common(1:2, 1:3),
+    class = "vctrs_error_incompatible_size"
+  )
 })
 
 test_that("argument tags are forwarded", {

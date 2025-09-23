@@ -44,7 +44,9 @@ vec_ptype_full.vctrs_partial_factor <- function(x, ...) {
   hashes <- map_chr(levels, hash_label)
 
   needs_indent <- hashes != empty
-  hashes[needs_indent] <- map_chr(hashes[needs_indent], function(x) paste0("  ", x))
+  hashes[needs_indent] <- map_chr(hashes[needs_indent], function(x) {
+    paste0("  ", x)
+  })
 
   source <- rep_named(names(hashes), empty)
   if (hashes["partial"] != empty) {

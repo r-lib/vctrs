@@ -1,4 +1,3 @@
-
 # group id ----------------------------------------------------------------
 
 test_that("vec_group_id detects groups in order of appearance", {
@@ -189,7 +188,10 @@ test_that("vec_group_loc takes the equality proxy recursively", {
   x <- tuple(c(1, 2, 1, 1), 1:4)
   df <- data_frame(x = x)
 
-  expect <- data_frame(key = vec_slice(df, c(1, 2)), loc = list(c(1L, 3L, 4L), 2L))
+  expect <- data_frame(
+    key = vec_slice(df, c(1, 2)),
+    loc = list(c(1L, 3L, 4L), 2L)
+  )
 
   expect_equal(vec_group_loc(df), expect)
 })

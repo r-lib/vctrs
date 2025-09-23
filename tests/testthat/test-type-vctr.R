@@ -1,10 +1,12 @@
-
 test_that("constructor sets attributes", {
   x <- new_vctr(1:4, class = "x", x = 1)
   expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr"), x = 1))
 
   x <- new_vctr(1:4, class = "x", x = 1, inherit_base_type = TRUE)
-  expect_equal(x, structure(1:4, class = c("x", "vctrs_vctr", "integer"), x = 1))
+  expect_equal(
+    x,
+    structure(1:4, class = c("x", "vctrs_vctr", "integer"), x = 1)
+  )
 })
 
 test_that(".data must be a vector", {
@@ -23,7 +25,10 @@ test_that("default format method is internal", {
 
 test_that("vctr class is proxied", {
   expect_identical(vec_proxy(new_vctr(1:3)), new_vctr(1:3))
-  expect_identical(vec_proxy(new_vctr(as.list(1:3))), unclass(new_vctr(as.list(1:3))))
+  expect_identical(
+    vec_proxy(new_vctr(as.list(1:3))),
+    unclass(new_vctr(as.list(1:3)))
+  )
   expect_true(vec_is(new_vctr(as.list(1:3))))
 })
 
@@ -37,7 +42,10 @@ test_that("base type is always set for lists", {
 })
 
 test_that("cannot opt out of the base type with lists", {
-  expect_error(new_vctr(list(), inherit_base_type = FALSE), "must inherit from the base type")
+  expect_error(
+    new_vctr(list(), inherit_base_type = FALSE),
+    "must inherit from the base type"
+  )
 })
 
 test_that("data frames are not allowed", {
@@ -125,7 +133,12 @@ test_that("as.data.frame on shaped vctrs doesn't bring along extra attributes", 
 })
 
 test_that("as.data.frame2() unclasses input to avoid dispatch on as.data.frame()", {
-  x <- structure(1:2, dim = c(1L, 2L), dimnames = list("r1", c("c1", "c2")), class = "foo")
+  x <- structure(
+    1:2,
+    dim = c(1L, 2L),
+    dimnames = list("r1", c("c1", "c2")),
+    class = "foo"
+  )
   expect <- data.frame(c1 = 1L, c2 = 2L, row.names = "r1")
 
   local_methods(as.data.frame.foo = function(x, ...) "dispatched!")
@@ -207,7 +220,7 @@ test_that("operators remapped", {
   expect_equal(x - 1, 1L)
   expect_equal(x * 1, 1L)
   expect_equal(x / 1, 1L)
-  expect_equal(x ^ 1, 1L)
+  expect_equal(x^1, 1L)
   expect_equal(x %% 1, 1L)
   expect_equal(x %/% 1, 1L)
   expect_equal(x & 1, 1L)
@@ -461,7 +474,10 @@ test_that("rbind does not fail with an unclear message (#1186)", {
   expect_equal(rbind(df), df)
   expect_equal(rbind(df, NULL), df)
 
-  expect_equal(rbind(df, data_frame(h = 1)), unrownames(df[c(1, 1), , drop = FALSE]))
+  expect_equal(
+    rbind(df, data_frame(h = 1)),
+    unrownames(df[c(1, 1), , drop = FALSE])
+  )
   expect_equal(rbind(df, df), unrownames(df[c(1, 1), , drop = FALSE]))
   # An example where the result differs, to alert us if the rbind() contract
   # changes
@@ -481,7 +497,10 @@ test_that("methods using vec_proxy_compare agree with base", {
 
   expect_agree <- function(f, x, na.rm = FALSE) {
     f <- enexpr(f)
-    expect_equal(vec_data((!!f)(x, na.rm = na.rm)), (!!f)(vec_data(x), na.rm = na.rm))
+    expect_equal(
+      vec_data((!!f)(x, na.rm = na.rm)),
+      (!!f)(vec_data(x), na.rm = na.rm)
+    )
   }
 
   expect_agree(min, h)
@@ -511,7 +530,10 @@ test_that("base coercions default to vec_cast", {
   expect_error(as.integer(h), class = "vctrs_error_incompatible_type")
   expect_error(generics::as.factor(h), class = "vctrs_error_incompatible_type")
   expect_error(generics::as.ordered(h), class = "vctrs_error_incompatible_type")
-  expect_error(generics::as.difftime(h), class = "vctrs_error_incompatible_type")
+  expect_error(
+    generics::as.difftime(h),
+    class = "vctrs_error_incompatible_type"
+  )
   expect_equal(as.logical(h), TRUE)
   expect_equal(as.double(h), 1)
 })
@@ -644,7 +666,10 @@ test_that("generic predicates return logical vectors (#251)", {
 })
 
 test_that("xtfrm() converts logical types to integer", {
-  expect_identical(xtfrm(new_vctr(c(TRUE, FALSE, NA), foo = "bar")), c(1L, 0L, NA))
+  expect_identical(
+    xtfrm(new_vctr(c(TRUE, FALSE, NA), foo = "bar")),
+    c(1L, 0L, NA)
+  )
 })
 
 test_that("xtfrm() unwraps integer and double atomic types", {
@@ -679,15 +704,36 @@ test_that("xtfrm() works on rcrd types", {
 test_that("Summary generics behave as expected if na.rm = TRUE and all values are NA (#1357)", {
   expect_identical(min(new_vctr(NA_real_), na.rm = TRUE), new_vctr(Inf))
   expect_identical(max(new_vctr(NA_real_), na.rm = TRUE), new_vctr(-Inf))
-  expect_identical(range(new_vctr(NA_real_), na.rm = TRUE), new_vctr(c(Inf, -Inf)))
+  expect_identical(
+    range(new_vctr(NA_real_), na.rm = TRUE),
+    new_vctr(c(Inf, -Inf))
+  )
 
-  expect_identical(min(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(NA_integer_))
-  expect_identical(max(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(NA_integer_))
-  expect_identical(range(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(c(NA_integer_, NA_integer_)))
+  expect_identical(
+    min(new_vctr(NA_integer_), na.rm = TRUE),
+    new_vctr(NA_integer_)
+  )
+  expect_identical(
+    max(new_vctr(NA_integer_), na.rm = TRUE),
+    new_vctr(NA_integer_)
+  )
+  expect_identical(
+    range(new_vctr(NA_integer_), na.rm = TRUE),
+    new_vctr(c(NA_integer_, NA_integer_))
+  )
 
-  expect_identical(min(new_vctr(NA_character_), na.rm = TRUE), new_vctr(NA_character_))
-  expect_identical(max(new_vctr(NA_character_), na.rm = TRUE), new_vctr(NA_character_))
-  expect_identical(range(new_vctr(NA_character_), na.rm = TRUE), new_vctr(c(NA_character_, NA_character_)))
+  expect_identical(
+    min(new_vctr(NA_character_), na.rm = TRUE),
+    new_vctr(NA_character_)
+  )
+  expect_identical(
+    max(new_vctr(NA_character_), na.rm = TRUE),
+    new_vctr(NA_character_)
+  )
+  expect_identical(
+    range(new_vctr(NA_character_), na.rm = TRUE),
+    new_vctr(c(NA_character_, NA_character_))
+  )
 
   expect_identical(min(new_vctr(NA), na.rm = TRUE), new_vctr(NA))
   expect_identical(max(new_vctr(NA), na.rm = TRUE), new_vctr(NA))
@@ -697,19 +743,43 @@ test_that("Summary generics behave as expected if na.rm = TRUE and all values ar
 test_that("Summary generics behave as expected for empty vctrs (#1357)", {
   expect_identical(min(new_vctr(numeric()), na.rm = TRUE), new_vctr(Inf))
   expect_identical(max(new_vctr(numeric()), na.rm = TRUE), new_vctr(-Inf))
-  expect_identical(range(new_vctr(numeric()), na.rm = TRUE), new_vctr(c(Inf, -Inf)))
+  expect_identical(
+    range(new_vctr(numeric()), na.rm = TRUE),
+    new_vctr(c(Inf, -Inf))
+  )
 
-  expect_identical(min(new_vctr(integer()), na.rm = TRUE), new_vctr(NA_integer_))
-  expect_identical(max(new_vctr(integer()), na.rm = TRUE), new_vctr(NA_integer_))
-  expect_identical(range(new_vctr(integer()), na.rm = TRUE), new_vctr(c(NA_integer_, NA_integer_)))
+  expect_identical(
+    min(new_vctr(integer()), na.rm = TRUE),
+    new_vctr(NA_integer_)
+  )
+  expect_identical(
+    max(new_vctr(integer()), na.rm = TRUE),
+    new_vctr(NA_integer_)
+  )
+  expect_identical(
+    range(new_vctr(integer()), na.rm = TRUE),
+    new_vctr(c(NA_integer_, NA_integer_))
+  )
 
-  expect_identical(min(new_vctr(character()), na.rm = TRUE), new_vctr(NA_character_))
-  expect_identical(max(new_vctr(character()), na.rm = TRUE), new_vctr(NA_character_))
-  expect_identical(range(new_vctr(character()), na.rm = TRUE), new_vctr(c(NA_character_, NA_character_)))
+  expect_identical(
+    min(new_vctr(character()), na.rm = TRUE),
+    new_vctr(NA_character_)
+  )
+  expect_identical(
+    max(new_vctr(character()), na.rm = TRUE),
+    new_vctr(NA_character_)
+  )
+  expect_identical(
+    range(new_vctr(character()), na.rm = TRUE),
+    new_vctr(c(NA_character_, NA_character_))
+  )
 
   expect_identical(min(new_vctr(logical()), na.rm = TRUE), new_vctr(NA))
   expect_identical(max(new_vctr(logical()), na.rm = TRUE), new_vctr(NA))
-  expect_identical(range(new_vctr(logical()), na.rm = TRUE), new_vctr(c(NA, NA)))
+  expect_identical(
+    range(new_vctr(logical()), na.rm = TRUE),
+    new_vctr(c(NA, NA))
+  )
 })
 
 test_that("anyNA(recursive = TRUE) works with lists (#1278)", {

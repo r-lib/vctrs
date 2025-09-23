@@ -1,4 +1,3 @@
-
 test_that("ptype methods are descriptive", {
   f <- factor()
   o <- ordered(character())
@@ -63,8 +62,14 @@ test_that("factors level are unioned", {
 test_that("coercion errors with factors", {
   f <- factor(levels = "a")
 
-  expect_error(vec_ptype_common(f, logical()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype_common(logical(), f), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_ptype_common(f, logical()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype_common(logical(), f),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("vec_ptype2(<factor>, NA) is symmetric (#687)", {
@@ -160,7 +165,10 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(fa, factor()), fa)
 
   # This used to be allowed
-  expect_error(vec_cast(list("a", "b"), fab), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(list("a", "b"), fab),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("can cast to character", {
@@ -184,11 +192,26 @@ test_that("lossy factor casts fail", {
 })
 
 test_that("invalid casts generate error", {
-  expect_error(vec_cast(double(), factor("a")), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(factor("a"), logical()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(ordered("a"), logical()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(logical(), factor("a")), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(logical(), ordered("a")), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(double(), factor("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(factor("a"), logical()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(ordered("a"), logical()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(logical(), factor("a")),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(logical(), ordered("a")),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("orderedness of factor is preserved", {
@@ -209,7 +232,10 @@ test_that("Casting to a factor with explicit NA levels retains them", {
 
 test_that("characters can be cast to ordered", {
   expect_identical(vec_cast("a", ordered("a")), ordered("a"))
-  expect_error(vec_cast(c("a", "b"), ordered("a")), class = "vctrs_error_cast_lossy")
+  expect_error(
+    vec_cast(c("a", "b"), ordered("a")),
+    class = "vctrs_error_cast_lossy"
+  )
 })
 
 

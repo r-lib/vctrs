@@ -34,7 +34,10 @@ test_that("translation fails purposefully with any bytes", {
 test_that("translation fails purposefully when mixing with bytes with other encodings", {
   for (enc in encodings()) {
     x <- c(encoding_bytes(), enc)
-    expect_error(vec_normalize_encoding(x), "translating strings with \"bytes\" encoding")
+    expect_error(
+      vec_normalize_encoding(x),
+      "translating strings with \"bytes\" encoding"
+    )
   }
 })
 

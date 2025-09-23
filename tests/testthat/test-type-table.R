@@ -1,4 +1,3 @@
-
 # Print -------------------------------------------------------------------
 
 test_that("ptype print methods are descriptive", {
@@ -64,13 +63,31 @@ test_that("errors on non-broadcastable dimensions", {
 })
 
 test_that("vec_ptype2() errors on non-tables", {
-  expect_error(vec_ptype2(new_table(), 1), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(new_table(), 1L), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(new_table(), "1"), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_ptype2(new_table(), 1),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(new_table(), 1L),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(new_table(), "1"),
+    class = "vctrs_error_incompatible_type"
+  )
 
-  expect_error(vec_ptype2(1, new_table()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(1L, new_table()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2("1", new_table()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_ptype2(1, new_table()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2(1L, new_table()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_ptype2("1", new_table()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("common types have symmetry when mixed with unspecified input", {
@@ -127,7 +144,11 @@ test_that("cannot decrease axis length", {
   x <- new_table(dim = c(0L, 3L))
   y <- new_table(dim = c(0L, 1L))
 
-  expect_error(vec_cast(x, y), "Non-recyclable", class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(x, y),
+    "Non-recyclable",
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("cannot decrease dimensionality", {
@@ -140,13 +161,31 @@ test_that("cannot decrease dimensionality", {
 })
 
 test_that("vec_cast() errors on non-tables", {
-  expect_error(vec_cast(new_table(), 1), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(new_table(), 1L), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(new_table(), "1"), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(new_table(), 1),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(new_table(), 1L),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(new_table(), "1"),
+    class = "vctrs_error_incompatible_type"
+  )
 
-  expect_error(vec_cast(1, new_table()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(1L, new_table()), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast("1", new_table()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(1, new_table()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast(1L, new_table()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_error(
+    vec_cast("1", new_table()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("can cast from, but not to, unspecified", {
@@ -158,7 +197,10 @@ test_that("can cast from, but not to, unspecified", {
   x <- new_table(dim = c(0L, 2L))
 
   expect_error(vec_cast(x, NA), class = "vctrs_error_incompatible_type")
-  expect_identical(vec_cast(NA, x), new_table(c(NA_integer_, NA_integer_), dim = c(1L, 2L)))
+  expect_identical(
+    vec_cast(NA, x),
+    new_table(c(NA_integer_, NA_integer_), dim = c(1L, 2L))
+  )
 })
 
 test_that("`table` delegates casting", {
@@ -195,8 +237,14 @@ test_that("can use a table in `vec_c()`", {
   y <- new_table(1:4, dim = c(2L, 2L))
 
   expect_identical(vec_c(x, x), new_table(c(1:5, 1:5), dim = 10L))
-  expect_identical(vec_c(y, y), new_table(c(1:2, 1:2, 3:4, 3:4), dim = c(4L, 2L)))
-  expect_identical(vec_c(x, y), new_table(c(1:5, 1:2, 1:5, 3:4), dim = c(7L, 2L)))
+  expect_identical(
+    vec_c(y, y),
+    new_table(c(1:2, 1:2, 3:4, 3:4), dim = c(4L, 2L))
+  )
+  expect_identical(
+    vec_c(x, y),
+    new_table(c(1:5, 1:2, 1:5, 3:4), dim = c(7L, 2L))
+  )
 })
 
 test_that("names of the first dimension are kept in `vec_c()`", {
@@ -212,7 +260,10 @@ test_that("can use a table in `list_unchop()`", {
   x <- new_table(1:4, dim = c(2L, 2L))
 
   expect_identical(list_unchop(list(x)), x)
-  expect_identical(list_unchop(list(x, x), indices = list(1:2, 4:3)), vec_slice(x, c(1:2, 2:1)))
+  expect_identical(
+    list_unchop(list(x, x), indices = list(1:2, 4:3)),
+    vec_slice(x, c(1:2, 2:1))
+  )
 })
 
 test_that("can concatenate tables", {
@@ -226,7 +277,6 @@ test_that("can concatenate tables", {
   exp <- data_frame(`1` = new_table(c(1L, 1L)), `2` = new_table(c(1L, 1L)))
   expect_identical(out, exp)
 
-
   y <- table(list(1:2, 3:4))
 
   # FIXME
@@ -239,9 +289,10 @@ test_that("can concatenate tables", {
   expect_identical(out, exp)
 
   out <- vec_rbind(y, y)
-  exp <- new_data_frame(list(
-    `3` = int(1, 0, 1, 0),
-    `4` = int(0, 1, 0, 1)
+  exp <- new_data_frame(
+    list(
+      `3` = int(1, 0, 1, 0),
+      `4` = int(0, 1, 0, 1)
     ),
     row.names = c("1...1", "2...2", "1...3", "2...4")
   )
@@ -254,7 +305,10 @@ test_that("can concatenate tables of type double (#1190)", {
   x <- table(c(1, 2)) / 2
 
   out <- vec_c(x, x)
-  exp <- new_table(c(0.5, 0.5, 0.5, 0.5), dimnames = list(c("1", "2", "1", "2")))
+  exp <- new_table(
+    c(0.5, 0.5, 0.5, 0.5),
+    dimnames = list(c("1", "2", "1", "2"))
+  )
   expect_identical(out, exp)
 
   out <- vec_rbind(x, x)

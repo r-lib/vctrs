@@ -1,12 +1,17 @@
-
 test_that("vec_slice throws error with non-vector inputs", {
   expect_error(vec_slice(environment(), 1L), class = "vctrs_error_scalar_type")
 })
 
 test_that("vec_slice throws error with non-vector subscripts", {
   expect_snapshot({
-    (expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_subscript_type"))
-    (expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type"))
+    (expect_error(
+      vec_slice(1:3, Sys.Date()),
+      class = "vctrs_error_subscript_type"
+    ))
+    (expect_error(
+      vec_slice(1:3, matrix(TRUE, nrow = 1)),
+      class = "vctrs_error_subscript_type"
+    ))
   })
 })
 
@@ -53,7 +58,10 @@ test_that("can subset with a recycled NA", {
 
   rownames <- rep_len("", nrow(mtcars))
   rownames <- vec_as_names(rownames, repair = "unique")
-  expect_identical(vec_slice(mtcars, NA), structure(mtcars[NA, ], row.names = rownames))
+  expect_identical(
+    vec_slice(mtcars, NA),
+    structure(mtcars[NA, ], row.names = rownames)
+  )
 })
 
 test_that("can subset with a recycled TRUE", {
@@ -77,7 +85,10 @@ test_that("can't index beyond the end of a vector", {
 })
 
 test_that("slicing non existing elements fails", {
-  expect_error(vec_as_location("foo", 1L, "f"), class = "vctrs_error_subscript_oob")
+  expect_error(
+    vec_as_location("foo", 1L, "f"),
+    class = "vctrs_error_subscript_oob"
+  )
   expect_error(vec_slice(c(f = 1), "foo"), class = "vctrs_error_subscript_oob")
 })
 
@@ -183,7 +194,12 @@ test_that("0 is ignored in positive indices", {
 
 test_that("can slice with double indices", {
   expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
-  expect_snapshot((expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_type")))
+  expect_snapshot(
+    (expect_error(
+      vec_as_location(2^31, 3L),
+      class = "vctrs_error_subscript_type"
+    ))
+  )
 })
 
 test_that("can slice with symbols", {
@@ -227,10 +243,9 @@ test_that("dimensions are preserved by vec_slice()", {
   exp <- foobar(
     c(1L, 3L),
     dim = c(1, 2),
-    dimnames = list(a = "foo", b = c("quux", "hunoz")
-  ))
+    dimnames = list(a = "foo", b = c("quux", "hunoz"))
+  )
   expect_identical(out, exp)
-
 
   # Native case
   attrib <- NULL
@@ -300,7 +315,10 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
   )
   expect_identical(vec_slice(foobar(NA), 1), "dispatched")
 
-  expect_error(vec_slice(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
+  expect_error(
+    vec_slice(foobar(list(NA)), 1),
+    class = "vctrs_error_scalar_type"
+  )
   local_methods(
     vec_proxy.vctrs_foobar = function(x, ...) x
   )
@@ -402,7 +420,10 @@ test_that("can slice with numerics (#577)", {
 test_that("missing indices don't create NA names", {
   x <- set_names(letters)
   expect_identical(vec_slice(x, na_int), set_names(na_chr, ""))
-  expect_identical(vec_slice(x, int(1, NA, 3, NA)), chr(a = "a", NA, c = "c", NA))
+  expect_identical(
+    vec_slice(x, int(1, NA, 3, NA)),
+    chr(a = "a", NA, c = "c", NA)
+  )
 
   # Preserves existing NA names
   x <- set_names(1:2, c(NA, "foo"))
@@ -547,26 +568,68 @@ test_that("can subset base vectors with compact seqs", {
   start <- 1L
   size <- 2L
   increasing <- TRUE
-  expect_identical(vec_slice_seq(lgl(1, 0, 1), start, size, increasing), lgl(0, 1))
-  expect_identical(vec_slice_seq(int(1, 2, 3), start, size, increasing), int(2, 3))
-  expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl(2, 3))
-  expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl(2, 3))
-  expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr("2", "3"))
-  expect_identical(vec_slice_seq(raw2(1, 2, 3), start, size, increasing), raw2(2, 3))
-  expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list(2, 3))
+  expect_identical(
+    vec_slice_seq(lgl(1, 0, 1), start, size, increasing),
+    lgl(0, 1)
+  )
+  expect_identical(
+    vec_slice_seq(int(1, 2, 3), start, size, increasing),
+    int(2, 3)
+  )
+  expect_identical(
+    vec_slice_seq(dbl(1, 2, 3), start, size, increasing),
+    dbl(2, 3)
+  )
+  expect_identical(
+    vec_slice_seq(cpl(1, 2, 3), start, size, increasing),
+    cpl(2, 3)
+  )
+  expect_identical(
+    vec_slice_seq(chr("1", "2", "3"), start, size, increasing),
+    chr("2", "3")
+  )
+  expect_identical(
+    vec_slice_seq(raw2(1, 2, 3), start, size, increasing),
+    raw2(2, 3)
+  )
+  expect_identical(
+    vec_slice_seq(list(1, 2, 3), start, size, increasing),
+    list(2, 3)
+  )
 })
 
 test_that("can subset base vectors with decreasing compact seqs", {
   start <- 2L
   size <- 2L
   increasing <- FALSE
-  expect_identical(vec_slice_seq(lgl(1, 0, 1), start, size, increasing), lgl(1, 0))
-  expect_identical(vec_slice_seq(int(1, 2, 3), start, size, increasing), int(3, 2))
-  expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl(3, 2))
-  expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl(3, 2))
-  expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr("3", "2"))
-  expect_identical(vec_slice_seq(raw2(1, 2, 3), start, size, increasing), raw2(3, 2))
-  expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list(3, 2))
+  expect_identical(
+    vec_slice_seq(lgl(1, 0, 1), start, size, increasing),
+    lgl(1, 0)
+  )
+  expect_identical(
+    vec_slice_seq(int(1, 2, 3), start, size, increasing),
+    int(3, 2)
+  )
+  expect_identical(
+    vec_slice_seq(dbl(1, 2, 3), start, size, increasing),
+    dbl(3, 2)
+  )
+  expect_identical(
+    vec_slice_seq(cpl(1, 2, 3), start, size, increasing),
+    cpl(3, 2)
+  )
+  expect_identical(
+    vec_slice_seq(chr("1", "2", "3"), start, size, increasing),
+    chr("3", "2")
+  )
+  expect_identical(
+    vec_slice_seq(raw2(1, 2, 3), start, size, increasing),
+    raw2(3, 2)
+  )
+  expect_identical(
+    vec_slice_seq(list(1, 2, 3), start, size, increasing),
+    list(3, 2)
+  )
 })
 
 test_that("can subset base vectors with size 0 compact seqs", {
@@ -577,9 +640,18 @@ test_that("can subset base vectors with size 0 compact seqs", {
   expect_identical(vec_slice_seq(int(1, 2, 3), start, size, increasing), int())
   expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl())
   expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl())
-  expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr())
-  expect_identical(vec_slice_seq(raw2(1, 2, 3), start, size, increasing), raw2())
-  expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list())
+  expect_identical(
+    vec_slice_seq(chr("1", "2", "3"), start, size, increasing),
+    chr()
+  )
+  expect_identical(
+    vec_slice_seq(raw2(1, 2, 3), start, size, increasing),
+    raw2()
+  )
+  expect_identical(
+    vec_slice_seq(list(1, 2, 3), start, size, increasing),
+    list()
+  )
 })
 
 test_that("can subset shaped base vectors with compact seqs", {
@@ -587,13 +659,34 @@ test_that("can subset shaped base vectors with compact seqs", {
   size <- 2L
   increasing <- TRUE
   mat <- as.matrix
-  expect_identical(vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing), mat(lgl(0, 1)))
-  expect_identical(vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing), mat(int(2, 3)))
-  expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl(2, 3)))
-  expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl(2, 3)))
-  expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr("2", "3")))
-  expect_identical(vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing), mat(raw2(2, 3)))
-  expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list(2, 3)))
+  expect_identical(
+    vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing),
+    mat(lgl(0, 1))
+  )
+  expect_identical(
+    vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing),
+    mat(int(2, 3))
+  )
+  expect_identical(
+    vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing),
+    mat(dbl(2, 3))
+  )
+  expect_identical(
+    vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing),
+    mat(cpl(2, 3))
+  )
+  expect_identical(
+    vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing),
+    mat(chr("2", "3"))
+  )
+  expect_identical(
+    vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing),
+    mat(raw2(2, 3))
+  )
+  expect_identical(
+    vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing),
+    mat(list(2, 3))
+  )
 })
 
 test_that("can subset shaped base vectors with decreasing compact seqs", {
@@ -601,13 +694,34 @@ test_that("can subset shaped base vectors with decreasing compact seqs", {
   size <- 2L
   increasing <- FALSE
   mat <- as.matrix
-  expect_identical(vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing), mat(lgl(1, 0)))
-  expect_identical(vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing), mat(int(3, 2)))
-  expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl(3, 2)))
-  expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl(3, 2)))
-  expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr("3", "2")))
-  expect_identical(vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing), mat(raw2(3, 2)))
-  expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list(3, 2)))
+  expect_identical(
+    vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing),
+    mat(lgl(1, 0))
+  )
+  expect_identical(
+    vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing),
+    mat(int(3, 2))
+  )
+  expect_identical(
+    vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing),
+    mat(dbl(3, 2))
+  )
+  expect_identical(
+    vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing),
+    mat(cpl(3, 2))
+  )
+  expect_identical(
+    vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing),
+    mat(chr("3", "2"))
+  )
+  expect_identical(
+    vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing),
+    mat(raw2(3, 2))
+  )
+  expect_identical(
+    vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing),
+    mat(list(3, 2))
+  )
 })
 
 test_that("can subset shaped base vectors with size 0 compact seqs", {
@@ -615,13 +729,34 @@ test_that("can subset shaped base vectors with size 0 compact seqs", {
   size <- 0L
   increasing <- TRUE
   mat <- as.matrix
-  expect_identical(vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing), mat(lgl()))
-  expect_identical(vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing), mat(int()))
-  expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl()))
-  expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl()))
-  expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr()))
-  expect_identical(vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing), mat(raw2()))
-  expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list()))
+  expect_identical(
+    vec_slice_seq(mat(lgl(1, 0, 1)), start, size, increasing),
+    mat(lgl())
+  )
+  expect_identical(
+    vec_slice_seq(mat(int(1, 2, 3)), start, size, increasing),
+    mat(int())
+  )
+  expect_identical(
+    vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing),
+    mat(dbl())
+  )
+  expect_identical(
+    vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing),
+    mat(cpl())
+  )
+  expect_identical(
+    vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing),
+    mat(chr())
+  )
+  expect_identical(
+    vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing),
+    mat(raw2())
+  )
+  expect_identical(
+    vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing),
+    mat(list())
+  )
 })
 
 test_that("can subset object of any dimensionality with compact seqs", {
@@ -671,7 +806,10 @@ test_that("vec_slice() with compact_seqs work with Altrep classes", {
 test_that("vec_slice() handles symbols and OO objects", {
   expect_identical(vec_slice(c(a = 1, b = 2), quote(b)), c(b = 2))
   expect_identical(vec_slice(c(a = 1, b = 2), factor("b")), c(b = 2))
-  expect_error(vec_slice(c(a = 1, b = 2), foobar("b")), class = "vctrs_error_subscript_type")
+  expect_error(
+    vec_slice(c(a = 1, b = 2), foobar("b")),
+    class = "vctrs_error_subscript_type"
+  )
 })
 
 test_that("vec_init() handles names in columns", {

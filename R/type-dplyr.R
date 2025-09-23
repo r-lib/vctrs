@@ -1,6 +1,4 @@
-
 # All methods in this file are conditionally registered in .onLoad()
-
 
 ### `grouped_df` -----------------------------------------------------
 

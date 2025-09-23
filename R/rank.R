@@ -85,14 +85,16 @@
 #' df
 #'
 #' vec_rank(df)
-vec_rank <- function(x,
-                     ...,
-                     ties = c("min", "max", "sequential", "dense"),
-                     incomplete = c("rank", "na"),
-                     direction = "asc",
-                     na_value = "largest",
-                     nan_distinct = FALSE,
-                     chr_proxy_collate = NULL) {
+vec_rank <- function(
+  x,
+  ...,
+  ties = c("min", "max", "sequential", "dense"),
+  incomplete = c("rank", "na"),
+  direction = "asc",
+  na_value = "largest",
+  nan_distinct = FALSE,
+  chr_proxy_collate = NULL
+) {
   check_dots_empty0(...)
 
   ties <- arg_match0(ties, c("min", "max", "sequential", "dense"), "ties")

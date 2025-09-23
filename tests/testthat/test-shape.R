@@ -1,38 +1,71 @@
-
 # common shape ------------------------------------------------------------
 
 test_that("vec_shape2() applies recycling rules", {
-  expect_equal(vec_shape2(shaped_int(1, 5, 5), shaped_int(1)),       c(0L, 5L, 5L))
-  expect_equal(vec_shape2(shaped_int(1),       shaped_int(1, 5, 5)), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(shaped_int(1, 1),    shaped_int(1, 5, 5)), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(shaped_int(1, 1, 1), shaped_int(1, 5, 5)), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(shaped_int(1, 5, 5), shaped_int(1)), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(shaped_int(1), shaped_int(1, 5, 5)), c(0L, 5L, 5L))
+  expect_equal(vec_shape2(shaped_int(1, 1), shaped_int(1, 5, 5)), c(0L, 5L, 5L))
+  expect_equal(
+    vec_shape2(shaped_int(1, 1, 1), shaped_int(1, 5, 5)),
+    c(0L, 5L, 5L)
+  )
 
-  expect_equal(vec_shape2(shaped_int(1, 1, 5), shaped_int(1, 5, 1)), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(shaped_int(1, 5, 1), shaped_int(1, 1, 5)), c(0L, 5L, 5L))
-  expect_equal(vec_shape2(shaped_int(1, 1, 1), shaped_int(1, 5, 5)), c(0L, 5L, 5L))
+  expect_equal(
+    vec_shape2(shaped_int(1, 1, 5), shaped_int(1, 5, 1)),
+    c(0L, 5L, 5L)
+  )
+  expect_equal(
+    vec_shape2(shaped_int(1, 5, 1), shaped_int(1, 1, 5)),
+    c(0L, 5L, 5L)
+  )
+  expect_equal(
+    vec_shape2(shaped_int(1, 1, 1), shaped_int(1, 5, 5)),
+    c(0L, 5L, 5L)
+  )
 
-  expect_equal(vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 1, 1)), c(0L, 0L, 5L))
+  expect_equal(
+    vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 1, 1)),
+    c(0L, 0L, 5L)
+  )
 })
 
 test_that("incompatible shapes throw errors", {
   expect_snapshot({
-    (expect_error(vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 5, 1)), class = "vctrs_error_incompatible_type"))
-    (expect_error(vec_shape2(shaped_int(1, 5, 0), shaped_int(1, 1, 5)), class = "vctrs_error_incompatible_type"))
+    (expect_error(
+      vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 5, 1)),
+      class = "vctrs_error_incompatible_type"
+    ))
+    (expect_error(
+      vec_shape2(shaped_int(1, 5, 0), shaped_int(1, 1, 5)),
+      class = "vctrs_error_incompatible_type"
+    ))
   })
 })
 
 test_that("can override error args", {
   expect_snapshot({
     (expect_error(
-      vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 5, 1), x_arg = "foo", y_arg = "bar"),
+      vec_shape2(
+        shaped_int(1, 0, 5),
+        shaped_int(1, 5, 1),
+        x_arg = "foo",
+        y_arg = "bar"
+      ),
       class = "vctrs_error_incompatible_type"
     ))
   })
 })
 
 test_that("vec_shape2() evaluates arg lazily", {
-  expect_silent(vec_shape2(shaped_int(1, 5, 5), shaped_int(1), x_arg = print("oof")))
-  expect_silent(vec_shape2(shaped_int(1, 5, 5), shaped_int(1), y_arg = print("oof")))
+  expect_silent(vec_shape2(
+    shaped_int(1, 5, 5),
+    shaped_int(1),
+    x_arg = print("oof")
+  ))
+  expect_silent(vec_shape2(
+    shaped_int(1, 5, 5),
+    shaped_int(1),
+    y_arg = print("oof")
+  ))
 })
 
 # broadcasting -------------------------------------------------------------

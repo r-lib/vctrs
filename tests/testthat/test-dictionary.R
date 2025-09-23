@@ -1,4 +1,3 @@
-
 # counting ----------------------------------------------------------------
 
 test_that("vec_count counts number observations", {
@@ -224,9 +223,15 @@ test_that("vec_match() and vec_in() check types", {
     df2 <- data_frame(x = data_frame(foo = ""))
 
     (expect_error(vec_match(df1, df2), class = "vctrs_error_incompatible_type"))
-    (expect_error(vec_match(df1, df2, needles_arg = "n", haystack_arg = "h"), class = "vctrs_error_incompatible_type"))
+    (expect_error(
+      vec_match(df1, df2, needles_arg = "n", haystack_arg = "h"),
+      class = "vctrs_error_incompatible_type"
+    ))
     (expect_error(vec_in(df1, df2), class = "vctrs_error_incompatible_type"))
-    (expect_error(vec_in(df1, df2, needles_arg = "n", haystack_arg = "h"), class = "vctrs_error_incompatible_type"))
+    (expect_error(
+      vec_in(df1, df2, needles_arg = "n", haystack_arg = "h"),
+      class = "vctrs_error_incompatible_type"
+    ))
   })
 })
 
@@ -298,15 +303,36 @@ test_that("matching functions take the equality proxy recursively", {
 
 test_that("can propagate missing values while matching", {
   exp <- c(NA, 3L, NA, 1L)
-  expect_identical(vec_match(lgl(NA, TRUE, NA, FALSE), lgl(FALSE, NA, TRUE), na_equal = FALSE), exp)
-  expect_identical(vec_match(int(NA, 1L, NA, 2L), int(2L, NA, 1L), na_equal = FALSE), exp)
-  expect_identical(vec_match(dbl(NA, 1, NA, 2), dbl(2, NA, 1), na_equal = FALSE), exp)
-  expect_identical(vec_match(cpl(NA, 1, NA, 2), cpl(2, NA, 1), na_equal = FALSE), exp)
-  expect_identical(vec_match(chr(NA, "1", NA, "2"), chr("2", NA, "1"), na_equal = FALSE), exp)
-  expect_identical(vec_match(list(NULL, 1, NULL, 2), list(2, NULL, 1), na_equal = FALSE), exp)
+  expect_identical(
+    vec_match(lgl(NA, TRUE, NA, FALSE), lgl(FALSE, NA, TRUE), na_equal = FALSE),
+    exp
+  )
+  expect_identical(
+    vec_match(int(NA, 1L, NA, 2L), int(2L, NA, 1L), na_equal = FALSE),
+    exp
+  )
+  expect_identical(
+    vec_match(dbl(NA, 1, NA, 2), dbl(2, NA, 1), na_equal = FALSE),
+    exp
+  )
+  expect_identical(
+    vec_match(cpl(NA, 1, NA, 2), cpl(2, NA, 1), na_equal = FALSE),
+    exp
+  )
+  expect_identical(
+    vec_match(chr(NA, "1", NA, "2"), chr("2", NA, "1"), na_equal = FALSE),
+    exp
+  )
+  expect_identical(
+    vec_match(list(NULL, 1, NULL, 2), list(2, NULL, 1), na_equal = FALSE),
+    exp
+  )
 
   # No missing values for raw vectors
-  expect_identical(vec_match(raw2(0, 1, 0, 2), raw2(2, 0, 1), na_equal = FALSE), c(2L, 3L, 2L, 1L))
+  expect_identical(
+    vec_match(raw2(0, 1, 0, 2), raw2(2, 0, 1), na_equal = FALSE),
+    c(2L, 3L, 2L, 1L)
+  )
 })
 
 test_that("can propagate missingness of incomplete rcrd observations (#1386)", {
@@ -318,8 +344,14 @@ test_that("can propagate missingness of incomplete rcrd observations (#1386)", {
 })
 
 test_that("can propagate NaN as a missing value (#1252)", {
-  expect_identical(vec_match(dbl(NaN, NA), c(NaN, NA), na_equal = FALSE), int(NA, NA))
-  expect_identical(vec_in(dbl(NaN, NA), c(NaN, NA), na_equal = FALSE), lgl(NA, NA))
+  expect_identical(
+    vec_match(dbl(NaN, NA), c(NaN, NA), na_equal = FALSE),
+    int(NA, NA)
+  )
+  expect_identical(
+    vec_in(dbl(NaN, NA), c(NaN, NA), na_equal = FALSE),
+    lgl(NA, NA)
+  )
 })
 
 test_that("missing values are propagated across columns", {

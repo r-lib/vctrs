@@ -1,4 +1,3 @@
-
 # vectorised --------------------------------------------------------------
 
 test_that("throws error for unsuported type", {
@@ -15,9 +14,12 @@ test_that("correct behaviour for basic vectors", {
   expect_equal(vec_equal(as.raw(1:2), as.raw(1L)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(1:3, 1:2), list(1:3)), c(TRUE, FALSE))
   expect_equal(vec_equal(list(1:3, 1.5), list(1:3)), c(TRUE, FALSE))
-  expect_equal(vec_equal(list(as.raw(1:3), as.raw(1.5)), list(as.raw(1:3))), c(TRUE, FALSE))
-  expect_equal(vec_equal(list(1+1i, 1+0i), list(1+1i)), c(TRUE, FALSE))
-  expect_equal(vec_equal(c(1, 2) + 1i, 1+1i), c(TRUE, FALSE))
+  expect_equal(
+    vec_equal(list(as.raw(1:3), as.raw(1.5)), list(as.raw(1:3))),
+    c(TRUE, FALSE)
+  )
+  expect_equal(vec_equal(list(1 + 1i, 1 + 0i), list(1 + 1i)), c(TRUE, FALSE))
+  expect_equal(vec_equal(c(1, 2) + 1i, 1 + 1i), c(TRUE, FALSE))
 })
 
 test_that("NAs are equal", {
@@ -61,8 +63,8 @@ test_that("can compare data frames with various types of columns", {
   x5 <- data_frame(x = as.raw(0))
   y5 <- data_frame(x = as.raw(1))
 
-  x6 <- data_frame(x = 1+0i)
-  y6 <- data_frame(x = 1+1i)
+  x6 <- data_frame(x = 1 + 0i)
+  y6 <- data_frame(x = 1 + 1i)
 
   expect_false(vec_equal(x1, y1))
   expect_false(vec_equal(x2, y2))
@@ -236,7 +238,7 @@ test_that("recycling works in all cases", {
 
 # object ------------------------------------------------------------------
 
-test_that("can compare NULL",{
+test_that("can compare NULL", {
   expect_true(obj_equal(NULL, NULL))
 })
 

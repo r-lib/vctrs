@@ -1,4 +1,3 @@
-
 # constructor and accessors -----------------------------------------------
 
 test_that("can construct and access components", {
@@ -34,32 +33,43 @@ test_that("equality, comparison, and order proxies are recursive and fall throug
   expect_identical(vec_proxy_compare(x), 1)
   expect_identical(vec_proxy_order(x), 1)
 
-  local_methods(vec_proxy_equal.custom = function(x, ...) rep("equal", length(x)))
+  local_methods(vec_proxy_equal.custom = function(x, ...) {
+    rep("equal", length(x))
+  })
 
   expect_identical(vec_proxy_equal(x), "equal")
   expect_identical(vec_proxy_compare(x), "equal")
   expect_identical(vec_proxy_order(x), "equal")
 
-  local_methods(vec_proxy_compare.custom = function(x, ...) rep("compare", length(x)))
+  local_methods(vec_proxy_compare.custom = function(x, ...) {
+    rep("compare", length(x))
+  })
 
   expect_identical(vec_proxy_equal(x), "equal")
   expect_identical(vec_proxy_compare(x), "compare")
   expect_identical(vec_proxy_order(x), "compare")
 
-  local_methods(vec_proxy_order.custom = function(x, ...) rep("order", length(x)))
+  local_methods(vec_proxy_order.custom = function(x, ...) {
+    rep("order", length(x))
+  })
 
   expect_identical(vec_proxy_equal(x), "equal")
   expect_identical(vec_proxy_compare(x), "compare")
   expect_identical(vec_proxy_order(x), "order")
 
   y <- new_rcrd(list(a = 1), class = "custom2")
-  local_methods(vec_proxy_compare.custom2 = function(x, ...) rep("compare2", length(x)))
+  local_methods(vec_proxy_compare.custom2 = function(x, ...) {
+    rep("compare2", length(x))
+  })
 
   z <- data_frame(x = x, y = y)
 
   # Each column falls back independently
   expect_identical(vec_proxy_equal(z), data_frame(x = "equal", y = 1))
-  expect_identical(vec_proxy_compare(z), data_frame(x = "compare", y = "compare2"))
+  expect_identical(
+    vec_proxy_compare(z),
+    data_frame(x = "compare", y = "compare2")
+  )
   expect_identical(vec_proxy_order(z), data_frame(x = "order", y = "compare2"))
 })
 
@@ -168,14 +178,26 @@ test_that("can't cast incompatible rcrd", {
 
 test_that("must be list of equal length vectors", {
   expect_error(new_rcrd(list()), "list of length 1")
-  expect_error(new_rcrd(list(x = environment())), class = "vctrs_error_scalar_type")
+  expect_error(
+    new_rcrd(list(x = environment())),
+    class = "vctrs_error_scalar_type"
+  )
   expect_error(new_rcrd(list(x = 1:2, y = 1:3)), "same size")
 })
 
 test_that("names must be unique", {
-  expect_error(new_rcrd(list(1, 2)), class = "vctrs_error_names_cannot_be_empty")
-  expect_error(new_rcrd(list(x = 1, 2)), class = "vctrs_error_names_cannot_be_empty")
-  expect_error(new_rcrd(list(x = 1, x = 2)), class = "vctrs_error_names_must_be_unique")
+  expect_error(
+    new_rcrd(list(1, 2)),
+    class = "vctrs_error_names_cannot_be_empty"
+  )
+  expect_error(
+    new_rcrd(list(x = 1, 2)),
+    class = "vctrs_error_names_cannot_be_empty"
+  )
+  expect_error(
+    new_rcrd(list(x = 1, x = 2)),
+    class = "vctrs_error_names_must_be_unique"
+  )
   expect_error(new_rcrd(setNames(list(1, 2), "x")), "can't return `NA`")
 })
 

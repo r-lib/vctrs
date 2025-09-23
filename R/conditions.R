@@ -56,10 +56,12 @@
 #' @name vctrs-conditions
 NULL
 
-stop_vctrs <- function(message = NULL,
-                       class = NULL,
-                       ...,
-                       call = caller_env()) {
+stop_vctrs <- function(
+  message = NULL,
+  class = NULL,
+  ...,
+  call = caller_env()
+) {
   abort(
     message,
     class = c(class, "vctrs_error"),
@@ -67,10 +69,12 @@ stop_vctrs <- function(message = NULL,
     call = call
   )
 }
-warn_vctrs <- function(message = NULL,
-                       class = NULL,
-                       ...,
-                       call = caller_env()) {
+warn_vctrs <- function(
+  message = NULL,
+  class = NULL,
+  ...,
+  call = caller_env()
+) {
   warn(
     message,
     class = c(class, "vctrs_warning"),
@@ -79,13 +83,15 @@ warn_vctrs <- function(message = NULL,
   )
 }
 
-stop_incompatible <- function(x,
-                              y,
-                              ...,
-                              details = NULL,
-                              message = NULL,
-                              class = NULL,
-                              call = caller_env()) {
+stop_incompatible <- function(
+  x,
+  y,
+  ...,
+  details = NULL,
+  message = NULL,
+  class = NULL,
+  call = caller_env()
+) {
   stop_vctrs(
     message,
     class = c(class, "vctrs_error_incompatible"),
@@ -103,16 +109,18 @@ stop_incompatible <- function(x,
 #'
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_type <- function(x,
-                                   y,
-                                   ...,
-                                   x_arg,
-                                   y_arg,
-                                   action = c("combine", "convert"),
-                                   details = NULL,
-                                   message = NULL,
-                                   class = NULL,
-                                   call = caller_env()) {
+stop_incompatible_type <- function(
+  x,
+  y,
+  ...,
+  x_arg,
+  y_arg,
+  action = c("combine", "convert"),
+  details = NULL,
+  message = NULL,
+  class = NULL,
+  call = caller_env()
+) {
   obj_check_vector(x, arg = x_arg)
   obj_check_vector(y, arg = y_arg)
 
@@ -136,7 +144,8 @@ stop_incompatible_type <- function(x,
   )
 
   stop_incompatible(
-    x, y,
+    x,
+    y,
     x_arg = x_arg,
     y_arg = y_arg,
     details = details,
@@ -149,15 +158,17 @@ stop_incompatible_type <- function(x,
 
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_cast <- function(x,
-                                   to,
-                                   ...,
-                                   x_arg,
-                                   to_arg,
-                                   details = NULL,
-                                   message = NULL,
-                                   class = NULL,
-                                   call = caller_env()) {
+stop_incompatible_cast <- function(
+  x,
+  to,
+  ...,
+  x_arg,
+  to_arg,
+  details = NULL,
+  message = NULL,
+  class = NULL,
+  call = caller_env()
+) {
   stop_incompatible_type(
     x = x,
     y = to,
@@ -174,16 +185,20 @@ stop_incompatible_cast <- function(x,
   )
 }
 
-stop_incompatible_shape <- function(x,
-                                    y,
-                                    x_size,
-                                    y_size,
-                                    axis,
-                                    x_arg,
-                                    y_arg,
-                                    call = caller_env()) {
+stop_incompatible_shape <- function(
+  x,
+  y,
+  x_size,
+  y_size,
+  axis,
+  x_arg,
+  y_arg,
+  call = caller_env()
+) {
   details <- format_error_bullets(c(
-    x = glue::glue("Incompatible sizes {x_size} and {y_size} along axis {axis}.")
+    x = glue::glue(
+      "Incompatible sizes {x_size} and {y_size} along axis {axis}."
+    )
   ))
   stop_incompatible_type(
     x,
@@ -196,7 +211,8 @@ stop_incompatible_shape <- function(x,
 }
 
 type_actions <- c(
-  "combine", "convert"
+  "combine",
+  "convert"
 )
 
 cnd_type_separator <- function(action) {
@@ -209,15 +225,17 @@ cnd_type_separator <- function(action) {
   }
 }
 
-cnd_type_message <- function(x,
-                             y,
-                             x_arg,
-                             y_arg,
-                             details,
-                             action,
-                             message,
-                             from_dispatch = FALSE,
-                             fallback = NULL) {
+cnd_type_message <- function(
+  x,
+  y,
+  x_arg,
+  y_arg,
+  details,
+  action,
+  message,
+  from_dispatch = FALSE,
+  fallback = NULL
+) {
   if (!is_null(message)) {
     if (!is_null(details)) {
       abort("Can't supply both `message` and `details`.")
@@ -274,9 +292,13 @@ cnd_type_message <- function(x,
   }
 
   if (converting && nzchar(y_arg)) {
-    header <- glue::glue("Can't convert{x_name}<{x_type}> to match type of{y_name}<{y_type}>{end}")
+    header <- glue::glue(
+      "Can't convert{x_name}<{x_type}> to match type of{y_name}<{y_type}>{end}"
+    )
   } else {
-    header <- glue::glue("Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>{end}")
+    header <- glue::glue(
+      "Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>{end}"
+    )
   }
 
   paste_line(header, details)
@@ -310,22 +332,25 @@ cnd_type_message_df_label <- function(x) {
 
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_op <- function(op,
-                                 x,
-                                 y,
-                                 details = NULL,
-                                 ...,
-                                 message = NULL,
-                                 class = NULL,
-                                 call = caller_env()) {
-
-  message <- message %||% glue_lines(
-    "<{vec_ptype_full(x)}> {op} <{vec_ptype_full(y)}> is not permitted",
-    details
-  )
+stop_incompatible_op <- function(
+  op,
+  x,
+  y,
+  details = NULL,
+  ...,
+  message = NULL,
+  class = NULL,
+  call = caller_env()
+) {
+  message <- message %||%
+    glue_lines(
+      "<{vec_ptype_full(x)}> {op} <{vec_ptype_full(y)}> is not permitted",
+      details
+    )
 
   stop_incompatible(
-    x, y,
+    x,
+    y,
     op = op,
     details = details,
     ...,
@@ -337,17 +362,19 @@ stop_incompatible_op <- function(op,
 
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_size <- function(x,
-                                   y,
-                                   x_size,
-                                   y_size,
-                                   ...,
-                                   x_arg,
-                                   y_arg,
-                                   details = NULL,
-                                   message = NULL,
-                                   class = NULL,
-                                   call = caller_env()) {
+stop_incompatible_size <- function(
+  x,
+  y,
+  x_size,
+  y_size,
+  ...,
+  x_arg,
+  y_arg,
+  details = NULL,
+  message = NULL,
+  class = NULL,
+  call = caller_env()
+) {
   stop_incompatible(
     x,
     y,
@@ -438,18 +465,22 @@ cnd_body.vctrs_error_incompatible_size <- function(cnd, ...) {
 #'   to wrap their code with `allow_lossy_cast()`.
 #' @keywords internal
 #' @export
-maybe_lossy_cast <- function(result, x, to,
-                             lossy = NULL,
-                             locations = NULL,
-                             ...,
-                             loss_type = c("precision", "generality"),
-                             x_arg,
-                             to_arg,
-                             call = caller_env(),
-                             details = NULL,
-                             message = NULL,
-                             class = NULL,
-                             .deprecation = FALSE) {
+maybe_lossy_cast <- function(
+  result,
+  x,
+  to,
+  lossy = NULL,
+  locations = NULL,
+  ...,
+  loss_type = c("precision", "generality"),
+  x_arg,
+  to_arg,
+  call = caller_env(),
+  details = NULL,
+  message = NULL,
+  class = NULL,
+  .deprecation = FALSE
+) {
   if (!any(lossy)) {
     return(result)
   }
@@ -478,18 +509,20 @@ maybe_lossy_cast <- function(result, x, to,
     )
   )
 }
-stop_lossy_cast <- function(x,
-                            to,
-                            result,
-                            locations = NULL,
-                            ...,
-                            loss_type,
-                            x_arg,
-                            to_arg,
-                            details = NULL,
-                            message = NULL,
-                            class = NULL,
-                            call = caller_env()) {
+stop_lossy_cast <- function(
+  x,
+  to,
+  result,
+  locations = NULL,
+  ...,
+  loss_type,
+  x_arg,
+  to_arg,
+  details = NULL,
+  message = NULL,
+  class = NULL,
+  call = caller_env()
+) {
   stop_incompatible_cast(
     x = x,
     to = to,
@@ -510,7 +543,9 @@ cnd_header.vctrs_error_cast_lossy <- function(cnd, ...) {
   x_label <- format_arg_label(vec_ptype_full(cnd$x), cnd$x_arg)
   to_label <- format_arg_label(vec_ptype_full(cnd$y), cnd$y_arg)
   loss_type <- loss_type(cnd$loss_type)
-  glue::glue("Can't convert from {x_label} to {to_label} due to loss of {loss_type}.")
+  glue::glue(
+    "Can't convert from {x_label} to {to_label} due to loss of {loss_type}."
+  )
 }
 #' @export
 cnd_body.vctrs_error_cast_lossy <- function(cnd, ...) {
@@ -561,12 +596,14 @@ allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
   )
 }
 
-maybe_warn_deprecated_lossy_cast <- function(x,
-                                             to,
-                                             loss_type,
-                                             x_arg,
-                                             to_arg,
-                                             user_env = caller_env(2)) {
+maybe_warn_deprecated_lossy_cast <- function(
+  x,
+  to,
+  loss_type,
+  x_arg,
+  to_arg,
+  user_env = caller_env(2)
+) {
   # Returns `TRUE` if `allow_lossy_cast()` is on the stack and accepts
   # to handle the condition
   handled <- withRestarts(
@@ -600,7 +637,9 @@ maybe_warn_deprecated_lossy_cast <- function(x,
     what = I("Coercion with lossy casts"),
     with = "allow_lossy_cast()",
     details = paste0(
-      glue::glue("We detected a lossy transformation from { from } to { to }. "),
+      glue::glue(
+        "We detected a lossy transformation from { from } to { to }. "
+      ),
       "The result will contain lower-resolution values or missing values. ",
       "To suppress this warning, wrap your code with `allow_lossy_cast()`."
     ),
@@ -648,28 +687,33 @@ stop_scalar_type <- function(x, arg = NULL, call = caller_env()) {
   )
 }
 
-stop_corrupt_factor_levels <- function(x,
-                                       arg = "x",
-                                       call = caller_env()) {
+stop_corrupt_factor_levels <- function(x, arg = "x", call = caller_env()) {
   msg <- glue::glue("`{arg}` is a corrupt factor with non-character levels")
   abort(msg, call = call)
 }
 
 stop_corrupt_ordered_levels <- function(x, arg = "x", call = caller_env()) {
-  msg <- glue::glue("`{arg}` is a corrupt ordered factor with non-character levels")
+  msg <- glue::glue(
+    "`{arg}` is a corrupt ordered factor with non-character levels"
+  )
   abort(msg, call = call)
 }
 
-stop_recycle_incompatible_size <- function(x_size,
-                                           size,
-                                           x_arg = "x",
-                                           call = caller_env()) {
+stop_recycle_incompatible_size <- function(
+  x_size,
+  size,
+  x_arg = "x",
+  call = caller_env()
+) {
   stop_vctrs(
     x_size = x_size,
     y_size = size,
     x_arg = x_arg,
     # FIXME: tibble is the only package that uses `vctrs_error_recycle_incompatible_size`
-    class = c("vctrs_error_incompatible_size", "vctrs_error_recycle_incompatible_size"),
+    class = c(
+      "vctrs_error_incompatible_size",
+      "vctrs_error_recycle_incompatible_size"
+    ),
     call = call
   )
 }
@@ -705,7 +749,9 @@ cnd_body.vctrs_error_names_cannot_be_empty <- function(cnd, ...) {
   if (length(locations) == 1) {
     bullet <- glue::glue("Empty name found at location {locations}.")
   } else {
-    bullet <- glue::glue("Empty names found at locations {ensure_full_stop(enumerate(locations))}")
+    bullet <- glue::glue(
+      "Empty names found at locations {ensure_full_stop(enumerate(locations))}"
+    )
   }
 
   bullet <- c(x = bullet)
@@ -746,9 +792,7 @@ cnd_body.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
   message
 }
 
-stop_names_must_be_unique <- function(names,
-                                      arg = "",
-                                      call = caller_env()) {
+stop_names_must_be_unique <- function(names, arg = "", call = caller_env()) {
   stop_names(
     class = "vctrs_error_names_must_be_unique",
     arg = arg,
@@ -781,7 +825,9 @@ cnd_body.vctrs_error_names_must_be_unique <- function(cnd, ...) {
 
   arg <- arg_as_string(cnd$arg)
   if (arg != "") {
-    hint <- c(i = glue::glue("Use argument `{cnd$arg}` to specify repair strategy."))
+    hint <- c(
+      i = glue::glue("Use argument `{cnd$arg}` to specify repair strategy.")
+    )
     message <- c(message, format_error_bullets(hint))
   }
 
@@ -793,7 +839,9 @@ make_names_loc_bullet <- function(x, loc) {
   if (length(loc) == 1) {
     glue::glue("{glue::double_quote(x)} at location {loc}.")
   } else {
-    glue::glue("{glue::double_quote(x)} at locations {ensure_full_stop(enumerate(loc))}")
+    glue::glue(
+      "{glue::double_quote(x)} at locations {ensure_full_stop(enumerate(loc))}"
+    )
   }
 }
 

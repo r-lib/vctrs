@@ -86,11 +86,20 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'
 #' df <- fancy_df(x = 1)
 #' class(df)
-df_list <- function(...,
-                    .size = NULL,
-                    .unpack = TRUE,
-                    .name_repair = c("check_unique", "unique", "universal", "minimal", "unique_quiet", "universal_quiet"),
-                    .error_call = current_env()) {
+df_list <- function(
+  ...,
+  .size = NULL,
+  .unpack = TRUE,
+  .name_repair = c(
+    "check_unique",
+    "unique",
+    "universal",
+    "minimal",
+    "unique_quiet",
+    "universal_quiet"
+  ),
+  .error_call = current_env()
+) {
   .Call(ffi_df_list, list2(...), .size, .unpack, .name_repair, environment())
 }
 df_list <- fn_inline_formals(df_list, ".name_repair")
@@ -162,10 +171,19 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #'
 #' # Unnamed data frame input is automatically unpacked
 #' data_frame(x = 1, data_frame(y = 1:2, z = "a"))
-data_frame <- function(...,
-                       .size = NULL,
-                       .name_repair = c("check_unique", "unique", "universal", "minimal", "unique_quiet", "universal_quiet"),
-                       .error_call = current_env()) {
+data_frame <- function(
+  ...,
+  .size = NULL,
+  .name_repair = c(
+    "check_unique",
+    "unique",
+    "universal",
+    "minimal",
+    "unique_quiet",
+    "universal_quiet"
+  ),
+  .error_call = current_env()
+) {
   .Call(ffi_data_frame, list2(...), .size, .name_repair, environment())
 }
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
@@ -219,12 +237,7 @@ df_is_coercible <- function(x, y, opts) {
 #'   as a bare tibble.
 #'
 #' @export
-df_ptype2 <- function(x,
-                      y,
-                      ...,
-                      x_arg = "",
-                      y_arg = "",
-                      call = caller_env()) {
+df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "", call = caller_env()) {
   .Call(
     ffi_df_ptype2_opts,
     x,
@@ -235,12 +248,7 @@ df_ptype2 <- function(x,
 }
 #' @rdname df_ptype2
 #' @export
-df_cast <- function(x,
-                    to,
-                    ...,
-                    x_arg = "",
-                    to_arg = "",
-                    call = caller_env()) {
+df_cast <- function(x, to, ..., x_arg = "", to_arg = "", call = caller_env()) {
   .Call(
     ffi_df_cast_opts,
     x,
@@ -250,23 +258,27 @@ df_cast <- function(x,
   )
 }
 
-df_ptype2_opts <- function(x,
-                           y,
-                           ...,
-                           opts,
-                           x_arg = "",
-                           y_arg = "",
-                           call = caller_env()) {
+df_ptype2_opts <- function(
+  x,
+  y,
+  ...,
+  opts,
+  x_arg = "",
+  y_arg = "",
+  call = caller_env()
+) {
   .Call(ffi_df_ptype2_opts, x, y, opts = opts, environment())
 }
 
-df_cast_opts <- function(x,
-                         to,
-                         ...,
-                         opts = fallback_opts(),
-                         x_arg = "",
-                         to_arg = "",
-                         call = caller_env()) {
+df_cast_opts <- function(
+  x,
+  to,
+  ...,
+  opts = fallback_opts(),
+  x_arg = "",
+  to_arg = "",
+  call = caller_env()
+) {
   .Call(
     ffi_df_cast_opts,
     x,
@@ -275,12 +287,14 @@ df_cast_opts <- function(x,
     environment()
   )
 }
-df_cast_params <- function(x,
-                           to,
-                           ...,
-                           x_arg = "",
-                           to_arg = "",
-                           s3_fallback = NULL) {
+df_cast_params <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  s3_fallback = NULL
+) {
   opts <- fallback_opts(s3_fallback = s3_fallback)
   df_cast_opts(x, to, opts = opts, x_arg = x_arg, to_arg = to_arg)
 }
@@ -308,12 +322,14 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
 }
 
 # Fallback for data frame subclasses (#981)
-vec_ptype2_df_fallback <- function(x,
-                                   y,
-                                   opts,
-                                   x_arg = "",
-                                   y_arg = "",
-                                   call = caller_env()) {
+vec_ptype2_df_fallback <- function(
+  x,
+  y,
+  opts,
+  x_arg = "",
+  y_arg = "",
+  call = caller_env()
+) {
   vec_ptype2_params(
     as_base_df(x),
     as_base_df(y),
@@ -343,7 +359,13 @@ vec_cast.data.frame <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.data.frame data.frame
-vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.data.frame.data.frame <- function(
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = ""
+) {
   df_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -358,13 +380,15 @@ df_size <- function(x) {
   .Call(vctrs_df_size, x)
 }
 
-df_lossy_cast <- function(out,
-                          x,
-                          to,
-                          ...,
-                          x_arg = "",
-                          to_arg = "",
-                          call = caller_env()) {
+df_lossy_cast <- function(
+  out,
+  x,
+  to,
+  ...,
+  x_arg = "",
+  to_arg = "",
+  call = caller_env()
+) {
   extra <- setdiff(names(x), names(to))
 
   maybe_lossy_cast(

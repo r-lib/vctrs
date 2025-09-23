@@ -20,7 +20,6 @@
 #    * There is a new `nan_distinct` argument for differentiating between `NaN`
 #      and `NA` in double and complex vectors.
 
-
 #' Order and sort vectors
 #'
 #' @description
@@ -146,23 +145,27 @@
 NULL
 
 #' @rdname order-radix
-vec_order_radix <- function(x,
-                            ...,
-                            direction = "asc",
-                            na_value = "largest",
-                            nan_distinct = FALSE,
-                            chr_proxy_collate = NULL) {
+vec_order_radix <- function(
+  x,
+  ...,
+  direction = "asc",
+  na_value = "largest",
+  nan_distinct = FALSE,
+  chr_proxy_collate = NULL
+) {
   check_dots_empty0(...)
   .Call(vctrs_order, x, direction, na_value, nan_distinct, chr_proxy_collate)
 }
 
 #' @rdname order-radix
-vec_sort_radix <- function(x,
-                           ...,
-                           direction = "asc",
-                           na_value = "largest",
-                           nan_distinct = FALSE,
-                           chr_proxy_collate = NULL) {
+vec_sort_radix <- function(
+  x,
+  ...,
+  direction = "asc",
+  na_value = "largest",
+  nan_distinct = FALSE,
+  chr_proxy_collate = NULL
+) {
   check_dots_empty0(...)
 
   idx <- vec_order_radix(
@@ -219,12 +222,14 @@ vec_sort_radix <- function(x,
 #' vec_locate_sorted_groups(df)
 #'
 #' vec_group_loc(df)
-vec_locate_sorted_groups <- function(x,
-                                     ...,
-                                     direction = "asc",
-                                     na_value = "largest",
-                                     nan_distinct = FALSE,
-                                     chr_proxy_collate = NULL) {
+vec_locate_sorted_groups <- function(
+  x,
+  ...,
+  direction = "asc",
+  na_value = "largest",
+  nan_distinct = FALSE,
+  chr_proxy_collate = NULL
+) {
   check_dots_empty0(...)
 
   .Call(
@@ -239,15 +244,25 @@ vec_locate_sorted_groups <- function(x,
 
 # ------------------------------------------------------------------------------
 
-vec_order_info <- function(x,
-                           ...,
-                           direction = "asc",
-                           na_value = "largest",
-                           nan_distinct = FALSE,
-                           chr_proxy_collate = NULL,
-                           chr_ordered = TRUE) {
+vec_order_info <- function(
+  x,
+  ...,
+  direction = "asc",
+  na_value = "largest",
+  nan_distinct = FALSE,
+  chr_proxy_collate = NULL,
+  chr_ordered = TRUE
+) {
   check_dots_empty0(...)
-  .Call(vctrs_order_info, x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered)
+  .Call(
+    vctrs_order_info,
+    x,
+    direction,
+    na_value,
+    nan_distinct,
+    chr_proxy_collate,
+    chr_ordered
+  )
 }
 
 # ------------------------------------------------------------------------------
@@ -295,10 +310,12 @@ vec_order_info <- function(x,
 #' # in increasing order:
 #' vec_order(c(1, NA), na_value = "largest", direction = "asc")
 #' vec_order(c(1, NA), na_value = "largest", direction = "desc")
-vec_order <- function(x,
-                      ...,
-                      direction = c("asc", "desc"),
-                      na_value = c("largest", "smallest")) {
+vec_order <- function(
+  x,
+  ...,
+  direction = c("asc", "desc"),
+  na_value = c("largest", "smallest")
+) {
   check_dots_empty0(...)
 
   direction <- arg_match0(direction, c("asc", "desc"))
@@ -324,7 +341,13 @@ vec_order <- function(x,
       .x
     })
     exec("order", !!!args, decreasing = decreasing, na.last = na.last)
-  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy) || is.complex(proxy)) {
+  } else if (
+    is_character(proxy) ||
+      is_logical(proxy) ||
+      is_integer(proxy) ||
+      is_double(proxy) ||
+      is.complex(proxy)
+  ) {
     if (is.object(proxy)) {
       proxy <- unstructure(proxy)
     }
@@ -336,10 +359,12 @@ vec_order <- function(x,
 
 #' @export
 #' @rdname vec_order
-vec_sort <- function(x,
-                     ...,
-                     direction = c("asc", "desc"),
-                     na_value = c("largest", "smallest")) {
+vec_sort <- function(
+  x,
+  ...,
+  direction = c("asc", "desc"),
+  na_value = c("largest", "smallest")
+) {
   check_dots_empty0(...)
 
   direction <- arg_match0(direction, c("asc", "desc"))

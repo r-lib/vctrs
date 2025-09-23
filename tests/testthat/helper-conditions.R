@@ -1,8 +1,9 @@
-
-with_subscript_data <- function(expr,
-                                subscript_arg,
-                                subscript_elt = NULL,
-                                subscript_action = NULL) {
+with_subscript_data <- function(
+  expr,
+  subscript_arg,
+  subscript_elt = NULL,
+  subscript_action = NULL
+) {
   local_options(rlang_force_unhandled_error = TRUE)
   tryCatch(
     expr,
@@ -76,10 +77,12 @@ my_vec_rep_each <- function(my_x, my_times) {
   )
 }
 
-my_vec_as_names <- function(my_names,
-                            ...,
-                            my_repair = "minimal",
-                            my_quiet = FALSE) {
+my_vec_as_names <- function(
+  my_names,
+  ...,
+  my_repair = "minimal",
+  my_quiet = FALSE
+) {
   vec_as_names(
     my_names,
     repair = my_repair,

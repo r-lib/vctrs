@@ -31,8 +31,10 @@
 #' df
 #'
 #' vec_fill_missing(df)
-vec_fill_missing <- function(x,
-                             direction = c("down", "up", "downup", "updown"),
-                             max_fill = NULL) {
+vec_fill_missing <- function(
+  x,
+  direction = c("down", "up", "downup", "updown"),
+  max_fill = NULL
+) {
   .Call(vctrs_fill_missing, x, direction, max_fill)
 }

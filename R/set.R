@@ -115,53 +115,60 @@ NULL
 
 #' @rdname vec-set
 #' @export
-vec_set_intersect <- function(x,
-                              y,
-                              ...,
-                              ptype = NULL,
-                              x_arg = "x",
-                              y_arg = "y",
-                              error_call = current_env()) {
+vec_set_intersect <- function(
+  x,
+  y,
+  ...,
+  ptype = NULL,
+  x_arg = "x",
+  y_arg = "y",
+  error_call = current_env()
+) {
   check_dots_empty0(...)
   .Call(ffi_vec_set_intersect, x, y, ptype, environment())
 }
 
 #' @rdname vec-set
 #' @export
-vec_set_difference <- function(x,
-                               y,
-                               ...,
-                               ptype = NULL,
-                               x_arg = "x",
-                               y_arg = "y",
-                               error_call = current_env()) {
+vec_set_difference <- function(
+  x,
+  y,
+  ...,
+  ptype = NULL,
+  x_arg = "x",
+  y_arg = "y",
+  error_call = current_env()
+) {
   check_dots_empty0(...)
   .Call(ffi_vec_set_difference, x, y, ptype, environment())
 }
 
 #' @rdname vec-set
 #' @export
-vec_set_union <- function(x,
-                          y,
-                          ...,
-                          ptype = NULL,
-                          x_arg = "x",
-                          y_arg = "y",
-                          error_call = current_env()) {
+vec_set_union <- function(
+  x,
+  y,
+  ...,
+  ptype = NULL,
+  x_arg = "x",
+  y_arg = "y",
+  error_call = current_env()
+) {
   check_dots_empty0(...)
   .Call(ffi_vec_set_union, x, y, ptype, environment())
 }
 
 #' @rdname vec-set
 #' @export
-vec_set_symmetric_difference <- function(x,
-                                         y,
-                                         ...,
-                                         ptype = NULL,
-                                         x_arg = "x",
-                                         y_arg = "y",
-                                         error_call = current_env()) {
+vec_set_symmetric_difference <- function(
+  x,
+  y,
+  ...,
+  ptype = NULL,
+  x_arg = "x",
+  y_arg = "y",
+  error_call = current_env()
+) {
   check_dots_empty0(...)
   .Call(ffi_vec_set_symmetric_difference, x, y, ptype, environment())
 }
-

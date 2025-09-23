@@ -93,22 +93,26 @@
 #' vec_interval_locate_groups(bounds$start, bounds$end)
 #'
 #' @noRd
-vec_interval_groups <- function(start,
-                                end,
-                                ...,
-                                abutting = TRUE,
-                                missing = "group") {
+vec_interval_groups <- function(
+  start,
+  end,
+  ...,
+  abutting = TRUE,
+  missing = "group"
+) {
   check_dots_empty0(...)
   .Call(ffi_interval_groups, start, end, abutting, missing)
 }
 
 #' @noRd
 #' @rdname interval-groups
-vec_interval_locate_groups <- function(start,
-                                       end,
-                                       ...,
-                                       abutting = TRUE,
-                                       missing = "group") {
+vec_interval_locate_groups <- function(
+  start,
+  end,
+  ...,
+  abutting = TRUE,
+  missing = "group"
+) {
   check_dots_empty0(...)
   .Call(ffi_interval_locate_groups, start, end, abutting, missing)
 }
@@ -165,11 +169,13 @@ vec_interval_locate_groups <- function(start,
 #' vec_interval_complement(x$start, x$end, lower = -Inf, upper = Inf)
 #'
 #' @noRd
-vec_interval_complement <- function(start,
-                                    end,
-                                    ...,
-                                    lower = NULL,
-                                    upper = NULL) {
+vec_interval_complement <- function(
+  start,
+  end,
+  ...,
+  lower = NULL,
+  upper = NULL
+) {
   check_dots_empty0(...)
   .Call(ffi_interval_complement, start, end, lower, upper)
 }
@@ -241,11 +247,13 @@ vec_interval_locate_containers <- function(start, end) {
 # - A short deprecation period goes by that allows users time to update their
 #   version of ivs
 
-exp_vec_interval_groups <- function(start,
-                                    end,
-                                    ...,
-                                    abutting = TRUE,
-                                    missing = "group") {
+exp_vec_interval_groups <- function(
+  start,
+  end,
+  ...,
+  abutting = TRUE,
+  missing = "group"
+) {
   vec_interval_groups(
     start = start,
     end = end,
@@ -255,11 +263,13 @@ exp_vec_interval_groups <- function(start,
   )
 }
 
-exp_vec_interval_locate_groups <- function(start,
-                                           end,
-                                           ...,
-                                           abutting = TRUE,
-                                           missing = "group") {
+exp_vec_interval_locate_groups <- function(
+  start,
+  end,
+  ...,
+  abutting = TRUE,
+  missing = "group"
+) {
   vec_interval_locate_groups(
     start = start,
     end = end,
@@ -269,11 +279,13 @@ exp_vec_interval_locate_groups <- function(start,
   )
 }
 
-exp_vec_interval_complement <- function(start,
-                                        end,
-                                        ...,
-                                        lower = NULL,
-                                        upper = NULL) {
+exp_vec_interval_complement <- function(
+  start,
+  end,
+  ...,
+  lower = NULL,
+  upper = NULL
+) {
   vec_interval_complement(
     start = start,
     end = end,

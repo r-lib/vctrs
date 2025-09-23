@@ -42,9 +42,11 @@ vec_recycle <- function(x, size, ..., x_arg = "", call = caller_env()) {
 
 #' @export
 #' @rdname vec_recycle
-vec_recycle_common <- function(...,
-                               .size = NULL,
-                               .arg = "",
-                               .call = caller_env()) {
+vec_recycle_common <- function(
+  ...,
+  .size = NULL,
+  .arg = "",
+  .call = caller_env()
+) {
   .External2(ffi_recycle_common, .size)
 }

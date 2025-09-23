@@ -1,4 +1,3 @@
-
 # Vectorised --------------------------------------------------------------
 
 test_that("vec_hash() produces same hash for same values", {
@@ -171,12 +170,18 @@ test_that("equal objects hash to same value", {
   f1 <- function(x, y = NULL) x + y
   f2 <- function(x, y = NULL) x + y
   expect_false(identical(obj_hash(f1), obj_hash(f2)))
-  expect_false(identical(vec_hash(data_frame(x = list(f1))), vec_hash(data_frame(x = list(f2)))))
+  expect_false(identical(
+    vec_hash(data_frame(x = list(f1))),
+    vec_hash(data_frame(x = list(f2)))
+  ))
 
   attr(f1, "srcref") <- NULL
   attr(f2, "srcref") <- NULL
   expect_equal(obj_hash(f1), obj_hash(f2))
-  expect_equal(vec_hash(data_frame(x = list(f1))), vec_hash(data_frame(x = list(f2))))
+  expect_equal(
+    vec_hash(data_frame(x = list(f1))),
+    vec_hash(data_frame(x = list(f2)))
+  )
 })
 
 test_that("expression vectors hash to the same value as lists of calls/names", {

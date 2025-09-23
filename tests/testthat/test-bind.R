@@ -55,7 +55,7 @@ test_that("result contains union of columns", {
       data_frame(x = 1),
       data_frame(y = 1)
     ),
-    c("x" , "y")
+    c("x", "y")
   )
 
   expect_named(
@@ -103,8 +103,14 @@ test_that("can rbind unspecified vectors", {
   expect_identical(vec_rbind(NA, df), data.frame(x = c(NA, 1)))
   expect_identical(vec_rbind(df, NA), data.frame(x = c(1, NA)))
   expect_identical(vec_rbind(NA, df, NA), data.frame(x = c(NA, 1, NA)))
-  expect_identical(vec_rbind(c(x = NA), data.frame(x = 1)), data.frame(x = c(NA, 1)))
-  expect_identical(vec_rbind(c(y = NA), df), data.frame(y = c(NA, NA), x = c(NA, 1)))
+  expect_identical(
+    vec_rbind(c(x = NA), data.frame(x = 1)),
+    data.frame(x = c(NA, 1))
+  )
+  expect_identical(
+    vec_rbind(c(y = NA), df),
+    data.frame(y = c(NA, NA), x = c(NA, 1))
+  )
 
   out <- suppressMessages(vec_rbind(c(x = NA, x = NA), df))
   exp <- data.frame(x...1 = c(NA, NA), x...2 = c(NA, NA), x = c(NA, 1))
@@ -114,8 +120,14 @@ test_that("can rbind unspecified vectors", {
 test_that("as_df_row() tidies the names of unspecified vectors", {
   expect_identical(as_df_row(c(NA, NA)), c(NA, NA))
   expect_identical(as_df_row(unspecified(2)), unspecified(2))
-  expect_identical(as_df_row(c(a = NA, a = NA), quiet = TRUE), data.frame(a...1 = NA, a...2 = NA))
-  expect_identical(as_df_row(c(a = TRUE, a = TRUE), quiet = TRUE), data.frame(a...1 = TRUE, a...2 = TRUE))
+  expect_identical(
+    as_df_row(c(a = NA, a = NA), quiet = TRUE),
+    data.frame(a...1 = NA, a...2 = NA)
+  )
+  expect_identical(
+    as_df_row(c(a = TRUE, a = TRUE), quiet = TRUE),
+    data.frame(a...1 = TRUE, a...2 = TRUE)
+  )
 })
 
 test_that("can rbind spliced lists", {
@@ -180,39 +192,68 @@ test_that("can rbind table objects (#913)", {
 
 test_that("can rbind missing vectors", {
   expect_identical(vec_rbind(c(x = na_int)), data_frame(x = na_int))
-  expect_identical(vec_rbind(c(x = na_int), c(x = na_int)), data_frame(x = int(na_int, na_int)))
+  expect_identical(
+    vec_rbind(c(x = na_int), c(x = na_int)),
+    data_frame(x = int(na_int, na_int))
+  )
 })
 
 test_that("vec_rbind() respects size invariants (#286)", {
   expect_identical(vec_rbind(), new_data_frame(n = 0L))
 
   expect_identical(vec_rbind(int(), int()), new_data_frame(n = 2L))
-  expect_identical(vec_rbind(c(x = int()), c(x = TRUE)), new_data_frame(list(x = lgl(NA, TRUE))))
+  expect_identical(
+    vec_rbind(c(x = int()), c(x = TRUE)),
+    new_data_frame(list(x = lgl(NA, TRUE)))
+  )
 
-  expect_identical(vec_rbind(int(), new_data_frame(n = 2L), int()), new_data_frame(n = 4L))
+  expect_identical(
+    vec_rbind(int(), new_data_frame(n = 2L), int()),
+    new_data_frame(n = 4L)
+  )
 })
 
 test_that("can repair names in `vec_rbind()` (#229)", {
   expect_snapshot({
     (expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`"))
-    (expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`"))
-    (expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
+    (expect_error(
+      vec_rbind(.name_repair = "minimal"),
+      "can't be `\"minimal\"`"
+    ))
+    (expect_error(
+      vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"),
+      class = "vctrs_error_names_must_be_unique"
+    ))
   })
 
-  expect_named(vec_rbind(list(a = 1, a = 2), .name_repair = "unique"), c("a...1", "a...2"))
+  expect_named(
+    vec_rbind(list(a = 1, a = 2), .name_repair = "unique"),
+    c("a...1", "a...2")
+  )
 
   expect_named(vec_rbind(list(`_` = 1)), "_")
   expect_named(vec_rbind(list(`_` = 1), .name_repair = "universal"), c("._"))
 
-  expect_named(vec_rbind(list(a = 1, a = 2), .name_repair = ~ toupper(.)), c("A", "A"))
+  expect_named(
+    vec_rbind(list(a = 1, a = 2), .name_repair = ~ toupper(.)),
+    c("A", "A")
+  )
 })
 
 test_that("can repair names quietly", {
   local_name_repair_verbose()
 
   expect_snapshot({
-    res_unique <- vec_rbind(c(x = 1, x = 2), c(x = 3, x = 4), .name_repair = "unique_quiet")
-    res_universal <- vec_rbind(c("if" = 1, "in" = 2), c("if" = 3, "for" = 4), .name_repair = "universal_quiet")
+    res_unique <- vec_rbind(
+      c(x = 1, x = 2),
+      c(x = 3, x = 4),
+      .name_repair = "unique_quiet"
+    )
+    res_universal <- vec_rbind(
+      c("if" = 1, "in" = 2),
+      c("if" = 3, "for" = 4),
+      .name_repair = "universal_quiet"
+    )
   })
   expect_named(res_unique, c("x...1", "x...2"))
   expect_named(res_universal, c(".if", ".in", ".for"))
@@ -466,7 +507,10 @@ test_that("duplicate names are de-deduplicated", {
 
   expect_snapshot({
     (expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2")))
-    (expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1", "x...2")))
+    (expect_named(
+      vec_cbind(data.frame(x = 1), data.frame(x = 1)),
+      c("x...1", "x...2")
+    ))
   })
 })
 
@@ -502,11 +546,20 @@ test_that("can override default .nrow", {
 
 test_that("can repair names in `vec_cbind()` (#227)", {
   expect_snapshot({
-    (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`"))
-    (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
+    (expect_error(
+      vec_cbind(a = 1, a = 2, .name_repair = "none"),
+      "can't be `\"none\"`"
+    ))
+    (expect_error(
+      vec_cbind(a = 1, a = 2, .name_repair = "check_unique"),
+      class = "vctrs_error_names_must_be_unique"
+    ))
   })
 
-  expect_named(vec_cbind(a = 1, a = 2, .name_repair = "unique"), c("a...1", "a...2"))
+  expect_named(
+    vec_cbind(a = 1, a = 2, .name_repair = "unique"),
+    c("a...1", "a...2")
+  )
 
   expect_named(vec_cbind(`_` = 1, .name_repair = "universal"), "._")
 
@@ -519,7 +572,11 @@ test_that("can repair names quietly", {
 
   expect_snapshot({
     res_unique <- vec_cbind(x = 1, x = 2, .name_repair = "unique_quiet")
-    res_universal <- vec_cbind("if" = 1, "in" = 2, .name_repair = "universal_quiet")
+    res_universal <- vec_cbind(
+      "if" = 1,
+      "in" = 2,
+      .name_repair = "universal_quiet"
+    )
   })
   expect_named(res_unique, c("x...1", "x...2"))
   expect_named(res_universal, c(".if", ".in"))
@@ -537,7 +594,11 @@ test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
 
   expect_identical(
     vec_rbind(a = x, b = y, .names_to = "quux"),
-    data_frame(quux = c("a", "a", "b"), foo = c(1L, 2L, 5L), bar = c(3L, 4L, 6L))
+    data_frame(
+      quux = c("a", "a", "b"),
+      foo = c(1L, 2L, 5L),
+      bar = c(3L, 4L, 6L)
+    )
   )
   expect_identical(
     vec_rbind(a = x, b = y, .names_to = "foo"),
@@ -579,7 +640,10 @@ test_that("vec_cbind() returns visibly (#452)", {
 
 test_that("vec_cbind() packs named data frames (#446)", {
   expect_identical(vec_cbind(data_frame(y = 1:3)), data_frame(y = 1:3))
-  expect_identical(vec_cbind(x = data_frame(y = 1:3)), data_frame(x = data_frame(y = 1:3)))
+  expect_identical(
+    vec_cbind(x = data_frame(y = 1:3)),
+    data_frame(x = data_frame(y = 1:3))
+  )
 })
 
 test_that("vec_cbind() packs 1d arrays", {
@@ -784,7 +848,12 @@ test_that("rbind repairs names of data frames (#704)", {
       class = "vctrs_error_names_must_be_unique"
     ))
     (expect_error(
-      vec_rbind(df, df, .name_repair = "check_unique", .error_call = call("foo")),
+      vec_rbind(
+        df,
+        df,
+        .name_repair = "check_unique",
+        .error_call = call("foo")
+      ),
       class = "vctrs_error_names_must_be_unique"
     ))
   })
@@ -827,7 +896,10 @@ test_that("vec_rbind() fails with complex foreign S4 classes", {
   expect_snapshot({
     joe <- .Counts(1L, name = "Joe")
     jane <- .Counts(2L, name = "Jane")
-    (expect_error(vec_rbind(set_names(joe, "x"), set_names(jane, "y")), class = "vctrs_error_incompatible_type"))
+    (expect_error(
+      vec_rbind(set_names(joe, "x"), set_names(jane, "y")),
+      class = "vctrs_error_incompatible_type"
+    ))
   })
 })
 
@@ -840,7 +912,10 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
 
   expect_error(vec_rbind(x_df, y_df), class = "vctrs_error_incompatible_type")
   expect_error(vec_c(x_df, y_df), class = "vctrs_error_incompatible_type")
-  expect_error(list_unchop(list(x_df, y_df), indices = list(1, 2)), class = "vctrs_error_incompatible_type")
+  expect_error(
+    list_unchop(list(x_df, y_df), indices = list(1, 2)),
+    class = "vctrs_error_incompatible_type"
+  )
 
   with_c_method <- function(expr) {
     with_methods(
@@ -877,8 +952,12 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   with_hybrid_methods <- function(expr, cast = TRUE) {
     methods <- list(
       c.vctrs_foobar = function(...) quux(NextMethod()),
-      vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
-      vec_cast.vctrs_foobaz.vctrs_foobaz = if (cast) function(...) foobaz(df_cast(...))
+      vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) {
+        foobaz(df_ptype2(...))
+      },
+      vec_cast.vctrs_foobaz.vctrs_foobaz = if (cast) {
+        function(...) foobaz(df_cast(...))
+      }
     )
     with_methods(expr, !!!compact(methods))
   }
@@ -898,7 +977,10 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
 
   expect_identical(with_hybrid_methods(vec_c(foo_df, bar_df)), exp)
   expect_identical(
-    with_hybrid_methods(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
+    with_hybrid_methods(list_unchop(
+      list(foo_df, bar_df),
+      indices = list(1, 2)
+    )),
     exp
   )
 
@@ -911,7 +993,10 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
 
   expect_identical(with_c_method(vec_c(wrapper_x_df, wrapper_y_df)), exp)
   expect_identical(
-    with_c_method(list_unchop(list(wrapper_x_df, wrapper_y_df), indices = list(1, 2))),
+    with_c_method(list_unchop(
+      list(wrapper_x_df, wrapper_y_df),
+      indices = list(1, 2)
+    )),
     exp
   )
 })
@@ -919,17 +1004,22 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
 test_that("c() fallback works with unspecified columns", {
   local_methods(
     c.vctrs_foobar = function(...) foobar(NextMethod()),
-    `[.vctrs_foobar` = function(x, i, ...) foobar(NextMethod(), dispatched = TRUE)
+    `[.vctrs_foobar` = function(x, i, ...) {
+      foobar(NextMethod(), dispatched = TRUE)
+    }
   )
 
   out <- vec_rbind(
     data_frame(x = foobar(1)),
     data_frame(y = foobar(2))
   )
-  expect_identical(out, data_frame(
-    x = foobar(c(1, NA), dispatched = TRUE),
-    y = foobar(c(NA, 2), dispatched = TRUE)
-  ))
+  expect_identical(
+    out,
+    data_frame(
+      x = foobar(c(1, NA), dispatched = TRUE),
+      y = foobar(c(NA, 2), dispatched = TRUE)
+    )
+  )
 })
 
 test_that("c() fallback works with vctrs-powered data frame subclass", {
@@ -993,7 +1083,10 @@ test_that("rbind supports names and inner names (#689)", {
 
   vec_x <- set_names(1:3, letters[1:3])
   vec_y <- c(FOO = 4L)
-  oo_x <- set_names(as.POSIXlt(c("2020-01-01", "2020-01-02", "2020-01-03")), letters[1:3])
+  oo_x <- set_names(
+    as.POSIXlt(c("2020-01-01", "2020-01-02", "2020-01-03")),
+    letters[1:3]
+  )
   oo_y <- c(FOO = as.POSIXlt(c("2020-01-04")))
   df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
   df_y <- new_data_frame(list(x = 4L), row.names = "d")
@@ -1017,7 +1110,9 @@ test_that("rbind supports names and inner names (#689)", {
 })
 
 test_that("vec_rbind() doesn't fall back to c() with proxied classes (#1119)", {
-  foobar_rcrd <- function(x, y) new_rcrd(list(x = x, y = y), class = "vctrs_foobar")
+  foobar_rcrd <- function(x, y) {
+    new_rcrd(list(x = x, y = y), class = "vctrs_foobar")
+  }
 
   x <- foobar_rcrd(x = 1:2, y = 3:4)
 
@@ -1062,7 +1157,11 @@ test_that("can zap names even when `.names_to` is supplied", {
     data.frame(x = 1)
   )
   expect_identical(
-    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = zap(), .name_spec = zap()),
+    vec_rbind(
+      foo = data.frame(x = 1, row.names = "row"),
+      .names_to = zap(),
+      .name_spec = zap()
+    ),
     data.frame(x = 1)
   )
 
@@ -1074,7 +1173,11 @@ test_that("can zap names even when `.names_to` is supplied", {
     data.frame(id = "foo", x = 1)
   )
   expect_identical(
-    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = "id", .name_spec = zap()),
+    vec_rbind(
+      foo = data.frame(x = 1, row.names = "row"),
+      .names_to = "id",
+      .name_spec = zap()
+    ),
     data.frame(id = "foo", x = 1)
   )
 })
@@ -1084,15 +1187,27 @@ test_that("can request 'inner' names when `.names_to` is supplied", {
   # still expose `.names_to` to your users and allow all of its options.
   # `purrr::list_rbind()` does this.
   expect_identical(
-    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = zap(), .name_spec = "inner"),
+    vec_rbind(
+      foo = data.frame(x = 1, row.names = "row"),
+      .names_to = zap(),
+      .name_spec = "inner"
+    ),
     data.frame(x = 1, row.names = "row")
   )
   expect_identical(
-    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = "id", .name_spec = "inner"),
+    vec_rbind(
+      foo = data.frame(x = 1, row.names = "row"),
+      .names_to = "id",
+      .name_spec = "inner"
+    ),
     data.frame(id = "foo", x = 1, row.names = "row")
   )
   expect_identical(
-    vec_rbind(foo = data.frame(x = 1, row.names = "row"), .names_to = NULL, .name_spec = "inner"),
+    vec_rbind(
+      foo = data.frame(x = 1, row.names = "row"),
+      .names_to = NULL,
+      .name_spec = "inner"
+    ),
     data.frame(x = 1, row.names = "row")
   )
 })
@@ -1194,10 +1309,13 @@ test_that("vec_rbind() only restores one time", {
   df <- data_frame(x = foobar(1:3))
   vec_rbind(df, df)
 
-  expect_equal(restored, list(
-    rep(na_int, 6),       # From `vec_init()`
-    foobar(c(1:3, 1:3))   # Final restoration
-  ))
+  expect_equal(
+    restored,
+    list(
+      rep(na_int, 6), # From `vec_init()`
+      foobar(c(1:3, 1:3)) # Final restoration
+    )
+  )
 })
 
 test_that("vec_rbind() applies `base::c()` fallback to df-cols (#1462, #1640)", {

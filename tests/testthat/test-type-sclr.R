@@ -1,4 +1,3 @@
-
 test_that("sclr is a named list", {
   x <- new_sclr(x = 1, y = 2)
   expect_type(x, "list")

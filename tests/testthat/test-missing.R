@@ -18,9 +18,18 @@ test_that("can detect different types of NA in data frames", {
   expect_true(vec_detect_missing(data.frame(x = NA_integer_, y = NA_integer_)))
   expect_true(vec_detect_missing(data.frame(x = NA_real_, y = NaN)))
   expect_true(vec_detect_missing(data.frame(x = NA_complex_, y = NA_complex_)))
-  expect_true(vec_detect_missing(data.frame(x = complex(real = NA, imaginary = 1), y = complex(real = 1, imaginary = NA))))
-  expect_true(vec_detect_missing(data.frame(x = NA_character_, y = NA_character_)))
-  expect_true(vec_detect_missing(new_data_frame(list(x = list(NULL), y = list(NULL)))))
+  expect_true(vec_detect_missing(data.frame(
+    x = complex(real = NA, imaginary = 1),
+    y = complex(real = 1, imaginary = NA)
+  )))
+  expect_true(vec_detect_missing(data.frame(
+    x = NA_character_,
+    y = NA_character_
+  )))
+  expect_true(vec_detect_missing(new_data_frame(list(
+    x = list(NULL),
+    y = list(NULL)
+  ))))
 })
 
 test_that("raw vectors can never be NA", {
@@ -41,7 +50,10 @@ test_that("works recursively with data frame columns", {
 
 test_that("0 row, N col data frame always returns `logical()` (#1585)", {
   expect_identical(vec_detect_missing(data_frame()), logical())
-  expect_identical(vec_detect_missing(data_frame(x = integer(), y = double())), logical())
+  expect_identical(
+    vec_detect_missing(data_frame(x = integer(), y = double())),
+    logical()
+  )
 })
 
 test_that(">0 row, 0 col data frame always returns `TRUE` for each row (#1585)", {
@@ -105,14 +117,14 @@ test_that("works with `NULL` input", {
 test_that("entire row of a data frame must be missing", {
   df <- data.frame(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA))
   expect_true(vec_any_missing(df))
-  expect_false(vec_any_missing(df[-4,]))
+  expect_false(vec_any_missing(df[-4, ]))
 })
 
 test_that("works recursively with data frame columns", {
   df <- data.frame(x = c(1, 1, NA, NA))
   df$df <- data.frame(y = c(NA, 1, 1, NA), z = c(1, NA, 1, NA))
   expect_true(vec_any_missing(df))
-  expect_false(vec_any_missing(df[-4,]))
+  expect_false(vec_any_missing(df[-4, ]))
 })
 
 test_that("0 row, N col data frame always returns `FALSE` (#1585)", {

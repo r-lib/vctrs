@@ -25,7 +25,10 @@ test_that("`vec_rep()` can repeat `x` of size 1", {
 
 test_that("`vec_rep()` errors on long vector output", {
   # Exact error message may be platform specific
-  expect_error(vec_rep(1:2, .Machine$integer.max), "output size must be less than")
+  expect_error(
+    vec_rep(1:2, .Machine$integer.max),
+    "output size must be less than"
+  )
 })
 
 test_that("`vec_rep()` validates `times`", {
@@ -73,12 +76,18 @@ test_that("`vec_rep_each()` can repeat 1 `time`", {
 
 test_that("`vec_rep_each()` errors on long vector output", {
   # Exact error message may be platform specific
-  expect_error(vec_rep_each(1:2, .Machine$integer.max), "output size must be less than")
+  expect_error(
+    vec_rep_each(1:2, .Machine$integer.max),
+    "output size must be less than"
+  )
 })
 
 test_that("`vec_rep_each()` validates `times`", {
   expect_snapshot({
-    (expect_error(my_vec_rep_each(1, "x"), class = "vctrs_error_incompatible_type"))
+    (expect_error(
+      my_vec_rep_each(1, "x"),
+      class = "vctrs_error_incompatible_type"
+    ))
     (expect_error(my_vec_rep_each(1, -1)))
     (expect_error(my_vec_rep_each(c(1, 2), c(1, -1))))
     (expect_error(my_vec_rep_each(1, NA_integer_)))
@@ -88,7 +97,10 @@ test_that("`vec_rep_each()` validates `times`", {
 
 test_that("`vec_rep_each()` uses recyclying errors", {
   expect_snapshot({
-    (expect_error(my_vec_rep_each(1:2, 1:3), class = "vctrs_error_recycle_incompatible_size"))
+    (expect_error(
+      my_vec_rep_each(1:2, 1:3),
+      class = "vctrs_error_recycle_incompatible_size"
+    ))
   })
 })
 
@@ -141,7 +153,10 @@ test_that("can unrep a data frame", {
 })
 
 test_that("works with size zero input", {
-  expect_identical(vec_unrep(integer()), data_frame(key = integer(), times = integer()))
+  expect_identical(
+    vec_unrep(integer()),
+    data_frame(key = integer(), times = integer())
+  )
 })
 
 test_that("can roundtrip empty input", {

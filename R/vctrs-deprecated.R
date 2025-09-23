@@ -152,11 +152,13 @@ vec_repeat <- function(x, each = 1L, times = 1L) {
 #'
 #' @keywords internal
 #' @export
-vec_unchop <- function(x,
-                       indices = NULL,
-                       ptype = NULL,
-                       name_spec = NULL,
-                       name_repair = c("minimal", "unique", "check_unique", "universal")) {
+vec_unchop <- function(
+  x,
+  indices = NULL,
+  ptype = NULL,
+  name_spec = NULL,
+  name_repair = c("minimal", "unique", "check_unique", "universal")
+) {
   # Soft-deprecated: 2022-09
   lifecycle::deprecate_soft("0.5.0", "vec_unchop()", "list_unchop()")
 
@@ -212,10 +214,7 @@ vec_is_list <- function(x) {
 
 #' @rdname vec_is_list
 #' @export
-vec_check_list <- function(x,
-                           ...,
-                           arg = caller_arg(x),
-                           call = caller_env()) {
+vec_check_list <- function(x, ..., arg = caller_arg(x), call = caller_env()) {
   # Silently-deprecated: 2023-03
   # lifecycle::deprecate_soft("0.6.0", "vec_check_list()", "obj_check_list()")
   obj_check_list(x, ..., arg = arg, call = call)

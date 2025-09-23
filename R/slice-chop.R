@@ -152,16 +152,33 @@ check_dots_chop <- function(..., indices = NULL, call = caller_env()) {
 
 #' @rdname vec_chop
 #' @export
-list_unchop <- function(x,
-                        ...,
-                        indices = NULL,
-                        ptype = NULL,
-                        name_spec = NULL,
-                        name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet", "universal_quiet"),
-                        error_arg = "x",
-                        error_call = current_env()) {
+list_unchop <- function(
+  x,
+  ...,
+  indices = NULL,
+  ptype = NULL,
+  name_spec = NULL,
+  name_repair = c(
+    "minimal",
+    "unique",
+    "check_unique",
+    "universal",
+    "unique_quiet",
+    "universal_quiet"
+  ),
+  error_arg = "x",
+  error_call = current_env()
+) {
   check_dots_empty0(...)
-  .Call(ffi_list_unchop, x, indices, ptype, name_spec, name_repair, environment())
+  .Call(
+    ffi_list_unchop,
+    x,
+    indices,
+    ptype,
+    name_spec,
+    name_repair,
+    environment()
+  )
 }
 
 # Exposed for testing  (`starts` is 0-based)

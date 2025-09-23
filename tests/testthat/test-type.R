@@ -1,4 +1,3 @@
-
 test_that("vec_ptype() is a no-op for NULL", {
   expect_null(vec_ptype(NULL))
 })
@@ -73,23 +72,44 @@ test_that("vec_ptype_common() includes index in argument tag", {
 
   # Names
   expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, bar = "foo"))
-  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, baz = FALSE, bar = "foo"))
+  expect_snapshot(
+    error = TRUE,
+    vec_ptype_common(foo = TRUE, baz = FALSE, bar = "foo")
+  )
   expect_snapshot(error = TRUE, vec_ptype_common(foo = df1, bar = df2))
   expect_snapshot(error = TRUE, vec_ptype_common(df1, df1, bar = df2))
 
   # One splice box
   expect_snapshot(error = TRUE, vec_ptype_common(TRUE, !!!list(1, "foo")))
   expect_snapshot(error = TRUE, vec_ptype_common(TRUE, !!!list(1, 2), "foo"))
-  expect_snapshot(error = TRUE, vec_ptype_common(1, !!!list(TRUE, FALSE), "foo"))
+  expect_snapshot(
+    error = TRUE,
+    vec_ptype_common(1, !!!list(TRUE, FALSE), "foo")
+  )
 
   # One named splice box
-  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"))
-  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(bar = 1, "foo")))
-  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(bar = "foo")))
-  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr"))
+  expect_snapshot(
+    error = TRUE,
+    vec_ptype_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo")
+  )
+  expect_snapshot(
+    error = TRUE,
+    vec_ptype_common(foo = TRUE, !!!list(bar = 1, "foo"))
+  )
+  expect_snapshot(
+    error = TRUE,
+    vec_ptype_common(foo = TRUE, !!!list(bar = "foo"))
+  )
+  expect_snapshot(
+    error = TRUE,
+    vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr")
+  )
 
   # Two splice boxes in next and current
-  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")))
+  expect_snapshot(
+    error = TRUE,
+    vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr"))
+  )
 })
 
 test_that("proxied types are have s3 bare type", {
@@ -127,7 +147,11 @@ test_that("can retrieve proxy info", {
 
   x <- as.POSIXlt(new_datetime(0))
   proxy <- new_data_frame(unclass(x))
-  exp <- list(type = "dataframe", proxy_method = vec_proxy.POSIXlt, proxy = proxy)
+  exp <- list(
+    type = "dataframe",
+    proxy_method = vec_proxy.POSIXlt,
+    proxy = proxy
+  )
   expect_identical(vec_proxy_info(x), exp)
 })
 
@@ -135,8 +159,14 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(list()), "none")
   expect_identical(class_type(foobar(list())), "unknown")
   expect_identical(class_type(structure(list(), class = "list")), "list")
-  expect_identical(class_type(subclass(structure(list(), class = "list"))), "list")
-  expect_identical(class_type(I(subclass(structure(list(), class = "list")))), "list")
+  expect_identical(
+    class_type(subclass(structure(list(), class = "list"))),
+    "list"
+  )
+  expect_identical(
+    class_type(I(subclass(structure(list(), class = "list")))),
+    "list"
+  )
 
   expect_identical(class_type(I(list())), "bare_asis")
   expect_identical(class_type(I(1)), "bare_asis")
@@ -149,7 +179,6 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(new_ordered()), "bare_ordered")
   expect_identical(class_type(subclass(new_factor())), "unknown")
   expect_identical(class_type(subclass(new_ordered())), "unknown")
-
 
   expect_identical(class_type(new_date()), "bare_date")
   expect_identical(class_type(new_datetime()), "bare_posixct")
@@ -204,14 +233,22 @@ test_that("vec_ptype_finalise() works with NULL", {
 })
 
 test_that("vec_ptype_finalise() works recursively over bare data frames", {
-  df <- new_data_frame(list(x = numeric(), y = unspecified(), z = partial_factor()))
+  df <- new_data_frame(list(
+    x = numeric(),
+    y = unspecified(),
+    z = partial_factor()
+  ))
   expect <- data_frame(x = numeric(), y = logical(), z = factor())
 
   expect_identical(vec_ptype_finalise(df), expect)
 })
 
 test_that("vec_ptype_finalise() works recursively over classed data frames", {
-  df <- new_data_frame(list(x = numeric(), y = unspecified(), z = partial_factor()))
+  df <- new_data_frame(list(
+    x = numeric(),
+    y = unspecified(),
+    z = partial_factor()
+  ))
   df <- subclass(df)
   expect <- subclass(data_frame(x = numeric(), y = logical(), z = factor()))
 
@@ -226,7 +263,10 @@ test_that("vec_ptype_finalise() can handle data frame columns", {
 })
 
 test_that("vec_ptype_finalise() requires vector types", {
-  expect_error(vec_ptype_finalise(quote(name)), class = "vctrs_error_scalar_type")
+  expect_error(
+    vec_ptype_finalise(quote(name)),
+    class = "vctrs_error_scalar_type"
+  )
   expect_error(vec_ptype_finalise(foobar()), class = "vctrs_error_scalar_type")
 })
 

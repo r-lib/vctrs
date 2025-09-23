@@ -1,4 +1,3 @@
-
 test_that("vec_as_index() still works", {
   local_options(lifecycle_verbosity = "quiet")
   expect_identical(vec_as_index(-2, 10), vec_as_location(-2, 10))

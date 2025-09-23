@@ -70,13 +70,15 @@
 #'
 #' @keywords internal
 #' @export
-vec_as_location <- function(i,
-                            n,
-                            names = NULL,
-                            ...,
-                            missing = c("propagate", "remove", "error"),
-                            arg = caller_arg(i),
-                            call = caller_env()) {
+vec_as_location <- function(
+  i,
+  n,
+  names = NULL,
+  ...,
+  missing = c("propagate", "remove", "error"),
+  arg = caller_arg(i),
+  call = caller_env()
+) {
   check_dots_empty0(...)
 
   .Call(
@@ -114,15 +116,17 @@ vec_as_location <- function(i,
 #'   - `"ignore"` returns them as is.
 #'
 #' @export
-num_as_location <- function(i,
-                            n,
-                            ...,
-                            missing = c("propagate", "remove", "error"),
-                            negative = c("invert", "error", "ignore"),
-                            oob = c("error", "remove", "extend"),
-                            zero = c("remove", "error", "ignore"),
-                            arg = caller_arg(i),
-                            call = caller_env()) {
+num_as_location <- function(
+  i,
+  n,
+  ...,
+  missing = c("propagate", "remove", "error"),
+  negative = c("invert", "error", "ignore"),
+  oob = c("error", "remove", "extend"),
+  zero = c("remove", "error", "ignore"),
+  arg = caller_arg(i),
+  call = caller_env()
+) {
   check_dots_empty0(...)
 
   if (is.object(i) || !(is_integer(i) || is_double(i))) {
@@ -143,13 +147,15 @@ num_as_location <- function(i,
 
 #' @rdname vec_as_location
 #' @export
-vec_as_location2 <- function(i,
-                             n,
-                             names = NULL,
-                             ...,
-                             missing = c("error", "propagate"),
-                             arg = caller_arg(i),
-                             call = caller_env()) {
+vec_as_location2 <- function(
+  i,
+  n,
+  names = NULL,
+  ...,
+  missing = c("error", "propagate"),
+  arg = caller_arg(i),
+  call = caller_env()
+) {
   check_dots_empty0(...)
   result_get(vec_as_location2_result(
     i,
@@ -163,13 +169,15 @@ vec_as_location2 <- function(i,
 }
 #' @rdname vec_as_location
 #' @export
-num_as_location2 <- function(i,
-                             n,
-                             ...,
-                             negative = c("error", "ignore"),
-                             missing = c("error", "propagate"),
-                             arg = caller_arg(i),
-                             call = caller_env()) {
+num_as_location2 <- function(
+  i,
+  n,
+  ...,
+  negative = c("error", "ignore"),
+  missing = c("error", "propagate"),
+  arg = caller_arg(i),
+  call = caller_env()
+) {
   check_dots_empty0(...)
 
   if (!is_integer(i) && !is_double(i)) {
@@ -186,13 +194,7 @@ num_as_location2 <- function(i,
   ))
 }
 
-vec_as_location2_result <- function(i,
-                                    n,
-                                    names,
-                                    missing,
-                                    negative,
-                                    arg,
-                                    call) {
+vec_as_location2_result <- function(i, n, names, missing, negative, arg, call) {
   allow_missing <- arg_match0(missing, c("error", "propagate")) == "propagate"
   allow_negative <- arg_match0(negative, c("error", "ignore")) == "ignore"
 
@@ -204,24 +206,28 @@ vec_as_location2_result <- function(i,
 
   if (!is_null(result$err)) {
     parent <- result$err
-    return(result(err = new_error_location2_type(
-      i = i,
-      subscript_arg = arg,
-      body = parent$body,
-      call = call
-    )))
+    return(result(
+      err = new_error_location2_type(
+        i = i,
+        subscript_arg = arg,
+        body = parent$body,
+        call = call
+      )
+    ))
   }
 
   # Locations must be size 1, can't be NA, and must be positive
   i <- result$ok
 
   if (length(i) != 1L) {
-    return(result(err = new_error_location2_type(
-      i = i,
-      subscript_arg = arg,
-      body = cnd_bullets_location2_need_scalar,
-      call = call
-    )))
+    return(result(
+      err = new_error_location2_type(
+        i = i,
+        subscript_arg = arg,
+        body = cnd_bullets_location2_need_scalar,
+        call = call
+      )
+    ))
   }
 
   neg <- typeof(i) == "integer" && !is.na(i) && i < 0L
@@ -231,12 +237,14 @@ vec_as_location2_result <- function(i,
 
   if (is.na(i)) {
     if (!allow_missing && is.na(i)) {
-      result <- result(err = new_error_location2_type(
-        i = i,
-        subscript_arg = arg,
-        body = cnd_bullets_location2_need_present,
-        call = call
-      ))
+      result <- result(
+        err = new_error_location2_type(
+          i = i,
+          subscript_arg = arg,
+          body = cnd_bullets_location2_need_present,
+          call = call
+        )
+      )
     } else {
       result <- result(i)
     }
@@ -244,21 +252,25 @@ vec_as_location2_result <- function(i,
   }
 
   if (identical(i, 0L)) {
-    return(result(err = new_error_location2_type(
-      i = i,
-      subscript_arg = arg,
-      body = cnd_bullets_location2_need_positive,
-      call = call
-    )))
+    return(result(
+      err = new_error_location2_type(
+        i = i,
+        subscript_arg = arg,
+        body = cnd_bullets_location2_need_positive,
+        call = call
+      )
+    ))
   }
 
   if (!allow_negative && neg) {
-    return(result(err = new_error_location2_type(
-      i = i,
-      subscript_arg = arg,
-      body = cnd_bullets_location2_need_positive,
-      call = call
-    )))
+    return(result(
+      err = new_error_location2_type(
+        i = i,
+        subscript_arg = arg,
+        body = cnd_bullets_location2_need_positive,
+        call = call
+      )
+    ))
   }
 
   err <- NULL
@@ -337,9 +349,7 @@ cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
 }
 
 
-new_error_location2_type <- function(i,
-                                     ...,
-                                     class = NULL) {
+new_error_location2_type <- function(i, ..., class = NULL) {
   new_error_subscript2_type(
     class = class,
     i = i,
@@ -357,13 +367,19 @@ cnd_bullets_location2_need_scalar <- function(cnd, ...) {
 cnd_bullets_location2_need_present <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
+    x = glue::glue_data(
+      cnd,
+      "{subscript_arg} must be a location, not {obj_type_friendly(i)}."
+    )
   ))
 }
 cnd_bullets_location2_need_positive <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be a positive location, not {i}.")
+    x = glue::glue_data(
+      cnd,
+      "{subscript_arg} must be a positive location, not {i}."
+    )
   ))
 }
 
@@ -378,7 +394,10 @@ stop_location_negative <- function(i, ..., call = caller_env()) {
 cnd_bullets_location_need_non_negative <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} can't contain negative locations.")
+    x = glue::glue_data(
+      cnd,
+      "{subscript_arg} can't contain negative locations."
+    )
   ))
 }
 
@@ -422,10 +441,14 @@ cnd_bullets_subscript_missing <- function(cnd, ...) {
 
   missing_loc <- which(is.na(cnd$i))
   if (length(missing_loc) == 1) {
-    missing_line <- glue::glue("It has a missing value at location {missing_loc}.")
+    missing_line <- glue::glue(
+      "It has a missing value at location {missing_loc}."
+    )
   } else {
     missing_enum <- ensure_full_stop(enumerate(missing_loc))
-    missing_line <- glue::glue("It has missing values at locations {missing_enum}")
+    missing_line <- glue::glue(
+      "It has missing values at locations {missing_enum}"
+    )
   }
 
   format_error_bullets(c(
@@ -476,10 +499,7 @@ cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
   )
 }
 
-stop_subscript_oob <- function(i,
-                               subscript_type,
-                               ...,
-                               call = caller_env()) {
+stop_subscript_oob <- function(i, subscript_type, ..., call = caller_env()) {
   stop_subscript(
     class = "vctrs_error_subscript_oob",
     i = i,
@@ -508,15 +528,14 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
 
 #' @export
 cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
-  switch(cnd_subscript_type(cnd),
-    numeric =
-      if (cnd_subscript_oob_non_consecutive(cnd)) {
-        cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
-      } else {
-        cnd_body_vctrs_error_subscript_oob_location(cnd, ...)
-      },
-    character =
-      cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
+  switch(
+    cnd_subscript_type(cnd),
+    numeric = if (cnd_subscript_oob_non_consecutive(cnd)) {
+      cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
+    } else {
+      cnd_body_vctrs_error_subscript_oob_location(cnd, ...)
+    },
+    character = cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
     abort("Internal error: subscript type can't be `logical` for OOB errors.")
   )
 }
@@ -565,10 +584,12 @@ vctrs_cli_vec <- function(x, ..., vec_trunc = 5) {
   cli::cli_vec(as.character(x), list(..., vec_trunc = vec_trunc))
 }
 
-stop_location_oob_non_consecutive <- function(i,
-                                              size,
-                                              ...,
-                                              call = caller_env()) {
+stop_location_oob_non_consecutive <- function(
+  i,
+  size,
+  ...,
+  call = caller_env()
+) {
   stop_subscript_oob(
     i = i,
     size = size,
@@ -582,7 +603,9 @@ stop_location_oob_non_consecutive <- function(i,
 cnd_header_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   action <- cnd_subscript_action(cnd)
   elt <- cnd_subscript_element(cnd)
-  glue::glue("Can't {action} {elt[[2]]} beyond the end with non-consecutive locations.")
+  glue::glue(
+    "Can't {action} {elt[[2]]} beyond the end with non-consecutive locations."
+  )
 }
 cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   i <- sort(cnd$i)
@@ -592,10 +615,14 @@ cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
 
   arg <- append_arg("Subscript", cnd$subscript_arg)
   if (length(non_consecutive) == 1) {
-    x_line <- glue::glue("{arg} contains non-consecutive location {non_consecutive}.")
+    x_line <- glue::glue(
+      "{arg} contains non-consecutive location {non_consecutive}."
+    )
   } else {
     non_consecutive <- ensure_full_stop(enumerate(non_consecutive))
-    x_line <- glue::glue("{arg} contains non-consecutive locations {non_consecutive}")
+    x_line <- glue::glue(
+      "{arg} contains non-consecutive locations {non_consecutive}"
+    )
   }
 
   glue_data_bullets(

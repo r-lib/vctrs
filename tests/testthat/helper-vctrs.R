@@ -22,12 +22,21 @@ set_rownames_recursively <- function(x, i = NULL) {
 }
 
 expect_waldo_equal <- function(type, act, exp, info, ...) {
-  comp <- waldo::compare(act$val, exp$val, ..., x_arg = "actual", y_arg = "expected")
+  comp <- waldo::compare(
+    act$val,
+    exp$val,
+    ...,
+    x_arg = "actual",
+    y_arg = "expected"
+  )
   expect(
     length(comp) == 0,
     sprintf(
       "`actual` (%s) not %s to `expected` (%s).\n\n%s",
-      act$lab, type, exp$lab, paste0(comp, collapse = "\n\n")
+      act$lab,
+      type,
+      exp$lab,
+      paste0(comp, collapse = "\n\n")
     ),
     info = info
   )
@@ -35,18 +44,29 @@ expect_waldo_equal <- function(type, act, exp, info, ...) {
   invisible(act$val)
 }
 
-expect_identical <- function(object, expected, info = NULL, label = NULL,
-                             expected.label = NULL, ...) {
+expect_identical <- function(
+  object,
+  expected,
+  info = NULL,
+  label = NULL,
+  expected.label = NULL,
+  ...
+) {
   act <- quasi_label(enquo(object), label, arg = "object")
   exp <- quasi_label(enquo(expected), expected.label, arg = "expected")
 
   expect_waldo_equal("identical", act, exp, info, ...)
 }
 
-expect_equal <- function(object, expected, ...,
-                         tolerance = .Machine$double.eps ^ 0.5,
-                         info = NULL, label = NULL,
-                         expected.label = NULL) {
+expect_equal <- function(
+  object,
+  expected,
+  ...,
+  tolerance = .Machine$double.eps^0.5,
+  info = NULL,
+  label = NULL,
+  expected.label = NULL
+) {
   act <- quasi_label(enquo(object), label, arg = "object")
   exp <- quasi_label(enquo(expected), expected.label, arg = "expected")
 

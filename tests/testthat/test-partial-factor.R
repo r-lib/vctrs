@@ -1,4 +1,3 @@
-
 test_that("has ok print method", {
   partial <- partial_factor("x")
   expect_snapshot(partial)

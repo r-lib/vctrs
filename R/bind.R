@@ -177,12 +177,20 @@ NULL
 #'   either [rlang::zap()] to always ignore all names, or `"inner"` to always
 #'   ignore outer names, regardless of `.names_to`.
 #' @rdname vec_bind
-vec_rbind <- function(...,
-                      .ptype = NULL,
-                      .names_to = rlang::zap(),
-                      .name_repair = c("unique", "universal", "check_unique", "unique_quiet", "universal_quiet"),
-                      .name_spec = NULL,
-                      .error_call = current_env()) {
+vec_rbind <- function(
+  ...,
+  .ptype = NULL,
+  .names_to = rlang::zap(),
+  .name_repair = c(
+    "unique",
+    "universal",
+    "check_unique",
+    "unique_quiet",
+    "universal_quiet"
+  ),
+  .name_spec = NULL,
+  .error_call = current_env()
+) {
   .External2(ffi_rbind, .ptype, .names_to, .name_repair, .name_spec)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
@@ -195,11 +203,20 @@ vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs of length
 #'   1 will be recycled appropriately.
-vec_cbind <- function(...,
-                      .ptype = NULL,
-                      .size = NULL,
-                      .name_repair = c("unique", "universal", "check_unique", "minimal", "unique_quiet", "universal_quiet"),
-                      .error_call = current_env()) {
+vec_cbind <- function(
+  ...,
+  .ptype = NULL,
+  .size = NULL,
+  .name_repair = c(
+    "unique",
+    "universal",
+    "check_unique",
+    "minimal",
+    "unique_quiet",
+    "universal_quiet"
+  ),
+  .error_call = current_env()
+) {
   .External2(ffi_cbind, .ptype, .size, .name_repair)
 }
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")

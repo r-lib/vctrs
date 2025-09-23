@@ -31,5 +31,3 @@
 vec_split <- function(x, by) {
   .Call(vctrs_split, x, by)
 }
-
-

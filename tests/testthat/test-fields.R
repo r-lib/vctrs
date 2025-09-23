@@ -1,4 +1,3 @@
-
 test_that("n_fields captures number of fields", {
   r <- new_rcrd(list(x = 1, y = 2))
   expect_equal(n_fields(r), 2)
@@ -42,7 +41,6 @@ test_that("invalid indices throw error", {
   expect_error(field(r, Inf), "Invalid index")
 
   expect_error(field(r, mean), "Invalid index")
-
 })
 
 test_that("corrupt rcrd throws error", {

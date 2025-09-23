@@ -1,4 +1,3 @@
-
 test_that("generics are extensible", {
   expect_error(vec_cast(NA, NA, NA), class = "rlib_error_dots_nonempty")
   expect_error(vec_restore(NA, NA, NA), class = "rlib_error_dots_nonempty")

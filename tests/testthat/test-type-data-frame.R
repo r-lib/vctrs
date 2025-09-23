@@ -1,4 +1,3 @@
-
 # printing ----------------------------------------------------------------
 
 test_that("data frames print nicely", {
@@ -21,7 +20,10 @@ test_that("embedded data frames print nicely", {
 test_that("data frame only combines with other data frames or NULL", {
   dt <- data.frame(x = 1)
   expect_equal(vec_ptype_common(dt, NULL), vec_ptype(dt))
-  expect_error(vec_ptype_common(dt, 1:10), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_ptype_common(dt, 1:10),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("data frame takes max of individual variables", {
@@ -115,16 +117,21 @@ test_that("warn about lossy coercions", {
     allow_lossy_cast(
       allow_lossy_cast(
         vec_cast(df1, df2),
-        factor("foo"), factor("bar")
+        factor("foo"),
+        factor("bar")
       ),
-      df1, df2
+      df1,
+      df2
     )
 
   expect_identical(out, data.frame(x = factor(NA, levels = "bar")))
 })
 
 test_that("invalid cast generates error", {
-  expect_error(vec_cast(1L, data.frame()), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(1L, data.frame()),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("column order matches type", {
@@ -167,7 +174,10 @@ test_that("can cast unspecified to data frame", {
 
 test_that("cannot cast list to data frame", {
   df <- data.frame(x = 1, y = 2L)
-  expect_error(vec_cast(list(df, df), df), class = "vctrs_error_incompatible_type")
+  expect_error(
+    vec_cast(list(df, df), df),
+    class = "vctrs_error_incompatible_type"
+  )
 })
 
 test_that("can restore lists with empty names", {
@@ -175,7 +185,10 @@ test_that("can restore lists with empty names", {
 })
 
 test_that("can restore subclasses of data frames", {
-  expect_identical(vec_restore(list(), subclass(data.frame())), subclass(data.frame()))
+  expect_identical(
+    vec_restore(list(), subclass(data.frame())),
+    subclass(data.frame())
+  )
   local_methods(
     vec_restore.vctrs_foobar = function(x, to, ..., i) "dispatched"
   )
@@ -262,7 +275,10 @@ test_that("class attribute", {
     c("tbl_df", "data.frame")
   )
   expect_identical(
-    class(new_data_frame(list(a = 1), class = c("tbl_df", "tbl", "data.frame"))),
+    class(new_data_frame(
+      list(a = 1),
+      class = c("tbl_df", "tbl", "data.frame")
+    )),
     c("tbl_df", "tbl", "data.frame", "data.frame")
   )
   expect_identical(
@@ -270,11 +286,19 @@ test_that("class attribute", {
     c("foo_frame", "data.frame")
   )
   expect_identical(
-    class(exec(new_data_frame, list(a = 1), !!!attributes(new_data_frame(list(), class = "tbl_df")))),
+    class(exec(
+      new_data_frame,
+      list(a = 1),
+      !!!attributes(new_data_frame(list(), class = "tbl_df"))
+    )),
     c("tbl_df", "data.frame", "data.frame")
   )
   expect_identical(
-    class(exec(new_data_frame, list(a = 1), !!!attributes(new_data_frame(list(b = 1), class = "tbl_df")))),
+    class(exec(
+      new_data_frame,
+      list(a = 1),
+      !!!attributes(new_data_frame(list(b = 1), class = "tbl_df"))
+    )),
     c("tbl_df", "data.frame", "data.frame")
   )
 })
@@ -366,15 +390,20 @@ test_that("ALTREP `row.names` are not materialized by `new_data_frame()` (tidyve
 })
 
 test_that("`x` must be a list", {
-  expect_snapshot((expect_error(
-    new_data_frame(1),
-    "`x` must be a list"
-  )))
+  expect_snapshot(
+    (expect_error(
+      new_data_frame(1),
+      "`x` must be a list"
+    ))
+  )
 })
 
 test_that("if supplied, `n` must be an integer of size 1", {
   expect_snapshot({
-    (expect_error(new_data_frame(n = c(1L, 2L)), "must be an integer of size 1"))
+    (expect_error(
+      new_data_frame(n = c(1L, 2L)),
+      "must be an integer of size 1"
+    ))
     (expect_error(new_data_frame(n = "x"), "must be an integer of size 1"))
   })
 })
@@ -387,10 +416,12 @@ test_that("if supplied, `n` can't be negative or missing (#1477)", {
 })
 
 test_that("`class` must be a character vector", {
-  expect_snapshot((expect_error(
-    new_data_frame(class = 1),
-    "must be NULL or a character vector"
-  )))
+  expect_snapshot(
+    (expect_error(
+      new_data_frame(class = 1),
+      "must be NULL or a character vector"
+    ))
+  )
 })
 
 test_that("flatten info is computed", {
@@ -410,7 +441,10 @@ test_that("can flatten data frames", {
   expect_identical(df_flatten(mtcars), mtcars)
 
   df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
-  expect_identical(df_flatten(df), new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5)))
+  expect_identical(
+    df_flatten(df),
+    new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5))
+  )
 })
 
 test_that("can flatten data frames with rcrd columns (#1318)", {
@@ -560,7 +594,9 @@ test_that("`.name_repair` happens after auto-naming with empty strings", {
 })
 
 test_that("`.name_repair` happens after splicing", {
-  expect_message(res <- data_frame(x = 1, data_frame(x = 2), .name_repair = "unique"))
+  expect_message(
+    res <- data_frame(x = 1, data_frame(x = 2), .name_repair = "unique")
+  )
   expect_named(res, c("x...1", "x...2"))
 })
 
@@ -569,9 +605,17 @@ test_that("`.name_repair` can be quiet", {
 
   expect_snapshot({
     dfl_unique <- df_list(1, 2, .name_repair = "unique_quiet")
-    dfl_universal <- df_list("if" = 1, "in" = 2, .name_repair = "universal_quiet")
+    dfl_universal <- df_list(
+      "if" = 1,
+      "in" = 2,
+      .name_repair = "universal_quiet"
+    )
     df_unique <- data_frame(1, 2, .name_repair = "unique_quiet")
-    df_universal <- data_frame("if" = 1, "in" = 2, .name_repair = "universal_quiet")
+    df_universal <- data_frame(
+      "if" = 1,
+      "in" = 2,
+      .name_repair = "universal_quiet"
+    )
   })
 
   expect_named(dfl_unique, c("...1", "...2"))

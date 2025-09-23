@@ -119,7 +119,12 @@ vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   args <- vec_recycle_common(x, y)
   args <- vec_cast_common_params(!!!args, .to = .ptype)
 
-  .Call(ffi_vec_compare, vec_proxy_compare(args[[1]]), vec_proxy_compare(args[[2]]), na_equal)
+  .Call(
+    ffi_vec_compare,
+    vec_proxy_compare(args[[1]]),
+    vec_proxy_compare(args[[2]]),
+    na_equal
+  )
 }
 
 
