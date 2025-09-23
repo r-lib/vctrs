@@ -142,10 +142,10 @@ r_obj* reduce_impl(r_obj* current,
                                   void* data),
                    void* data) {
   r_ssize n = r_length(rest);
+  r_keep_loc current_pi;
+  KEEP_HERE(current, &current_pi);
 
   for (r_ssize i = 0; i < n; ++i, counters_inc(counters)) {
-    KEEP(current);
-
     r_obj* next = r_list_get(rest, i);
 
     // Don't call `rlang_is_splice_box()` if we're already looking at a
@@ -163,9 +163,10 @@ r_obj* reduce_impl(r_obj* current,
       FREE(1);
     }
 
-    FREE(1);
+    KEEP_AT(current, current_pi);
   }
 
+  FREE(1);
   return current;
 }
 
