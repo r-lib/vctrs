@@ -1,0 +1,9 @@
+# This file lists revisions of large-scale formatting/style changes so that they
+# can be excluded from git blame results. It is automatically used by GitHub's
+# blame view.
+#
+# To set this file as the default ignore file for git blame, run:
+# $ git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Format with Air (#2033)
+c62d96ad6651697becc79142d94ee8f509467d56
