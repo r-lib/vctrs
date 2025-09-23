@@ -19,21 +19,11 @@ enum vctrs_type {
 };
 
 /**
- * @member type The vector type of the original data.
- * @member proxy_method The function of the `vec_proxy()` method, if
- *   any. This method is looked up with [vec_proxy_method()].
- */
-struct vctrs_type_info {
-  r_obj* shelter;
-  enum vctrs_type type;
-  r_obj* proxy_method;
-};
-
-/**
- * @inheritMembers vctrs_type_info
  * @member type If `proxy_method` was found, the vector type of the
  *   proxy data. Otherwise, the vector type of the original data.
  *   This is never `vctrs_type_s3`.
+ * @member proxy_method The function of the `vec_proxy()` method, if
+ *   any. This method is looked up with [vec_proxy_method()].
  * @member proxy If `proxy_method` was found, the result of invoking
  *   the method. Otherwise, the original data.
  */
@@ -45,20 +35,12 @@ struct vctrs_proxy_info {
 };
 
 /**
- * Return the type information of a vector or its proxy
+ * Return type information of a vector's proxy
  *
- * `vec_type_info()` returns the vctrs type of `x`. `vec_proxy_info()`
- * returns the vctrs type of `x` or its proxy if it has one. The
- * former returns `vctrs_type_s3` with S3 objects (expect for native
- * types like bare data frames). The latter returns the bare type of
- * the proxy, if any. It never returns `vctrs_type_s3`.
- *
- * `vec_proxy_info()` returns both the proxy method and the proxy
- * data. `vec_type_info()` only returns the proxy method, which it
- * needs to determine whether S3 lists and non-vector base types are
- * scalars or proxied vectors.
+ * `vec_proxy_info()` returns the vctrs type of `x` or its proxy if it has one.
+ * This never returns `vctrs_type_s3`, as we invoke `vec_proxy()` on classed
+ * objects and assume the result is a native type.
  */
-struct vctrs_type_info vec_type_info(r_obj* x);
 struct vctrs_proxy_info vec_proxy_info(r_obj* x);
 
 enum vctrs_type vec_typeof(r_obj* x);

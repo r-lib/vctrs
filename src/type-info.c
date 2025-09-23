@@ -1,21 +1,6 @@
 #include "vctrs.h"
 #include "decl/type-info-decl.h"
 
-
-struct vctrs_type_info vec_type_info(r_obj* x) {
-  struct vctrs_type_info info = {
-    .type = vec_typeof(x)
-  };
-
-  switch (info.type) {
-  case VCTRS_TYPE_s3: info.proxy_method = vec_proxy_method(x); break;
-  default: info.proxy_method = r_null;
-  }
-  info.shelter = info.proxy_method;
-
-  return info;
-}
-
 struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info;
   info.shelter = KEEP(r_alloc_list(2));
@@ -38,16 +23,22 @@ struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
   return info;
 }
 
+// Type info of `x`
+//
+// Does not take the proxy, so can return `VCTRS_TYPE_s3`, unlike `vec_proxy_info()`.
+// Returns the `proxy_method`, if any, for testing purposes.
+//
 // [[ register() ]]
 r_obj* ffi_type_info(r_obj* x) {
-  struct vctrs_type_info info = vec_type_info(x);
-  KEEP(info.shelter);
-
   r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "" }));
-  r_list_poke(out, 0, r_chr(vec_type_as_str(info.type)));
-  r_list_poke(out, 1, info.proxy_method);
 
-  FREE(2);
+  const enum vctrs_type type = vec_typeof(x);
+  r_list_poke(out, 0, r_chr(vec_type_as_str(type)));
+
+  // Roughly mimics `vec_proxy_2()`
+  r_list_poke(out, 1, (type == VCTRS_TYPE_s3) ? vec_proxy_method(x) : r_null);
+
+  FREE(1);
   return out;
 }
 // [[ register() ]]
