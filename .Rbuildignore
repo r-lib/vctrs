@@ -29,3 +29,4 @@
 ^CRAN-SUBMISSION$
 ^pkgdown$
 ^[.]?air[.]toml$
+^\.git-blame-ignore-revs$
