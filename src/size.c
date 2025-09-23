@@ -25,7 +25,7 @@ r_ssize vec_size_3(r_obj* x,
 static
 r_ssize vec_size_opts(r_obj* x, const struct vec_error_opts* opts) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
-  KEEP(info.shelter);
+  KEEP_1_PROXY_INFO(info);
 
   r_obj* data = info.proxy;
 
