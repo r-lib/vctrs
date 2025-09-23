@@ -50,7 +50,7 @@ r_ssize vec_size_opts(r_obj* x, const struct vec_error_opts* opts) {
 
   default:
     stop_scalar_type(x, opts->p_arg, opts->call);
-}
+  }
 
   FREE(1);
   return size;
