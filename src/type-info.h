@@ -33,7 +33,7 @@ enum vctrs_type {
  * in EXTREMELY tight loops, like `list_sizes()`, `vec_size_common()`, and
  * `vec_ptype_common()`. The overhead of creating and protecting a `shelter`
  * list is very noticeable! Instead use `KEEP_1_PROXY_INFO()` or
- * `KEEP_N_PROXY_INFO()` (#TODO).
+ * `KEEP_N_PROXY_INFO()` (#2042).
  */
 struct vctrs_proxy_info {
   r_obj* proxy;
