@@ -41,24 +41,26 @@ struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
 // [[ register() ]]
 r_obj* ffi_type_info(r_obj* x) {
   struct vctrs_type_info info = vec_type_info(x);
+  KEEP(info.shelter);
 
   r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "" }));
   r_list_poke(out, 0, r_chr(vec_type_as_str(info.type)));
   r_list_poke(out, 1, info.proxy_method);
 
-  FREE(1);
+  FREE(2);
   return out;
 }
 // [[ register() ]]
 r_obj* ffi_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
+  KEEP(info.shelter);
 
   r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "proxy", "" }));
   r_list_poke(out, 0, r_chr(vec_type_as_str(info.type)));
   r_list_poke(out, 1, info.proxy_method);
   r_list_poke(out, 2, info.proxy);
 
-  FREE(1);
+  FREE(2);
   return out;
 }
 
