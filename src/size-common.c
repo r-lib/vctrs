@@ -1,6 +1,13 @@
 #include "vctrs.h"
 #include "decl/size-common-decl.h"
 
+struct size_common_reduce_opts {
+  // Updated at each iteration.
+  // Allows us to reuse `vec_size()` info from the previous iteration.
+  r_ssize current_size;
+
+  const struct size_common_opts* opts;
+};
 
 // [[ register(external = TRUE) ]]
 r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
@@ -56,69 +63,95 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
 r_ssize vec_size_common_opts(r_obj* xs,
                              r_ssize absent,
                              const struct size_common_opts* opts) {
-  struct size_common_opts mut_opts = *opts;
+  struct size_common_reduce_opts reduce_opts = {
+    .current_size = -1,
+    .opts = opts
+  };
 
-  r_obj* common = KEEP(reduce(r_null,
-                              vec_args.empty,
-                              opts->p_arg,
-                              xs,
-                              &vctrs_size2_common,
-                              &mut_opts));
-  r_ssize out;
+  // Interested in `reduce_opts.current_size`,
+  // not in the returned `r_obj*` from `reduce()`
+  reduce(
+    r_null,
+    vec_args.empty,
+    opts->p_arg,
+    xs,
+    &vctrs_size2_common,
+    &reduce_opts
+  );
 
-  if (common == r_null) {
+  r_ssize out = reduce_opts.current_size;
+
+  if (out == -1) {
     out = absent;
-  } else {
-    out = vec_size(common);
   }
 
-  FREE(1);
   return out;
 }
 
+// Size2 computation
+//
+// `reduce_opts->current_size` updates when we switch to `y`
 static
-r_obj* vctrs_size2_common(r_obj* x,
-                          r_obj* y,
-                          struct counters* counters,
-                          void* data) {
-  struct size_common_opts* opts = data;
+r_obj* vctrs_size2_common(
+  r_obj* x,
+  r_obj* y,
+  struct counters* counters,
+  void* data
+) {
+  struct size_common_reduce_opts* reduce_opts = data;
 
-  if (x != r_null) {
-    obj_check_vector(x, counters->curr_arg, opts->call);
-  }
-  if (y != r_null) {
-    obj_check_vector(y, counters->next_arg, opts->call);
-  }
+  const r_ssize x_size = reduce_opts->current_size;
+  const r_ssize y_size = vec_size_3(y, counters->next_arg, reduce_opts->opts->call);
 
+  // `NULL` handling rules:
+  // - If `x` and `y` are `NULL`, do nothing
+  // - If `x` is `NULL`, use `y`
+  // - If `y` is `NULL`, use `x`
+  //
+  // The first rule is important to ensure that this works
+  // `vec_size_common(NULL, .absent = 5L)`
   if (x == r_null) {
-    counters_shift(counters);
-    return y;
+    if (y == r_null) {
+      return x;
+    } else {
+      counters_shift(counters);
+      reduce_opts->current_size = y_size;
+      return y;
+    }
   }
   if (y == r_null) {
-    return x;
+    if (x == r_null) {
+      r_stop_unreachable();
+    } else {
+      return x;
+    }
   }
 
-  r_ssize nx = vec_size(x);
-  r_ssize ny = vec_size(y);
-
-  if (nx == ny) {
+  // Now apply common size rules
+  // - Same size, use `x`
+  // - Size 1 `x`, use `y`
+  // - Size 1 `y`, use `x`
+  if (x_size == y_size) {
     return x;
   }
-  if (nx == 1) {
+  if (x_size == 1) {
     counters_shift(counters);
+    reduce_opts->current_size = y_size;
     return y;
   }
-  if (ny == 1) {
+  if (y_size == 1) {
     return x;
   }
 
-  stop_incompatible_size(x,
-                         y,
-                         nx,
-                         ny,
-                         counters->curr_arg,
-                         counters->next_arg,
-                         opts->call);
+  stop_incompatible_size(
+    x,
+    y,
+    x_size,
+    y_size,
+    counters->curr_arg,
+    counters->next_arg,
+    reduce_opts->opts->call
+  );
 }
 
 // [[ register(external = TRUE) ]]
