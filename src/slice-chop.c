@@ -196,7 +196,7 @@ r_obj* vec_chop(r_obj* x, r_obj* indices, r_obj* sizes) {
 // Performance variant that doesn't check the types or values of `indices` / `sizes`
 r_obj* vec_chop_unsafe(r_obj* x, r_obj* indices, r_obj* sizes) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
-  KEEP_1_PROXY_INFO(info);
+  KEEP(info.inner);
 
   struct vctrs_chop_indices* p_indices = new_chop_indices(x, indices, sizes);
   KEEP(p_indices->shelter);
@@ -252,7 +252,7 @@ static
 r_obj* chop(r_obj* x,
             struct vctrs_proxy_info info,
             struct vctrs_chop_indices* p_indices) {
-  r_obj* proxy = info.proxy;
+  r_obj* proxy = info.inner;
   r_obj* names = KEEP(r_names(proxy));
   const enum vctrs_type type = info.type;
 
@@ -300,7 +300,7 @@ static
 r_obj* chop_df(r_obj* x,
                struct vctrs_proxy_info info,
                struct vctrs_chop_indices* p_indices) {
-  r_obj* proxy = info.proxy;
+  r_obj* proxy = info.inner;
   r_obj* const* v_proxy = r_list_cbegin(proxy);
 
   const r_ssize n_cols = r_length(proxy);
@@ -374,7 +374,7 @@ static
 r_obj* chop_shaped(r_obj* x,
                    struct vctrs_proxy_info info,
                    struct vctrs_chop_indices* p_indices) {
-  r_obj* proxy = info.proxy;
+  r_obj* proxy = info.inner;
   const enum vctrs_type type = info.type;
 
   r_obj* dim_names = KEEP(r_dim_names(proxy));

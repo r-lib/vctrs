@@ -285,7 +285,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   int nprot = 0;
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
-  KEEP_N_PROXY_INFO(info, &nprot);
+  KEEP_N(info.inner, &nprot);
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
@@ -335,7 +335,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
     r_obj* out;
 
     if (has_dim(x)) {
-      out = KEEP_N(vec_slice_shaped(info.type, info.proxy, subscript), &nprot);
+      out = KEEP_N(vec_slice_shaped(info.type, info.inner, subscript), &nprot);
 
       r_obj* names = KEEP_N(r_attrib_get(x, r_syms.dim_names), &nprot);
       if (names != r_null) {
@@ -346,7 +346,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
         r_attrib_poke(out, r_syms.dim_names, names);
       }
     } else {
-      out = KEEP_N(vec_slice_base(info.type, info.proxy, subscript, VCTRS_MATERIALIZE_false), &nprot);
+      out = KEEP_N(vec_slice_base(info.type, info.inner, subscript, VCTRS_MATERIALIZE_false), &nprot);
 
       r_obj* names = KEEP_N(r_names(x), &nprot);
       names = KEEP_N(slice_names(names, subscript), &nprot);
@@ -369,7 +369,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   }
 
   case VCTRS_TYPE_dataframe: {
-    r_obj* out = KEEP_N(df_slice(info.proxy, subscript), &nprot);
+    r_obj* out = KEEP_N(df_slice(info.inner, subscript), &nprot);
 
     // Sliced `out` is a fresh list container from `df_slice()`, but we don't
     // necessarily own the sliced columns (an individual column could have gone

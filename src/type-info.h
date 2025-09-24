@@ -21,7 +21,7 @@ enum vctrs_type {
 /**
  * Proxy info
  *
- * @member proxy If a `proxy_method` was found, the result of invoking
+ * @member inner If a `proxy_method` was found, the result of invoking
  *   the method. Otherwise, the original data.
  * @member type If a `proxy_method` was found, the vector type of the
  *   proxy data. Otherwise, the vector type of the original data.
@@ -32,22 +32,14 @@ enum vctrs_type {
  * NOTE: Resist the urge to add a `shelter` here. `vec_proxy_info()` is called
  * in EXTREMELY tight loops, like `list_sizes()`, `vec_size_common()`, and
  * `vec_ptype_common()`. The overhead of creating and protecting a `shelter`
- * list is very noticeable! Instead use `KEEP_1_PROXY_INFO()` or
- * `KEEP_N_PROXY_INFO()` (#2042).
+ * list is very noticeable! Instead we use `inner` to denote that this struct
+ * "wraps" an inner object, and we `KEEP()` that directly at call sites (#2042).
  */
 struct vctrs_proxy_info {
-  r_obj* proxy;
+  r_obj* inner;
   enum vctrs_type type;
   bool had_proxy_method;
 };
-
-#define KEEP_1_PROXY_INFO(INFO) do { \
-  KEEP(INFO.proxy);                  \
-} while (0)
-
-#define KEEP_N_PROXY_INFO(INFO, P_N_PROTECT) do { \
-  KEEP_N(INFO.proxy, P_N_PROTECT);                \
-} while (0)
 
 /**
  * Return type information of a vector's proxy
