@@ -71,12 +71,14 @@ void counters_shift(struct counters* p_counters) {
   p_counters->curr = p_counters->next;
 }
 
-r_obj* reduce(r_obj* current,
-              struct vctrs_arg* p_current_arg,
-              struct vctrs_arg* p_parent_arg,
-              r_obj* rest,
-              r_obj* (*impl)(r_obj* current, r_obj* next, struct counters* counters, void* data),
-              void* data) {
+r_obj* reduce(
+  r_obj* current,
+  struct vctrs_arg* p_current_arg,
+  struct vctrs_arg* p_parent_arg,
+  r_obj* rest,
+  r_obj* (*impl)(r_obj* current, r_obj* next, struct counters* counters, void* data),
+  void* data
+) {
   const r_ssize n = r_length(rest);
   r_obj* names = r_names(rest);
   r_obj* const* v_rest = r_list_cbegin(rest);
