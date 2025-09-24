@@ -11,13 +11,13 @@ struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
   r_obj* x_proxy_method = r_is_object(x) ? vec_proxy_method(x) : r_null;
 
   if (x_proxy_method == r_null) {
-    info.proxy = x;
+    info.inner = x;
     info.type = vec_base_typeof(x, false);
     info.had_proxy_method = false;
   } else {
     KEEP(x_proxy_method);
-    info.proxy = KEEP(vec_proxy_invoke(x, x_proxy_method));
-    info.type = vec_base_typeof(info.proxy, true);
+    info.inner = KEEP(vec_proxy_invoke(x, x_proxy_method));
+    info.type = vec_base_typeof(info.inner, true);
     info.had_proxy_method = true;
     FREE(2);
   }
@@ -43,12 +43,12 @@ r_obj* ffi_type_info(r_obj* x) {
 // [[ register() ]]
 r_obj* ffi_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
-  KEEP_1_PROXY_INFO(info);
+  KEEP(info.inner);
 
   r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "had_proxy_method", "proxy", "" }));
   r_list_poke(out, 0, r_chr(vec_type_as_str(info.type)));
   r_list_poke(out, 1, r_lgl(info.had_proxy_method));
-  r_list_poke(out, 2, info.proxy);
+  r_list_poke(out, 2, info.inner);
 
   FREE(2);
   return out;

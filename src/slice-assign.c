@@ -247,12 +247,12 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
   opts_copy.ignore_outer_names = false;
 
   struct vctrs_proxy_info value_info = vec_proxy_info(value);
-  KEEP_N_PROXY_INFO(value_info, &n_protect);
+  KEEP_N(value_info.inner, &n_protect);
 
-  if (r_typeof(proxy) != r_typeof(value_info.proxy)) {
+  if (r_typeof(proxy) != r_typeof(value_info.inner)) {
     r_stop_internal("`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
                     r_type_as_c_string(r_typeof(proxy)),
-                    r_type_as_c_string(r_typeof(value_info.proxy)));
+                    r_type_as_c_string(r_typeof(value_info.inner)));
   }
 
   // If a fallback is required, the `proxy` is identical to the output container
@@ -263,13 +263,13 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
     index = KEEP_N(vec_subscript_materialize(index), &n_protect);
     out = KEEP_N(vec_assign_fallback(proxy, index, value, opts_copy.slice_value, opts_copy.index_style), &n_protect);
   } else if (has_dim(proxy)) {
-    out = KEEP_N(vec_assign_shaped(proxy, index, value_info.proxy, opts_copy.ownership, opts_copy.slice_value, opts_copy.index_style), &n_protect);
+    out = KEEP_N(vec_assign_shaped(proxy, index, value_info.inner, opts_copy.ownership, opts_copy.slice_value, opts_copy.index_style), &n_protect);
   } else {
-    out = KEEP_N(vec_assign_switch(proxy, index, value_info.proxy, &opts_copy), &n_protect);
+    out = KEEP_N(vec_assign_switch(proxy, index, value_info.inner, &opts_copy), &n_protect);
   }
 
   if (!ignore_outer_names && p_opts->assign_names) {
-    out = vec_proxy_assign_names(out, index, value_info.proxy, opts_copy.ownership, opts_copy.slice_value, opts_copy.index_style);
+    out = vec_proxy_assign_names(out, index, value_info.inner, opts_copy.ownership, opts_copy.slice_value, opts_copy.index_style);
   }
 
   FREE(n_protect);
