@@ -54,6 +54,8 @@ r_obj* vec_shape2(
   struct vctrs_arg* p_y_arg
 ) {
   // Expect that `r_dim()` does not allocate, so we don't protect these!
+  // This is somewhat important for performance, because `vec_shaped_ptype()`
+  // is called on every ptype2 iteration.
   r_obj* x_dimensions = r_dim(x);
   r_obj* y_dimensions = r_dim(y);
 
