@@ -377,6 +377,23 @@ test_that("vec_names() and vec_set_names() work with 1-dimensional arrays", {
   expect_identical(vec_names(vec_set_names(x, c("A", "B"))), c("A", "B"))
 })
 
+test_that("vec_set_names() is consistent with `names<-` regarding `NULL` inputs", {
+  # See also https://github.com/tidyverse/purrr/pull/1224
+
+  # Can "clear" names on `NULL`
+  expect_identical(`names<-`(NULL, NULL), NULL)
+  expect_identical(vec_set_names(NULL, NULL), NULL)
+
+  # But trying to make a "named `NULL`" is an error
+  # (Don't capture the message, these are base R errors)
+  expect_error(`names<-`(NULL, character()))
+  expect_error(vec_set_names(NULL, character()))
+
+  # This is more obviously an error, because the size of the names doesn't match
+  expect_error(`names<-`(NULL, "x"))
+  expect_error(vec_set_names(NULL, "x"))
+})
+
 # minimal names -------------------------------------------------------------
 
 test_that("minimal names are made from `n` when `name = NULL`", {
