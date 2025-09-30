@@ -38,11 +38,15 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   enum vctrs_type y_type = vec_typeof(y);
 
   if (x_type == VCTRS_TYPE_null) {
-    *left = y == r_null;
+    // When `x` and `y` are `NULL`, keep using `x` name (1)
+    // When `x` is `NULL` but `y` isn't, switch to `y` name (0)
+    *left = y_type == VCTRS_TYPE_null;
     return vec_ptype2_from_unspecified(opts, x_type, y, y_arg);
   }
   if (y_type == VCTRS_TYPE_null) {
-    *left = x == r_null;
+    // When `x` and `y` are `NULL`, keep using `x` name (1)
+    // When `y` is `NULL` but `x` isn't, keep using `x` name (1)
+    *left = 1;
     return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
   }
 

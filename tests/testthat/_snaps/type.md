@@ -157,15 +157,15 @@
       vec_ptype_common(a = "foo", b = "bar", y = NULL, z = 1)
     Condition
       Error:
-      ! Can't combine `y` <character> and `z` <double>.
+      ! Can't combine `a` <character> and `z` <double>.
     Code
       vec_ptype_common(!!!args1, !!!args2)
     Condition
       Error:
-      ! Can't combine `y` <character> and `z` <double>.
+      ! Can't combine `a` <character> and `z` <double>.
     Code
       vec_ptype_common(!!!args1, "{y_name}" := NULL, "{z_name}" := 1)
     Condition
       Error:
-      ! Can't combine `y` <character> and `z` <double>.
+      ! Can't combine `a` <character> and `z` <double>.
 
