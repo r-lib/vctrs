@@ -99,7 +99,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
     }
 
     memset(d->hash, 0, n * sizeof(uint32_t));
-    hash_fill(d->hash, n, x, opts->na_equal);
+    vec_hash_fill(x, n, opts->na_equal, d->hash);
   } else {
     d->hash = NULL;
   }

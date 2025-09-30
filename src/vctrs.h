@@ -26,7 +26,6 @@ bool vec_is_unspecified(SEXP x);
 #include "dim.h"
 #include "equal.h"
 #include "expand.h"
-#include "hash.h"
 #include "lazy.h"
 #include "list-combine.h"
 #include "match-compare.h"
@@ -108,9 +107,6 @@ SEXP vec_in(
 );
 
 bool is_data_frame(SEXP x);
-
-uint32_t hash_object(SEXP x);
-void hash_fill(uint32_t* p, R_len_t n, SEXP x, bool na_equal);
 
 SEXP vec_unique(SEXP x);
 bool duplicated_any(SEXP names);
