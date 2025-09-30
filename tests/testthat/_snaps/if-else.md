@@ -238,7 +238,23 @@
       vec_if_else(TRUE, 1, 2, missing = "x")
     Condition
       Error in `vec_if_else()`:
-      ! Can't combine `missing` <character> and <double>.
+      ! Can't combine `true` <double> and `missing` <character>.
+
+---
+
+    Code
+      vec_if_else(TRUE, 1L, 2, missing = "x")
+    Condition
+      Error in `vec_if_else()`:
+      ! Can't combine `false` <double> and `missing` <character>.
+
+---
+
+    Code
+      vec_if_else(TRUE, 1, 2L, missing = "x")
+    Condition
+      Error in `vec_if_else()`:
+      ! Can't combine `true` <double> and `missing` <character>.
 
 # `condition` must be logical (and isn't cast to logical!)
 
