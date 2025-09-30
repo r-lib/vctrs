@@ -125,7 +125,7 @@
       vec_ptype_common(foo = TRUE, !!!list(bar = 1, "foo"))
     Condition
       Error:
-      ! Can't combine `foo` <double> and `..3` <character>.
+      ! Can't combine `bar` <double> and `..3` <character>.
 
 ---
 

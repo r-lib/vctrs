@@ -241,13 +241,11 @@ struct vctrs_arg new_counter_arg(struct vctrs_arg* parent,
 
 struct arg_data_counter new_counter_arg_data(struct vctrs_arg* p_parent,
                                              r_ssize* i,
-                                             r_obj** names,
-                                             r_ssize* names_i) {
+                                             r_obj** names) {
   return (struct arg_data_counter) {
     .p_parent = p_parent,
     .i = i,
-    .names = names,
-    .names_i = names_i
+    .names = names
   };
 }
 
@@ -257,21 +255,20 @@ r_ssize counter_arg_fill(void* data_, char* buf, r_ssize remaining) {
   r_ssize i = *data->i;
 
   r_obj* names = *data->names;
-  r_ssize names_i = *data->names_i;
 
   int len;
   bool child = !is_empty_arg(data->p_parent);
 
   // FIXME: Check for syntactic names
   if (child) {
-    if (r_has_name_at(names, names_i)) {
-      len = snprintf(buf, remaining, "$%s", r_chr_get_c_string(names, names_i));
+    if (r_has_name_at(names, i)) {
+      len = snprintf(buf, remaining, "$%s", r_chr_get_c_string(names, i));
     } else {
       len = snprintf(buf, remaining, "[[%" R_PRI_SSIZE "]]", i + 1);
     }
   } else {
-    if (r_has_name_at(names, names_i)) {
-      len = snprintf(buf, remaining, "%s", r_chr_get_c_string(names, names_i));
+    if (r_has_name_at(names, i)) {
+      len = snprintf(buf, remaining, "%s", r_chr_get_c_string(names, i));
     } else {
       len = snprintf(buf, remaining, "..%" R_PRI_SSIZE, i + 1);
     }

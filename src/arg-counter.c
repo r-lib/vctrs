@@ -23,17 +23,13 @@ struct counters* new_counters(r_obj* names,
   p_counters->next = 0;
 
   p_counters->names = names;
-  p_counters->names_curr = 0;
-  p_counters->names_next = 0;
 
   p_counters->curr_counter_arg_data = new_counter_arg_data(p_parent_arg,
                                                            &p_counters->curr,
-                                                           &p_counters->names,
-                                                           &p_counters->names_curr);
+                                                           &p_counters->names);
   p_counters->next_counter_arg_data = new_counter_arg_data(p_parent_arg,
                                                            &p_counters->next,
-                                                           &p_counters->names,
-                                                           &p_counters->names_next);
+                                                           &p_counters->names);
 
   p_counters->curr_counter = new_counter_arg(p_parent_arg, (void*) &p_counters->curr_counter_arg_data);
   p_counters->next_counter = new_counter_arg(p_parent_arg, (void*) &p_counters->next_counter_arg_data);
@@ -46,9 +42,8 @@ struct counters* new_counters(r_obj* names,
 }
 
 static inline
-void counters_inc(struct counters* counters) {
+void counters_increment(struct counters* counters) {
   ++(counters->next);
-  ++(counters->names_next);
 }
 
 /**
@@ -61,7 +56,6 @@ void counters_shift(struct counters* p_counters) {
   // Swap the counters data
   SWAP(struct vctrs_arg, p_counters->curr_counter, p_counters->next_counter);
   SWAP(r_ssize*, p_counters->curr_counter_arg_data.i, p_counters->next_counter_arg_data.i);
-  SWAP(r_ssize*, p_counters->curr_counter_arg_data.names_i, p_counters->next_counter_arg_data.names_i);
 
   // Update the handles to `vctrs_arg`
   p_counters->curr_arg = (struct vctrs_arg*) &p_counters->curr_counter;
@@ -97,7 +91,7 @@ r_obj* reduce(
     r_obj* next = v_rest[i];
     current = impl(current, next, counters, data);
     KEEP_AT(current, current_pi);
-    counters_inc(counters);
+    counters_increment(counters);
   }
 
   FREE(2);

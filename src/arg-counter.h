@@ -23,8 +23,6 @@ struct counters {
   r_ssize next;
 
   r_obj* names;
-  r_ssize names_curr;
-  r_ssize names_next;
 
   struct vctrs_arg curr_counter;
   struct vctrs_arg next_counter;

@@ -25,7 +25,6 @@ struct arg_data_counter {
   struct vctrs_arg* p_parent;
   r_ssize* i;
   r_obj** names;
-  r_ssize* names_i;
 };
 
 struct vctrs_arg new_counter_arg(struct vctrs_arg* parent,
@@ -33,8 +32,7 @@ struct vctrs_arg new_counter_arg(struct vctrs_arg* parent,
 
 struct arg_data_counter new_counter_arg_data(struct vctrs_arg* p_parent,
                                              r_ssize* i,
-                                             r_obj** names,
-                                             r_ssize* names_i);
+                                             r_obj** names);
 
 
 struct vctrs_arg* new_subscript_arg_vec(struct vctrs_arg* parent,
