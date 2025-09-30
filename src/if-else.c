@@ -547,7 +547,7 @@ r_obj* ptype_finalize(
   int n_prot = 0;
 
   // Common type of `true` and `false`
-  int _;
+  int left;
   ptype = KEEP_N(
     vec_ptype2_params(
       true_,
@@ -555,21 +555,33 @@ r_obj* ptype_finalize(
       p_true_arg,
       p_false_arg,
       error_call,
-      &_
+      &left
     ),
     &n_prot
   );
 
   // Mix in `missing` if needed
   if (has_missing) {
+    // Same logic as `vec_ptype_common()`
+    // 1 = `x` won
+    // 0 = `y` won
+    // -1 = same type, stick with `x`
+    struct vctrs_arg* p_ptype_arg;
+    switch (left) {
+    case 1: p_ptype_arg = p_true_arg; break;
+    case 0: p_ptype_arg = p_false_arg; break;
+    case -1: p_ptype_arg = p_true_arg; break;
+    default: r_stop_unreachable();
+    }
+
     ptype = KEEP_N(
       vec_ptype2_params(
-        missing,
         ptype,
+        missing,
+        p_ptype_arg,
         p_missing_arg,
-        vec_args.empty,
         error_call,
-        &_
+        &left
       ),
       &n_prot
     );

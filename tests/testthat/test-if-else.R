@@ -465,6 +465,12 @@ test_that("includes `missing` in the common type computation if used", {
   expect_snapshot(error = TRUE, {
     vec_if_else(TRUE, 1, 2, missing = "x")
   })
+  expect_snapshot(error = TRUE, {
+    vec_if_else(TRUE, 1L, 2, missing = "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_if_else(TRUE, 1, 2L, missing = "x")
+  })
 })
 
 test_that("can recycle to size 0 `condition`", {
