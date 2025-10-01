@@ -243,7 +243,7 @@ r_obj* vec_chop_base(r_obj* x,
     return chop_df(x, info, p_indices);
   }
   default:
-    obj_check_vector(x, vec_args.empty, r_lazy_null);
+    obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.empty, r_lazy_null);
     stop_unimplemented_vctrs_type("vec_chop_base", info.type);
   }
 }

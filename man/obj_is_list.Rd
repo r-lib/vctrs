@@ -7,19 +7,45 @@
 \alias{list_check_all_vectors}
 \alias{list_all_size}
 \alias{list_check_all_size}
+\alias{list_all_recyclable}
+\alias{list_check_all_recyclable}
 \title{List checks}
 \usage{
 obj_is_list(x)
 
 obj_check_list(x, ..., arg = caller_arg(x), call = caller_env())
 
-list_all_vectors(x)
+list_all_vectors(x, ..., allow_null = FALSE)
 
-list_check_all_vectors(x, ..., arg = caller_arg(x), call = caller_env())
+list_check_all_vectors(
+  x,
+  ...,
+  allow_null = FALSE,
+  arg = caller_arg(x),
+  call = caller_env()
+)
 
-list_all_size(x, size)
+list_all_size(x, size, ..., allow_null = FALSE)
 
-list_check_all_size(x, size, ..., arg = caller_arg(x), call = caller_env())
+list_check_all_size(
+  x,
+  size,
+  ...,
+  allow_null = FALSE,
+  arg = caller_arg(x),
+  call = caller_env()
+)
+
+list_all_recyclable(x, size, ..., allow_null = FALSE)
+
+list_check_all_recyclable(
+  x,
+  size,
+  ...,
+  allow_null = FALSE,
+  arg = caller_arg(x),
+  call = caller_env()
+)
 }
 \arguments{
 \item{x}{For \verb{vec_*()} functions, an object. For \verb{list_*()} functions, a
@@ -36,7 +62,10 @@ running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 
-\item{size}{The size to check each element for.}
+\item{allow_null}{Whether \code{NULL} elements should be skipped over
+automatically or not.}
+
+\item{size}{The size to check each element for compatibility with.}
 }
 \description{
 \itemize{
@@ -50,9 +79,11 @@ returns \code{TRUE} if:
 that list are vectors.
 \item \code{list_all_size()} takes a list and returns \code{TRUE} if all elements of that
 list have the same \code{size}.
-\item \code{obj_check_list()}, \code{list_check_all_vectors()}, and \code{list_check_all_size()}
-use the above functions, but throw a standardized and informative error if
-they return \code{FALSE}.
+\item \code{list_all_recyclable()} takes a list and returns \code{TRUE} if all elements of
+that list can recycle to \code{size}.
+\item \code{obj_check_list()}, \code{list_check_all_vectors()}, \code{list_check_all_size()},
+and \code{list_check_all_recyclable()} use the above functions, but throw a
+standardized and informative error if they return \code{FALSE}.
 }
 }
 \details{
@@ -70,8 +101,28 @@ list_all_vectors(list(1, environment()))
 list_all_size(list(1:2, 2:3), 2)
 list_all_size(list(1:2, 2:4), 2)
 
+list_all_recyclable(list(1, 2:3), 2)
+list_all_recyclable(list(1, 2:4), 2)
+
 # `list_`-prefixed functions assume a list:
 try(list_all_vectors(environment()))
+
+# `NULL` elements are not considered vectors and generally have a size of 0
+try(list_check_all_vectors(list(1, NULL, 2)))
+try(list_check_all_size(list(1, NULL, 2), size = 1))
+
+# However, it is often useful to perform upfront vector/size checks on a
+# list, excluding `NULL`s, and then filter them out later on
+list_check_all_vectors(list(1, NULL, 2), allow_null = TRUE)
+list_check_all_size(list(1, NULL, 2), size = 1, allow_null = TRUE)
+
+# Performing the checks before removing `NULL`s from the list ensures that
+# any errors report the correct index. Note how the index is incorrect from a
+# user's point of view if we filter out `NULL` too soon.
+xs <- list(1, NULL, 2:3)
+try(list_check_all_size(xs, size = 1, allow_null = TRUE))
+xs <- vec_slice(xs, !vec_detect_missing(xs))
+try(list_check_all_size(xs, size = 1))
 }
 \seealso{
 \code{\link[=list_sizes]{list_sizes()}}

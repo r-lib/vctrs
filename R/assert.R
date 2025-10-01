@@ -306,9 +306,12 @@ vec_check_size <- function(
 #' - `list_all_size()` takes a list and returns `TRUE` if all elements of that
 #'   list have the same `size`.
 #'
-#' - `obj_check_list()`, `list_check_all_vectors()`, and `list_check_all_size()`
-#'   use the above functions, but throw a standardized and informative error if
-#'   they return `FALSE`.
+#' - `list_all_recyclable()` takes a list and returns `TRUE` if all elements of
+#'   that list can recycle to `size`.
+#'
+#' - `obj_check_list()`, `list_check_all_vectors()`, `list_check_all_size()`,
+#'   and `list_check_all_recyclable()` use the above functions, but throw a
+#'   standardized and informative error if they return `FALSE`.
 #'
 #' @inheritParams rlang::args_error_context
 #' @inheritParams rlang::args_dots_empty
@@ -316,7 +319,10 @@ vec_check_size <- function(
 #' @param x For `vec_*()` functions, an object. For `list_*()` functions, a
 #'   list.
 #'
-#' @param size The size to check each element for.
+#' @param size The size to check each element for compatibility with.
+#'
+#' @param allow_null Whether `NULL` elements should be skipped over
+#'   automatically or not.
 #'
 #' @details
 #' Notably, data frames and S3 record style classes like POSIXlt are not
@@ -335,8 +341,28 @@ vec_check_size <- function(
 #' list_all_size(list(1:2, 2:3), 2)
 #' list_all_size(list(1:2, 2:4), 2)
 #'
+#' list_all_recyclable(list(1, 2:3), 2)
+#' list_all_recyclable(list(1, 2:4), 2)
+#'
 #' # `list_`-prefixed functions assume a list:
 #' try(list_all_vectors(environment()))
+#'
+#' # `NULL` elements are not considered vectors and generally have a size of 0
+#' try(list_check_all_vectors(list(1, NULL, 2)))
+#' try(list_check_all_size(list(1, NULL, 2), size = 1))
+#'
+#' # However, it is often useful to perform upfront vector/size checks on a
+#' # list, excluding `NULL`s, and then filter them out later on
+#' list_check_all_vectors(list(1, NULL, 2), allow_null = TRUE)
+#' list_check_all_size(list(1, NULL, 2), size = 1, allow_null = TRUE)
+#'
+#' # Performing the checks before removing `NULL`s from the list ensures that
+#' # any errors report the correct index. Note how the index is incorrect from a
+#' # user's point of view if we filter out `NULL` too soon.
+#' xs <- list(1, NULL, 2:3)
+#' try(list_check_all_size(xs, size = 1, allow_null = TRUE))
+#' xs <- vec_slice(xs, !vec_detect_missing(xs))
+#' try(list_check_all_size(xs, size = 1))
 obj_is_list <- function(x) {
   .Call(ffi_obj_is_list, x)
 }
@@ -349,8 +375,9 @@ obj_check_list <- function(x, ..., arg = caller_arg(x), call = caller_env()) {
 
 #' @rdname obj_is_list
 #' @export
-list_all_vectors <- function(x) {
-  .Call(ffi_list_all_vectors, x, environment())
+list_all_vectors <- function(x, ..., allow_null = FALSE) {
+  check_dots_empty0(...)
+  .Call(ffi_list_all_vectors, x, allow_null, environment())
 }
 
 #' @rdname obj_is_list
@@ -358,17 +385,19 @@ list_all_vectors <- function(x) {
 list_check_all_vectors <- function(
   x,
   ...,
+  allow_null = FALSE,
   arg = caller_arg(x),
   call = caller_env()
 ) {
   check_dots_empty0(...)
-  invisible(.Call(ffi_list_check_all_vectors, x, environment()))
+  invisible(.Call(ffi_list_check_all_vectors, x, allow_null, environment()))
 }
 
 #' @rdname obj_is_list
 #' @export
-list_all_size <- function(x, size) {
-  .Call(ffi_list_all_size, x, size, environment())
+list_all_size <- function(x, size, ..., allow_null = FALSE) {
+  check_dots_empty0(...)
+  .Call(ffi_list_all_size, x, size, allow_null, environment())
 }
 
 #' @rdname obj_is_list
@@ -377,11 +406,45 @@ list_check_all_size <- function(
   x,
   size,
   ...,
+  allow_null = FALSE,
   arg = caller_arg(x),
   call = caller_env()
 ) {
   check_dots_empty0(...)
-  invisible(.Call(ffi_list_check_all_size, x, size, environment()))
+  invisible(.Call(
+    ffi_list_check_all_size,
+    x,
+    size,
+    allow_null,
+    environment()
+  ))
+}
+
+#' @rdname obj_is_list
+#' @export
+list_all_recyclable <- function(x, size, ..., allow_null = FALSE) {
+  check_dots_empty0(...)
+  .Call(ffi_list_all_recyclable, x, size, allow_null, environment())
+}
+
+#' @rdname obj_is_list
+#' @export
+list_check_all_recyclable <- function(
+  x,
+  size,
+  ...,
+  allow_null = FALSE,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
+  check_dots_empty0(...)
+  invisible(.Call(
+    ffi_list_check_all_recyclable,
+    x,
+    size,
+    allow_null,
+    environment()
+  ))
 }
 
 # Called from C

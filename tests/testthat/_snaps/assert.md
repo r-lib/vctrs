@@ -361,6 +361,30 @@
       Error in `my_function()`:
       ! `my_arg[[1]]` must have size 2, not size 0.
 
+# list_check_all_recyclable() works
+
+    Code
+      my_function <- (function(my_arg, size) {
+        list_check_all_recyclable(my_arg, size)
+      })
+      (expect_error(list_check_all_recyclable(list(1:2, 1:3), 2)))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error:
+      ! Can't recycle `list(1:2, 1:3)[[2]]` (size 3) to size 2.
+    Code
+      (expect_error(my_function(list(1:2, 1:3), 2)))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `my_function()`:
+      ! Can't recycle `my_arg[[2]]` (size 3) to size 2.
+    Code
+      (expect_error(my_function(list(NULL, 1:2), 2)))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `my_function()`:
+      ! Can't recycle `my_arg[[1]]` (size 0) to size 2.
+
 # list_all_size() and list_check_all_size() error on scalars
 
     Code
@@ -371,6 +395,24 @@
       ! `x[[1]]` must be a vector, not an environment.
     Code
       my_function <- (function(my_arg, size) list_check_all_size(my_arg, size))
+      (expect_error(my_function(x, 2)))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `my_function()`:
+      ! `my_arg[[1]]` must be a vector, not an environment.
+
+# list_all_recyclable() and list_check_all_recyclable() error on scalars
+
+    Code
+      (expect_error(list_all_recyclable(x, 2)))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `list_all_recyclable()`:
+      ! `x[[1]]` must be a vector, not an environment.
+    Code
+      my_function <- (function(my_arg, size) {
+        list_check_all_recyclable(my_arg, size)
+      })
       (expect_error(my_function(x, 2)))
     Output
       <error/vctrs_error_scalar_type>
@@ -406,6 +448,93 @@
       <error/rlang_error>
       Error in `list_check_all_size()`:
       ! `size` must be a scalar integer or double.
+
+# list_all_recyclable() and list_check_all_recyclable() validate `size`
+
+    Code
+      (expect_error(list_all_recyclable(list(), size = "x")))
+    Output
+      <error/rlang_error>
+      Error in `list_all_recyclable()`:
+      ! `size` must be a scalar integer or double.
+    Code
+      (expect_error(list_check_all_recyclable(list(), size = "x")))
+    Output
+      <error/rlang_error>
+      Error in `list_check_all_recyclable()`:
+      ! `size` must be a scalar integer or double.
+
+# list_check_all_size() works with `allow_null`
+
+    Code
+      list_check_all_size(x, size = 1)
+    Condition
+      Error:
+      ! `x[[2]]` must have size 1, not size 0.
+
+---
+
+    Code
+      list_check_all_size(x, size = 1)
+    Condition
+      Error:
+      ! `x[[2]]` must have size 1, not size 0.
+
+---
+
+    Code
+      list_check_all_size(x, size = 1, allow_null = TRUE)
+    Condition
+      Error:
+      ! `x[[3]]` must have size 1, not size 2.
+
+# list_check_all_vectors() works with `allow_null`
+
+    Code
+      list_check_all_vectors(x)
+    Condition
+      Error:
+      ! `x[[2]]` must be a vector, not `NULL`.
+
+---
+
+    Code
+      list_check_all_vectors(x)
+    Condition
+      Error:
+      ! `x[[2]]` must be a vector, not `NULL`.
+
+---
+
+    Code
+      list_check_all_vectors(x, allow_null = TRUE)
+    Condition
+      Error:
+      ! `x[[3]]` must be a vector, not an environment.
+
+# list_check_all_recyclable() works with `allow_null`
+
+    Code
+      list_check_all_recyclable(x, size = 2)
+    Condition
+      Error:
+      ! Can't recycle `x[[2]]` (size 0) to size 2.
+
+---
+
+    Code
+      list_check_all_recyclable(x, size = 2)
+    Condition
+      Error:
+      ! Can't recycle `x[[2]]` (size 0) to size 2.
+
+---
+
+    Code
+      list_check_all_recyclable(x, size = 2, allow_null = TRUE)
+    Condition
+      Error:
+      ! Can't recycle `x[[3]]` (size 3) to size 2.
 
 # informative messages when 1d array doesn't match vector
 

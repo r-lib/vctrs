@@ -3,6 +3,10 @@
 // -----------------------------------------------------------------------------
 // Maturing
 
+bool maturing_obj_is_vector(SEXP x) {
+  return obj_is_vector(x, VCTRS_ALLOW_NULL_no);
+}
+
 R_len_t short_vec_size(SEXP x) {
   return vec_size(x);
 }

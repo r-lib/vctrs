@@ -51,16 +51,16 @@ r_obj* vec_if_else(
   struct vctrs_arg* p_missing_arg,
   struct r_lazy error_call
 ) {
-  obj_check_vector(condition, p_condition_arg, error_call);
+  obj_check_vector(condition, VCTRS_ALLOW_NULL_no, p_condition_arg, error_call);
   const r_ssize size = r_length(condition);
   check_condition_index(condition, size, p_condition_arg, error_call);
 
   const bool has_missing = missing != r_null;
 
-  obj_check_vector(true_, p_true_arg, error_call);
-  obj_check_vector(false_, p_false_arg, error_call);
+  obj_check_vector(true_, VCTRS_ALLOW_NULL_no, p_true_arg, error_call);
+  obj_check_vector(false_, VCTRS_ALLOW_NULL_no, p_false_arg, error_call);
   if (has_missing) {
-    obj_check_vector(missing, p_missing_arg, error_call);
+    obj_check_vector(missing, VCTRS_ALLOW_NULL_no, p_missing_arg, error_call);
   }
 
   ptype = KEEP(ptype_finalize(
@@ -200,9 +200,9 @@ r_obj* atomic_if_else(
   int n_prot = 0;
 
   // `true`, `false`, and `missing` must all recycle to the size of `condition`
-  const r_ssize true_size = vec_check_recyclable(true_, size, p_true_arg, error_call);
-  const r_ssize false_size = vec_check_recyclable(false_, size, p_false_arg, error_call);
-  const r_ssize missing_size = has_missing ? vec_check_recyclable(missing, size, p_missing_arg, error_call) : 0;
+  const r_ssize true_size = vec_check_recyclable(true_, size, VCTRS_ALLOW_NULL_no, p_true_arg, error_call);
+  const r_ssize false_size = vec_check_recyclable(false_, size, VCTRS_ALLOW_NULL_no, p_false_arg, error_call);
+  const r_ssize missing_size = has_missing ? vec_check_recyclable(missing, size, VCTRS_ALLOW_NULL_no, p_missing_arg, error_call) : 0;
 
   // Grab names before casting as casting may drop them
   // https://github.com/r-lib/vctrs/issues/623

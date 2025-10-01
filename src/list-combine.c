@@ -310,7 +310,7 @@ r_obj* list_combine_impl(
     // Apply size/type checking to `indices` before possibly early exiting from
     // needing to apply a fallback
     obj_check_list(indices, p_indices_arg, error_call);
-    vec_check_size(indices, xs_size, p_indices_arg, error_call);
+    vec_check_size(indices, xs_size, VCTRS_ALLOW_NULL_no, p_indices_arg, error_call);
   }
 
   // Sizes are reused by the sequential path when advancing the compact-seq index.
@@ -646,7 +646,7 @@ r_obj* list_combine_impl(
     KEEP_AT(index, index_pi);
 
     // `default` recycles against the output size, not the `index`
-    vec_check_recyclable(default_, size, p_default_arg, error_call);
+    vec_check_recyclable(default_, size, VCTRS_ALLOW_NULL_no, p_default_arg, error_call);
 
     // Handle optional names assignment
     if (assign_names) {
@@ -997,7 +997,7 @@ bool needs_list_combine_homogeneous_fallback(
     first = default_;
   }
 
-  if (!obj_is_vector(first)) {
+  if (!obj_is_vector(first, VCTRS_ALLOW_NULL_no)) {
     return false;
   }
 
@@ -1210,7 +1210,7 @@ r_obj* base_list_combine_fallback(
       default_ = vec_slice_fallback(default_, default_index);
     } else {
       // `default` is the wrong size, error
-      vec_check_recyclable(default_, size, p_default_arg, error_call);
+      vec_check_recyclable(default_, size, VCTRS_ALLOW_NULL_no, p_default_arg, error_call);
     }
     KEEP(default_);
 
@@ -1489,7 +1489,7 @@ r_obj* vec_slice_xs_fallback(
       x = vec_slice_fallback(x, index);
     } else {
       // `x` is the wrong size, error
-      vec_check_recyclable(x, size, p_x_arg, error_call);
+      vec_check_recyclable(x, size, VCTRS_ALLOW_NULL_no, p_x_arg, error_call);
     }
 
     r_list_poke(xs, i, x);

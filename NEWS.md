@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* New `list_all_recyclable()` and `list_check_all_recyclable()`.
+
+* `list_all_vectors()`, `list_all_size()`, `list_check_all_vectors()`, and `list_check_all_size()` have all gained an `allow_null` argument, which skips over `NULL` when performing their respective check (#1762).
+
 * `vec_ptype_common()` now reports more accurate error argument names (#2048).
 
 * `vec_c()`, `list_unchop()`, `vec_size_common()`, `vec_ptype_common()`, `list_sizes()`, `list_check_all_vectors()`, and other vctrs functions that take a list of objects are now more performant, particularly when many small objects are provided (#2034, #2035, #2041, #2042, #2043, #2044).

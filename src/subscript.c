@@ -31,7 +31,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
   }
   KEEP_AT(subscript, subscript_pi);
 
-  if (!obj_is_vector(subscript)) {
+  if (!obj_is_vector(subscript, VCTRS_ALLOW_NULL_no)) {
     *err = new_error_subscript_type(subscript, opts, r_null);
     FREE(2);
     return r_null;

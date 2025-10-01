@@ -73,7 +73,7 @@ r_obj* s3_ptype(r_obj* x,
   r_obj* out;
 
   if (method == r_null) {
-    obj_check_vector(x, x_arg, call);
+    obj_check_vector(x, VCTRS_ALLOW_NULL_no, x_arg, call);
     out = vec_slice(x, r_null);
   } else {
     out = vec_ptype_invoke(x, method);
@@ -124,7 +124,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
   struct r_lazy call = lazy_calls.vec_ptype_finalise;
 
   if (!r_is_object(x)) {
-    obj_check_vector(x, vec_args.x, call);
+    obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, call);
     return x;
   }
 
@@ -136,7 +136,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
     return vec_ptype_finalise_dispatch(x);
   }
 
-  obj_check_vector(x, vec_args.x, call);
+  obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, call);
 
   switch (class_type(x)) {
   case VCTRS_CLASS_bare_tibble:
