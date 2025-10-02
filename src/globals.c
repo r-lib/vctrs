@@ -49,8 +49,8 @@ void vctrs_init_globals(r_obj* ns) {
 
   // Symbols -----------------------------------------------------------
   syms.arg = r_sym("arg");
-  syms.cases_arg = r_sym("cases_arg");
   syms.condition_arg = r_sym("condition_arg");
+  syms.conditions_arg = r_sym("conditions_arg");
   syms.default_arg = r_sym("default_arg");
   syms.dot_arg = r_sym(".arg");
   syms.dot_call = r_sym(".call");

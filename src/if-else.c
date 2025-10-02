@@ -124,12 +124,12 @@ r_obj* generic_if_else(
   struct vctrs_arg* p_missing_arg,
   struct r_lazy error_call
 ) {
-  r_obj* cases = KEEP(r_alloc_list(2));
-  r_list_poke(cases, 0, condition);
+  r_obj* conditions = KEEP(r_alloc_list(2));
+  r_list_poke(conditions, 0, condition);
   // TODO: This is another place where we could use a compact-condition
   // if `list_combine()` could take them as `indices`. Would be 3x less
   // memory, which probably does matter quite a bit for simple cases.
-  r_list_poke(cases, 1, r_lgl_invert(condition));
+  r_list_poke(conditions, 1, r_lgl_invert(condition));
 
   r_obj* values = KEEP(r_alloc_list(2));
   r_list_poke(values, 0, true_);
@@ -161,11 +161,11 @@ r_obj* generic_if_else(
 
   // Don't use outer names if any errors occur
   struct vctrs_arg* p_values_arg = vec_args.empty;
-  struct vctrs_arg* p_cases_arg = vec_args.empty;
+  struct vctrs_arg* p_conditions_arg = vec_args.empty;
 
   r_obj* out = list_combine(
     values,
-    cases,
+    conditions,
     size,
     missing,
     unmatched,
@@ -175,7 +175,7 @@ r_obj* generic_if_else(
     name_spec,
     p_name_repair_opts,
     p_values_arg,
-    p_cases_arg,
+    p_conditions_arg,
     p_missing_arg,
     error_call
   );

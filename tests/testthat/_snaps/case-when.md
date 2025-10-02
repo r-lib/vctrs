@@ -1,4 +1,4 @@
-# `cases` inputs can be size zero
+# `conditions` inputs can be size zero
 
     Code
       vec_case_when(list(logical()), list(1:2))
@@ -14,7 +14,7 @@
       Error in `vec_case_when()`:
       ! Can't combine `values[[1]]` <double> and `values[[2]]` <character>.
 
-# `values` must be size 1 or same size as the `cases`
+# `values` must be size 1 or same size as the `conditions`
 
     Code
       vec_case_when(list(c(TRUE, FALSE, TRUE, TRUE)), list(1:3))
@@ -22,7 +22,7 @@
       Error in `vec_case_when()`:
       ! Can't recycle `values[[1]]` (size 3) to size 4.
 
-# `default` must be size 1 or same size as `cases` (exact same as any other `values` input)
+# `default` must be size 1 or same size as `conditions` (exact same as any other `values` input)
 
     Code
       vec_case_when(list(FALSE), list(1L), default = 2:3)
@@ -46,10 +46,10 @@
       Error in `vec_case_when()`:
       ! Can't combine <integer> and `foo` <character>.
 
-# `cases_arg` is validated
+# `conditions_arg` is validated
 
     Code
-      vec_case_when(list("x"), list(1), cases_arg = 1)
+      vec_case_when(list("x"), list(1), conditions_arg = 1)
     Condition
       Error in `vec_case_when()`:
       ! `arg` must be a string.
@@ -70,13 +70,13 @@
       Error in `vec_case_when()`:
       ! `arg` must be a string.
 
-# `cases` must all be the same size
+# `conditions` must all be the same size
 
     Code
       vec_case_when(list(c(TRUE, FALSE), TRUE), list(1, 2))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[2]]` must have size 2, not size 1.
+      ! `conditions[[2]]` must have size 2, not size 1.
 
 ---
 
@@ -84,15 +84,15 @@
       vec_case_when(list(c(TRUE, FALSE), c(TRUE, FALSE, TRUE)), list(1, 2))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[2]]` must have size 2, not size 3.
+      ! `conditions[[2]]` must have size 2, not size 3.
 
-# `cases` must be logical (and aren't cast to logical!)
+# `conditions` must be logical (and aren't cast to logical!)
 
     Code
       vec_case_when(list(1), list(2))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[1]]` must be a logical vector, not the number 1.
+      ! `conditions[[1]]` must be a logical vector, not the number 1.
 
 ---
 
@@ -100,7 +100,7 @@
       vec_case_when(list(TRUE, 3.5), list(2, 4))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[2]]` must be a logical vector, not the number 3.5.
+      ! `conditions[[2]]` must be a logical vector, not the number 3.5.
 
 ---
 
@@ -108,15 +108,15 @@
       vec_case_when(list(x), list(1), default = 2)
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[1]]` must be a logical vector, not a <my_logical> object.
+      ! `conditions[[1]]` must be a logical vector, not a <my_logical> object.
 
-# `cases` can't be arrays (#6862)
+# `conditions` can't be arrays (#6862)
 
     Code
       vec_case_when(list(x), list(y))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[1]]` must be a logical vector, not a logical matrix.
+      ! `conditions[[1]]` must be a logical vector, not a logical matrix.
 
 ---
 
@@ -124,7 +124,7 @@
       vec_case_when(list(x), list(y), size = 3)
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[1]]` must be a logical vector, not a logical matrix.
+      ! `conditions[[1]]` must be a logical vector, not a logical matrix.
 
 ---
 
@@ -132,15 +132,15 @@
       vec_case_when(list(x), list(y))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[1]]` must be a logical vector, not a logical 1D array.
+      ! `conditions[[1]]` must be a logical vector, not a logical 1D array.
 
-# `size` overrides the `cases` sizes
+# `size` overrides the `conditions` sizes
 
     Code
       vec_case_when(list(TRUE), list(1), size = 5)
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[1]]` must have size 5, not size 1.
+      ! `conditions[[1]]` must have size 5, not size 1.
 
 ---
 
@@ -148,7 +148,7 @@
       vec_case_when(list(c(TRUE, FALSE), c(TRUE, FALSE, TRUE)), list(1, 2), size = 2)
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[2]]` must have size 2, not size 3.
+      ! `conditions[[2]]` must have size 2, not size 3.
 
 # `ptype` overrides the `values` types
 
@@ -158,13 +158,13 @@
       Error in `vec_case_when()`:
       ! Can't convert `values[[2]]` <double> to <character>.
 
-# number of `cases` and `values` must be the same
+# number of `conditions` and `values` must be the same
 
     Code
       vec_case_when(list(TRUE), list())
     Condition
       Error in `vec_case_when()`:
-      ! `cases` must have size 0, not size 1.
+      ! `conditions` must have size 0, not size 1.
 
 ---
 
@@ -172,7 +172,7 @@
       vec_case_when(list(TRUE, TRUE), list(1))
     Condition
       Error in `vec_case_when()`:
-      ! `cases` must have size 1, not size 2.
+      ! `conditions` must have size 1, not size 2.
 
 # dots must be empty
 
@@ -185,13 +185,13 @@
       * ..1 = 2
       i Did you forget to name an argument?
 
-# `cases` must be a list
+# `conditions` must be a list
 
     Code
       vec_case_when(1, list(2))
     Condition
       Error in `vec_case_when()`:
-      ! `cases` must be a list, not the number 1.
+      ! `conditions` must be a list, not the number 1.
 
 # `values` must be a list
 
@@ -207,12 +207,12 @@
       vec_case_when(list(x = 1.5), list(1))
     Condition
       Error in `vec_case_when()`:
-      ! `cases$x` must be a logical vector, not the number 1.5.
+      ! `conditions$x` must be a logical vector, not the number 1.5.
 
 ---
 
     Code
-      vec_case_when(list(x = 1.5), list(1), cases_arg = "foo")
+      vec_case_when(list(x = 1.5), list(1), conditions_arg = "foo")
     Condition
       Error in `vec_case_when()`:
       ! `foo$x` must be a logical vector, not the number 1.5.
@@ -220,7 +220,7 @@
 ---
 
     Code
-      vec_case_when(list(x = 1.5), list(1), cases_arg = "")
+      vec_case_when(list(x = 1.5), list(1), conditions_arg = "")
     Condition
       Error in `vec_case_when()`:
       ! `x` must be a logical vector, not the number 1.5.
@@ -231,12 +231,12 @@
       vec_case_when(list(x = TRUE, y = c(TRUE, FALSE)), list(1, 2))
     Condition
       Error in `vec_case_when()`:
-      ! `cases$y` must have size 1, not size 2.
+      ! `conditions$y` must have size 1, not size 2.
 
 ---
 
     Code
-      vec_case_when(list(x = TRUE, y = c(TRUE, FALSE)), list(1, 2), cases_arg = "foo")
+      vec_case_when(list(x = TRUE, y = c(TRUE, FALSE)), list(1, 2), conditions_arg = "foo")
     Condition
       Error in `vec_case_when()`:
       ! `foo$y` must have size 1, not size 2.
@@ -244,7 +244,7 @@
 ---
 
     Code
-      vec_case_when(list(x = TRUE, y = c(TRUE, FALSE)), list(1, 2), cases_arg = "")
+      vec_case_when(list(x = TRUE, y = c(TRUE, FALSE)), list(1, 2), conditions_arg = "")
     Condition
       Error in `vec_case_when()`:
       ! `y` must have size 1, not size 2.
@@ -324,7 +324,7 @@
 # `unmatched` errors are correct
 
     Code
-      vec_case_when(cases, values, unmatched = "error")
+      vec_case_when(conditions, values, unmatched = "error")
     Condition
       Error in `vec_case_when()`:
       ! Each location must be matched.

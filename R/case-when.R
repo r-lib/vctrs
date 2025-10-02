@@ -3,13 +3,14 @@
 #' @description
 #'
 #' - `vec_case_when()` constructs an entirely new vector by recoding the `TRUE`
-#'   `cases` to their corresponding `values`. If there are locations not matched
-#'   by `cases`, then they are recoded to the `default` value.
+#'   `conditions` to their corresponding `values`. If there are locations not
+#'   matched by `conditions`, then they are recoded to the `default` value.
 #'
 #' - `vec_replace_when()` updates an existing vector by replacing the values
-#'   from `x` matched by the `TRUE` `cases` with their corresponding `values`.
-#'   In this case, each element of `values` must have the same type as `x` and
-#'   locations not matched by `cases` retain their original `x` value.
+#'   from `x` matched by the `TRUE` `conditions` with their corresponding
+#'   `values`. In this case, each element of `values` must have the same type as
+#'   `x` and locations not matched by `conditions` retain their original `x`
+#'   value.
 #'
 #' `vec_case_when()` is often thought of as a way to vectorize multiple if-else
 #' statements, and is an R equivalent of the SQL "searched" `CASE WHEN`
@@ -20,30 +21,30 @@
 #'
 #' @param x A vector.
 #'
-#' @param cases A list of logical vectors.
+#' @param conditions A list of logical condition vectors.
 #'
 #'   For `vec_case_when()`, each vector should be the same size.
 #'
 #'   For `vec_replace_when()`, each vector should be the same size as `x`.
 #'
-#'   Where a value in `cases` is `TRUE`, the corresponding value in `values`
-#'   will be assigned to the result.
+#'   Where a value in `conditions` is `TRUE`, the corresponding value in
+#'   `values` will be assigned to the result.
 #'
 #' @param values A list of vectors.
 #'
 #'   For `vec_case_when()`, each vector should be size 1 or the size implied by
-#'   `cases`. The common type of `values` and `default` determine the output
-#'   type, unless overridden by `ptype`.
+#'   `conditions`. The common type of `values` and `default` determine the
+#'   output type, unless overridden by `ptype`.
 #'
 #'   For `vec_replace_when()`, each vector should be size 1 or the same size
 #'   as `x`. Each vector will be cast to the type of `x`.
 #'
-#' @param default Default value to use when `cases` does not match every
+#' @param default Default value to use when `conditions` does not match every
 #'   location in the output.
 #'
 #'   By default, a missing value is used as the default value.
 #'
-#'   If supplied, `default` must be size 1 or the size implied by `cases`.
+#'   If supplied, `default` must be size 1 or the size implied by `conditions`.
 #'
 #'   Can only be set when `unmatched = "default"`.
 #'
@@ -59,12 +60,12 @@
 #'   computed as the common type of `values` and `default`.
 #'
 #' @param size An optional override for the output size, which is usually
-#'   computed as the size of the first element of `cases`.
+#'   computed as the size of the first element of `conditions`.
 #'
-#'   Only useful for requiring a fixed size when `cases` is an empty list.
+#'   Only useful for requiring a fixed size when `conditions` is an empty list.
 #'
-#' @param x_arg,cases_arg,values_arg,default_arg Argument names used in error
-#'   messages.
+#' @param x_arg,conditions_arg,values_arg,default_arg Argument names used in
+#'   error messages.
 #'
 #' @returns
 #' A vector.
@@ -72,7 +73,7 @@
 #' - For `vec_case_when()`, the type of the output is computed as the common
 #'   type of `values` and `default`, unless overridden by `ptype`. The names of
 #'   the output come from the names of `values` and `default`. The size of the
-#'   output comes from the implied size from `cases`, unless overridden by
+#'   output comes from the implied size from `conditions`, unless overridden by
 #'   `size`.
 #'
 #' - For `vec_replace_when()`, the type of the output will have the same type as
@@ -86,7 +87,7 @@
 #' # Also note how the `NA` falls through to `default`.
 #' x <- seq(-2L, 2L, by = 1L)
 #' x <- c(x, NA)
-#' cases <- list(
+#' conditions <- list(
 #'   x < 0,
 #'   x < 1
 #' )
@@ -95,14 +96,14 @@
 #'   "<1"
 #' )
 #' vec_case_when(
-#'   cases,
+#'   conditions,
 #'   values,
 #'   default = "other"
 #' )
 #'
 #' # Missing values need to be handled with their own case
 #' # if you want them to have a special value
-#' cases <- list(
+#' conditions <- list(
 #'   x < 0,
 #'   x < 1,
 #'   is.na(x)
@@ -113,7 +114,7 @@
 #'   NA
 #' )
 #' vec_case_when(
-#'   cases,
+#'   conditions,
 #'   values,
 #'   default = "other"
 #' )
@@ -125,14 +126,14 @@
 #'   NA
 #' )
 #' vec_case_when(
-#'   cases,
+#'   conditions,
 #'   values,
 #'   default = x * 100
 #' )
 #'
 #' # Use `vec_replace_when()` if you need to update `x`, retaining
 #' # all previous values in locations that you don't match
-#' cases <- list(
+#' conditions <- list(
 #'   x < 0,
 #'   x < 1
 #' )
@@ -142,7 +143,7 @@
 #' )
 #' out <- vec_replace_when(
 #'   x,
-#'   cases,
+#'   conditions,
 #'   values
 #' )
 #' out
@@ -155,30 +156,30 @@
 #' # and `default`. `vec_replace_when()` modifies an existing vector, so
 #' # names come from `x` no matter what, just like `[<-` and `base::replace()`
 #' x <- c(a = 1, b = 2, c = 3)
-#' cases <- list(x == 1, x == 2)
+#' conditions <- list(x == 1, x == 2)
 #' values <- list(c(x = 0), c(y = -1))
-#' vec_case_when(cases, values)
-#' vec_replace_when(x, cases, values)
+#' vec_case_when(conditions, values)
+#' vec_replace_when(x, conditions, values)
 #'
 #' # If you want to enforce that you've covered all of the locations in your
-#' # `cases`, use `unmatched = "error"` rather than providing a `default`
+#' # `conditions`, use `unmatched = "error"` rather than providing a `default`
 #' x <- c(0, 1, 2)
-#' cases <- list(x == 1, x == 2)
+#' conditions <- list(x == 1, x == 2)
 #' values <- list("a", "b")
-#' try(vec_case_when(cases, values, unmatched = "error"))
+#' try(vec_case_when(conditions, values, unmatched = "error"))
 NULL
 
 #' @rdname vec-case-and-replace
 #' @export
 vec_case_when <- function(
-  cases,
+  conditions,
   values,
   ...,
   default = NULL,
   unmatched = "default",
   ptype = NULL,
   size = NULL,
-  cases_arg = "cases",
+  conditions_arg = "conditions",
   values_arg = "values",
   default_arg = "default",
   error_call = current_env()
@@ -186,7 +187,7 @@ vec_case_when <- function(
   check_dots_empty0(...)
   .Call(
     ffi_vec_case_when,
-    cases,
+    conditions,
     values,
     default,
     unmatched,
@@ -200,11 +201,11 @@ vec_case_when <- function(
 #' @export
 vec_replace_when <- function(
   x,
-  cases,
+  conditions,
   values,
   ...,
   x_arg = "x",
-  cases_arg = "cases",
+  conditions_arg = "conditions",
   values_arg = "values",
   error_call = current_env()
 ) {
@@ -212,7 +213,7 @@ vec_replace_when <- function(
   .Call(
     ffi_vec_replace_when,
     x,
-    cases,
+    conditions,
     values,
     environment()
   )
