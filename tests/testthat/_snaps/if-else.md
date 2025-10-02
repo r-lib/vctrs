@@ -66,7 +66,7 @@
         missing_arg = missing_arg)
     Condition
       Error in `vec_if_else()`:
-      ! `condition` must be a logical vector, not a logical vector.
+      ! `condition` must be a logical vector, not a logical 1D array.
 
 ---
 
@@ -76,7 +76,7 @@
         true_arg = true_arg, false_arg = false_arg, missing_arg = missing_arg)
     Condition
       Error in `vec_if_else()`:
-      ! `condition` must be a logical vector, not a logical vector.
+      ! `condition` must be a logical vector, not a logical 1D array.
 
 # `true`, `false`, and `missing` must be vectors
 
