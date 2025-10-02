@@ -15,8 +15,8 @@ r_obj* vec_assign_opts(r_obj* x,
   struct vctrs_arg* x_arg = r_lazy_is_null(p_opts->call) ? vec_args.x : p_opts->x_arg;
   struct vctrs_arg* value_arg = r_lazy_is_null(p_opts->call) ? vec_args.value : p_opts->value_arg;
 
-  obj_check_vector(x, x_arg, call);
-  obj_check_vector(value, value_arg, call);
+  obj_check_vector(x, VCTRS_ALLOW_NULL_no, x_arg, call);
+  obj_check_vector(value, VCTRS_ALLOW_NULL_no, value_arg, call);
 
   const r_ssize x_size = vec_size(x);
 
@@ -1075,7 +1075,7 @@ void check_recyclable_against_index(
   default: r_stop_unreachable();
   }
 
-  vec_check_recyclable(value, check_size, p_value_arg, call);
+  vec_check_recyclable(value, check_size, VCTRS_ALLOW_NULL_no, p_value_arg, call);
 }
 
 // Exported for testing

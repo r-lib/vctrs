@@ -25,13 +25,13 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
 
   if (x == r_null) {
     if (!vec_is_partial(to)) {
-      obj_check_vector(to, to_arg, opts->call);
+      obj_check_vector(to, VCTRS_ALLOW_NULL_no, to_arg, opts->call);
     }
     return x;
   }
   if (to == r_null) {
     if (!vec_is_partial(x)) {
-      obj_check_vector(x, x_arg, opts->call);
+      obj_check_vector(x, VCTRS_ALLOW_NULL_no, x_arg, opts->call);
     }
     return x;
   }

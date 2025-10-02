@@ -152,7 +152,7 @@ static
 struct r_vector_bool* vec_detect_run_bounds_bool(r_obj* x,
                                                  enum vctrs_run_bound which,
                                                  struct r_lazy error_call) {
-  obj_check_vector(x, vec_args.x, error_call);
+  obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, error_call);
 
   r_obj* proxy = KEEP(vec_proxy_equal(x));
   proxy = KEEP(vec_normalize_encoding(proxy));

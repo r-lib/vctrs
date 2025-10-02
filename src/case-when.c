@@ -15,10 +15,10 @@ r_obj* vec_case_when(
   struct r_lazy error_call
 ) {
   obj_check_list(cases, p_cases_arg, error_call);
-  list_check_all_vectors(cases, p_cases_arg, error_call);
+  list_check_all_vectors(cases, VCTRS_ALLOW_NULL_no, p_cases_arg, error_call);
 
   obj_check_list(values, p_values_arg, error_call);
-  list_check_all_vectors(values, p_values_arg, error_call);
+  list_check_all_vectors(values, VCTRS_ALLOW_NULL_no, p_values_arg, error_call);
 
   // Infer `size` from first element of `cases` unless specified.
   // We do this in `vec_case_when()` but not in `list_combine()`
@@ -60,7 +60,7 @@ r_obj* vec_replace_when(
   struct vctrs_arg* p_values_arg,
   struct r_lazy error_call
 ) {
-  obj_check_vector(x, p_x_arg, error_call);
+  obj_check_vector(x, VCTRS_ALLOW_NULL_no, p_x_arg, error_call);
 
   r_obj* default_ = x;
   struct vctrs_arg* p_default_arg = p_x_arg;

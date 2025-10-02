@@ -112,51 +112,6 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
   return out;
 }
 
-r_obj* ffi_list_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
-  struct r_lazy error_call = {.x = frame, .env = r_null };
-
-  // This is an internal error
-  obj_check_list(xs, vec_args.x, error_call);
-
-  r_ssize size = r_arg_as_ssize(ffi_size, "size");
-
-  return r_lgl(list_all_size(xs, size, vec_args.x, error_call));
-}
-
-bool list_all_size(
-  r_obj* xs,
-  r_ssize size,
-  struct vctrs_arg* p_xs_arg,
-  struct r_lazy call
-) {
-  if (r_typeof(xs) != R_TYPE_list) {
-    r_stop_unexpected_type(r_typeof(xs));
-  }
-
-  r_ssize i = 0;
-
-  const r_ssize xs_size = r_length(xs);
-  r_obj* xs_names = r_names(xs);
-  r_obj* const* v_xs = r_list_cbegin(xs);
-
-  struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
-  KEEP(p_x_arg->shelter);
-
-  bool out = true;
-
-  for (; i < xs_size; ++i) {
-    r_obj* x = v_xs[i];
-    const r_ssize x_size = vec_size_3(x, p_x_arg, call);
-    if (x_size != size) {
-      out = false;
-      break;
-    }
-  }
-
-  FREE(1);
-  return out;
-}
-
 r_ssize df_rownames_size(r_obj* x) {
   for (r_obj* attr = r_attrib(x);
        attr != r_null;
@@ -228,23 +183,6 @@ r_obj* vec_check_recycle(r_obj* x,
   }
 
   stop_recycle_incompatible_size(n_x, size, x_arg, call);
-}
-
-// Doesn't allow `NULL`, you likely want the returned size to have a guarantee
-// of being either `1` or `size`, and `NULL` would be size `0`.
-r_ssize vec_check_recyclable(
-  r_obj* x,
-  r_ssize size,
-  struct vctrs_arg* x_arg,
-  struct r_lazy call
-) {
-  r_ssize x_size = vec_size(x);
-
-  if (x_size == size || x_size == 1) {
-    return x_size;
-  }
-
-  stop_recycle_incompatible_size(x_size, size, x_arg, call);
 }
 
 // [[ register() ]]

@@ -638,7 +638,7 @@ r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) 
     if (r_typeof(out) != R_TYPE_character) {
       r_abort("`.name_spec` must return a character vector.");
     }
-    vec_check_recyclable(out, n, vec_args.empty, r_lazy_null);
+    vec_check_recyclable(out, n, VCTRS_ALLOW_NULL_no, vec_args.empty, r_lazy_null);
   }
 
   FREE(4);

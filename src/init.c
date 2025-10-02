@@ -150,12 +150,14 @@ extern r_obj* ffi_interval_locate_groups(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_complement(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_locate_containers(r_obj*, r_obj*);
 extern r_obj* ffi_check_list(r_obj*, r_obj*);
-extern r_obj* ffi_list_all_vectors(r_obj*, r_obj*);
-extern r_obj* ffi_list_check_all_vectors(r_obj*, r_obj*);
+extern r_obj* ffi_list_all_vectors(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_check_all_vectors(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_short_length(r_obj*, r_obj*);
 extern r_obj* ffi_s3_get_method(r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_list_all_size(r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_list_check_all_size(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_all_size(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_check_all_size(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_all_recyclable(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_check_all_recyclable(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_set_intersect(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_set_difference(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_set_union(r_obj*, r_obj*, r_obj*, r_obj*);
@@ -173,7 +175,7 @@ extern r_obj* ffi_vec_if_else(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 
 // Maturing
 // In the public header
-extern bool obj_is_vector(SEXP);
+extern bool maturing_obj_is_vector(SEXP);
 extern R_len_t short_vec_size(SEXP);
 extern SEXP short_vec_recycle(SEXP, R_len_t);
 
@@ -349,12 +351,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_interval_complement",                   (DL_FUNC) &ffi_interval_complement, 4},
   {"ffi_interval_locate_containers",            (DL_FUNC) &ffi_interval_locate_containers, 2},
   {"ffi_check_list",                            (DL_FUNC) &ffi_check_list, 2},
-  {"ffi_list_all_vectors",                      (DL_FUNC) &ffi_list_all_vectors, 2},
-  {"ffi_list_check_all_vectors",                (DL_FUNC) &ffi_list_check_all_vectors, 2},
+  {"ffi_list_all_vectors",                      (DL_FUNC) &ffi_list_all_vectors, 3},
+  {"ffi_list_check_all_vectors",                (DL_FUNC) &ffi_list_check_all_vectors, 3},
   {"ffi_as_short_length",                       (DL_FUNC) &ffi_as_short_length, 2},
   {"ffi_s3_get_method",                         (DL_FUNC) &ffi_s3_get_method, 3},
-  {"ffi_list_all_size",                         (DL_FUNC) &ffi_list_all_size, 3},
-  {"ffi_list_check_all_size",                   (DL_FUNC) &ffi_list_check_all_size, 3},
+  {"ffi_list_all_size",                         (DL_FUNC) &ffi_list_all_size, 4},
+  {"ffi_list_check_all_size",                   (DL_FUNC) &ffi_list_check_all_size, 4},
+  {"ffi_list_all_recyclable",                   (DL_FUNC) &ffi_list_all_recyclable, 4},
+  {"ffi_list_check_all_recyclable",             (DL_FUNC) &ffi_list_check_all_recyclable, 4},
   {"ffi_vec_set_intersect",                     (DL_FUNC) &ffi_vec_set_intersect, 4},
   {"ffi_vec_set_difference",                    (DL_FUNC) &ffi_vec_set_difference, 4},
   {"ffi_vec_set_union",                         (DL_FUNC) &ffi_vec_set_union, 4},
@@ -405,14 +409,14 @@ export void R_init_vctrs(DllInfo *dll)
 
     // Maturing
     // In the public header
-    R_RegisterCCallable("vctrs", "obj_is_vector",      (DL_FUNC) &obj_is_vector);
+    R_RegisterCCallable("vctrs", "obj_is_vector",      (DL_FUNC) &maturing_obj_is_vector);
     R_RegisterCCallable("vctrs", "short_vec_size",     (DL_FUNC) &short_vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle",  (DL_FUNC) &short_vec_recycle);
 
     // Deprecated
     // In the public header
     // See `inst/include/vctrs.h` for details
-    R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &obj_is_vector);
+    R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &maturing_obj_is_vector);
 
     // Experimental
     // Exported but not available in the public header

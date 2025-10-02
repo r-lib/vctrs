@@ -25,24 +25,24 @@ r_obj* vec_recode_values(
 
   // Vector checks ----
 
-  obj_check_vector(x, p_x_arg, error_call);
+  obj_check_vector(x, VCTRS_ALLOW_NULL_no, p_x_arg, error_call);
 
   if (from_as_list_of_vectors) {
     obj_check_list(from, p_from_arg, error_call);
-    list_check_all_vectors(from, p_from_arg, error_call);
+    list_check_all_vectors(from, VCTRS_ALLOW_NULL_no, p_from_arg, error_call);
   } else {
-    obj_check_vector(from, p_from_arg, error_call);
+    obj_check_vector(from, VCTRS_ALLOW_NULL_no, p_from_arg, error_call);
   }
 
   if (to_as_list_of_vectors) {
     obj_check_list(to, p_to_arg, error_call);
-    list_check_all_vectors(to, p_to_arg, error_call);
+    list_check_all_vectors(to, VCTRS_ALLOW_NULL_no, p_to_arg, error_call);
   } else {
-    obj_check_vector(to, p_to_arg, error_call);
+    obj_check_vector(to, VCTRS_ALLOW_NULL_no, p_to_arg, error_call);
   }
 
   if (has_default) {
-    obj_check_vector(default_, p_default_arg, error_call);
+    obj_check_vector(default_, VCTRS_ALLOW_NULL_no, p_default_arg, error_call);
   }
 
   // Type checks ----
@@ -100,16 +100,16 @@ r_obj* vec_recode_values(
 
   // Check size of `to` as recyclable against the size of `from`,
   // regardless of `from_as_list_of_vectors` and `to_as_list_of_vectors`
-  vec_check_recyclable(to, from_size, p_to_arg, error_call);
+  vec_check_recyclable(to, from_size, VCTRS_ALLOW_NULL_no, p_to_arg, error_call);
 
   if (to_as_list_of_vectors) {
     // Each element of `to` should be recyclable against `x`.
-    list_check_all_recyclable(to, x_size, p_to_arg, error_call);
+    list_check_all_recyclable(to, x_size, VCTRS_ALLOW_NULL_no, p_to_arg, error_call);
   }
 
   if (has_default) {
     // `default` should be recycled against `x`.
-    vec_check_recyclable(default_, x_size, p_default_arg, error_call);
+    vec_check_recyclable(default_, x_size, VCTRS_ALLOW_NULL_no, p_default_arg, error_call);
   }
 
   // Implementation ----
@@ -121,7 +121,7 @@ r_obj* vec_recode_values(
   //
   // All size 1 `to` values is a common `dplyr::recode_values()` case
   if (to_as_list_of_vectors) {
-    if (list_all_size(to, 1, p_to_arg, error_call)) {
+    if (list_all_size(to, 1, VCTRS_ALLOW_NULL_no, p_to_arg, error_call)) {
       // Optimize `to` to a flat vector and drop any outer names on the list, we've
       // already done casting checks and we don't want them on the flat form. We
       // don't expect any errors here.
@@ -260,7 +260,7 @@ r_obj* vec_replace_values(
   struct vctrs_arg* p_to_arg,
   struct r_lazy error_call
 ) {
-  obj_check_vector(x, p_x_arg, error_call);
+  obj_check_vector(x, VCTRS_ALLOW_NULL_no, p_x_arg, error_call);
 
   r_obj* default_ = x;
   struct vctrs_arg* p_default_arg = p_x_arg;
