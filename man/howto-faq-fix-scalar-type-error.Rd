@@ -64,14 +64,14 @@ class(my_df) <- c("data.frame", "my_class")
 
 vctrs::obj_check_vector(my_df)
 #> Error:
-#> ! `my_df` must be a vector, not a <data.frame/my_class> object.
+#> ! `my_df` must be a vector, not a <data.frame> object.
 }\if{html}{\out{</div>}}
 
 This is problematic as many tidyverse functions won’t work properly:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::slice(my_df, 1)
 #> Error in `vec_slice()`:
-#> ! `x` must be a vector, not a <data.frame/my_class> object.
+#> ! `x` must be a vector, not a <data.frame> object.
 }\if{html}{\out{</div>}}
 
 It is generally not appropriate to declare your class to be a superclass
