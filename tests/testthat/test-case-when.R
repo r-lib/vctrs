@@ -343,6 +343,9 @@ test_that("`cases` can't be arrays (#6862)", {
   expect_snapshot(error = TRUE, {
     vec_case_when(list(x), list(y))
   })
+  expect_snapshot(error = TRUE, {
+    vec_case_when(list(x), list(y), size = 3)
+  })
 
   # Not even 1D arrays
   x <- array(TRUE, dim = 3)

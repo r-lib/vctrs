@@ -21,7 +21,8 @@ r_obj* vec_assign_opts(r_obj* x,
   const r_ssize x_size = vec_size(x);
 
   // Determine index style. Logical condition indices follow an optimized path.
-  const enum vctrs_index_style index_style = is_condition_index(index, x_size) ?
+  enum vctrs_index_style index_style =
+    (is_condition_index(index) && r_length(index) == x_size) ?
     VCTRS_INDEX_STYLE_condition :
     VCTRS_INDEX_STYLE_location;
 
@@ -920,11 +921,12 @@ r_obj* vec_proxy_assign_names(
 // - Must be logical
 // - Can't be an array
 // - Can't be an object (objects go through `vec_as_location()` casting)
-// - Must be the same size as `x` (i.e. no scalar `TRUE`)
 //
 // Notably allowed:
 // - Can have other attributes, including names
-bool is_condition_index(r_obj* index, r_ssize size) {
+//
+// Caller typically also enforces a size check.
+bool is_condition_index(r_obj* index) {
   if (r_typeof(index) != R_TYPE_logical) {
     return false;
   }
@@ -934,45 +936,26 @@ bool is_condition_index(r_obj* index, r_ssize size) {
   if (r_is_object(index)) {
     return false;
   }
-  if (r_length(index) != size) {
-    return false;
-  }
   return true;
 }
 
 void check_condition_index(
   r_obj* x,
-  r_ssize size,
   struct vctrs_arg* p_x_arg,
   struct r_lazy call
 ) {
-  if (is_condition_index(x, size)) {
-    return;
-  }
-
-  // If it's a size issue, report that
-  if (r_length(x) != size) {
+  if (!is_condition_index(x)) {
     r_abort_lazy_call(
       call,
-      "%s must be size %" R_PRI_SSIZE ", not size %" R_PRI_SSIZE ".",
+      "%s must be a logical vector, not %s.",
       vec_arg_format(p_x_arg),
-      size,
-      r_length(x)
+      r_obj_type_friendly(x)
     );
   }
-
-  // Otherwise it's a type issue
-  r_abort_lazy_call(
-    call,
-    "%s must be a logical vector, not %s.",
-    vec_arg_format(p_x_arg),
-    r_obj_type_friendly(x)
-  );
 }
 
 void list_check_all_condition_indices(
   r_obj* xs,
-  r_ssize size,
   struct vctrs_arg* p_xs_arg,
   struct r_lazy call
 ) {
@@ -990,7 +973,7 @@ void list_check_all_condition_indices(
   KEEP(p_x_arg->shelter);
 
   for (; i < xs_size; ++i) {
-    check_condition_index(v_xs[i], size, p_x_arg, call);
+    check_condition_index(v_xs[i], p_x_arg, call);
   }
 
   FREE(1);

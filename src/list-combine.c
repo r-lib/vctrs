@@ -1644,7 +1644,10 @@ enum vctrs_index_style compute_indices_style(r_obj* indices, r_ssize size) {
   for (r_ssize i = 0; i < indices_size; ++i) {
     r_obj* index = v_indices[i];
 
-    if (!is_condition_index(index, size)) {
+    if (!is_condition_index(index)) {
+      return VCTRS_INDEX_STYLE_location;
+    }
+    if (r_length(index) != size) {
       return VCTRS_INDEX_STYLE_location;
     }
   }
