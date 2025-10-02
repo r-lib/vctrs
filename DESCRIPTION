@@ -16,14 +16,14 @@ Description: Defines new notions of prototype and size that are used to
 License: MIT + file LICENSE
 URL: https://vctrs.r-lib.org/, https://github.com/r-lib/vctrs
 BugReports: https://github.com/r-lib/vctrs/issues
-Depends: 
+Depends:
     R (>= 3.5.0)
 Imports:
     cli (>= 3.4.0),
     glue,
     lifecycle (>= 1.0.3),
     rlang (>= 1.1.0)
-Suggests: 
+Suggests:
     bit64,
     covr,
     crayon,
@@ -39,7 +39,7 @@ Suggests:
     withr,
     xml2,
     zeallot
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
@@ -48,3 +48,5 @@ Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Remotes:
+    r-lib/rlang

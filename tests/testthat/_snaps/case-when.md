@@ -124,7 +124,7 @@
       vec_case_when(list(x), list(y))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[1]]` must be a logical vector, not a logical vector.
+      ! `cases[[1]]` must be a logical vector, not a logical 1D array.
 
 # `size` overrides the `cases` sizes
 
