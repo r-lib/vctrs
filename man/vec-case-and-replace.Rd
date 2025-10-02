@@ -7,14 +7,14 @@
 \title{Recode and replace using logical conditions}
 \usage{
 vec_case_when(
-  cases,
+  conditions,
   values,
   ...,
   default = NULL,
   unmatched = "default",
   ptype = NULL,
   size = NULL,
-  cases_arg = "cases",
+  conditions_arg = "conditions",
   values_arg = "values",
   default_arg = "default",
   error_call = current_env()
@@ -22,42 +22,42 @@ vec_case_when(
 
 vec_replace_when(
   x,
-  cases,
+  conditions,
   values,
   ...,
   x_arg = "x",
-  cases_arg = "cases",
+  conditions_arg = "conditions",
   values_arg = "values",
   error_call = current_env()
 )
 }
 \arguments{
-\item{cases}{A list of logical vectors.
+\item{conditions}{A list of logical condition vectors.
 
 For \code{vec_case_when()}, each vector should be the same size.
 
 For \code{vec_replace_when()}, each vector should be the same size as \code{x}.
 
-Where a value in \code{cases} is \code{TRUE}, the corresponding value in \code{values}
-will be assigned to the result.}
+Where a value in \code{conditions} is \code{TRUE}, the corresponding value in
+\code{values} will be assigned to the result.}
 
 \item{values}{A list of vectors.
 
 For \code{vec_case_when()}, each vector should be size 1 or the size implied by
-\code{cases}. The common type of \code{values} and \code{default} determine the output
-type, unless overridden by \code{ptype}.
+\code{conditions}. The common type of \code{values} and \code{default} determine the
+output type, unless overridden by \code{ptype}.
 
 For \code{vec_replace_when()}, each vector should be size 1 or the same size
 as \code{x}. Each vector will be cast to the type of \code{x}.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{default}{Default value to use when \code{cases} does not match every
+\item{default}{Default value to use when \code{conditions} does not match every
 location in the output.
 
 By default, a missing value is used as the default value.
 
-If supplied, \code{default} must be size 1 or the size implied by \code{cases}.
+If supplied, \code{default} must be size 1 or the size implied by \code{conditions}.
 
 Can only be set when \code{unmatched = "default"}.}
 
@@ -73,9 +73,9 @@ One of:
 computed as the common type of \code{values} and \code{default}.}
 
 \item{size}{An optional override for the output size, which is usually
-computed as the size of the first element of \code{cases}.
+computed as the size of the first element of \code{conditions}.
 
-Only useful for requiring a fixed size when \code{cases} is an empty list.}
+Only useful for requiring a fixed size when \code{conditions} is an empty list.}
 
 \item{error_call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
@@ -84,8 +84,8 @@ mentioned in error messages as the source of the error. See the
 
 \item{x}{A vector.}
 
-\item{x_arg, cases_arg, values_arg, default_arg}{Argument names used in error
-messages.}
+\item{x_arg, conditions_arg, values_arg, default_arg}{Argument names used in
+error messages.}
 }
 \value{
 A vector.
@@ -93,7 +93,7 @@ A vector.
 \item For \code{vec_case_when()}, the type of the output is computed as the common
 type of \code{values} and \code{default}, unless overridden by \code{ptype}. The names of
 the output come from the names of \code{values} and \code{default}. The size of the
-output comes from the implied size from \code{cases}, unless overridden by
+output comes from the implied size from \code{conditions}, unless overridden by
 \code{size}.
 \item For \code{vec_replace_when()}, the type of the output will have the same type as
 \code{x}. The names of the output will be the same as the names of \code{x}. The size
@@ -103,12 +103,13 @@ of the output will be the same size as \code{x}.
 \description{
 \itemize{
 \item \code{vec_case_when()} constructs an entirely new vector by recoding the \code{TRUE}
-\code{cases} to their corresponding \code{values}. If there are locations not matched
-by \code{cases}, then they are recoded to the \code{default} value.
+\code{conditions} to their corresponding \code{values}. If there are locations not
+matched by \code{conditions}, then they are recoded to the \code{default} value.
 \item \code{vec_replace_when()} updates an existing vector by replacing the values
-from \code{x} matched by the \code{TRUE} \code{cases} with their corresponding \code{values}.
-In this case, each element of \code{values} must have the same type as \code{x} and
-locations not matched by \code{cases} retain their original \code{x} value.
+from \code{x} matched by the \code{TRUE} \code{conditions} with their corresponding
+\code{values}. In this case, each element of \code{values} must have the same type as
+\code{x} and locations not matched by \code{conditions} retain their original \code{x}
+value.
 }
 
 \code{vec_case_when()} is often thought of as a way to vectorize multiple if-else
@@ -120,7 +121,7 @@ statement.
 # Also note how the `NA` falls through to `default`.
 x <- seq(-2L, 2L, by = 1L)
 x <- c(x, NA)
-cases <- list(
+conditions <- list(
   x < 0,
   x < 1
 )
@@ -129,14 +130,14 @@ values <- list(
   "<1"
 )
 vec_case_when(
-  cases,
+  conditions,
   values,
   default = "other"
 )
 
 # Missing values need to be handled with their own case
 # if you want them to have a special value
-cases <- list(
+conditions <- list(
   x < 0,
   x < 1,
   is.na(x)
@@ -147,7 +148,7 @@ values <- list(
   NA
 )
 vec_case_when(
-  cases,
+  conditions,
   values,
   default = "other"
 )
@@ -159,14 +160,14 @@ values <- list(
   NA
 )
 vec_case_when(
-  cases,
+  conditions,
   values,
   default = x * 100
 )
 
 # Use `vec_replace_when()` if you need to update `x`, retaining
 # all previous values in locations that you don't match
-cases <- list(
+conditions <- list(
   x < 0,
   x < 1
 )
@@ -176,7 +177,7 @@ values <- list(
 )
 out <- vec_replace_when(
   x,
-  cases,
+  conditions,
   values
 )
 out
@@ -189,15 +190,15 @@ typeof(out)
 # and `default`. `vec_replace_when()` modifies an existing vector, so
 # names come from `x` no matter what, just like `[<-` and `base::replace()`
 x <- c(a = 1, b = 2, c = 3)
-cases <- list(x == 1, x == 2)
+conditions <- list(x == 1, x == 2)
 values <- list(c(x = 0), c(y = -1))
-vec_case_when(cases, values)
-vec_replace_when(x, cases, values)
+vec_case_when(conditions, values)
+vec_replace_when(x, conditions, values)
 
 # If you want to enforce that you've covered all of the locations in your
-# `cases`, use `unmatched = "error"` rather than providing a `default`
+# `conditions`, use `unmatched = "error"` rather than providing a `default`
 x <- c(0, 1, 2)
-cases <- list(x == 1, x == 2)
+conditions <- list(x == 1, x == 2)
 values <- list("a", "b")
-try(vec_case_when(cases, values, unmatched = "error"))
+try(vec_case_when(conditions, values, unmatched = "error"))
 }

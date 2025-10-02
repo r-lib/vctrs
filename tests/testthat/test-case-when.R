@@ -1,5 +1,5 @@
 test_that("works with data frames", {
-  cases <- list(
+  conditions <- list(
     c(FALSE, TRUE, FALSE, FALSE),
     c(TRUE, TRUE, FALSE, FALSE),
     c(FALSE, TRUE, FALSE, TRUE)
@@ -10,7 +10,7 @@ test_that("works with data frames", {
     data_frame(x = 3:6, y = 4:7)
   )
 
-  out <- vec_case_when(cases, values)
+  out <- vec_case_when(conditions, values)
 
   expect_identical(
     out,
@@ -22,7 +22,7 @@ test_that("works with data frames", {
 })
 
 test_that("first `TRUE` case wins", {
-  cases <- list(
+  conditions <- list(
     c(TRUE, FALSE),
     c(TRUE, TRUE),
     c(TRUE, TRUE)
@@ -34,7 +34,7 @@ test_that("first `TRUE` case wins", {
   )
 
   expect_identical(
-    vec_case_when(cases, values),
+    vec_case_when(conditions, values),
     c(1, 2)
   )
 })
@@ -42,7 +42,7 @@ test_that("first `TRUE` case wins", {
 test_that("can replace missing values by catching with `is.na()`", {
   x <- c(1:3, NA)
 
-  cases <- list(
+  conditions <- list(
     x <= 1,
     x <= 2,
     is.na(x)
@@ -54,7 +54,7 @@ test_that("can replace missing values by catching with `is.na()`", {
   )
 
   expect_identical(
-    vec_case_when(cases, values),
+    vec_case_when(conditions, values),
     c(1, 2, NA, 0)
   )
 })
@@ -72,7 +72,7 @@ test_that("Unused logical `NA` can still be cast to `values` ptype", {
   )
 })
 
-test_that("`cases` inputs can be size zero", {
+test_that("`conditions` inputs can be size zero", {
   expect_identical(
     vec_case_when(
       list(logical(), logical()),
@@ -118,7 +118,7 @@ test_that("`values` are cast to their common type", {
   })
 })
 
-test_that("`values` must be size 1 or same size as the `cases`", {
+test_that("`values` must be size 1 or same size as the `conditions`", {
   expect_identical(
     vec_case_when(
       list(c(TRUE, TRUE)),
@@ -174,7 +174,7 @@ test_that("`NA` is overridden by any `TRUE` values", {
   expect <- c("one", "not_one", "missing", "not_one")
 
   # `TRUE` overriding before the `NA`
-  cases <- list(
+  conditions <- list(
     is.na(x),
     x == 1
   )
@@ -184,7 +184,7 @@ test_that("`NA` is overridden by any `TRUE` values", {
   )
   expect_identical(
     vec_case_when(
-      cases,
+      conditions,
       values,
       default = "not_one"
     ),
@@ -192,7 +192,7 @@ test_that("`NA` is overridden by any `TRUE` values", {
   )
 
   # `TRUE` overriding after the `NA`
-  cases <- list(
+  conditions <- list(
     x == 1,
     is.na(x)
   )
@@ -202,7 +202,7 @@ test_that("`NA` is overridden by any `TRUE` values", {
   )
   expect_identical(
     vec_case_when(
-      cases,
+      conditions,
       values,
       default = "not_one"
     ),
@@ -256,7 +256,7 @@ test_that("`default` can be vectorized, and is sliced to fit as needed", {
   expect_identical(out, c(11L, 2L, 13L, 4L, 10L))
 })
 
-test_that("`default` must be size 1 or same size as `cases` (exact same as any other `values` input)", {
+test_that("`default` must be size 1 or same size as `conditions` (exact same as any other `values` input)", {
   expect_snapshot(error = TRUE, {
     vec_case_when(list(FALSE), list(1L), default = 2:3)
   })
@@ -281,9 +281,9 @@ test_that("`default_arg` can be customized", {
   })
 })
 
-test_that("`cases_arg` is validated", {
+test_that("`conditions_arg` is validated", {
   expect_snapshot(error = TRUE, {
-    vec_case_when(list("x"), list(1), cases_arg = 1)
+    vec_case_when(list("x"), list(1), conditions_arg = 1)
   })
 })
 
@@ -299,7 +299,7 @@ test_that("`default_arg` is validated", {
   })
 })
 
-test_that("`cases` must all be the same size", {
+test_that("`conditions` must all be the same size", {
   expect_snapshot(error = TRUE, {
     vec_case_when(
       list(c(TRUE, FALSE), TRUE),
@@ -314,7 +314,7 @@ test_that("`cases` must all be the same size", {
   })
 })
 
-test_that("`cases` must be logical (and aren't cast to logical!)", {
+test_that("`conditions` must be logical (and aren't cast to logical!)", {
   expect_snapshot(error = TRUE, {
     vec_case_when(list(1), list(2))
   })
@@ -331,12 +331,12 @@ test_that("`cases` must be logical (and aren't cast to logical!)", {
   })
 })
 
-test_that("`cases` are allowed to have attributes", {
+test_that("`conditions` are allowed to have attributes", {
   x <- structure(c(FALSE, TRUE), label = "foo")
   expect_identical(vec_case_when(list(x), list(1), default = 2), c(2, 1))
 })
 
-test_that("`cases` can't be arrays (#6862)", {
+test_that("`conditions` can't be arrays (#6862)", {
   x <- array(TRUE, dim = c(3, 3))
   y <- c("a", "b", "c")
 
@@ -355,7 +355,7 @@ test_that("`cases` can't be arrays (#6862)", {
   })
 })
 
-test_that("`size` overrides the `cases` sizes", {
+test_that("`size` overrides the `conditions` sizes", {
   expect_snapshot(error = TRUE, {
     vec_case_when(list(TRUE), list(1), size = 5)
   })
@@ -369,10 +369,10 @@ test_that("`size` overrides the `cases` sizes", {
   })
 })
 
-test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
+test_that("0 `conditions` result depends on `size` and `default` and `ptype`", {
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list()
     ),
     unspecified()
@@ -380,7 +380,7 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
 
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list(),
       size = 0
     ),
@@ -388,7 +388,7 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
   )
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list(),
       size = 2
     ),
@@ -397,7 +397,7 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
 
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list(),
       default = integer()
     ),
@@ -405,7 +405,7 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
   )
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list(),
       default = 1L
     ),
@@ -413,7 +413,7 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
   )
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list(),
       ptype = integer()
     ),
@@ -422,7 +422,7 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
 
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list(),
       size = 2L,
       default = 1L
@@ -431,7 +431,7 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
   )
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list(),
       size = 2L,
       default = 1:2
@@ -440,7 +440,7 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
   )
   expect_identical(
     vec_case_when(
-      cases = list(),
+      conditions = list(),
       values = list(),
       size = 2L,
       ptype = integer()
@@ -449,11 +449,11 @@ test_that("0 `cases` result depends on `size` and `default` and `ptype`", {
   )
 })
 
-test_that("`vec_replace_when()` with empty `cases` is a no-op", {
+test_that("`vec_replace_when()` with empty `conditions` is a no-op", {
   x <- 1:5
 
   expect_identical(
-    vec_replace_when(x, cases = list(), values = list()),
+    vec_replace_when(x, conditions = list(), values = list()),
     x
   )
 })
@@ -469,7 +469,7 @@ test_that("`ptype` overrides the `values` types", {
   })
 })
 
-test_that("number of `cases` and `values` must be the same", {
+test_that("number of `conditions` and `values` must be the same", {
   expect_snapshot(error = TRUE, {
     vec_case_when(list(TRUE), list())
   })
@@ -484,7 +484,7 @@ test_that("dots must be empty", {
   })
 })
 
-test_that("`cases` must be a list", {
+test_that("`conditions` must be a list", {
   expect_snapshot(error = TRUE, {
     vec_case_when(1, list(2))
   })
@@ -501,10 +501,10 @@ test_that("named inputs show up in the error message", {
     vec_case_when(list(x = 1.5), list(1))
   })
   expect_snapshot(error = TRUE, {
-    vec_case_when(list(x = 1.5), list(1), cases_arg = "foo")
+    vec_case_when(list(x = 1.5), list(1), conditions_arg = "foo")
   })
   expect_snapshot(error = TRUE, {
-    vec_case_when(list(x = 1.5), list(1), cases_arg = "")
+    vec_case_when(list(x = 1.5), list(1), conditions_arg = "")
   })
 
   expect_snapshot(error = TRUE, {
@@ -514,14 +514,14 @@ test_that("named inputs show up in the error message", {
     vec_case_when(
       list(x = TRUE, y = c(TRUE, FALSE)),
       list(1, 2),
-      cases_arg = "foo"
+      conditions_arg = "foo"
     )
   })
   expect_snapshot(error = TRUE, {
     vec_case_when(
       list(x = TRUE, y = c(TRUE, FALSE)),
       list(1, 2),
-      cases_arg = ""
+      conditions_arg = ""
     )
   })
 
@@ -559,7 +559,7 @@ test_that("proof that `ptype` finalization is important", {
   # Imagine you have an input logical vector you are remapping
   # and it happens to only have `NA`s
   x <- c(NA, NA)
-  cases <- list(x %in% NA)
+  conditions <- list(x %in% NA)
   values <- list(FALSE)
 
   # If no `ptype` finalization happened, then `ptype = x` would result in
@@ -567,17 +567,17 @@ test_that("proof that `ptype` finalization is important", {
   # now does `ptype` finalization when an explicit `ptype` is provided, so this
   # works.
   expect_identical(
-    vec_case_when(cases, values, default = x, ptype = x),
+    vec_case_when(conditions, values, default = x, ptype = x),
     c(FALSE, FALSE)
   )
   expect_identical(
-    vec_replace_when(x, cases, values),
+    vec_replace_when(x, conditions, values),
     c(FALSE, FALSE)
   )
 })
 
 test_that("`unmatched` errors are correct", {
-  cases <- list(
+  conditions <- list(
     c(TRUE, FALSE, TRUE, FALSE, FALSE, NA, NA, NA, TRUE),
     c(FALSE, TRUE, TRUE, FALSE, NA, FALSE, NA, TRUE, NA)
   )
@@ -586,6 +586,6 @@ test_that("`unmatched` errors are correct", {
     2
   )
   expect_snapshot(error = TRUE, {
-    vec_case_when(cases, values, unmatched = "error")
+    vec_case_when(conditions, values, unmatched = "error")
   })
 })

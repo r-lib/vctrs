@@ -6,8 +6,8 @@
 
 struct syms {
   r_obj* arg;
-  r_obj* cases_arg;
   r_obj* condition_arg;
+  r_obj* conditions_arg;
   r_obj* default_arg;
   r_obj* dot_arg;
   r_obj* dot_call;
