@@ -76,7 +76,7 @@
       vec_case_when(list(c(TRUE, FALSE), TRUE), list(1, 2))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[2]]` must be size 2, not size 1.
+      ! `cases[[2]]` must have size 2, not size 1.
 
 ---
 
@@ -84,7 +84,7 @@
       vec_case_when(list(c(TRUE, FALSE), c(TRUE, FALSE, TRUE)), list(1, 2))
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[2]]` must be size 2, not size 3.
+      ! `cases[[2]]` must have size 2, not size 3.
 
 # `cases` must be logical (and aren't cast to logical!)
 
@@ -121,6 +121,14 @@
 ---
 
     Code
+      vec_case_when(list(x), list(y), size = 3)
+    Condition
+      Error in `vec_case_when()`:
+      ! `cases[[1]]` must be a logical vector, not a logical matrix.
+
+---
+
+    Code
       vec_case_when(list(x), list(y))
     Condition
       Error in `vec_case_when()`:
@@ -132,7 +140,7 @@
       vec_case_when(list(TRUE), list(1), size = 5)
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[1]]` must be size 5, not size 1.
+      ! `cases[[1]]` must have size 5, not size 1.
 
 ---
 
@@ -140,7 +148,7 @@
       vec_case_when(list(c(TRUE, FALSE), c(TRUE, FALSE, TRUE)), list(1, 2), size = 2)
     Condition
       Error in `vec_case_when()`:
-      ! `cases[[2]]` must be size 2, not size 3.
+      ! `cases[[2]]` must have size 2, not size 3.
 
 # `ptype` overrides the `values` types
 
@@ -223,7 +231,7 @@
       vec_case_when(list(x = TRUE, y = c(TRUE, FALSE)), list(1, 2))
     Condition
       Error in `vec_case_when()`:
-      ! `cases$y` must be size 1, not size 2.
+      ! `cases$y` must have size 1, not size 2.
 
 ---
 
@@ -231,7 +239,7 @@
       vec_case_when(list(x = TRUE, y = c(TRUE, FALSE)), list(1, 2), cases_arg = "foo")
     Condition
       Error in `vec_case_when()`:
-      ! `foo$y` must be size 1, not size 2.
+      ! `foo$y` must have size 1, not size 2.
 
 ---
 
@@ -239,7 +247,7 @@
       vec_case_when(list(x = TRUE, y = c(TRUE, FALSE)), list(1, 2), cases_arg = "")
     Condition
       Error in `vec_case_when()`:
-      ! `y` must be size 1, not size 2.
+      ! `y` must have size 1, not size 2.
 
 ---
 

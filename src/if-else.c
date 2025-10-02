@@ -52,8 +52,9 @@ r_obj* vec_if_else(
   struct r_lazy error_call
 ) {
   obj_check_vector(condition, VCTRS_ALLOW_NULL_no, p_condition_arg, error_call);
+  check_condition_index(condition, p_condition_arg, error_call);
+
   const r_ssize size = r_length(condition);
-  check_condition_index(condition, size, p_condition_arg, error_call);
 
   const bool has_missing = missing != r_null;
 

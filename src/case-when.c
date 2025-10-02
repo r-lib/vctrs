@@ -15,7 +15,7 @@ r_obj* vec_case_when(
   struct r_lazy error_call
 ) {
   obj_check_list(cases, p_cases_arg, error_call);
-  list_check_all_vectors(cases, VCTRS_ALLOW_NULL_no, p_cases_arg, error_call);
+  list_check_all_condition_indices(cases, p_cases_arg, error_call);
 
   obj_check_list(values, p_values_arg, error_call);
   list_check_all_vectors(values, VCTRS_ALLOW_NULL_no, p_values_arg, error_call);
@@ -25,10 +25,7 @@ r_obj* vec_case_when(
   // because `vec_case_when()` only takes logical indices, which
   // has less ambiguity about the output size.
   size = compute_size(size, cases);
-
-  // Enforce that all `cases` are condition indices
-  // (bare logical vectors of the correct `size`)
-  list_check_all_condition_indices(cases, size, p_cases_arg, error_call);
+  list_check_all_size(cases, size, VCTRS_ALLOW_NULL_no, p_cases_arg, error_call);
 
   const enum list_combine_multiple multiple = LIST_COMBINE_MULTIPLE_first;
   const enum assignment_slice_value slice_values = ASSIGNMENT_SLICE_VALUE_yes;
