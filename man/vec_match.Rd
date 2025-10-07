@@ -51,13 +51,14 @@ haystack. \code{vec_match()} returns an integer vector giving location of
 \code{needle} in \code{haystack}, or \code{NA} if it's not found.
 }
 \details{
-\code{vec_in()} is equivalent to \link{\%in\%}; \code{vec_match()} is equivalent to \code{match()}.
+\code{vec_in()} is equivalent to \link[base:match]{base::\%in\%}; \code{vec_match()} is equivalent to
+\code{\link[base:match]{base::match()}}.
 }
 \section{Missing values}{
 
 In most cases places in R, missing values are not considered to be equal,
 i.e. \code{NA == NA} is not \code{TRUE}. The exception is in matching functions
-like \code{\link[=match]{match()}} and \code{\link[=merge]{merge()}}, where an \code{NA} will match another \code{NA}.
+like \code{\link[base:match]{base::match()}} and \code{\link[=merge]{merge()}}, where an \code{NA} will match another \code{NA}.
 By \code{vec_match()} and \code{vec_in()} will match \code{NA}s; but you can control
 this behaviour with the \code{na_equal} argument.
 }
