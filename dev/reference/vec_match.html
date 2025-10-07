@@ -105,7 +105,8 @@ logical vector; <code>vec_match()</code> returns an integer vector.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>vec_in()</code> is equivalent to <a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a>; <code>vec_match()</code> is equivalent to <code><a href="https://rdrr.io/r/base/match.html" class="external-link">match()</a></code>.</p>
+    <p><code>vec_in()</code> is equivalent to <a href="https://rdrr.io/r/base/match.html" class="external-link">base::%in%</a>; <code>vec_match()</code> is equivalent to
+<code><a href="https://rdrr.io/r/base/match.html" class="external-link">base::match()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="missing-values">Missing values<a class="anchor" aria-label="anchor" href="#missing-values"></a></h2>
@@ -113,7 +114,7 @@ logical vector; <code>vec_match()</code> returns an integer vector.</p>
 
 <p>In most cases places in R, missing values are not considered to be equal,
 i.e. <code>NA == NA</code> is not <code>TRUE</code>. The exception is in matching functions
-like <code><a href="https://rdrr.io/r/base/match.html" class="external-link">match()</a></code> and <code><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge()</a></code>, where an <code>NA</code> will match another <code>NA</code>.
+like <code><a href="https://rdrr.io/r/base/match.html" class="external-link">base::match()</a></code> and <code><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge()</a></code>, where an <code>NA</code> will match another <code>NA</code>.
 By <code>vec_match()</code> and <code>vec_in()</code> will match <code>NA</code>s; but you can control
 this behaviour with the <code>na_equal</code> argument.</p>
     </div>
