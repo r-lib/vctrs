@@ -46,6 +46,7 @@ reference:
 - title: Combining
   contents:
   - vec_c
+  - list_combine
   - vec_interleave
   - vec_cbind
   - vec_rbind

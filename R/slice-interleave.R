@@ -61,6 +61,10 @@ vec_interleave <- function(
 
   indices <- vec_interleave_indices(n, size)
 
+  # TODO: Consider switching to `list_combine()`, add tests for empty `...`
+  # case, which would start returning `unspecified()` rather than `NULL`.
+  # This would be more correct and good for composibility, see
+  # https://github.com/r-lib/vctrs/issues/2055
   list_unchop(
     x = args,
     indices = indices,
