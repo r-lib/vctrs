@@ -75,6 +75,9 @@
 #'   type across all elements of `x` and `default`. Alternatively, you can
 #'   supply `ptype` to give the output a known type.
 #'
+#' @param name_repair How to repair names, see `repair` options in
+#'   [vec_as_names()].
+#'
 #' @param x_arg,indices_arg,default_arg An argument name as a string. This
 #'   argument will be mentioned in error messages as the input that is at the
 #'   origin of a problem.
@@ -84,6 +87,7 @@
 #'
 #' The size of the output is determined by `size`.
 #'
+#' @export
 #' @examples
 #' # Combine a list of vectors using
 #' # a list of `indices`
@@ -148,7 +152,6 @@
 #'   size = 5,
 #'   unmatched = "error"
 #' ))
-#' @noRd
 list_combine <- function(
   x,
   ...,

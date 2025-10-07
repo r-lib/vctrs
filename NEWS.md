@@ -1,5 +1,14 @@
 # vctrs (development version)
 
+* New `list_combine()` for combining a list of vectors together according to a set of `indices`. We now recommend using:
+
+  * `list_combine(x, indices = indices, size = size)` over `list_unchop(x, indices = indices)`
+  * `vec_c(!!!x)` over `list_unchop(x)`
+
+  `list_unchop()` is not being deprecated, we just no longer feel like it has the best name or the most correct API, and all future work will be put into improving `list_combine()`. `list_combine()` is already much more powerful than `list_unchop()`, with new `unmatched`, `multiple`, and `slice_x` (like `slice_value` of `vec_assign()`) arguments and the ability to provide logical `indices`.
+
+  `list_combine()` is the engine that powers `vec_case_when()`, `vec_replace_when()`, `vec_recode_values()`, `vec_replace_values()`, and parts of `vec_if_else()`.
+
 * New `list_all_recyclable()` and `list_check_all_recyclable()`.
 
 * `list_all_vectors()`, `list_all_size()`, `list_check_all_vectors()`, and `list_check_all_size()` have all gained an `allow_null` argument, which skips over `NULL` when performing their respective check (#1762).
