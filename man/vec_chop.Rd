@@ -2,38 +2,19 @@
 % Please edit documentation in R/slice-chop.R
 \name{vec_chop}
 \alias{vec_chop}
-\alias{list_unchop}
 \title{Chopping}
 \usage{
 vec_chop(x, ..., indices = NULL, sizes = NULL)
-
-list_unchop(
-  x,
-  ...,
-  indices = NULL,
-  ptype = NULL,
-  name_spec = NULL,
-  name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet",
-    "universal_quiet"),
-  error_arg = "x",
-  error_call = current_env()
-)
 }
 \arguments{
 \item{x}{A vector}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{indices}{For \code{vec_chop()}, a list of positive integer vectors to
-slice \code{x} with, or \code{NULL}. Can't be used if \code{sizes} is already specified.
-If both \code{indices} and \code{sizes} are \code{NULL}, \code{x} is split into its individual
-elements, equivalent to using an \code{indices} of \code{as.list(vec_seq_along(x))}.
-
-For \code{list_unchop()}, a list of positive integer vectors specifying the
-locations to place elements of \code{x} in. Each element of \code{x} is recycled to
-the size of the corresponding index vector. The size of \code{indices} must
-match the size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is
-provided in, which is equivalent to using \code{\link[=vec_c]{vec_c()}}.}
+\item{indices}{A list of positive integer vectors to slice \code{x} with, or
+\code{NULL}. Can't be used if \code{sizes} is already specified. If both \code{indices}
+and \code{sizes} are \code{NULL}, \code{x} is split into its individual elements,
+equivalent to using an \code{indices} of \code{as.list(vec_seq_along(x))}.}
 
 \item{sizes}{An integer vector of non-negative sizes representing sequential
 indices to slice \code{x} with, or \code{NULL}. Can't be used if \code{indices} is already
@@ -44,84 +25,21 @@ but is typically faster.
 
 \code{sum(sizes)} must be equal to \code{vec_size(x)}, i.e. \code{sizes} must completely
 partition \code{x}, but an individual size is allowed to be \code{0}.}
-
-\item{ptype}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all elements of \code{x}. Alternatively, you
-can supply \code{ptype} to give the output a known type.}
-
-\item{name_spec}{A name specification for combining
-inner and outer names. This is relevant for inputs passed with a
-name, when these inputs are themselves named, like \code{outer = c(inner = 1)}, or when they have length greater than 1: \code{outer = 1:2}. By default, these cases trigger an error. You can resolve
-the error by providing a specification that describes how to
-combine the names or the indices of the inner vector with the
-name of the input. This specification can be:
-\itemize{
-\item A function of two arguments. The outer name is passed as a
-string to the first argument, and the inner names or positions
-are passed as second argument.
-\item An anonymous function as a purrr-style formula.
-\item A glue specification of the form \code{"{outer}_{inner}"}.
-\item \code{"inner"}, in which case outer names are ignored, and inner
-names are used if they exist. Note that outer names may still
-be used to provide informative error messages.
-\item An \code{\link[rlang:zap]{rlang::zap()}} object, in which case both outer and inner
-names are ignored and the result is unnamed.
-}
-
-See the \link[=name_spec]{name specification topic}.}
-
-\item{name_repair}{How to repair names, see \code{repair} options in
-\code{\link[=vec_as_names]{vec_as_names()}}.}
-
-\item{error_arg}{An argument name as a string. This argument
-will be mentioned in error messages as the input that is at the
-origin of a problem.}
-
-\item{error_call}{The execution environment of a currently
-running function, e.g. \code{caller_env()}. The function will be
-mentioned in error messages as the source of the error. See the
-\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \value{
-\itemize{
-\item \code{vec_chop()}: A list where each element has the same type as \code{x}. The size
-of the list is equal to \code{vec_size(indices)}, \code{vec_size(sizes)}, or
-\code{vec_size(x)} depending on whether or not \code{indices} or \code{sizes} is provided.
-\item \code{list_unchop()}: A vector of type \code{vec_ptype_common(!!!x)}, or \code{ptype}, if
-specified. The size is computed as \code{vec_size_common(!!!indices)} unless
-the indices are \code{NULL}, in which case the size is \code{vec_size_common(!!!x)}.
-}
+A list where each element has the same type as \code{x}. The size of the list is
+equal to \code{vec_size(indices)}, \code{vec_size(sizes)}, or \code{vec_size(x)} depending
+on whether or not \code{indices} or \code{sizes} is provided.
 }
 \description{
-\itemize{
-\item \code{vec_chop()} provides an efficient method to repeatedly slice a vector. It
+\code{vec_chop()} provides an efficient method to repeatedly slice a vector. It
 captures the pattern of \code{map(indices, vec_slice, x = x)}. When no indices
 are supplied, it is generally equivalent to \code{\link[=as.list]{as.list()}}.
-\item \code{list_unchop()} combines a list of vectors into a single vector, placing
-elements in the output according to the locations specified by \code{indices}.
-It is similar to \code{\link[=vec_c]{vec_c()}}, but gives greater control over how the elements
-are combined. When no indices are supplied, it is identical to \code{vec_c()},
-but typically a little faster.
 }
-
-If \code{indices} selects every value in \code{x} exactly once, in any order, then
-\code{list_unchop()} is the inverse of \code{vec_chop()} and the following invariant
-holds:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{list_unchop(vec_chop(x, indices = indices), indices = indices) == x
-}\if{html}{\out{</div>}}
-}
-\section{Dependencies of \code{vec_chop()}}{
+\section{Dependencies}{
 
 \itemize{
 \item \code{\link[=vec_slice]{vec_slice()}}
-}
-}
-
-\section{Dependencies of \code{list_unchop()}}{
-
-\itemize{
-\item \code{\link[=vec_c]{vec_c()}}
 }
 }
 
@@ -135,41 +53,6 @@ vec_chop(1:5, sizes = c(2, 3))
 # Can also be used on data frames
 vec_chop(mtcars, indices = list(1:3, 4:6))
 
-# If `indices` selects every value in `x` exactly once,
-# in any order, then `list_unchop()` inverts `vec_chop()`
-x <- c("a", "b", "c", "d")
-indices <- list(2, c(3, 1), 4)
-vec_chop(x, indices = indices)
-list_unchop(vec_chop(x, indices = indices), indices = indices)
-
-# When unchopping, size 1 elements of `x` are recycled
-# to the size of the corresponding index
-list_unchop(list(1, 2:3), indices = list(c(1, 3, 5), c(2, 4)))
-
-# Names are retained, and outer names can be combined with inner
-# names through the use of a `name_spec`
-lst <- list(x = c(a = 1, b = 2), y = 1)
-list_unchop(lst, indices = list(c(3, 2), c(1, 4)), name_spec = "{outer}_{inner}")
-
-# An alternative implementation of `ave()` can be constructed using
-# `vec_chop()` and `list_unchop()` in combination with `vec_group_loc()`
-ave2 <- function(.x, .by, .f, ...) {
-  indices <- vec_group_loc(.by)$loc
-  chopped <- vec_chop(.x, indices = indices)
-  out <- lapply(chopped, .f, ...)
-  list_unchop(out, indices = indices)
-}
-
-breaks <- warpbreaks$breaks
-wool <- warpbreaks$wool
-
-ave2(breaks, wool, mean)
-
-identical(
-  ave2(breaks, wool, mean),
-  ave(breaks, wool, FUN = mean)
-)
-
 # If you know your input is sorted and you'd like to split on the groups,
 # `vec_run_sizes()` can be efficiently combined with `sizes`
 df <- data_frame(
@@ -179,10 +62,10 @@ df <- data_frame(
 vec_chop(df, sizes = vec_run_sizes(df$g))
 
 # If you have a list of homogeneous vectors, sometimes it can be useful to
-# unchop, apply a function to the flattened vector, and then rechop according
+# combine, apply a function to the flattened vector, and chop according
 # to the original indices. This can be done efficiently with `list_sizes()`.
 x <- list(c(1, 2, 1), c(3, 1), 5, double())
-x_flat <- list_unchop(x)
+x_flat <- vec_c(!!!x)
 x_flat <- x_flat + max(x_flat)
 vec_chop(x_flat, sizes = list_sizes(x))
 }

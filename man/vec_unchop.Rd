@@ -13,14 +13,9 @@ vec_unchop(
 )
 }
 \arguments{
-\item{x}{A vector}
+\item{x}{A list}
 
-\item{indices}{For \code{vec_chop()}, a list of positive integer vectors to
-slice \code{x} with, or \code{NULL}. Can't be used if \code{sizes} is already specified.
-If both \code{indices} and \code{sizes} are \code{NULL}, \code{x} is split into its individual
-elements, equivalent to using an \code{indices} of \code{as.list(vec_seq_along(x))}.
-
-For \code{list_unchop()}, a list of positive integer vectors specifying the
+\item{indices}{A list of positive integer vectors specifying the
 locations to place elements of \code{x} in. Each element of \code{x} is recycled to
 the size of the corresponding index vector. The size of \code{indices} must
 match the size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is
@@ -55,14 +50,9 @@ See the \link[=name_spec]{name specification topic}.}
 \code{\link[=vec_as_names]{vec_as_names()}}.}
 }
 \value{
-\itemize{
-\item \code{vec_chop()}: A list where each element has the same type as \code{x}. The size
-of the list is equal to \code{vec_size(indices)}, \code{vec_size(sizes)}, or
-\code{vec_size(x)} depending on whether or not \code{indices} or \code{sizes} is provided.
-\item \code{list_unchop()}: A vector of type \code{vec_ptype_common(!!!x)}, or \code{ptype}, if
-specified. The size is computed as \code{vec_size_common(!!!indices)} unless
-the indices are \code{NULL}, in which case the size is \code{vec_size_common(!!!x)}.
-}
+A vector of type \code{vec_ptype_common(!!!x)}, or \code{ptype}, if specified. The size
+is computed as \code{vec_size_common(!!!indices)} unless the indices are \code{NULL},
+in which case the size is \code{vec_size_common(!!!x)}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}

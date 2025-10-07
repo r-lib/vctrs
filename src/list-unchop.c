@@ -1,6 +1,6 @@
 #include "vctrs.h"
 
-#include "decl/c-unchop-decl.h"
+#include "decl/list-unchop-decl.h"
 
 r_obj* ffi_list_unchop(
   r_obj* x,

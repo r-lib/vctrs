@@ -74,7 +74,7 @@ expect_equal <- function(
 }
 
 raw2 <- function(...) {
-  as.raw(list_unchop(list2(...), ptype = integer()))
+  as.raw(vec_c(..., .ptype = integer()))
 }
 cpl2 <- function(...) {
   # R 4.4.0 changed `as.complex(NA_real/integer/logical)` so that it always uses
