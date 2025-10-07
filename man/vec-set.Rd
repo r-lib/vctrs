@@ -84,8 +84,8 @@ from \code{x} and \code{y}, returned in the order they first appeared in the ori
 input. Names of \code{x} and \code{y} are retained on the result, but names are always
 taken from \code{x} if the value appears in both inputs.
 
-These functions work similarly to \code{\link[=intersect]{intersect()}}, \code{\link[=setdiff]{setdiff()}}, and \code{\link[=union]{union()}},
-but don't strip attributes and can be used with data frames.
+These functions work similarly to \code{\link[base:sets]{base::intersect()}}, \code{\link[base:sets]{base::setdiff()}}, and
+\code{\link[base:sets]{base::union()}}, but don't strip attributes and can be used with data frames.
 }
 \details{
 Missing values are treated as equal to other missing values. For doubles and

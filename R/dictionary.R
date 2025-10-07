@@ -215,12 +215,13 @@ vec_unique_count <- function(x) {
 #' haystack. `vec_match()` returns an integer vector giving location of
 #' `needle` in `haystack`, or `NA` if it's not found.
 #'
-#' `vec_in()` is equivalent to [%in%]; `vec_match()` is equivalent to `match()`.
+#' `vec_in()` is equivalent to [base::%in%]; `vec_match()` is equivalent to
+#' [base::match()].
 #'
 #' @section Missing values:
 #' In most cases places in R, missing values are not considered to be equal,
 #' i.e. `NA == NA` is not `TRUE`. The exception is in matching functions
-#' like [match()] and [merge()], where an `NA` will match another `NA`.
+#' like [base::match()] and [merge()], where an `NA` will match another `NA`.
 #' By `vec_match()` and `vec_in()` will match `NA`s; but you can control
 #' this behaviour with the `na_equal` argument.
 #'

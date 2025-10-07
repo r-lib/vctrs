@@ -16,8 +16,8 @@
 #' input. Names of `x` and `y` are retained on the result, but names are always
 #' taken from `x` if the value appears in both inputs.
 #'
-#' These functions work similarly to [intersect()], [setdiff()], and [union()],
-#' but don't strip attributes and can be used with data frames.
+#' These functions work similarly to [base::intersect()], [base::setdiff()], and
+#' [base::union()], but don't strip attributes and can be used with data frames.
 #'
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context

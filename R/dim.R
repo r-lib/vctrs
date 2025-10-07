@@ -13,7 +13,7 @@
 #' equivalent, `vec_dim()` returns [length()], not `NULL`, when `x` is 1d.
 #'
 #' @seealso
-#' [dim2()], a variant of [dim()] that returns [length()] if an object
+#' `dim2()`, a variant of [dim()] that returns [length()] if an object
 #' doesn't have dimensions.
 #'
 #' @param x A vector
@@ -48,7 +48,7 @@ has_dim <- function(x) {
 #' equivalent, `dim2()` returns [length()], not `NULL`, when `x` is 1d.
 #'
 #' @seealso
-#' [vec_dim()], a variant that never dispatches over the [dim()] generic.
+#' `vec_dim()`, a variant that never dispatches over the [dim()] generic.
 #'
 #' @param x A vector
 #' @noRd
