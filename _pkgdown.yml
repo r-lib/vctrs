@@ -49,6 +49,7 @@ reference:
   - vec_c
   - list_combine
   - vec_interleave
+  - list_transpose
   - vec_cbind
   - vec_rbind
   - name_spec
