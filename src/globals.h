@@ -69,6 +69,7 @@ struct vec_args {
   struct vctrs_arg* indices;
   struct vctrs_arg* sizes;
   struct vctrs_arg* ptype;
+  struct vctrs_arg* size;
 };
 
 struct lazy_args {

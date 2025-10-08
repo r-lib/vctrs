@@ -15,12 +15,19 @@
 #'
 #' ## vctrs dependencies
 #'
-#' - [list_unchop()]
+#' - [list_combine()]
 #'
 #' @inheritParams vec_c
 #'
-#' @param ... Vectors to interleave. These will be
-#'   [recycled][theory-faq-recycling] to a common size.
+#' @param ... Vectors to interleave.
+#'
+#' @param .size The expected size of each vector. If not provided, computed
+#'   automatically by [vec_size_common()]. Each vector will be
+#'   [recycled][theory-faq-recycling] to this size.
+#'
+#' @param .ptype The expected type of each vector. If not provided, computed
+#'   automatically by [vec_ptype_common()]. Each vector will be
+#'   [cast][theory-faq-coercion] to this type.
 #'
 #' @export
 #' @examples
@@ -35,8 +42,15 @@
 #' y <- data_frame(x = 3:4, y = c("c", "d"))
 #'
 #' vec_interleave(x, y)
+#'
+#' # `.size` can be used to recycle size 1 elements before interleaving
+#' vec_interleave(1, 2, .size = 3)
+#'
+#' # `.ptype` can be used to enforce a particular type
+#' typeof(vec_interleave(1, 2, .ptype = integer()))
 vec_interleave <- function(
   ...,
+  .size = NULL,
   .ptype = NULL,
   .name_spec = NULL,
   .name_repair = c(
@@ -46,34 +60,48 @@ vec_interleave <- function(
     "universal",
     "unique_quiet",
     "universal_quiet"
-  )
+  ),
+  .error_call = current_env()
 ) {
-  args <- list2(...)
-
-  # `NULL`s must be dropped up front to generate appropriate indices
-  if (vec_any_missing(args)) {
-    missing <- vec_detect_missing(args)
-    args <- vec_slice(args, !missing)
-  }
-
-  n <- length(args)
-  size <- vec_size_common(!!!args)
-
-  indices <- vec_interleave_indices(n, size)
-
-  # TODO: Consider switching to `list_combine()`, add tests for empty `...`
-  # case, which would start returning `unspecified()` rather than `NULL`.
-  # This would be more correct and good for composibility, see
-  # https://github.com/r-lib/vctrs/issues/2055
-  list_unchop(
-    x = args,
-    indices = indices,
+  list_interleave(
+    x = list2(...),
+    size = .size,
     ptype = .ptype,
     name_spec = .name_spec,
-    name_repair = .name_repair
+    name_repair = .name_repair,
+    x_arg = "",
+    error_call = .error_call
   )
 }
 
-vec_interleave_indices <- function(n, size) {
-  .Call(ffi_interleave_indices, n, size)
+# It's sometimes more convenient to supply a list, plus you get access to
+# `x_arg` for better error messages than you get from `vec_interleave(!!!x)`.
+# We could consider exporting this alongside `vec_interleave()`.
+list_interleave <- function(
+  x,
+  ...,
+  size = NULL,
+  ptype = NULL,
+  name_spec = NULL,
+  name_repair = c(
+    "minimal",
+    "unique",
+    "check_unique",
+    "universal",
+    "unique_quiet",
+    "universal_quiet"
+  ),
+  x_arg = caller_arg(x),
+  error_call = current_env()
+) {
+  check_dots_empty0(...)
+  .Call(
+    ffi_list_interleave,
+    x,
+    size,
+    ptype,
+    name_spec,
+    name_repair,
+    environment()
+  )
 }

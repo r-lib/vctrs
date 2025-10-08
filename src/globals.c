@@ -92,6 +92,7 @@ void vctrs_init_globals(r_obj* ns) {
   INIT_ARG(indices);
   INIT_ARG(sizes);
   INIT_ARG(ptype);
+  INIT_ARG(size);
 
   // Lazy args ---------------------------------------------------------
   INIT_LAZY_ARG_2(dot_name_repair, ".name_repair");

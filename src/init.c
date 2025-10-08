@@ -142,7 +142,7 @@ extern r_obj* vctrs_integer64_proxy(r_obj*);
 extern r_obj* vctrs_integer64_restore(r_obj*);
 extern r_obj* vctrs_list_drop_empty(r_obj*);
 extern r_obj* vctrs_is_altrep(r_obj* x);
-extern r_obj* ffi_interleave_indices(r_obj*, r_obj*);
+extern r_obj* ffi_list_interleave(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_compute_nesting_container_info(r_obj*, r_obj*);
 extern r_obj* ffi_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_groups(r_obj*, r_obj*, r_obj*, r_obj*);
@@ -343,7 +343,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_integer64_restore",                   (DL_FUNC) &vctrs_integer64_restore, 1},
   {"vctrs_list_drop_empty",                     (DL_FUNC) &vctrs_list_drop_empty, 1},
   {"vctrs_is_altrep",                           (DL_FUNC) &vctrs_is_altrep, 1},
-  {"ffi_interleave_indices",                    (DL_FUNC) &ffi_interleave_indices, 2},
+  {"ffi_list_interleave",                       (DL_FUNC) &ffi_list_interleave, 6},
   {"ffi_compute_nesting_container_info",        (DL_FUNC) &ffi_compute_nesting_container_info, 2},
   {"ffi_locate_matches",                        (DL_FUNC) &ffi_locate_matches, 14},
   {"ffi_interval_groups",                       (DL_FUNC) &ffi_interval_groups, 4},

@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_interleave()` gains new `.size` and `.error_call` arguments.
+
+* `vec_interleave()` now reports the correct index in errors when `NULL`s are present.
+
 * New `list_combine()` for combining a list of vectors together according to a set of `indices`. We now recommend using:
 
   * `list_combine(x, indices = indices, size = size)` over `list_unchop(x, indices = indices)`
