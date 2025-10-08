@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `list_transpose()` for transposing a list of vectors.
+
 * `vec_interleave()` gains new `.size` and `.error_call` arguments.
 
 * `vec_interleave()` now reports the correct index in errors when `NULL`s are present.
