@@ -16,7 +16,55 @@
       res_unique <- vec_interleave(c(x = 1), c(x = 2), .name_repair = "unique_quiet")
       res_universal <- vec_interleave(c(`if` = 1), c(`in` = 2), .name_repair = "universal_quiet")
 
-# uses recycling errors
+# reports type errors
+
+    Code
+      vec_interleave(1, "x")
+    Condition
+      Error in `vec_interleave()`:
+      ! Can't combine `..1` <double> and `..2` <character>.
+
+---
+
+    Code
+      vec_interleave(1, "x", .error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! Can't combine `..1` <double> and `..2` <character>.
+
+---
+
+    Code
+      vec_interleave(1, "x", .ptype = double())
+    Condition
+      Error in `vec_interleave()`:
+      ! Can't convert `..2` <character> to <double>.
+
+---
+
+    Code
+      vec_interleave(1, "x", .ptype = double(), .error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! Can't convert `..2` <character> to <double>.
+
+---
+
+    Code
+      vec_interleave(1, NULL, "x")
+    Condition
+      Error in `vec_interleave()`:
+      ! Can't combine `..1` <double> and `..3` <character>.
+
+---
+
+    Code
+      vec_interleave(1, NULL, "x", .ptype = double())
+    Condition
+      Error in `vec_interleave()`:
+      ! Can't convert `..3` <character> to <double>.
+
+# reports recycling errors
 
     Code
       vec_interleave(1:2, 1:3)
@@ -24,11 +72,83 @@
       Error in `vec_interleave()`:
       ! Can't recycle `..1` (size 2) to match `..2` (size 3).
 
-# errors if the result would be a long vector
+---
 
     Code
-      vec_interleave_indices(3L, 1000000000L)
+      vec_interleave(1:2, 1:3, .error_call = quote(foo()))
     Condition
-      Error in `vec_interleave_indices()`:
-      ! Long vectors are not yet supported in `vec_interleave()`. Result from interleaving would have size 3000000000, which is larger than the maximum supported size of 2^31 - 1.
+      Error in `foo()`:
+      ! Can't recycle `..1` (size 2) to match `..2` (size 3).
+
+---
+
+    Code
+      vec_interleave(1:2, 3:4, .size = 3)
+    Condition
+      Error in `vec_interleave()`:
+      ! Can't recycle `..1` (size 2) to size 3.
+
+---
+
+    Code
+      vec_interleave(1:2, 3:4, .size = 3, .error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! Can't recycle `..1` (size 2) to size 3.
+
+---
+
+    Code
+      vec_interleave(1:2, NULL, 1:3)
+    Condition
+      Error in `vec_interleave()`:
+      ! Can't recycle `..1` (size 2) to match `..3` (size 3).
+
+---
+
+    Code
+      vec_interleave(1:2, NULL, 1:3, .size = 2)
+    Condition
+      Error in `vec_interleave()`:
+      ! Can't recycle `..3` (size 3) to size 2.
+
+# reports scalar errors
+
+    Code
+      vec_interleave(lm(1 ~ 1))
+    Condition
+      Error in `vec_interleave()`:
+      ! `..1` must be a vector, not a <lm> object.
+
+---
+
+    Code
+      vec_interleave(lm(1 ~ 1), .error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! `..1` must be a vector, not a <lm> object.
+
+---
+
+    Code
+      vec_interleave(1, NULL, lm(1 ~ 1))
+    Condition
+      Error in `vec_interleave()`:
+      ! `..3` must be a vector, not a <lm> object.
+
+---
+
+    Code
+      vec_interleave(1, NULL, lm(1 ~ 1), .error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! `..3` must be a vector, not a <lm> object.
+
+# `list_interleave()` checks for a list
+
+    Code
+      list_interleave(1)
+    Condition
+      Error in `list_interleave()`:
+      ! `1` must be a list, not the number 1.
 

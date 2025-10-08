@@ -6,22 +6,24 @@
 \usage{
 vec_interleave(
   ...,
+  .size = NULL,
   .ptype = NULL,
   .name_spec = NULL,
   .name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet",
-    "universal_quiet")
+    "universal_quiet"),
+  .error_call = current_env()
 )
 }
 \arguments{
-\item{...}{Vectors to interleave. These will be
-\link[=theory-faq-recycling]{recycled} to a common size.}
+\item{...}{Vectors to interleave.}
 
-\item{.ptype}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all elements of \code{...}.
+\item{.size}{The expected size of each vector. If not provided, computed
+automatically by \code{\link[=vec_size_common]{vec_size_common()}}. Each vector will be
+\link[=theory-faq-recycling]{recycled} to this size.}
 
-Alternatively, you can supply \code{.ptype} to give the output known type.
-If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
-this is a convenient way to make production code demand fixed types.}
+\item{.ptype}{The expected type of each vector. If not provided, computed
+automatically by \code{\link[=vec_ptype_common]{vec_ptype_common()}}. Each vector will be
+\link[=theory-faq-coercion]{cast} to this type.}
 
 \item{.name_spec}{A name specification for combining
 inner and outer names. This is relevant for inputs passed with a
@@ -46,6 +48,11 @@ See the \link[=name_spec]{name specification topic}.}
 
 \item{.name_repair}{How to repair names, see \code{repair} options in
 \code{\link[=vec_as_names]{vec_as_names()}}.}
+
+\item{.error_call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 \code{vec_interleave()} combines multiple vectors together, much like \code{\link[=vec_c]{vec_c()}},
@@ -61,7 +68,7 @@ It is a more efficient equivalent to the following usage of \code{vec_c()}:
 
 \subsection{vctrs dependencies}{
 \itemize{
-\item \code{\link[=list_unchop]{list_unchop()}}
+\item \code{\link[=list_combine]{list_combine()}}
 }
 }
 }
@@ -78,4 +85,10 @@ x <- data_frame(x = 1:2, y = c("a", "b"))
 y <- data_frame(x = 3:4, y = c("c", "d"))
 
 vec_interleave(x, y)
+
+# `.size` can be used to recycle size 1 elements before interleaving
+vec_interleave(1, 2, .size = 3)
+
+# `.ptype` can be used to enforce a particular type
+typeof(vec_interleave(1, 2, .ptype = integer()))
 }
