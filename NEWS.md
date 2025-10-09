@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `obj_check_vector()` now throws a clearer error message. In particular, special info bullets have been added that link out to FAQ pages and explain common issues around incompatible S3 lists and data frames (#2061).
+
 * New `list_combine()` for combining a list of vectors together according to a set of `indices`. We now recommend using:
 
   * `list_combine(x, indices = indices, size = size)` over `list_unchop(x, indices = indices)`
