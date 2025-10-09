@@ -28,4 +28,5 @@ NULL
 #' @includeRmd man/faq/user/faq-error-scalar-type.Rmd description
 #'
 #' @name faq-error-scalar-type
+#' @aliases faq_error_scalar_type
 NULL
