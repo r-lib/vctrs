@@ -166,6 +166,28 @@ test_that("obj_check_vector() error respects `arg` and `call`", {
   })
 })
 
+test_that("obj_check_vector() error contains FAQ links and correct bullets", {
+  # Expect to see:
+  # - Link to general FAQ about scalar types
+  x <- expression()
+  expect_snapshot(error = TRUE, obj_check_vector(x))
+
+  # Expect to see:
+  # - Bullet about incompatible S3 list
+  # - Full class list
+  # - Link to specific FAQ about creating vectors
+  x <- structure(list(), class = "my_list")
+  expect_snapshot(error = TRUE, obj_check_vector(x))
+
+  # Expect to see:
+  # - Bullet about incompatible data frame
+  # - Full class list
+  # - Link to specific FAQ about creating vectors
+  x <- data_frame(a = 1)
+  class(x) <- c("data.frame", "my_df")
+  expect_snapshot(error = TRUE, obj_check_vector(x))
+})
+
 test_that("vec_assert() uses friendly type in error messages", {
   # Friendly type will be generated in rlang in the future. Upstream
   # changes should not cause CRAN failures.

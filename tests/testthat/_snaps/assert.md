@@ -22,6 +22,37 @@
       Error in `my_check_vector()`:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
 
+# obj_check_vector() error contains FAQ links and correct bullets
+
+    Code
+      obj_check_vector(x)
+    Condition
+      Error:
+      ! `x` must be a vector, not an expression vector.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+
+---
+
+    Code
+      obj_check_vector(x)
+    Condition
+      Error:
+      ! `x` must be a vector, not a <my_list> object.
+      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <my_list>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+
+---
+
+    Code
+      obj_check_vector(x)
+    Condition
+      Error:
+      ! `x` must be a vector, not a <data.frame> object.
+      x Detected incompatible data frame subclass. To be a vector, the subclass must come before <data.frame> in the class, not after. Class: <data.frame/my_df>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+
 # assertion failures are explained
 
     Code

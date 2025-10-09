@@ -678,12 +678,106 @@ stop_scalar_type <- function(x, arg = NULL, call = caller_env()) {
   } else {
     arg <- glue::backtick(arg)
   }
-  msg <- glue::glue("{arg} must be a vector, not {obj_type_friendly(x)}.")
+
+  message <- glue::glue("{arg} must be a vector, not {obj_type_friendly(x)}.")
+
+  if (needs_incompatible_s3_list_bullets(x)) {
+    message <- with_incompatible_s3_list_bullets(x, message)
+  } else if (needs_incompatible_data_frame_bullets(x)) {
+    message <- with_incompatible_data_frame_bullets(x, message)
+  } else {
+    message <- with_scalar_faq_bullet(message)
+  }
+
   stop_vctrs(
-    msg,
+    message,
     "vctrs_error_scalar_type",
     actual = x,
     call = call
+  )
+}
+
+needs_incompatible_s3_list_bullets <- function(x) {
+  is_list_typeof <- typeof(x) == "list"
+
+  classes <- class(x)
+  doesnt_contain_explicit_list_class <- !any(classes == "list")
+  doesnt_contain_data_frame_class <- !any(classes == "data.frame")
+
+  # We also assume no `vec_proxy()` method exists, otherwise one would have
+  # been invoked, avoiding the error
+  is_incompatible_s3_list <-
+    is_list_typeof &&
+    doesnt_contain_explicit_list_class &&
+    doesnt_contain_data_frame_class
+
+  is_incompatible_s3_list
+}
+
+with_incompatible_s3_list_bullets <- function(x, message) {
+  classes <- class(x)
+
+  c(
+    message,
+    x = cli::format_inline(paste(
+      "Detected incompatible S3 list.",
+      "To be a vector, the object must explicitly inherit from {.cls list}",
+      "or should implement a {.fn vec_proxy} method.",
+      "Class: {.cls {classes}}."
+    )),
+    i = "If this object comes from a package, please report this error to the package author.",
+    i = cli::format_inline(paste(
+      "Read our FAQ about",
+      "{.topic [creating vector types](howto_faq_fix_scalar_type_error)}",
+      "to learn more."
+    ))
+  )
+}
+
+needs_incompatible_data_frame_bullets <- function(x) {
+  classes <- class(x)
+
+  if (length(classes) == 0) {
+    # Edge case of `NULL` or `character()` classes
+    return(FALSE)
+  }
+
+  contains_data_frame_class <- any(classes == "data.frame")
+  last_class_is_not_data_frame <- classes[length(classes)] != "data.frame"
+
+  is_incompatible_data_frame <-
+    contains_data_frame_class && last_class_is_not_data_frame
+
+  is_incompatible_data_frame
+}
+
+with_incompatible_data_frame_bullets <- function(x, message) {
+  classes <- class(x)
+
+  c(
+    message,
+    x = cli::format_inline(paste(
+      "Detected incompatible data frame subclass.",
+      "To be a vector, the subclass must come before {.cls data.frame} in the",
+      "class, not after.",
+      "Class: {.cls {classes}}."
+    )),
+    i = "If this object comes from a package, please report this error to the package author.",
+    i = cli::format_inline(paste(
+      "Read our FAQ about",
+      "{.topic [creating vector types](howto_faq_fix_scalar_type_error)}",
+      "to learn more."
+    ))
+  )
+}
+
+with_scalar_faq_bullet <- function(message) {
+  c(
+    message,
+    i = cli::format_inline(paste(
+      "Read our FAQ about {.topic [scalar types](faq_error_scalar_type)}",
+      "to learn more."
+    ))
   )
 }
 

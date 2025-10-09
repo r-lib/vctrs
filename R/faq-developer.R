@@ -42,4 +42,5 @@ NULL
 #' @includeRmd man/faq/developer/howto-faq-fix-scalar-type-error.Rmd description
 #'
 #' @name howto-faq-fix-scalar-type-error
+#' @aliases howto_faq_fix_scalar_type_error
 NULL

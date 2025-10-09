@@ -2,6 +2,7 @@
 % Please edit documentation in R/faq-developer.R
 \name{howto-faq-fix-scalar-type-error}
 \alias{howto-faq-fix-scalar-type-error}
+\alias{howto_faq_fix_scalar_type_error}
 \title{FAQ - Why isn't my class treated as a vector?}
 \description{
 The tidyverse is a bit stricter than base R regarding what kind of
@@ -65,6 +66,9 @@ class(my_df) <- c("data.frame", "my_class")
 vctrs::obj_check_vector(my_df)
 #> Error:
 #> ! `my_df` must be a vector, not a <data.frame> object.
+#> x Detected incompatible data frame subclass. To be a vector, the subclass must come before <data.frame> in the class, not after. Class: <data.frame/my_class>.
+#> i If this object comes from a package, please report this error to the package author.
+#> i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 }\if{html}{\out{</div>}}
 
 This is problematic as many tidyverse functions won’t work properly:
@@ -72,6 +76,9 @@ This is problematic as many tidyverse functions won’t work properly:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::slice(my_df, 1)
 #> Error in `vec_slice()`:
 #> ! `x` must be a vector, not a <data.frame> object.
+#> x Detected incompatible data frame subclass. To be a vector, the subclass must come before <data.frame> in the class, not after. Class: <data.frame/my_class>.
+#> i If this object comes from a package, please report this error to the package author.
+#> i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 }\if{html}{\out{</div>}}
 
 It is generally not appropriate to declare your class to be a superclass
