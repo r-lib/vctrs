@@ -280,6 +280,7 @@
     Condition
       Error in `vec_case_when()`:
       ! `values[[1]]` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -288,6 +289,7 @@
     Condition
       Error in `vec_case_when()`:
       ! `values$x` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -296,6 +298,7 @@
     Condition
       Error in `vec_case_when()`:
       ! `foo[[1]]` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -304,6 +307,7 @@
     Condition
       Error in `vec_case_when()`:
       ! `foo$x` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -312,6 +316,7 @@
     Condition
       Error in `vec_case_when()`:
       ! `..1` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -320,6 +325,7 @@
     Condition
       Error in `vec_case_when()`:
       ! `x` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 # `unmatched` errors are correct
 

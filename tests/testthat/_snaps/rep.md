@@ -155,4 +155,5 @@
     Condition
       Error in `vec_unrep()`:
       ! `x` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 

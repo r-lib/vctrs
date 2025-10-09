@@ -38,6 +38,7 @@
       <error/vctrs_error_scalar_type>
       Error:
       ! `foo` must be a vector, not a symbol.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
     Code
       (expect_error(vec_ptype2(quote(x), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
       )
@@ -45,6 +46,7 @@
       <error/vctrs_error_scalar_type>
       Error:
       ! `foo` must be a vector, not a symbol.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 # can override scalar vector error message for S3 types
 
@@ -55,6 +57,9 @@
       <error/vctrs_error_scalar_type>
       Error:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
     Code
       (expect_error(vec_ptype2(foobar(), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
       )
@@ -62,6 +67,9 @@
       <error/vctrs_error_scalar_type>
       Error:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # ptype2 and cast errors when same class fallback is impossible are informative
 

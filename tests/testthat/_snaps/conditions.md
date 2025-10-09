@@ -49,6 +49,9 @@
       <error/vctrs_error_scalar_type>
       Error in `vec_slice()`:
       ! `x` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
     Code
       (expect_error(stop_scalar_type(foobar(list(1)), arg = "foo"), class = "vctrs_error_scalar_type")
       )
@@ -56,6 +59,9 @@
       <error/vctrs_error_scalar_type>
       Error:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # empty names errors are informative
 
