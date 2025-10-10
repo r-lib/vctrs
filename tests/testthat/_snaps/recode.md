@@ -253,5 +253,5 @@
       vec_recode_values(1, from = 1, to = 1, unmatched = "e")
     Condition
       Error in `vec_recode_values()`:
-      ! `unmatched` must be either "default" or "error".
+      ! `unmatched` must be either "default" or "error", not "e".
 
