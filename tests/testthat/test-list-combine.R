@@ -1278,13 +1278,95 @@ test_that("list_combine() `unmatched = 'error'` can't be set when `default` is a
 
 test_that("list_combine() `unmatched` is validated", {
   expect_snapshot(error = TRUE, {
-    list_combine(list(1), indices = list(1), size = 1, unmatched = "e")
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      unmatched = "e"
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      unmatched = c("a", "b")
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      unmatched = NA_character_
+    )
+  })
+
+  # With error call
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      unmatched = "e",
+      error_call = quote(foo())
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      unmatched = c("a", "b"),
+      error_call = quote(foo())
+    )
   })
 })
 
 test_that("list_combine() `multiple` is validated", {
   expect_snapshot(error = TRUE, {
-    list_combine(list(1), indices = list(1), size = 1, multiple = "a")
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      multiple = "a"
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      multiple = c("a", "b")
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      multiple = NA_character_
+    )
+  })
+
+  # With error call
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      multiple = "a",
+      error_call = quote(foo())
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      size = 1,
+      multiple = c("a", "b"),
+      error_call = quote(foo())
+    )
   })
 })
 

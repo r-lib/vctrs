@@ -495,7 +495,41 @@
       list_combine(list(1), indices = list(1), size = 1, unmatched = "e")
     Condition
       Error in `list_combine()`:
-      ! `unmatched` must be either "default" or "error".
+      ! `unmatched` must be either "default" or "error", not "e".
+
+---
+
+    Code
+      list_combine(list(1), indices = list(1), size = 1, unmatched = c("a", "b"))
+    Condition
+      Error in `list_combine()`:
+      ! `unmatched` must be a string, not a character vector.
+
+---
+
+    Code
+      list_combine(list(1), indices = list(1), size = 1, unmatched = NA_character_)
+    Condition
+      Error in `list_combine()`:
+      ! `unmatched` must be a string, not a character `NA`.
+
+---
+
+    Code
+      list_combine(list(1), indices = list(1), size = 1, unmatched = "e", error_call = quote(
+        foo()))
+    Condition
+      Error in `foo()`:
+      ! `unmatched` must be either "default" or "error", not "e".
+
+---
+
+    Code
+      list_combine(list(1), indices = list(1), size = 1, unmatched = c("a", "b"),
+      error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! `unmatched` must be a string, not a character vector.
 
 # list_combine() `multiple` is validated
 
@@ -503,7 +537,41 @@
       list_combine(list(1), indices = list(1), size = 1, multiple = "a")
     Condition
       Error in `list_combine()`:
-      ! `multiple` must be either "last" or "first".
+      ! `multiple` must be either "last" or "first", not "a".
+
+---
+
+    Code
+      list_combine(list(1), indices = list(1), size = 1, multiple = c("a", "b"))
+    Condition
+      Error in `list_combine()`:
+      ! `multiple` must be a string, not a character vector.
+
+---
+
+    Code
+      list_combine(list(1), indices = list(1), size = 1, multiple = NA_character_)
+    Condition
+      Error in `list_combine()`:
+      ! `multiple` must be a string, not a character `NA`.
+
+---
+
+    Code
+      list_combine(list(1), indices = list(1), size = 1, multiple = "a", error_call = quote(
+        foo()))
+    Condition
+      Error in `foo()`:
+      ! `multiple` must be either "last" or "first", not "a".
+
+---
+
+    Code
+      list_combine(list(1), indices = list(1), size = 1, multiple = c("a", "b"),
+      error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! `multiple` must be a string, not a character vector.
 
 # `NA` indices are considered unmatched locations
 

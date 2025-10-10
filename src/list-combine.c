@@ -1597,7 +1597,11 @@ bool class_implements_base_c(r_obj* cls) {
 
 enum list_combine_unmatched parse_list_combine_unmatched(r_obj* unmatched, struct r_lazy error_call) {
   if (!r_is_string(unmatched)) {
-    r_stop_internal("`unmatched` must be a string.");
+    r_abort_lazy_call(
+      error_call,
+      "`unmatched` must be a string, not %s.",
+      r_obj_type_friendly(unmatched)
+    );
   }
 
   const char* c_unmatched = r_chr_get_c_string(unmatched, 0);
@@ -1607,13 +1611,18 @@ enum list_combine_unmatched parse_list_combine_unmatched(r_obj* unmatched, struc
 
   r_abort_lazy_call(
     error_call,
-    "`unmatched` must be either \"default\" or \"error\"."
+    "`unmatched` must be either \"default\" or \"error\", not \"%s\".",
+    c_unmatched
   );
 }
 
 enum list_combine_multiple parse_list_combine_multiple(r_obj* multiple, struct r_lazy error_call) {
   if (!r_is_string(multiple)) {
-    r_stop_internal("`multiple` must be a string.");
+    r_abort_lazy_call(
+      error_call,
+      "`multiple` must be a string, not %s.",
+      r_obj_type_friendly(multiple)
+    );
   }
 
   const char* c_multiple = r_chr_get_c_string(multiple, 0);
@@ -1623,7 +1632,8 @@ enum list_combine_multiple parse_list_combine_multiple(r_obj* multiple, struct r
 
   r_abort_lazy_call(
     error_call,
-    "`multiple` must be either \"last\" or \"first\"."
+    "`multiple` must be either \"last\" or \"first\", not \"%s\".",
+    c_multiple
   );
 }
 
