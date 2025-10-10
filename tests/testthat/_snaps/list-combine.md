@@ -480,6 +480,15 @@
       Error in `list_combine()`:
       ! Can't set `default` when `unmatched = "error"`.
 
+---
+
+    Code
+      list_combine(list(1), indices = list(1), default = 1, size = 1, unmatched = "error",
+      default_arg = ".default", error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! Can't set `.default` when `unmatched = "error"`.
+
 # list_combine() `unmatched` is validated
 
     Code

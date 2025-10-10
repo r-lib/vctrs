@@ -1263,6 +1263,17 @@ test_that("list_combine() `unmatched = 'error'` can't be set when `default` is a
       unmatched = "error"
     )
   })
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(1),
+      indices = list(1),
+      default = 1,
+      size = 1,
+      unmatched = "error",
+      default_arg = ".default",
+      error_call = quote(foo())
+    )
+  })
 })
 
 test_that("list_combine() `unmatched` is validated", {

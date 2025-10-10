@@ -366,7 +366,11 @@ r_obj* list_combine_impl(
   }
   case LIST_COMBINE_UNMATCHED_error: {
     if (default_ != r_null) {
-      r_abort("Can't set `default` when `unmatched = \"error\"`.");
+      r_abort_lazy_call(
+        error_call,
+        "Can't set %s when `unmatched = \"error\"`.",
+        vec_arg_format(p_default_arg)
+      );
     }
     if (!has_indices) {
       r_stop_internal("`indices` should have been required if `unmatched` was set.");
