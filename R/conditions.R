@@ -753,13 +753,14 @@ needs_incompatible_data_frame_bullets <- function(x) {
 
 with_incompatible_data_frame_bullets <- function(x, message) {
   classes <- class(x)
+  subclasses <- setdiff(classes, "data.frame")
 
   c(
     message,
     x = cli::format_inline(paste(
-      "Detected incompatible data frame subclass.",
-      "To be treated as a vector, the subclass must come before {.cls data.frame} in the",
-      "class, not after.",
+      "Detected incompatible data frame structure.",
+      "A data frame is normally treated as a vector, but an incompatible class ordering was detected.",
+      "To be compatible, the subclass {.cls {subclasses}} must come before {.cls data.frame}, not after.",
       "Class: {.cls {classes}}."
     )),
     i = "If this object comes from a package, please report this error to the package author.",

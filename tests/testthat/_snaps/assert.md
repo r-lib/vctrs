@@ -56,7 +56,7 @@
     Condition
       Error:
       ! `x` must be a vector, not a <data.frame> object.
-      x Detected incompatible data frame subclass. To be treated as a vector, the subclass must come before <data.frame> in the class, not after. Class: <data.frame/my_df>.
+      x Detected incompatible data frame structure. A data frame is normally treated as a vector, but an incompatible class ordering was detected. To be compatible, the subclass <my_df> must come before <data.frame>, not after. Class: <data.frame/my_df>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
