@@ -75,7 +75,7 @@ r_ssize vec_size_common_opts(r_obj* xs,
     vec_args.empty,
     opts->p_arg,
     xs,
-    &vctrs_size2_common,
+    &size2_common,
     &reduce_opts
   );
 
@@ -88,11 +88,85 @@ r_ssize vec_size_common_opts(r_obj* xs,
   return out;
 }
 
+/**
+ * `vec_size2()` implementation
+ *
+ * `left` works the same as `vec_typeof2_impl()`
+ *
+ * @param left Output parameter. Set to 1 when the common size comes
+ *   from the left, 0 when it comes from the right, and -1 when it
+ *   comes from both sides. This means that "left" is the default
+ *   when coerced to a boolean value.
+*/
+static inline
+r_obj* vec_size2_impl(
+  r_obj* x,
+  r_obj* y,
+  r_ssize x_size,
+  r_ssize y_size,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  int* left
+) {
+  // `NULL` handling rules:
+  // - If `x` and `y` are `NULL`, do nothing
+  // - If `x` is `NULL`, use `y`
+  // - If `y` is `NULL`, use `x`
+  //
+  // The first rule is important to ensure that this works
+  // `vec_size_common(NULL, .absent = 5L)`
+  if (x == r_null) {
+    if (y == r_null) {
+      *left = -1;
+      return x;
+    } else {
+      *left = 0;
+      return y;
+    }
+  }
+  if (y == r_null) {
+    if (x == r_null) {
+      r_stop_unreachable();
+    } else {
+      *left = 1;
+      return x;
+    }
+  }
+
+  // Now apply common size rules
+  // - Same size, use `x`
+  // - Size 1 `x`, use `y`
+  // - Size 1 `y`, use `x`
+  if (x_size == y_size) {
+    *left = -1;
+    return x;
+  }
+  if (x_size == 1) {
+    *left = 0;
+    return y;
+  }
+  if (y_size == 1) {
+    *left = 1;
+    return x;
+  }
+
+  stop_incompatible_size(
+    x,
+    y,
+    x_size,
+    y_size,
+    p_x_arg,
+    p_y_arg,
+    call
+  );
+}
+
 // Size2 computation
 //
 // `reduce_opts->current_size` updates when we switch to `y`
 static
-r_obj* vctrs_size2_common(
+r_obj* size2_common(
   r_obj* x,
   r_obj* y,
   struct counters* counters,
@@ -103,55 +177,25 @@ r_obj* vctrs_size2_common(
   const r_ssize x_size = reduce_opts->current_size;
   const r_ssize y_size = vec_size_3(y, counters->next_arg, reduce_opts->opts->call);
 
-  // `NULL` handling rules:
-  // - If `x` and `y` are `NULL`, do nothing
-  // - If `x` is `NULL`, use `y`
-  // - If `y` is `NULL`, use `x`
-  //
-  // The first rule is important to ensure that this works
-  // `vec_size_common(NULL, .absent = 5L)`
-  if (x == r_null) {
-    if (y == r_null) {
-      return x;
-    } else {
-      counters_shift(counters);
-      reduce_opts->current_size = y_size;
-      return y;
-    }
-  }
-  if (y == r_null) {
-    if (x == r_null) {
-      r_stop_unreachable();
-    } else {
-      return x;
-    }
-  }
+  int left = -1;
 
-  // Now apply common size rules
-  // - Same size, use `x`
-  // - Size 1 `x`, use `y`
-  // - Size 1 `y`, use `x`
-  if (x_size == y_size) {
-    return x;
-  }
-  if (x_size == 1) {
-    counters_shift(counters);
-    reduce_opts->current_size = y_size;
-    return y;
-  }
-  if (y_size == 1) {
-    return x;
-  }
-
-  stop_incompatible_size(
+  r_obj* out = vec_size2_impl(
     x,
     y,
     x_size,
     y_size,
     counters->curr_arg,
     counters->next_arg,
-    reduce_opts->opts->call
+    reduce_opts->opts->call,
+    &left
   );
+
+  if (!left) {
+    counters_shift(counters);
+    reduce_opts->current_size = y_size;
+  }
+
+  return out;
 }
 
 // [[ register(external = TRUE) ]]
