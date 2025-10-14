@@ -9,6 +9,18 @@
 #'
 #' @param x A list.
 #'
+#' @param null A value to replace `NULL` elements with before transposing.
+#'
+#'   If specified:
+#'
+#'   - `null` must be size 1.
+#'
+#'   - `null` will participate in common type determination alongside the
+#'     elements of `x`.
+#'
+#'   If not specified, an error will be thrown if any `NULL` values are
+#'   detected.
+#'
 #' @param size The expected size of each element of `x`. If not provided,
 #'   computed automatically by [vec_size_common()].
 #'
@@ -22,13 +34,17 @@
 #'
 #' For the list:
 #'
-#' - `vec_ptype(list_transpose(x)) == vec_ptype(x)`
-#' - `vec_size(list_transpose(x)) == (size || vec_size_common(!!!x))`
+#' - `vec_ptype(list_transpose(x)) == <list>`
+#' - `vec_size(list_transpose(x)) == vec_size_common(!!!x, .size = size)`
 #'
 #' For the list elements:
 #'
-#' - `vec_ptype(list_transpose(x)[[i]]) == (ptype || vec_ptype_common(!!!x))`
+#' - `vec_ptype(list_transpose(x)[[i]]) == vec_ptype_common(!!!x, .ptype = ptype)`
 #' - `vec_size(list_transpose(x)[[i]]) == vec_size(x)`
+#'
+#' If `NULL` elements are present in `x`, then an error is thrown unless `null`
+#' is provided, in which case any `NULL` elements are treated as size 1 for the
+#' common size computation.
 #'
 #' @export
 #' @examples
@@ -88,16 +104,17 @@
 #' )
 #' list_transpose(x)
 #'
-#' # `NULL` values aren't allowed in `list_transpose()`. If you'd like `NULL`s
-#' # to be treated as size 1 missing values, replace them with `NA` first.
+#' # `NULL` values aren't allowed in `list_transpose()`
 #' x <- list(1:3, NULL, 5:7, NULL)
 #' try(list_transpose(x))
 #'
-#' x <- vec_assign(x, vec_detect_missing(x), list(NA))
-#' list_transpose(x)
+#' # Use `null` to replace `NULL` values before transposing
+#' list_transpose(x, null = NA)
+#' list_transpose(x, null = 0L)
 list_transpose <- function(
   x,
   ...,
+  null = NULL,
   size = NULL,
   ptype = NULL,
   x_arg = caller_arg(x),
@@ -105,8 +122,22 @@ list_transpose <- function(
 ) {
   check_dots_empty0(...)
 
-  # Disallow `NULL` entirely. These would break `vec_size()` invariants of
+  obj_check_list(x, arg = x_arg, call = error_call)
+
+  if (is.object(x)) {
+    # The list input type should not affect the transposition process in any
+    # way. In particular, supplying a list subclass that doesn't have a
+    # `vec_cast.subclass.list` method shouldn't prevent the insertion of
+    # `list(null)` before the transposition. The fact that we must insert
+    # `list(null)` should be considered an internal detail.
+    x <- unclass(x)
+  }
+
+  # We disallow `NULL` elements. These would break `vec_size()` invariants of
   # `list_transpose()` if we simply drop them via `list_interleave()`.
+  #
+  # Either `list_check_all_vectors()` errors, or the user supplied `null` which
+  # will replace `NULL`s with size 1 vectors before we `list_interleave()`.
   #
   # For example:
   #
@@ -125,23 +156,51 @@ list_transpose <- function(
   # - List size 4
   # - Element size 2
   #
-  # A reasonable thing for users to do would be to replace `NULL` with `NA`
-  # ahead of time. This is similar to `keep_empty` in some tidyr functions.
-  # But we force the caller to make that decision, and it's a fairly easy
-  # replacement to make with `vec_detect_missing()` and `vec_assign()`.
+  # Users should instead use `null` to replace `NULL` elements with something
+  # else, like `NA`. This is similar to `purrr::list_transpose(default =)` and
+  # `keep_empty` in some tidyr functions.
   #
   # ```
-  # list_transpose(list(1:4, NA, 5:8))
+  # list_transpose(list(1:4, NULL, 5:8), null = NA)
   # ```
-  allow_null <- FALSE
+  allow_null <- !is_null(null)
 
-  obj_check_list(x, arg = x_arg, call = error_call)
   list_check_all_vectors(
     x,
     allow_null = allow_null,
     arg = x_arg,
     call = error_call
   )
+
+  ptype <- list_transpose_ptype_common(
+    x,
+    null,
+    ptype,
+    x_arg,
+    error_call
+  )
+
+  if (!is_null(null)) {
+    # Do `null` checks regardless of usage
+    null <- vec_cast(
+      x = null,
+      to = ptype,
+      x_arg = "null",
+      to_arg = "",
+      call = error_call
+    )
+    vec_check_size(
+      null,
+      size = 1L,
+      arg = "null",
+      call = error_call
+    )
+
+    if (vec_any_missing(x)) {
+      null <- list(null)
+      x <- vec_assign(x, vec_detect_missing(x), null)
+    }
+  }
 
   flat <- list_interleave(
     x,
@@ -172,4 +231,37 @@ list_transpose <- function(
   out <- vec_chop(flat, sizes = sizes)
 
   out
+}
+
+# Computes the `ptype` incorporating both `x` and `null`
+#
+# Like `ptype_finalize()` in `vec_recode_values()` and `vec_if_else()`
+list_transpose_ptype_common <- function(
+  x,
+  null,
+  ptype,
+  x_arg,
+  error_call
+) {
+  if (!is_null(ptype)) {
+    # Validate and return user specified `ptype`
+    ptype <- vec_ptype(ptype, x_arg = "ptype", call = error_call)
+    return(vec_ptype_finalise(ptype))
+  }
+
+  # Compute from `x`
+  ptype <- vec_ptype_common(!!!x, .arg = x_arg, .call = error_call)
+
+  if (!is_null(null)) {
+    # Layer in `null`
+    ptype <- vec_ptype2(
+      x = null,
+      y = ptype,
+      x_arg = "null",
+      y_arg = "",
+      call = error_call
+    )
+  }
+
+  ptype
 }

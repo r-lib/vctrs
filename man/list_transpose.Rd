@@ -7,6 +7,7 @@
 list_transpose(
   x,
   ...,
+  null = NULL,
   size = NULL,
   ptype = NULL,
   x_arg = caller_arg(x),
@@ -17,6 +18,18 @@ list_transpose(
 \item{x}{A list.}
 
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{null}{A value to replace \code{NULL} elements with before transposing.
+
+If specified:
+\itemize{
+\item \code{null} must be size 1.
+\item \code{null} will participate in common type determination alongside the
+elements of \code{x}.
+}
+
+If not specified, an error will be thrown if any \code{NULL} values are
+detected.}
 
 \item{size}{The expected size of each element of \code{x}. If not provided,
 computed automatically by \code{\link[=vec_size_common]{vec_size_common()}}.}
@@ -36,15 +49,19 @@ A list of vectors with the following invariants:
 
 For the list:
 \itemize{
-\item \code{vec_ptype(list_transpose(x)) == vec_ptype(x)}
-\item \code{vec_size(list_transpose(x)) == (size || vec_size_common(!!!x))}
+\item \verb{vec_ptype(list_transpose(x)) == <list>}
+\item \code{vec_size(list_transpose(x)) == vec_size_common(!!!x, .size = size)}
 }
 
 For the list elements:
 \itemize{
-\item \code{vec_ptype(list_transpose(x)[[i]]) == (ptype || vec_ptype_common(!!!x))}
+\item \code{vec_ptype(list_transpose(x)[[i]]) == vec_ptype_common(!!!x, .ptype = ptype)}
 \item \code{vec_size(list_transpose(x)[[i]]) == vec_size(x)}
 }
+
+If \code{NULL} elements are present in \code{x}, then an error is thrown unless \code{null}
+is provided, in which case any \code{NULL} elements are treated as size 1 for the
+common size computation.
 }
 \description{
 \code{list_transpose()} takes a list of vectors, transposes it, and returns a new
@@ -107,11 +124,11 @@ x[index] <- lapply(
 )
 list_transpose(x)
 
-# `NULL` values aren't allowed in `list_transpose()`. If you'd like `NULL`s
-# to be treated as size 1 missing values, replace them with `NA` first.
+# `NULL` values aren't allowed in `list_transpose()`
 x <- list(1:3, NULL, 5:7, NULL)
 try(list_transpose(x))
 
-x <- vec_assign(x, vec_detect_missing(x), list(NA))
-list_transpose(x)
+# Use `null` to replace `NULL` values before transposing
+list_transpose(x, null = NA)
+list_transpose(x, null = 0L)
 }
