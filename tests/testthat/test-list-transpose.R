@@ -116,6 +116,17 @@ test_that("`...` must be empty", {
   })
 })
 
+test_that("recycles inputs to common size before transposing", {
+  expect_identical(
+    list_transpose(list(1, 2:3, 4)),
+    list(c(1, 2, 4), c(1, 3, 4))
+  )
+  expect_snapshot(error = TRUE, {
+    x <- list(1:2, 3:5)
+    list_transpose(x)
+  })
+})
+
 test_that("respects `size`", {
   # Useful for the case where you somehow know the element size from somewhere
   # else, but you also happen to only have all size 1 elements right now

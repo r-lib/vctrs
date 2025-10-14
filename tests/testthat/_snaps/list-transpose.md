@@ -25,6 +25,15 @@
       * ..1 = 2
       i Did you forget to name an argument?
 
+# recycles inputs to common size before transposing
+
+    Code
+      x <- list(1:2, 3:5)
+      list_transpose(x)
+    Condition
+      Error in `list_transpose()`:
+      ! Can't recycle `x[[1]]` (size 2) to match `x[[2]]` (size 3).
+
 # respects `size`
 
     Code
