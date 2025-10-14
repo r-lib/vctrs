@@ -5,6 +5,7 @@
     Condition
       Error in `vec_assign()`:
       ! Input must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -13,6 +14,7 @@
     Condition
       Error in `vec_assign()`:
       ! Input must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -21,6 +23,7 @@
     Condition
       Error in `vec_assign()`:
       ! `foo` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -29,6 +32,7 @@
     Condition
       Error in `vec_assign()`:
       ! `foo` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -37,6 +41,7 @@
     Condition
       Error in `vec_assign()`:
       ! `foo` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -45,6 +50,7 @@
     Condition
       Error in `vec_assign()`:
       ! `foo` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 # can assign using logical index
 
