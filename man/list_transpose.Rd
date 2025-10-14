@@ -96,6 +96,8 @@ list_transpose(out, size = vec_size(x), ptype = vec_ptype_common(!!!x))
 # If you'd like to pad with a missing value rather than recycling or
 # erroring, you might do something like this, which left-pads
 x <- list(1, 2:5, 6:7)
+try(list_transpose(x))
+
 sizes <- list_sizes(x)
 size <- max(sizes)
 index <- which(sizes != size)
@@ -108,6 +110,8 @@ list_transpose(x)
 # `NULL` values aren't allowed in `list_transpose()`. If you'd like `NULL`s
 # to be treated as size 1 missing values, replace them with `NA` first.
 x <- list(1:3, NULL, 5:7, NULL)
+try(list_transpose(x))
+
 x <- vec_assign(x, vec_detect_missing(x), list(NA))
 list_transpose(x)
 }
