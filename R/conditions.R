@@ -681,13 +681,11 @@ stop_scalar_type <- function(x, arg = NULL, call = caller_env()) {
 
   message <- glue::glue("{arg} must be a vector, not {obj_type_friendly(x)}.")
 
-  if (needs_incompatible_s3_list_bullets(x)) {
-    message <- with_incompatible_s3_list_bullets(x, message)
-  } else if (needs_incompatible_data_frame_bullets(x)) {
-    message <- with_incompatible_data_frame_bullets(x, message)
-  } else {
-    message <- with_scalar_faq_bullet(message)
-  }
+  # Use the first detected issue, with a fallthrough to point to our scalar FAQ
+  message <-
+    with_incompatible_s3_list_bullets(message, x) %||%
+    with_incompatible_data_frame_bullets(message, x) %||%
+    with_scalar_faq_bullet(message)
 
   stop_vctrs(
     message,
@@ -697,7 +695,7 @@ stop_scalar_type <- function(x, arg = NULL, call = caller_env()) {
   )
 }
 
-needs_incompatible_s3_list_bullets <- function(x) {
+with_incompatible_s3_list_bullets <- function(message, x) {
   is_list_typeof <- typeof(x) == "list"
 
   classes <- class(x)
@@ -711,11 +709,9 @@ needs_incompatible_s3_list_bullets <- function(x) {
     doesnt_contain_explicit_list_class &&
     doesnt_contain_data_frame_class
 
-  is_incompatible_s3_list
-}
-
-with_incompatible_s3_list_bullets <- function(x, message) {
-  classes <- class(x)
+  if (!is_incompatible_s3_list) {
+    return(NULL)
+  }
 
   c(
     message,
@@ -734,25 +730,26 @@ with_incompatible_s3_list_bullets <- function(x, message) {
   )
 }
 
-needs_incompatible_data_frame_bullets <- function(x) {
+with_incompatible_data_frame_bullets <- function(message, x) {
   classes <- class(x)
-
-  if (length(classes) == 0) {
-    # Edge case of `NULL` or `character()` classes
-    return(FALSE)
-  }
+  n_classes <- length(classes)
 
   contains_data_frame_class <- any(classes == "data.frame")
-  last_class_is_not_data_frame <- classes[length(classes)] != "data.frame"
+
+  if (n_classes == 0L) {
+    # Edge case of `NULL` or `character()` classes
+    last_class_is_not_data_frame <- TRUE
+  } else {
+    last_class_is_not_data_frame <- classes[n_classes] != "data.frame"
+  }
 
   is_incompatible_data_frame <-
     contains_data_frame_class && last_class_is_not_data_frame
 
-  is_incompatible_data_frame
-}
+  if (!is_incompatible_data_frame) {
+    return(NULL)
+  }
 
-with_incompatible_data_frame_bullets <- function(x, message) {
-  classes <- class(x)
   subclasses <- setdiff(classes, "data.frame")
 
   c(
