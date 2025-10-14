@@ -61,10 +61,12 @@ together.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vec_interleave</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
+<span>  .size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .name_spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"check_unique"</span>, <span class="st">"universal"</span>, <span class="st">"unique_quiet"</span>,</span>
-<span>    <span class="st">"universal_quiet"</span><span class="op">)</span></span>
+<span>    <span class="st">"universal_quiet"</span><span class="op">)</span>,</span>
+<span>  .error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -73,16 +75,19 @@ together.</p>
 
 
 <dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Vectors to interleave. These will be
-<a href="theory-faq-recycling.html">recycled</a> to a common size.</p></dd>
+<dd><p>Vectors to interleave.</p></dd>
+
+
+<dt id="arg--size">.size<a class="anchor" aria-label="anchor" href="#arg--size"></a></dt>
+<dd><p>The expected size of each vector. If not provided, computed
+automatically by <code><a href="vec_size.html">vec_size_common()</a></code>. Each vector will be
+<a href="theory-faq-recycling.html">recycled</a> to this size.</p></dd>
 
 
 <dt id="arg--ptype">.ptype<a class="anchor" aria-label="anchor" href="#arg--ptype"></a></dt>
-<dd><p>If <code>NULL</code>, the default, the output type is determined by
-computing the common type across all elements of <code>...</code>.</p>
-<p>Alternatively, you can supply <code>.ptype</code> to give the output known type.
-If <code>getOption("vctrs.no_guessing")</code> is <code>TRUE</code> you must supply this value:
-this is a convenient way to make production code demand fixed types.</p></dd>
+<dd><p>The expected type of each vector. If not provided, computed
+automatically by <code><a href="vec_ptype.html">vec_ptype_common()</a></code>. Each vector will be
+<a href="theory-faq-coercion.html">cast</a> to this type.</p></dd>
 
 
 <dt id="arg--name-spec">.name_spec<a class="anchor" aria-label="anchor" href="#arg--name-spec"></a></dt>
@@ -108,6 +113,13 @@ names are ignored and the result is unnamed.</p></li>
 <dd><p>How to repair names, see <code>repair</code> options in
 <code><a href="vec_as_names.html">vec_as_names()</a></code>.</p></dd>
 
+
+<dt id="arg--error-call">.error_call<a class="anchor" aria-label="anchor" href="#arg--error-call"></a></dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a></h2>
@@ -116,7 +128,7 @@ names are ignored and the result is unnamed.</p></li>
 <div class="section">
 <h3 id="vctrs-dependencies">vctrs dependencies<a class="anchor" aria-label="anchor" href="#vctrs-dependencies"></a></h3>
 
-<ul><li><p><code><a href="list_unchop.html">list_unchop()</a></code></p></li>
+<ul><li><p><code><a href="list_combine.html">list_combine()</a></code></p></li>
 </ul></div>
 
     </div>
@@ -143,6 +155,14 @@ names are ignored and the result is unnamed.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     3 c    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2 b    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4 d    </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># `.size` can be used to recycle size 1 elements before interleaving</span></span></span>
+<span class="r-in"><span><span class="fu">vec_interleave</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, .size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 1 2 1 2</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># `.ptype` can be used to enforce a particular type</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/typeof.html" class="external-link">typeof</a></span><span class="op">(</span><span class="fu">vec_interleave</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, .ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "integer"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

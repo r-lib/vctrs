@@ -40,7 +40,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li>
+<ul><li><p><code><a href="../reference/vec_interleave.html">vec_interleave()</a></code> gains new <code>.size</code> and <code>.error_call</code> arguments.</p></li>
+<li><p><code><a href="../reference/vec_interleave.html">vec_interleave()</a></code> now reports the correct index in errors when <code>NULL</code>s are present.</p></li>
+<li>
 <p>New <code><a href="../reference/list_combine.html">list_combine()</a></code> for combining a list of vectors together according to a set of <code>indices</code>. We now recommend using:</p>
 <ul><li>
 <code>list_combine(x, indices = indices, size = size)</code> over <code>list_unchop(x, indices = indices)</code>
