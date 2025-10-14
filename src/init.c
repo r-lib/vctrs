@@ -43,6 +43,7 @@ extern SEXP vctrs_typeof(SEXP, SEXP);
 extern r_obj* ffi_obj_is_vector(r_obj*);
 extern r_obj* ffi_obj_check_vector(r_obj*, r_obj*);
 extern r_obj* ffi_vec_check_size(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_check_recyclable(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_ptype2(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_typeof2(r_obj*, r_obj*);
 extern r_obj* ffi_typeof2_s3(r_obj*, r_obj*);
@@ -238,6 +239,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_obj_is_vector",                         (DL_FUNC) &ffi_obj_is_vector, 1},
   {"ffi_obj_check_vector",                      (DL_FUNC) &ffi_obj_check_vector, 2},
   {"ffi_vec_check_size",                        (DL_FUNC) &ffi_vec_check_size, 3},
+  {"ffi_vec_check_recyclable",                  (DL_FUNC) &ffi_vec_check_recyclable, 3},
   {"ffi_ptype2",                                (DL_FUNC) &ffi_ptype2, 3},
   {"ffi_typeof2",                               (DL_FUNC) &ffi_typeof2, 2},
   {"ffi_typeof2_s3",                            (DL_FUNC) &ffi_typeof2_s3, 2},

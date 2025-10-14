@@ -284,6 +284,78 @@
       Error in `vec_check_size()`:
       ! `size` must be a whole number, not a decimal number.
 
+# vec_check_recyclable() errors on the wrong size
+
+    Code
+      vec_check_recyclable(1:5, size = 1L)
+    Condition
+      Error:
+      ! Can't recycle `1:5` (size 5) to size 1.
+
+---
+
+    Code
+      vec_check_recyclable(1:5, size = 10L)
+    Condition
+      Error:
+      ! Can't recycle `1:5` (size 5) to size 10.
+
+# vec_check_recyclable() errors on scalars
+
+    Code
+      vec_check_recyclable(quote(foo), size = 1L)
+    Condition
+      Error:
+      ! `quote(foo)` must be a vector, not a symbol.
+
+---
+
+    Code
+      vec_check_recyclable(foobar(), size = 1L)
+    Condition
+      Error:
+      ! `foobar()` must be a vector, not a <vctrs_foobar> object.
+
+# vec_check_recyclable() error respects `arg` and `call`
+
+    Code
+      my_check_recyclable(1:2, size = 5L)
+    Condition
+      Error in `my_check_recyclable()`:
+      ! Can't recycle `foo` (size 2) to size 5.
+
+---
+
+    Code
+      my_check_recyclable(foobar(), size = 5L)
+    Condition
+      Error in `my_check_recyclable()`:
+      ! `foo` must be a vector, not a <vctrs_foobar> object.
+
+# vec_check_recyclable() validates `size`
+
+    Code
+      vec_check_recyclable(1, size = "x")
+    Condition
+      Error in `vec_check_recyclable()`:
+      ! `size` must be a scalar integer or double.
+
+---
+
+    Code
+      vec_check_recyclable(1, size = c(1L, 2L))
+    Condition
+      Error in `vec_check_recyclable()`:
+      ! `size` must be a scalar integer or double.
+
+---
+
+    Code
+      vec_check_recyclable(1, size = 1.5)
+    Condition
+      Error in `vec_check_recyclable()`:
+      ! `size` must be a whole number, not a decimal number.
+
 # list_all_vectors() works
 
     Code
