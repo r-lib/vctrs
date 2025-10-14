@@ -78,28 +78,110 @@ test_that("recycles inputs", {
 })
 
 test_that("works with no inputs", {
-  expect_identical(vec_interleave(), NULL)
+  # Purposefully returns `unspecified()`, which is the more useful result
+  # for generic programming against this, like in `list_transpose()`
+  expect_identical(vec_interleave(), unspecified())
+  expect_identical(vec_interleave(NULL), unspecified())
+
+  # `.size` affects the size of each element, thus it doesn't affect the output
+  # when there are 0 elements
+  expect_identical(vec_interleave(.size = 2), unspecified())
+  expect_identical(vec_interleave(NULL, .size = 2), unspecified())
 })
 
 test_that("works with length zero input", {
   expect_identical(vec_interleave(integer(), integer()), integer())
 })
 
-test_that("respects ptype", {
+test_that("respects `.ptype`", {
   expect_identical(vec_interleave(.ptype = character()), character())
+  expect_identical(vec_interleave(NULL, .ptype = character()), character())
+
   expect_identical(vec_interleave(1L, 2L, .ptype = numeric()), c(1, 2))
 })
 
-test_that("uses recycling errors", {
-  expect_snapshot(error = TRUE, vec_interleave(1:2, 1:3))
+test_that("reports type errors", {
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1, "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1, "x", .error_call = quote(foo()))
+  })
+
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1, "x", .ptype = double())
+  })
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1, "x", .ptype = double(), .error_call = quote(foo()))
+  })
+
+  # Index is right even with `NULL`!
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1, NULL, "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1, NULL, "x", .ptype = double())
+  })
 })
 
-test_that("errors if the result would be a long vector", {
-  # Internal multiplication overflows `r_ssize` resulting in a different error
-  skip_on_os("windows")
-
-  expect_snapshot(
-    error = TRUE,
-    vec_interleave_indices(3L, 1e9L)
+test_that("respects `.size`", {
+  # Correctly does not report an error here
+  expect_identical(
+    vec_interleave(1:2, 3:4, .size = 2),
+    c(1L, 3L, 2L, 4L)
   )
+
+  # Useful for recycling to a known element size
+  # in the case of all size 1 elements
+  expect_identical(
+    vec_interleave(1, 2, .size = 2),
+    c(1, 2, 1, 2)
+  )
+})
+
+test_that("reports recycling errors", {
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1:2, 1:3)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1:2, 1:3, .error_call = quote(foo()))
+  })
+
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1:2, 3:4, .size = 3)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1:2, 3:4, .size = 3, .error_call = quote(foo()))
+  })
+
+  # Index is right even with `NULL`!
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1:2, NULL, 1:3)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1:2, NULL, 1:3, .size = 2)
+  })
+})
+
+test_that("reports scalar errors", {
+  expect_snapshot(error = TRUE, {
+    vec_interleave(lm(1 ~ 1))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_interleave(lm(1 ~ 1), .error_call = quote(foo()))
+  })
+
+  # Index is right even with `NULL`!
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1, NULL, lm(1 ~ 1))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_interleave(1, NULL, lm(1 ~ 1), .error_call = quote(foo()))
+  })
+})
+
+test_that("`list_interleave()` checks for a list", {
+  expect_snapshot(error = TRUE, {
+    list_interleave(1)
+  })
 })
