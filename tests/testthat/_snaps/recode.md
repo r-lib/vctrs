@@ -73,7 +73,7 @@
     Condition
       Error in `vec_recode_values()`:
       ! `ptype` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
@@ -158,7 +158,7 @@
     Condition
       Error in `vec_recode_values()`:
       ! `.x` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
@@ -169,7 +169,7 @@
     Condition
       Error in `vec_recode_values()`:
       ! `.from` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
@@ -190,7 +190,7 @@
     Condition
       Error in `vec_recode_values()`:
       ! `.from$a` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
@@ -201,7 +201,7 @@
     Condition
       Error in `vec_recode_values()`:
       ! `.to` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
@@ -221,7 +221,7 @@
     Condition
       Error in `vec_recode_values()`:
       ! `.to$a` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
@@ -232,7 +232,7 @@
     Condition
       Error in `vec_recode_values()`:
       ! `.default` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 

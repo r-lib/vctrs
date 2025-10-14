@@ -720,8 +720,8 @@ with_incompatible_s3_list_bullets <- function(x, message) {
   c(
     message,
     x = cli::format_inline(paste(
-      "Detected incompatible S3 list.",
-      "To be a vector, the object must explicitly inherit from {.cls list}",
+      "Detected incompatible scalar S3 list.",
+      "To be treated as a vector, the object must explicitly inherit from {.cls list}",
       "or should implement a {.fn vec_proxy} method.",
       "Class: {.cls {classes}}."
     )),
@@ -758,7 +758,7 @@ with_incompatible_data_frame_bullets <- function(x, message) {
     message,
     x = cli::format_inline(paste(
       "Detected incompatible data frame subclass.",
-      "To be a vector, the subclass must come before {.cls data.frame} in the",
+      "To be treated as a vector, the subclass must come before {.cls data.frame} in the",
       "class, not after.",
       "Class: {.cls {classes}}."
     )),

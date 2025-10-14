@@ -117,7 +117,7 @@
       <error/vctrs_error_scalar_type>
       Error in `vec_cbind()`:
       ! `..1` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
     Code
@@ -126,7 +126,7 @@
       <error/vctrs_error_scalar_type>
       Error in `foo()`:
       ! `..1` must be a vector, not a <vctrs_foobar> object.
-      x Detected incompatible S3 list. To be a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
       i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
     Code
