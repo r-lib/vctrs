@@ -223,6 +223,21 @@ r_obj* ffi_check_list(r_obj* x, r_obj* frame) {
   return r_null;
 }
 
+r_obj* ffi_vec_check_recyclable(r_obj* x, r_obj* ffi_size, r_obj* frame) {
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+  struct r_lazy arg_lazy = { .x = r_syms.arg, .env = frame };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+
+  const r_ssize size = r_arg_as_ssize(ffi_size, "size");
+
+  // Not exposed at the R level for single vector checks
+  const enum vctrs_allow_null allow_null = VCTRS_ALLOW_NULL_no;
+
+  vec_check_recyclable(x, size, allow_null, &arg, call);
+
+  return r_null;
+}
+
 r_obj* ffi_list_all_recyclable(
   r_obj* ffi_xs,
   r_obj* ffi_size,

@@ -13,7 +13,7 @@
 
   `list_combine()` is the engine that powers `vec_case_when()`, `vec_replace_when()`, `vec_recode_values()`, `vec_replace_values()`, and parts of `vec_if_else()`.
 
-* New `list_all_recyclable()` and `list_check_all_recyclable()`.
+* New `vec_check_recyclable()`, `list_all_recyclable()`, and `list_check_all_recyclable()`.
 
 * `list_all_vectors()`, `list_all_size()`, `list_check_all_vectors()`, and `list_check_all_size()` have all gained an `allow_null` argument, which skips over `NULL` when performing their respective check (#1762).
 

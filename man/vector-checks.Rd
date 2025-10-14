@@ -5,6 +5,7 @@
 \alias{obj_is_vector}
 \alias{obj_check_vector}
 \alias{vec_check_size}
+\alias{vec_check_recyclable}
 \title{Vector checks}
 \usage{
 obj_is_vector(x)
@@ -12,6 +13,8 @@ obj_is_vector(x)
 obj_check_vector(x, ..., arg = caller_arg(x), call = caller_env())
 
 vec_check_size(x, size, ..., arg = caller_arg(x), call = caller_env())
+
+vec_check_recyclable(x, size, ..., arg = caller_arg(x), call = caller_env())
 }
 \arguments{
 \item{x}{For \verb{obj_*()} functions, an object. For \verb{vec_*()} functions, a
@@ -28,13 +31,14 @@ running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 
-\item{size}{The size to check for.}
+\item{size}{The size to check for compatibility with.}
 }
 \value{
 \itemize{
 \item \code{obj_is_vector()} returns a single \code{TRUE} or \code{FALSE}.
 \item \code{obj_check_vector()} returns \code{NULL} invisibly, or errors.
 \item \code{vec_check_size()} returns \code{NULL} invisibly, or errors.
+\item \code{vec_check_recyclable()} returns \code{NULL} invisibly, or errors.
 }
 }
 \description{
@@ -45,6 +49,8 @@ See \emph{Vectors and scalars} below for the exact details.
 informative error if it returns \code{FALSE}.
 \item \code{vec_check_size()} tests if \code{x} has size \code{size}, and throws an informative
 error if it doesn't.
+\item \code{vec_check_recyclable()} tests if \code{x} can recycle to size \code{size}, and
+throws an informative error if it can't.
 }
 }
 \section{Vectors and scalars}{
@@ -120,4 +126,10 @@ try(obj_check_vector(y))
 # input doesn't match `size`
 vec_check_size(1:5, size = 5)
 try(vec_check_size(1:5, size = 4))
+
+# `vec_check_recyclable()` throws an informative error if the input can't
+# recycle to size `size`
+vec_check_recyclable(1:5, size = 5)
+vec_check_recyclable(1, size = 5)
+try(vec_check_recyclable(1:2, size = 5))
 }

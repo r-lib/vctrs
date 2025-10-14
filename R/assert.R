@@ -177,13 +177,16 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' - `vec_check_size()` tests if `x` has size `size`, and throws an informative
 #'   error if it doesn't.
 #'
+#' - `vec_check_recyclable()` tests if `x` can recycle to size `size`, and
+#'   throws an informative error if it can't.
+#'
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context
 #'
 #' @param x For `obj_*()` functions, an object. For `vec_*()` functions, a
 #'   vector.
 #'
-#' @param size The size to check for.
+#' @param size The size to check for compatibility with.
 #'
 #' @returns
 #' - `obj_is_vector()` returns a single `TRUE` or `FALSE`.
@@ -191,6 +194,8 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' - `obj_check_vector()` returns `NULL` invisibly, or errors.
 #'
 #' - `vec_check_size()` returns `NULL` invisibly, or errors.
+#'
+#' - `vec_check_recyclable()` returns `NULL` invisibly, or errors.
 #'
 #' @section Vectors and scalars:
 #'
@@ -264,6 +269,12 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' # input doesn't match `size`
 #' vec_check_size(1:5, size = 5)
 #' try(vec_check_size(1:5, size = 4))
+#'
+#' # `vec_check_recyclable()` throws an informative error if the input can't
+#' # recycle to size `size`
+#' vec_check_recyclable(1:5, size = 5)
+#' vec_check_recyclable(1, size = 5)
+#' try(vec_check_recyclable(1:2, size = 5))
 NULL
 
 #' @export
@@ -290,6 +301,19 @@ vec_check_size <- function(
 ) {
   check_dots_empty0(...)
   invisible(.Call(ffi_vec_check_size, x, size, environment()))
+}
+
+#' @export
+#' @rdname vector-checks
+vec_check_recyclable <- function(
+  x,
+  size,
+  ...,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
+  check_dots_empty0(...)
+  invisible(.Call(ffi_vec_check_recyclable, x, size, environment()))
 }
 
 #' List checks

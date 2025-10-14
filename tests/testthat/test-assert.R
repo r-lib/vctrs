@@ -336,6 +336,58 @@ test_that("vec_check_size() validates `size`", {
   })
 })
 
+# vec_check_recyclable --------------------------------------------------------
+
+test_that("vec_check_recyclable() is silent if the size is right", {
+  expect_null(vec_check_recyclable(1:5, size = 5L))
+  expect_null(vec_check_recyclable(1, size = 5L))
+  expect_null(vec_check_recyclable(data_frame(.size = 10L), size = 10L))
+  expect_null(vec_check_recyclable(data_frame(.size = 1L), size = 10L))
+})
+
+test_that("vec_check_recyclable() errors on the wrong size", {
+  expect_snapshot(error = TRUE, {
+    vec_check_recyclable(1:5, size = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_recyclable(1:5, size = 10L)
+  })
+})
+
+test_that("vec_check_recyclable() errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    vec_check_recyclable(quote(foo), size = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_recyclable(foobar(), size = 1L)
+  })
+})
+
+test_that("vec_check_recyclable() error respects `arg` and `call`", {
+  my_check_recyclable <- function(foo, size) {
+    vec_check_recyclable(foo, size)
+  }
+
+  expect_snapshot(error = TRUE, {
+    my_check_recyclable(1:2, size = 5L)
+  })
+  expect_snapshot(error = TRUE, {
+    my_check_recyclable(foobar(), size = 5L)
+  })
+})
+
+test_that("vec_check_recyclable() validates `size`", {
+  expect_snapshot(error = TRUE, {
+    vec_check_recyclable(1, size = "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_recyclable(1, size = c(1L, 2L))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_recyclable(1, size = 1.5)
+  })
+})
+
 # obj_is_list and friends -----------------------------------------------
 
 test_that("bare lists are lists", {
