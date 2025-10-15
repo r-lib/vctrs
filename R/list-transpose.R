@@ -140,15 +140,73 @@ list_transpose <- function(
   #
   # Resist the urge to provide support for recycling in this function. It is
   # designed to transpose a "df-list" or "rectangular list" returned by
-  # `df_list()`, which already contains vectors of equal size.
-  #
-  # We treat differing sizes as a user error.
+  # `df_list()`, which already contains vectors of equal size. We treat any
+  # differing sizes as a user error.
   #
   # This also leaves open the possibility of providing automatic support for
   # padding via `too_short = c("error", "left", "right"), pad = NULL` where
   # `pad` could be a scalar value to pad with when choosing `"left"` or
   # `"right"`.
   #
+  # # `NULL` handling
+  #
+  # We spent a lot of effort trying to rationalize `NULL` handling, but
+  # ultimately decided to treat this function as if it takes a "df-list",
+  # which don't allow `NULL` columns.
+  #
+  # Simply dropping `NULL`s is not a good option. That would break `vec_size()`
+  # invariants of `list_transpose()`. For example:
+  #
+  # ```
+  # I: List size 3, Element size 4
+  # O: List size 4, Element size 3 (in theory)
+  # O: List size 4, Element size 2 (if you drop `NULL`s)
+  # list_transpose(list(1:4, NULL, 5:8))
+  # ```
+  #
+  # Adding a `null` argument that accepts a vector to replace `NULL`s with is
+  # extremely tricky to get right due to the number of edge cases related to
+  # empty inputs. In particular, deciding whether `null` should participate in
+  # size determination or not is very confusing.
+  #
+  # ```
+  # # If `null` participates in size determination
+  # # I: List size 0, Element size 2 (infer from `null`?)
+  # # O: List size 2, Element size 0
+  # list_transpose(list(), null = 1:2)
+  # # list(integer(), integer())
+  # # Very weird output result, expecting `list()`
+  #
+  # # If `null` must be the input element size, then this errors
+  # list_transpose(list(), null = 1:2)
+  # # Error: Can't recycle `null` (2) to size 0.
+  # # But then this works
+  # list_transpose(list(1:2), null = 1:2)
+  # # You'd have to do this
+  # list_transpose(list(), null = 1:2, size = 2)
+  # ```
+  #
+  # ```
+  # # If `null` participates in size determination
+  # # I: List size 1, Element size 2 (infer from `null`?)
+  # # O: List size 2, Element size 1
+  # list_transpose(list(NULL), null = 1:2)
+  # # list(1L, 2L)
+  #
+  # # If `null` must be the input element size, then this errors
+  # list_transpose(list(NULL), null = 1:2)
+  # # Error: Can't recycle `null` (2) to size 0.
+  # # Again, you'd have to do this
+  # list_transpose(list(NULL), null = 1:2, size = 2)
+  #
+  # # This is weird because it feels like it should be identical to replacing
+  # # the `NULL`s up front, i.e.
+  # list_transpose(list(1:2))
+  # ```
+  #
+  # And then you also have to deal with common type. Does `null` contribute to
+  # the common type or is it cast to the input element type? What happens when
+  # there are no inputs or only `NULL`s and the type is `unspecified`?
 
   check_dots_empty0(...)
 
@@ -198,34 +256,3 @@ list_transpose <- function(
 
   out
 }
-
-# We disallow `NULL` elements. These would break `vec_size()` invariants of
-# `list_transpose()` if we simply drop them via `list_interleave()`.
-#
-# Either `list_check_all_vectors()` errors, or the user supplied `null` which
-# will replace `NULL`s with size 1 vectors before we `list_interleave()`.
-#
-# For example:
-#
-# ```
-# list_transpose(list(1:4, NULL, 5:8))
-# ```
-#
-# Input:
-# - List size 3
-# - Element size 4
-# Output:
-# - List size 4
-# - Element size 3
-#
-# But if we drop `NULL` you'd get:
-# - List size 4
-# - Element size 2
-#
-# Users should instead use `null` to replace `NULL` elements with something
-# else, like `NA`. This is similar to `purrr::list_transpose(default =)` and
-# `keep_empty` in some tidyr functions.
-#
-# ```
-# list_transpose(list(1:4, NULL, 5:8), null = NA)
-# ```
