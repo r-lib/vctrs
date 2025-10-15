@@ -94,7 +94,7 @@ vec_size_common <- function(
   .arg = "",
   .call = caller_env()
 ) {
-  .External2(ffi_size_common, .size, .absent)
+  .External2(ffi_size_common, list2(...), .size, .absent)
 }
 
 #' @rdname vec_size

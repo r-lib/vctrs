@@ -19,6 +19,7 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
 
   struct r_lazy internal_call = { .x = env, .env = r_null };
 
+  r_obj* xs = r_node_car(args); args = r_node_cdr(args);
   r_obj* size = r_node_car(args); args = r_node_cdr(args);
   r_obj* absent = r_node_car(args);
 
@@ -40,7 +41,6 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
     .call = call
   };
 
-  r_obj* xs = KEEP(rlang_env_dots_list(env));
   r_ssize common = vec_size_common_opts(xs, -1, &size_opts);
 
   r_obj* out;
@@ -56,7 +56,6 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
     out = r_int(common);
   }
 
-  FREE(1);
   return out;
 }
 
