@@ -152,6 +152,12 @@ test_that("provided size is cast to an integer", {
   expect_identical(vec_size_common(.size = 1), 1L)
 })
 
+test_that("doesn't mutate the input", {
+  x <- list(a = 1, b = 2:3)
+  expect_identical(vec_size_common(!!!x), 2L)
+  expect_identical(x, list(a = 1, b = 2:3))
+})
+
 # list_sizes --------------------------------------------------------------
 
 test_that("only lists are allowed", {
