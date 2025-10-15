@@ -7,7 +7,6 @@
 list_transpose(
   x,
   ...,
-  null = NULL,
   size = NULL,
   ptype = NULL,
   x_arg = caller_arg(x),
@@ -15,24 +14,18 @@ list_transpose(
 )
 }
 \arguments{
-\item{x}{A list.}
+\item{x}{A list of vectors.
+\itemize{
+\item Each vector must be the same size.
+\item Each vector will be \link[=theory-faq-coercion]{cast} to the common type
+before transposing.
+\item \code{NULL} elements are not allowed.
+}}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{null}{A value to replace \code{NULL} elements with before transposing.
-
-If specified:
-\itemize{
-\item \code{null} must be size 1.
-\item \code{null} will participate in common type determination alongside the
-elements of \code{x}.
-}
-
-If not specified, an error will be thrown if any \code{NULL} values are
-detected.}
-
 \item{size}{The expected size of each element of \code{x}. If not provided,
-computed automatically by \code{\link[=vec_size_common]{vec_size_common()}}.}
+computed as \code{vec_size(x[[1L]])}, or \code{0L} if \code{x} is empty.}
 
 \item{ptype}{The expected type of each element of \code{x}. If not provided,
 computed automatically by \code{\link[=vec_ptype_common]{vec_ptype_common()}}.}
@@ -50,7 +43,7 @@ A list of vectors with the following invariants:
 For the list:
 \itemize{
 \item \verb{vec_ptype(list_transpose(x)) == <list>}
-\item \code{vec_size(list_transpose(x)) == vec_size_common(!!!x, .size = size)}
+\item \code{vec_size(list_transpose(x)) == size \%||\% vec_size(x[[1L]]) \%||\% 0L}
 }
 
 For the list elements:
@@ -58,14 +51,32 @@ For the list elements:
 \item \code{vec_ptype(list_transpose(x)[[i]]) == vec_ptype_common(!!!x, .ptype = ptype)}
 \item \code{vec_size(list_transpose(x)[[i]]) == vec_size(x)}
 }
-
-If \code{NULL} elements are present in \code{x}, then an error is thrown unless \code{null}
-is provided, in which case any \code{NULL} elements are treated as size 1 for the
-common size computation.
 }
 \description{
-\code{list_transpose()} takes a list of vectors, transposes it, and returns a new
-list of vectors.
+\code{list_transpose()} takes a list of vectors of equal size, transposes it, and
+returns a new list of vectors of equal size.
+
+To predict the output from \code{list_transpose()}, swap the size of the list
+with the size of the list elements. For example:
+\itemize{
+\item Input: List of size 2, elements of size 3
+\item Output: List of size 3, elements of size 2
+}
+}
+\details{
+In an ideal world, this function would transpose a data frame. Data frames
+have a few desirable properties:
+\itemize{
+\item Each column is the same size
+\item \code{NULL} columns are not allowed
+}
+
+The downside is that data frames must have names. When transposing, names
+are meaningless, both on the input and output.
+
+The compromise struck here is to allow a list, which doesn't require names,
+but to enforce that each element of the list must be the same size and can't
+be \code{NULL}.
 }
 \examples{
 # Input:
@@ -80,13 +91,6 @@ list_transpose(list(1:2, 3:4, 5:6))
 x <- data_frame(a = 1:2, b = letters[1:2])
 y <- data_frame(a = 3:4, b = letters[3:4])
 list_transpose(list(x, y))
-
-# Size 1 elements are recycled to the common size before transposing
-list_transpose(list(1, 2:4))
-
-# With all size 1 elements, you can use `size` if you want to force a known
-# common size other than size 1
-list_transpose(list(1, 2), size = 3)
 
 # With size 0 elements, the invariants are a bit tricky!
 # This must return a size 0 list, but then you lose expected
@@ -110,8 +114,14 @@ list_transpose(out)
 # To work around this, provide the lost `size` and `ptype` manually
 list_transpose(out, size = vec_size(x), ptype = vec_ptype_common(!!!x))
 
-# If you'd like to pad with a missing value rather than recycling or
-# erroring, you might do something like this, which left-pads
+# Note that this function doesn't recycle elements. This is purposeful,
+# it is meant for transposing "rectangular lists", which are lists with
+# elements of equal size.
+x <- list(1, 2:3)
+try(list_transpose(x))
+
+# If you'd like to pad with a missing value rather than erroring,
+# you might do something like this, which left-pads
 x <- list(1, 2:5, 6:7)
 try(list_transpose(x))
 
@@ -124,11 +134,16 @@ x[index] <- lapply(
 )
 list_transpose(x)
 
-# `NULL` values aren't allowed in `list_transpose()`
+# `NULL` values aren't allowed in `list_transpose()` because theoretically
+# this function is meant to transpose a data frame, which can't have `NULL`
+# columns.
 x <- list(1:3, NULL, 5:7, NULL)
 try(list_transpose(x))
 
-# Use `null` to replace `NULL` values before transposing
-list_transpose(x, null = NA)
-list_transpose(x, null = 0L)
+# Either drop the `NULL` values or replace them with something else
+list_transpose(list_drop_empty(x))
+
+na <- list(vec_rep(NA, vec_size_common(!!!x)))
+x <- vec_assign(x, vec_detect_missing(x), na)
+list_transpose(x)
 }
