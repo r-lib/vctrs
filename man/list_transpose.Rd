@@ -38,7 +38,7 @@ transposing.
 }
 
 Note that \code{null} can alter the output type, but cannot alter the output
-size.}
+size. See the examples for consequences of this.}
 
 \item{size}{The expected size of each element of \code{x}. If not provided,
 computed automatically by \code{\link[=vec_size_common]{vec_size_common()}}.}
@@ -92,6 +92,9 @@ list_transpose(list(x, y))
 # Size 1 elements are recycled
 list_transpose(list(1, 2:3, 4))
 
+# ---------------------------------------------------------------------------
+# Using `size` and `ptype`
+
 # With size 0 elements, the invariants are a bit tricky!
 # This must return a size 0 list, but then you lose expected
 # type (integer) and size (2) information about the elements.
@@ -110,6 +113,9 @@ list_transpose(out)
 # To work around this, provide the lost `size` and `ptype` manually
 list_transpose(out, size = vec_size(x), ptype = vec_ptype_common(!!!x))
 
+# ---------------------------------------------------------------------------
+# Padding
+
 # If you'd like to pad with a missing value rather than erroring,
 # you might do something like this, which left-pads
 x <- list(1, 2:5, 6:7)
@@ -118,11 +124,17 @@ try(list_transpose(x))
 sizes <- list_sizes(x)
 size <- max(sizes)
 index <- which(sizes != size)
+
 x[index] <- lapply(
   index,
   function(i) vec_c(rep(NA, times = size - sizes[[i]]), x[[i]])
 )
+x
+
 list_transpose(x)
+
+# ---------------------------------------------------------------------------
+# `NULL` handling
 
 # `NULL` values aren't allowed in `list_transpose()`
 x <- list(1:3, NULL, 5:7, NULL)
@@ -132,39 +144,57 @@ try(list_transpose(x))
 list_transpose(x, null = NA)
 list_transpose(x, null = -(1:3))
 
-# Note that using `null` is not fully identical to swapping any `NULL`s
-# with their replacement value ahead of the `list_transpose()` call.
-# Most of the time `null` works as you'd expect, but some confusion can occur
-# when you have a length >1 `null` and `x` is an empty list, a list of
-# `NULL`s, or a list with only size 1 elements. The main thing to remember is
-# that `null` is not allowed to change the output size, which makes it more
-# predictable to program with, but sometimes requires you to provide more
-# information through `size`.
+# When you don't know the list element size up front, but you still want
+# to replace `NULL`s with something, use a size 1 `null` value which will
+# get recycled to the element size after it has been computed
+list_transpose(list(), null = NA)
+list_transpose(list(1, NULL, 3), null = NA)
+list_transpose(list(1, NULL, 3:4), null = NA)
 
-# This is an error, because the common size from the list is 0,
-# and you can't recycle `null` to that size.
-try(list_transpose(list(), null = 3:4))
-try(list_transpose(list(NULL), null = 3:4))
+# When you do know the list element size up front, it's best to also provide
+# that information as `size`, as this helps direct the recycling process
+# for `null`, particularly in the cases of an empty list, a list of `NULL`s,
+# or a list of size 1 elements. You typically know the list element size if
+# you are providing a `null` of size != 1, because otherwise you wouldn't
+# have been able to make `null` in the first place!
+size <- 2L
+null <- 3:4
 
-# This is also an error, because the common size from the list is 1,
-# and you can't recycle `null` to that size either.
-try(list_transpose(list(1, 2), null = 3:4))
-
-# If you're programming with `list_transpose()` and you're supplying a
-# length >1 `null` value like this, then that implies you know the
-# expected element size (otherwise you wouldn't have been able to create
-# the `null` value). Supply that `size` to override the inferred common size,
-# and then things work as expected:
-
+# `size` overrides the inferred element size of 0
+#
+# I: List size 0, Element size 0
+# O: List size 0, Element size 0
+try(list_transpose(list(), null = null))
 # I: List size 0, Element size 2
 # O: List size 2, Element size 0
-list_transpose(list(), null = 3:4, size = 2)
+list_transpose(list(), null = null, size = size)
 
+# Same idea here
+#
+# I: List size 1, Element size 0
+# O: List size 0, Element size 1
+try(list_transpose(list(NULL), null = null))
 # I: List size 1, Element size 2
 # O: List size 2, Element size 1
-list_transpose(list(NULL), null = 3:4, size = 2)
+list_transpose(list(NULL), null = null, size = size)
 
+# `size` overrides the inferred element size of 1
+#
+# I: List size 2, Element size 1
+# O: List size 1, Element size 2
+try(list_transpose(list(1, 2), null = null))
 # I: List size 2, Element size 2
 # O: List size 2, Element size 2
-list_transpose(list(1, 2), null = 3:4, size = 2)
+list_transpose(list(1, 2), null = null, size = size)
+
+# The reason that `list_transpose()` recycles `null` to the common size
+# rather than letting `null` participate in common size determination is
+# due to this example. When supplying a size 1 `null`, most of the time
+# you don't know the element size, and you just want `null` to recycle to
+# whatever the required size will be. If `null` participated in determining
+# the common size, the output of this would be `list(logical())` rather than
+# `list()` because the element size would be computed as 1. Since a size 1
+# `null` is much more common than a size !=1 `null`, we've optimized for this
+# case at the cost of needing to specify `size` explicitly in some scenarios.
+list_transpose(list(), null = NA)
 }

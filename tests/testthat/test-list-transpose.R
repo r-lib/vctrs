@@ -347,8 +347,13 @@ test_that("`null` size 0 behavior", {
 })
 
 test_that("`null` size 1 behavior", {
-  # This is the easy to explain case because everything recycles as you'd
-  # imagine it to work anyways
+  # This example of `list_transpose(list(), null = 3)` is a big reason why
+  # we recycle `null` rather than letting it participate in common size
+  # determination. A size 1 `null` is a very common way to say "I don't know
+  # what the element size is, but replace `NULL` with this and recycle it.".
+  # Since the user has no preexisting knowledge about the element size, the
+  # size of `null` should not impact the output, and you should get `list()`,
+  # not `list(numeric())`.
 
   # Element common size is inferred to be 0 from `x`
   #
@@ -378,6 +383,24 @@ test_that("`null` size 1 behavior", {
   expect_identical(
     list_transpose(list(1, 2, NULL), null = 3),
     list(c(1, 2, 3))
+  )
+
+  # Like with `null` size 0 and size >1, you can still supply `size` to override
+  # the inferred size if you know the element size is actually 1
+  size <- 1L
+  null <- 3
+
+  # I: List size 0, Element size 1
+  # O: List size 1, Element size 0
+  expect_identical(
+    list_transpose(list(), null = null, size = size),
+    list(numeric())
+  )
+  # I: List size 1, Element size 1
+  # O: List size 1, Element size 1
+  expect_identical(
+    list_transpose(list(NULL), null = null, size = size),
+    list(3)
   )
 })
 
@@ -420,26 +443,26 @@ test_that("`null` size >1 behavior", {
   # I: List size 0, Element size 2
   # O: List size 2, Element size 0
   expect_identical(
-    list_transpose(list(), null = null, size = 2),
+    list_transpose(list(), null = null, size = size),
     list(double(), double())
   )
   # I: List size 1, Element size 2
   # O: List size 2, Element size 1
   expect_identical(
-    list_transpose(list(NULL), null = null, size = 2),
+    list_transpose(list(NULL), null = null, size = size),
     list(3, 4)
   )
 
   # I: List size 2, Element size 2
   # O: List size 2, Element size 2
   expect_identical(
-    list_transpose(list(1, 2), null = null, size = 2),
+    list_transpose(list(1, 2), null = null, size = size),
     list(c(1, 2), c(1, 2))
   )
   # I: List size 3, Element size 2
   # O: List size 2, Element size 3
   expect_identical(
-    list_transpose(list(1, 2, NULL), null = null, size = 2),
+    list_transpose(list(1, 2, NULL), null = null, size = size),
     list(c(1, 2, 3), c(1, 2, 4))
   )
 })
