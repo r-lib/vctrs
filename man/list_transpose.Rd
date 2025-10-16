@@ -7,6 +7,7 @@
 list_transpose(
   x,
   ...,
+  null = NULL,
   size = NULL,
   ptype = NULL,
   x_arg = caller_arg(x),
@@ -16,16 +17,31 @@ list_transpose(
 \arguments{
 \item{x}{A list of vectors.
 \itemize{
-\item Each vector must be the same size.
-\item Each vector will be \link[=theory-faq-coercion]{cast} to the common type
+\item Each vector will be \link[=theory-faq-recycling]{recycled} to the common size
 before transposing.
-\item \code{NULL} elements are not allowed.
+\item Each vector will be \link[=theory-faq-coercion]{cast} to the common type before
+transposing.
 }}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
+\item{null}{A value to replace \code{NULL} elements with before transposing.
+
+If left unspecified, any \code{NULL} elements in \code{x} result in an error.
+
+If specified:
+\itemize{
+\item Will be \link[=theory-faq-recycling]{recycled} to the common size of \code{x} before
+transposing.
+\item Will participate in determining the common type, and will be
+\link[=theory-faq-coercion]{cast} to that type before transposing.
+}
+
+Note that \code{null} can alter the output type, but cannot alter the output
+size.}
+
 \item{size}{The expected size of each element of \code{x}. If not provided,
-computed as \code{vec_size(x[[1L]])}, or \code{0L} if \code{x} is empty.}
+computed automatically by \code{\link[=vec_size_common]{vec_size_common()}}.}
 
 \item{ptype}{The expected type of each element of \code{x}. If not provided,
 computed automatically by \code{\link[=vec_ptype_common]{vec_ptype_common()}}.}
@@ -43,18 +59,18 @@ A list of vectors with the following invariants:
 For the list:
 \itemize{
 \item \verb{vec_ptype(list_transpose(x)) == <list>}
-\item \code{vec_size(list_transpose(x)) == size \%||\% vec_size(x[[1L]]) \%||\% 0L}
+\item \code{vec_size(list_transpose(x)) == vec_size_common(!!!x)}
 }
 
 For the list elements:
 \itemize{
-\item \code{vec_ptype(list_transpose(x)[[i]]) == vec_ptype_common(!!!x, .ptype = ptype)}
+\item \code{vec_ptype(list_transpose(x)[[i]]) == vec_ptype_common(!!!x)}
 \item \code{vec_size(list_transpose(x)[[i]]) == vec_size(x)}
 }
 }
 \description{
-\code{list_transpose()} takes a list of vectors of equal size, transposes it, and
-returns a new list of vectors of equal size.
+\code{list_transpose()} takes a list of vectors, transposes it, and returns a new
+list of vectors.
 
 To predict the output from \code{list_transpose()}, swap the size of the list
 with the size of the list elements. For example:
@@ -63,28 +79,9 @@ with the size of the list elements. For example:
 \item Output: List of size 3, elements of size 2
 }
 }
-\details{
-In an ideal world, this function would transpose a data frame. Data frames
-have a few desirable properties:
-\itemize{
-\item Each column is the same size
-\item \code{NULL} columns are not allowed
-}
-
-The downside is that data frames must have names. When transposing, names
-are meaningless, both on the input and output.
-
-The compromise struck here is to allow a list, which doesn't require names,
-but to enforce that each element of the list must be the same size and can't
-be \code{NULL}.
-}
 \examples{
-# Input:
-# - List size 3
-# - Element size 2
-# Output:
-# - List size 2
-# - Element size 3
+# I: List size 3, Element size 2
+# O: List size 2, Element size 3
 list_transpose(list(1:2, 3:4, 5:6))
 
 # With data frames
@@ -92,18 +89,17 @@ x <- data_frame(a = 1:2, b = letters[1:2])
 y <- data_frame(a = 3:4, b = letters[3:4])
 list_transpose(list(x, y))
 
+# Size 1 elements are recycled
+list_transpose(list(1, 2:3, 4))
+
 # With size 0 elements, the invariants are a bit tricky!
 # This must return a size 0 list, but then you lose expected
 # type (integer) and size (2) information about the elements.
 # Losing that information makes it difficult to reverse the
 # transposition.
 #
-# Input:
-# - List size 2
-# - Element size 0
-# Output:
-# - List size 0
-# - Element size 2
+# I: List size 2, Element size 0
+# O: List size 0, Element size 2
 x <- list(integer(), integer())
 out <- list_transpose(x)
 out
@@ -113,12 +109,6 @@ list_transpose(out)
 
 # To work around this, provide the lost `size` and `ptype` manually
 list_transpose(out, size = vec_size(x), ptype = vec_ptype_common(!!!x))
-
-# Note that this function doesn't recycle elements. This is purposeful,
-# it is meant for transposing "rectangular lists", which are lists with
-# elements of equal size.
-x <- list(1, 2:3)
-try(list_transpose(x))
 
 # If you'd like to pad with a missing value rather than erroring,
 # you might do something like this, which left-pads
@@ -134,16 +124,47 @@ x[index] <- lapply(
 )
 list_transpose(x)
 
-# `NULL` values aren't allowed in `list_transpose()` because theoretically
-# this function is meant to transpose a data frame, which can't have `NULL`
-# columns.
+# `NULL` values aren't allowed in `list_transpose()`
 x <- list(1:3, NULL, 5:7, NULL)
 try(list_transpose(x))
 
-# Either drop the `NULL` values or replace them with something else
-list_transpose(list_drop_empty(x))
+# Replace them with `null`
+list_transpose(x, null = NA)
+list_transpose(x, null = -(1:3))
 
-na <- list(vec_rep(NA, vec_size_common(!!!x)))
-x <- vec_assign(x, vec_detect_missing(x), na)
-list_transpose(x)
+# Note that using `null` is not fully identical to swapping any `NULL`s
+# with their replacement value ahead of the `list_transpose()` call.
+# Most of the time `null` works as you'd expect, but some confusion can occur
+# when you have a length >1 `null` and `x` is an empty list, a list of
+# `NULL`s, or a list with only size 1 elements. The main thing to remember is
+# that `null` is not allowed to change the output size, which makes it more
+# predictable to program with, but sometimes requires you to provide more
+# information through `size`.
+
+# This is an error, because the common size from the list is 0,
+# and you can't recycle `null` to that size.
+try(list_transpose(list(), null = 3:4))
+try(list_transpose(list(NULL), null = 3:4))
+
+# This is also an error, because the common size from the list is 1,
+# and you can't recycle `null` to that size either.
+try(list_transpose(list(1, 2), null = 3:4))
+
+# If you're programming with `list_transpose()` and you're supplying a
+# length >1 `null` value like this, then that implies you know the
+# expected element size (otherwise you wouldn't have been able to create
+# the `null` value). Supply that `size` to override the inferred common size,
+# and then things work as expected:
+
+# I: List size 0, Element size 2
+# O: List size 2, Element size 0
+list_transpose(list(), null = 3:4, size = 2)
+
+# I: List size 1, Element size 2
+# O: List size 2, Element size 1
+list_transpose(list(NULL), null = 3:4, size = 2)
+
+# I: List size 2, Element size 2
+# O: List size 2, Element size 2
+list_transpose(list(1, 2), null = 3:4, size = 2)
 }
