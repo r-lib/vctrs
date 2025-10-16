@@ -237,7 +237,7 @@ list_transpose <- function(
     vec_check_recyclable(
       x = null,
       size = size,
-      x_arg = "null",
+      arg = "null",
       call = error_call
     )
 
