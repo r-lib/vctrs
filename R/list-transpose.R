@@ -265,6 +265,7 @@ list_transpose <- function(
   out
 }
 
+# Same as `ptype_finalize()` in `vec_recode_values()` and `vec_if_else()`
 list_transpose_ptype_common <- function(
   x,
   null,
