@@ -1,6 +1,6 @@
 # vctrs (development version)
 
-* New `list_transpose()` for transposing a list of vectors.
+* New `list_transpose()` for transposing a list of vectors (#2059).
 
 * Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens the list to better align with base R and the existing `$<-` and `[<-` methods (#2112).
 
