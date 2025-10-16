@@ -234,13 +234,12 @@ list_transpose <- function(
       call = error_call
     )
 
-    null <- vec_recycle(
+    vec_check_recyclable(
       x = null,
       size = size,
       x_arg = "null",
       call = error_call
     )
-    # TODO!: vec_check_recyclable()
 
     if (vec_any_missing(x)) {
       null <- list(null)
