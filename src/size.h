@@ -7,16 +7,12 @@
 r_ssize vec_size(r_obj* x);
 r_ssize vec_size_3(r_obj* x, struct vctrs_arg* p_arg, struct r_lazy call);
 
-r_obj* vec_check_recycle(r_obj* x,
-                         r_ssize size,
-                         struct vctrs_arg* x_arg,
-                         struct r_lazy call);
-
-static inline
-r_obj* vec_recycle(r_obj* x,
-                   r_ssize size) {
-  return vec_check_recycle(x, size, vec_args.x, lazy_calls.vec_recycle);
-}
+r_obj* vec_recycle(
+  r_obj* x,
+  r_ssize size,
+  struct vctrs_arg* p_x_arg,
+  struct r_lazy call
+);
 
 r_obj* vec_recycle_fallback(r_obj* x,
                             r_ssize size,

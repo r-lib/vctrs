@@ -5,8 +5,7 @@ struct size_common_reduce_opts {
   // Updated at each iteration.
   // Allows us to reuse `vec_size()` info from the previous iteration.
   r_ssize current_size;
-
-  const struct size_common_opts* opts;
+  const struct r_lazy call;
 };
 
 // [[ register(external = TRUE) ]]
@@ -36,12 +35,7 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
                       r_c_str_format_error_arg(".absent"));
   }
 
-  struct size_common_opts size_opts = {
-    .p_arg = &arg,
-    .call = call
-  };
-
-  r_ssize common = vec_size_common_opts(xs, -1, &size_opts);
+  r_ssize common = vec_size_common(xs, -1, &arg, call);
 
   r_obj* out;
   if (common < 0) {
@@ -59,12 +53,15 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   return out;
 }
 
-r_ssize vec_size_common_opts(r_obj* xs,
-                             r_ssize absent,
-                             const struct size_common_opts* opts) {
+r_ssize vec_size_common(
+  r_obj* xs,
+  r_ssize absent,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy call
+) {
   struct size_common_reduce_opts reduce_opts = {
     .current_size = -1,
-    .opts = opts
+    .call = call
   };
 
   // Interested in `reduce_opts.current_size`,
@@ -72,7 +69,7 @@ r_ssize vec_size_common_opts(r_obj* xs,
   reduce(
     r_null,
     vec_args.empty,
-    opts->p_arg,
+    p_xs_arg,
     xs,
     &size2_common,
     &reduce_opts
@@ -174,7 +171,7 @@ r_obj* size2_common(
   struct size_common_reduce_opts* reduce_opts = data;
 
   const r_ssize x_size = reduce_opts->current_size;
-  const r_ssize y_size = vec_size_3(y, counters->next_arg, reduce_opts->opts->call);
+  const r_ssize y_size = vec_size_3(y, counters->next_arg, reduce_opts->call);
 
   int left = -1;
 
@@ -185,7 +182,7 @@ r_obj* size2_common(
     y_size,
     counters->curr_arg,
     counters->next_arg,
-    reduce_opts->opts->call,
+    reduce_opts->call,
     &left
   );
 
@@ -207,52 +204,58 @@ r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
   struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 
-  struct size_common_opts size_opts = {
-    .p_arg = &arg,
-    .call = call
-  };
-
   r_obj* size = r_node_car(args); args = r_node_cdr(args);
   r_obj* xs = KEEP(rlang_env_dots_list(env));
 
   r_ssize common;
   if (size == r_null) {
-    common = vec_size_common_opts(xs, -1, &size_opts);
+    common = vec_size_common(xs, -1, &arg, call);
   } else {
     common = vec_as_short_length(size,
                                  vec_args.dot_size,
                                  internal_call);
   }
 
-  r_obj* out = vec_recycle_common_opts(xs, common, &size_opts);
+  r_obj* out = vec_recycle_common(xs, common, &arg, call);
 
   FREE(1);
   return out;
 }
 
-r_obj* vec_recycle_common_opts(r_obj* xs,
-                               r_ssize size,
-                               const struct size_common_opts* p_opts) {
+r_obj* vec_recycle_common(
+  r_obj* xs,
+  r_ssize size,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy call
+) {
   if (size < 0) {
     return xs;
   }
 
   xs = KEEP(r_clone_referenced(xs));
-  r_ssize n = vec_size(xs);
+  const r_ssize n = vec_size(xs);
 
   r_ssize i = 0;
-  struct vctrs_arg* p_x_arg = new_subscript_arg(p_opts->p_arg,
-                                                r_names(xs),
-                                                n,
-                                                &i);
+
+  struct vctrs_arg* p_x_arg = new_subscript_arg(
+    p_xs_arg,
+    r_names(xs),
+    n,
+    &i
+  );
   KEEP(p_x_arg->shelter);
 
   for (; i < n; ++i) {
     r_obj* elt = r_list_get(xs, i);
-    r_list_poke(xs, i, vec_check_recycle(elt,
-                                         size,
-                                         p_x_arg,
-                                         p_opts->call));
+
+    elt = vec_recycle(
+      elt,
+      size,
+      p_x_arg,
+      call
+    );
+
+    r_list_poke(xs, i, elt);
   }
 
   FREE(2);

@@ -174,7 +174,7 @@ r_obj* ffi_data_frame(r_obj* x,
 
   r_ssize c_size = 0;
   if (size == r_null) {
-    c_size = vec_check_size_common(x, 0, vec_args.empty, error_call);
+    c_size = vec_size_common(x, 0, vec_args.empty, error_call);
   } else {
     c_size = vec_as_short_length(size, vec_args.dot_size, error_call);
   }
@@ -214,7 +214,7 @@ r_obj* ffi_df_list(r_obj* x,
 
   r_ssize c_size = 0;
   if (size == r_null) {
-    c_size = vec_check_size_common(x, 0, vec_args.empty, error_call);
+    c_size = vec_size_common(x, 0, vec_args.empty, error_call);
   } else {
     c_size = vec_as_short_length(size, vec_args.dot_size, error_call);
   }
@@ -237,7 +237,7 @@ r_obj* df_list(r_obj* x,
     r_stop_internal("`x` must be a list.");
   }
 
-  x = KEEP(vec_check_recycle_common(x, size, vec_args.empty, error_call));
+  x = KEEP(vec_recycle_common(x, size, vec_args.empty, error_call));
 
   r_ssize n_cols = r_length(x);
 

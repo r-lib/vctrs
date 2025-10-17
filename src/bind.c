@@ -447,13 +447,13 @@ r_obj* vec_cbind(r_obj* xs,
 
   r_ssize nrow;
   if (size == r_null) {
-    nrow = vec_check_size_common(xs, 0, p_arg, error_call);
+    nrow = vec_size_common(xs, 0, p_arg, error_call);
   } else {
     nrow = vec_as_short_length(size, vec_args.dot_size, error_call);
   }
 
   if (rownames != r_null && r_length(rownames) != nrow) {
-    rownames = KEEP(vec_check_recycle(rownames, nrow, vec_args.empty, error_call));
+    rownames = KEEP(vec_recycle(rownames, nrow, vec_args.empty, error_call));
     rownames = vec_as_unique_names(rownames, false);
     FREE(1);
   }
@@ -472,7 +472,7 @@ r_obj* vec_cbind(r_obj* xs,
       continue;
     }
 
-    x = KEEP(vec_check_recycle(x, nrow, vec_args.empty, r_lazy_null));
+    x = KEEP(vec_recycle(x, nrow, vec_args.empty, r_lazy_null));
 
     r_obj* outer_name = has_names ? xs_names_p[i] : strings_empty;
     bool allow_packing;

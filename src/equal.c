@@ -57,11 +57,7 @@ SEXP vec_equal(
 
   args = PROTECT(vec_cast_common(args, ptype, vec_args.empty, error_call));
 
-  struct size_common_opts size_common_opts = {
-    vec_args.empty,
-    error_call
-  };
-  const R_len_t size = vec_size_common_opts(args, -1, &size_common_opts);
+  const R_len_t size = vec_size_common(args, -1, vec_args.empty, error_call);
 
   x = r_list_get(args, 0);
   y = r_list_get(args, 1);
