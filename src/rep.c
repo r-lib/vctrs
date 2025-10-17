@@ -18,7 +18,7 @@ r_obj* vec_rep(r_obj* x,
   const r_ssize x_size = vec_size(x);
 
   if (x_size == 1) {
-    return vec_check_recycle(x, times_, p_x_arg, error_call);
+    return vec_recycle(x, times_, p_x_arg, error_call);
   }
 
   if (multiply_would_overflow(x_size, times_)) {

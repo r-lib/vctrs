@@ -54,7 +54,7 @@ r_obj* list_interleave(
   obj_check_list(x, p_x_arg, error_call);
 
   const r_ssize elt_size = (size == -1) ?
-    vec_check_size_common(x, 0, p_x_arg, error_call) :
+    vec_size_common(x, 0, p_x_arg, error_call) :
     size;
 
   r_obj* const* v_x = r_list_cbegin(x);
