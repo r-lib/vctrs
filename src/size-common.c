@@ -233,32 +233,53 @@ r_obj* vec_recycle_common(
     return xs;
   }
 
-  xs = KEEP(r_clone_referenced(xs));
-  const r_ssize n = vec_size(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
+  const r_ssize xs_size = r_length(xs);
 
-  r_ssize i = 0;
+  r_ssize xs_index = 0;
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(
     p_xs_arg,
     r_names(xs),
-    n,
-    &i
+    xs_size,
+    &xs_index
   );
   KEEP(p_x_arg->shelter);
 
-  for (; i < n; ++i) {
-    r_obj* elt = r_list_get(xs, i);
+  // If all elements are of size `size`, there is nothing to do
+  // and we can avoid an allocation
+  for (r_ssize i = 0; i < xs_size; ++i) {
+    r_obj* x = v_xs[i];
 
-    elt = vec_recycle(
-      elt,
-      size,
-      p_x_arg,
-      call
-    );
+    if (!vec_is_size(x, size, VCTRS_ALLOW_NULL_yes, p_x_arg, call)) {
+      break;
+    }
 
-    r_list_poke(xs, i, elt);
+    ++xs_index;
+  }
+
+  if (xs_index == xs_size) {
+    FREE(1);
+    return xs;
+  }
+
+  // Otherwise we need a new list
+  r_obj* out = KEEP(r_alloc_list(xs_size));
+  r_attrib_poke_names(out, r_names(xs));
+
+  // Copy over everything before `xs_index`
+  for (r_ssize i = 0; i < xs_index; ++i) {
+    r_obj* x = v_xs[i];
+    r_list_poke(out, i, x);
+  }
+
+  // Recycle everything at and after `xs_index`
+  for (r_ssize i = xs_index; i < xs_size; ++i) {
+    r_obj* x = v_xs[i];
+    r_list_poke(out, i, vec_recycle(x, size, p_x_arg, call));
+    ++xs_index;
   }
 
   FREE(2);
-  return xs;
+  return out;
 }
