@@ -50,12 +50,7 @@ r_obj* vec_expand_grid(r_obj* xs,
   names = vec_as_names(names, p_name_repair_opts);
   r_attrib_poke_names(out, names);
 
-  const struct vec_error_opts error_opts = {
-    .p_arg = vec_args.empty,
-    .call = error_call
-  };
-
-  r_obj* sizes = KEEP(list_sizes(xs, &error_opts));
+  r_obj* sizes = KEEP(list_sizes(xs, vec_args.empty, error_call));
   const int* v_sizes = r_int_cbegin(sizes);
 
   r_obj* cumulative = KEEP(r_alloc_raw(n * sizeof(r_ssize)));

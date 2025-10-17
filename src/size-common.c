@@ -171,7 +171,7 @@ r_obj* size2_common(
   struct size_common_reduce_opts* reduce_opts = data;
 
   const r_ssize x_size = reduce_opts->current_size;
-  const r_ssize y_size = vec_size_3(y, counters->next_arg, reduce_opts->call);
+  const r_ssize y_size = vec_size_params(y, counters->next_arg, reduce_opts->call);
 
   int left = -1;
 

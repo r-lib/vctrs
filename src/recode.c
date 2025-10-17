@@ -749,14 +749,8 @@ r_obj* build_from_flat_map(r_obj* from, r_ssize from_size) {
 // ```
 static
 r_obj* build_repeated_to(r_obj* to, r_obj* from) {
-  const struct vec_error_opts from_error_opts = {
-    .p_arg = vec_args.empty,
-    .call = r_lazy_null
-  };
-  r_obj* from_sizes = KEEP(list_sizes(from, &from_error_opts));
-
+  r_obj* from_sizes = KEEP(list_sizes(from, vec_args.empty, r_lazy_null));
   to = vec_rep_each(to, from_sizes, r_lazy_null, vec_args.empty, vec_args.empty);
-
   FREE(1);
   return to;
 }

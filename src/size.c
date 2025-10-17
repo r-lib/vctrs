@@ -5,25 +5,18 @@
 // [[ register() ]]
 r_obj* ffi_size(r_obj* x, r_obj* frame) {
   struct r_lazy call = { .x = frame, .env = r_null };
-  return r_len(vec_size_3(x, vec_args.x, call));
+  return r_len(vec_size_params(x, vec_args.x, call));
 }
 
 r_ssize vec_size(r_obj* x) {
-  return vec_size_3(x, vec_args.x, lazy_calls.vec_size);
+  return vec_size_params(x, vec_args.x, lazy_calls.vec_size);
 }
 
-r_ssize vec_size_3(r_obj* x,
-                   struct vctrs_arg* p_arg,
-                   struct r_lazy call) {
-  struct vec_error_opts err = {
-    .p_arg = p_arg,
-    .call = call
-  };
-  return vec_size_opts(x, &err);
-}
-
-static
-r_ssize vec_size_opts(r_obj* x, const struct vec_error_opts* opts) {
+r_ssize vec_size_params(
+  r_obj* x,
+  struct vctrs_arg* p_x_arg,
+  struct r_lazy call
+) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
   KEEP(info.inner);
 
@@ -49,7 +42,7 @@ r_ssize vec_size_opts(r_obj* x, const struct vec_error_opts* opts) {
     break;
 
   default:
-    stop_scalar_type(x, opts->p_arg, opts->call);
+    stop_scalar_type(x, p_x_arg, call);
   }
 
   FREE(1);
@@ -73,39 +66,33 @@ r_ssize vec_raw_size(r_obj* x) {
 
 // [[ register() ]]
 r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
-  struct vec_error_opts err = {
-    .p_arg = vec_args.x,
-    .call = { .x = frame, .env = r_null }
-  };
-  return list_sizes(x, &err);
+  struct r_lazy call = { .x = frame, .env = r_null };
+  return list_sizes(x, vec_args.x, call);
 }
 
-r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
-  if (!obj_is_list(x)) {
-    r_abort_lazy_call(opts->call,
-                      "%s must be a list, not %s.",
-                      r_c_str_format_error_arg("x"),
-                      r_obj_type_friendly(x));
-  }
+r_obj* list_sizes(
+  r_obj* xs,
+  struct vctrs_arg* p_xs_arg,
+  struct r_lazy call
+) {
+  obj_check_list(xs, p_xs_arg, call);
 
-  r_ssize size = vec_size(x);
-  r_obj* const * v_x = r_list_cbegin(x);
+  r_ssize size = vec_size(xs);
+  r_obj* const * v_xs = r_list_cbegin(xs);
 
   r_obj* out = KEEP(r_alloc_integer(size));
   int* v_out = r_int_begin(out);
 
-  r_obj* names = vec_names(x);
+  r_obj* names = vec_names(xs);
   r_attrib_poke_names(out, names);
 
   r_ssize i = 0;
-  struct vctrs_arg* arg = new_subscript_arg_vec(opts->p_arg, x, &i);
-  KEEP(arg->shelter);
-
-  struct vec_error_opts local_opts = *opts;
-  local_opts.p_arg = arg;
+  struct vctrs_arg* p_x_arg = new_subscript_arg_vec(p_xs_arg, xs, &i);
+  KEEP(p_x_arg->shelter);
 
   for (; i < size; ++i) {
-    v_out[i] = vec_size_opts(v_x[i], &local_opts);
+    r_obj* x = v_xs[i];
+    v_out[i] = vec_size_params(x, p_x_arg, call);
   }
 
   FREE(2);
