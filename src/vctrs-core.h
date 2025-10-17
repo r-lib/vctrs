@@ -94,12 +94,6 @@ struct vctrs_arg {
   void* data;
 };
 
-struct vec_error_opts {
-  struct vctrs_arg* p_arg;
-  struct r_lazy call;
-};
-
-
 // Annex F of C99 specifies that `double` should conform to the IEEE 754
 // type `binary64`, which is defined as:
 // * 1  bit : sign

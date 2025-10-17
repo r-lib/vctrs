@@ -73,7 +73,7 @@ bool vec_is_size(
   struct vctrs_arg* p_x_arg,
   struct r_lazy call
 ) {
-  const r_ssize x_size = vec_size_3(x, p_x_arg, call);
+  const r_ssize x_size = vec_size_params(x, p_x_arg, call);
 
   if (x_size == size) {
     return true;
@@ -95,7 +95,7 @@ void vec_check_size(
   struct r_lazy call
 ) {
   if (!vec_is_size(x, size, allow_null, p_x_arg, call)) {
-    const r_ssize x_size = vec_size_3(x, p_x_arg, call);
+    const r_ssize x_size = vec_size_params(x, p_x_arg, call);
     stop_assert_size(x_size, size, p_x_arg, call);
   }
 }
@@ -167,7 +167,7 @@ bool vec_is_recyclable(
   struct vctrs_arg* p_x_arg,
   struct r_lazy call
 ) {
-  const r_ssize x_size = vec_size_3(x, p_x_arg, call);
+  const r_ssize x_size = vec_size_params(x, p_x_arg, call);
 
   if (x_size == size || x_size == 1) {
     return true;
@@ -188,7 +188,7 @@ r_ssize vec_check_recyclable(
   struct vctrs_arg* p_x_arg,
   struct r_lazy call
 ) {
-  const r_ssize x_size = vec_size_3(x, p_x_arg, call);
+  const r_ssize x_size = vec_size_params(x, p_x_arg, call);
 
   if (x_size == size || x_size == 1) {
     return x_size;
