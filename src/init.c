@@ -394,7 +394,7 @@ const R_ExternalMethodDef ExtEntries[] = {
   {"ffi_ptype_common",                 (DL_FUNC) &ffi_ptype_common, 1},
   {"ffi_ptype_common_opts",            (DL_FUNC) &ffi_ptype_common_opts, 2},
   {"ffi_size_common",                  (DL_FUNC) &ffi_size_common, 3},
-  {"ffi_recycle_common",               (DL_FUNC) &ffi_recycle_common, 1},
+  {"ffi_recycle_common",               (DL_FUNC) &ffi_recycle_common, 2},
   {"ffi_cast_common",                  (DL_FUNC) &ffi_cast_common, 1},
   {"ffi_cast_common_opts",             (DL_FUNC) &ffi_cast_common_opts, 2},
   {"ffi_rbind",                        (DL_FUNC) &ffi_rbind, 4},

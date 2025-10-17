@@ -201,24 +201,25 @@ r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   struct r_lazy call = { .x = syms.dot_call, .env = env };
   struct r_lazy internal_call = { .x = env, .env = r_null };
 
-  struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
-  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+  struct r_lazy xs_arg_lazy = { .x = syms.dot_arg, .env = env };
+  struct vctrs_arg xs_arg = new_lazy_arg(&xs_arg_lazy);
 
-  r_obj* size = r_node_car(args); args = r_node_cdr(args);
-  r_obj* xs = KEEP(rlang_env_dots_list(env));
+  r_obj* xs = r_node_car(args); args = r_node_cdr(args);
+  r_obj* ffi_size = r_node_car(args);
 
-  r_ssize common;
-  if (size == r_null) {
-    common = vec_size_common(xs, -1, &arg, call);
+  r_ssize size;
+  if (ffi_size == r_null) {
+    size = vec_size_common(xs, -1, &xs_arg, call);
   } else {
-    common = vec_as_short_length(size,
-                                 vec_args.dot_size,
-                                 internal_call);
+    size = vec_as_short_length(
+      ffi_size,
+      vec_args.dot_size,
+      internal_call
+    );
   }
 
-  r_obj* out = vec_recycle_common(xs, common, &arg, call);
+  r_obj* out = vec_recycle_common(xs, size, &xs_arg, call);
 
-  FREE(1);
   return out;
 }
 
@@ -232,32 +233,53 @@ r_obj* vec_recycle_common(
     return xs;
   }
 
-  xs = KEEP(r_clone_referenced(xs));
-  const r_ssize n = vec_size(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
+  const r_ssize xs_size = r_length(xs);
 
-  r_ssize i = 0;
+  r_ssize xs_index = 0;
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(
     p_xs_arg,
     r_names(xs),
-    n,
-    &i
+    xs_size,
+    &xs_index
   );
   KEEP(p_x_arg->shelter);
 
-  for (; i < n; ++i) {
-    r_obj* elt = r_list_get(xs, i);
+  // If all elements are of size `size`, there is nothing to do
+  // and we can avoid an allocation
+  for (r_ssize i = 0; i < xs_size; ++i) {
+    r_obj* x = v_xs[i];
 
-    elt = vec_recycle(
-      elt,
-      size,
-      p_x_arg,
-      call
-    );
+    if (!vec_is_size(x, size, VCTRS_ALLOW_NULL_yes, p_x_arg, call)) {
+      break;
+    }
 
-    r_list_poke(xs, i, elt);
+    ++xs_index;
+  }
+
+  if (xs_index == xs_size) {
+    FREE(1);
+    return xs;
+  }
+
+  // Otherwise we need a new list
+  r_obj* out = KEEP(r_alloc_list(xs_size));
+  r_attrib_poke_names(out, r_names(xs));
+
+  // Copy over everything before `xs_index`
+  for (r_ssize i = 0; i < xs_index; ++i) {
+    r_obj* x = v_xs[i];
+    r_list_poke(out, i, x);
+  }
+
+  // Recycle everything at and after `xs_index`
+  for (r_ssize i = xs_index; i < xs_size; ++i) {
+    r_obj* x = v_xs[i];
+    r_list_poke(out, i, vec_recycle(x, size, p_x_arg, call));
+    ++xs_index;
   }
 
   FREE(2);
-  return xs;
+  return out;
 }
