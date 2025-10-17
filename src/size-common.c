@@ -201,24 +201,25 @@ r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   struct r_lazy call = { .x = syms.dot_call, .env = env };
   struct r_lazy internal_call = { .x = env, .env = r_null };
 
-  struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
-  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+  struct r_lazy xs_arg_lazy = { .x = syms.dot_arg, .env = env };
+  struct vctrs_arg xs_arg = new_lazy_arg(&xs_arg_lazy);
 
-  r_obj* size = r_node_car(args); args = r_node_cdr(args);
-  r_obj* xs = KEEP(rlang_env_dots_list(env));
+  r_obj* xs = r_node_car(args); args = r_node_cdr(args);
+  r_obj* ffi_size = r_node_car(args);
 
-  r_ssize common;
-  if (size == r_null) {
-    common = vec_size_common(xs, -1, &arg, call);
+  r_ssize size;
+  if (ffi_size == r_null) {
+    size = vec_size_common(xs, -1, &xs_arg, call);
   } else {
-    common = vec_as_short_length(size,
-                                 vec_args.dot_size,
-                                 internal_call);
+    size = vec_as_short_length(
+      ffi_size,
+      vec_args.dot_size,
+      internal_call
+    );
   }
 
-  r_obj* out = vec_recycle_common(xs, common, &arg, call);
+  r_obj* out = vec_recycle_common(xs, size, &xs_arg, call);
 
-  FREE(1);
   return out;
 }
 

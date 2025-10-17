@@ -48,5 +48,5 @@ vec_recycle_common <- function(
   .arg = "",
   .call = caller_env()
 ) {
-  .External2(ffi_recycle_common, .size)
+  .External2(ffi_recycle_common, list2(...), .size)
 }
