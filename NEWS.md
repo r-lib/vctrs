@@ -19,7 +19,7 @@
 
 * `vec_ptype_common()` now reports more accurate error argument names (#2048).
 
-* `vec_c()`, `list_unchop()`, `vec_size_common()`, `vec_ptype_common()`, `list_sizes()`, `list_check_all_vectors()`, and other vctrs functions that take a list of objects are now more performant, particularly when many small objects are provided (#2034, #2035, #2041, #2042, #2043, #2044).
+* `vec_c()`, `list_unchop()`, `vec_size_common()`, `vec_recycle_common()`, `vec_ptype_common()`, `list_sizes()`, `list_check_all_vectors()`, and other vctrs functions that take a list of objects are now more performant, particularly when many small objects are provided (#2034, #2035, #2041, #2042, #2043, #2044, #2070).
 
 * New `vec_if_else()` for performing a vectorized if-else. It is exactly the same as `dplyr::if_else()`, but much faster and memory efficient (#2030).
 
