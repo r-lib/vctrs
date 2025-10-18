@@ -114,16 +114,18 @@ vec_ptype_common <- function(
   .arg = "",
   .call = caller_env()
 ) {
-  .External2(ffi_ptype_common, .ptype)
+  .External2(ffi_ptype_common, list2(...), .ptype)
 }
+
 vec_ptype_common_opts <- function(
   ...,
   .ptype = NULL,
   .opts = fallback_opts(),
   .call = caller_env()
 ) {
-  .External2(ffi_ptype_common_opts, .ptype, .opts)
+  .External2(ffi_ptype_common_opts, list2(...), .ptype, .opts)
 }
+
 vec_ptype_common_params <- function(
   ...,
   .ptype = NULL,
@@ -140,6 +142,7 @@ vec_ptype_common_params <- function(
     .call = .call
   )
 }
+
 vec_ptype_common_fallback <- function(
   ...,
   .ptype = NULL,
