@@ -106,7 +106,7 @@ vec_cast_dispatch_native <- function(
 #' @export
 #' @rdname vec_cast
 vec_cast_common <- function(..., .to = NULL, .arg = "", .call = caller_env()) {
-  .External2(ffi_cast_common, .to)
+  .External2(ffi_cast_common, list2(...), .to)
 }
 vec_cast_common_opts <- function(
   ...,
@@ -115,7 +115,7 @@ vec_cast_common_opts <- function(
   .arg = "",
   .call = caller_env()
 ) {
-  .External2(ffi_cast_common_opts, .to, .opts)
+  .External2(ffi_cast_common_opts, list2(...), .to, .opts)
 }
 vec_cast_common_params <- function(
   ...,
