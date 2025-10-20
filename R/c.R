@@ -80,6 +80,6 @@ vec_c <- function(
   .error_arg = "",
   .error_call = current_env()
 ) {
-  .External2(ffi_vec_c, .ptype, .name_spec, .name_repair)
+  .External2(ffi_vec_c, list2(...), .ptype, .name_spec, .name_repair)
 }
 vec_c <- fn_inline_formals(vec_c, ".name_repair")
