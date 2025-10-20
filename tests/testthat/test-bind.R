@@ -420,6 +420,17 @@ test_that("vec_rbind() requires a data frame proxy for data frame ptypes", {
   )
 })
 
+test_that("names of `...` are used for type and cast errors even when zapped", {
+  xs <- list(a = data_frame(x = 1), b = data_frame(x = "2"))
+
+  expect_snapshot(error = TRUE, {
+    vec_rbind(!!!xs)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rbind(!!!xs, .ptype = data_frame(x = double()))
+  })
+})
+
 test_that("monitoring: name repair while rbinding doesn't modify in place", {
   df <- new_data_frame(list(x = 1, x = 1))
   expect <- new_data_frame(list(x = 1, x = 1))
@@ -584,9 +595,13 @@ test_that("can repair names quietly", {
 
 test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
   expect_snapshot({
-    (expect_error(vec_rbind(.names_to = letters)))
-    (expect_error(vec_rbind(.names_to = 10)))
-    (expect_error(vec_rbind(.names_to = letters, .error_call = call("foo"))))
+    (expect_error(vec_rbind(data_frame(), .names_to = letters)))
+    (expect_error(vec_rbind(data_frame(), .names_to = 10)))
+    (expect_error(vec_rbind(
+      data_frame(),
+      .names_to = letters,
+      .error_call = call("foo")
+    )))
   })
 
   x <- data_frame(foo = 1:2, bar = 3:4)
