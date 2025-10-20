@@ -57,6 +57,12 @@ test_that("vec_ptype_common() handles matrices", {
   expect_identical(vec_ptype_common(m, m), matrix(int(), ncol = 2))
 })
 
+test_that("vec_ptype_common() doesn't mutate input", {
+  x <- list(a = 1L, b = 2)
+  expect_identical(vec_ptype_common(!!!x), numeric())
+  expect_identical(x, list(a = 1L, b = 2))
+})
+
 test_that("vec_ptype_common() includes index in argument tag", {
   df1 <- tibble(x = tibble(y = tibble(z = 1)))
   df2 <- tibble(x = tibble(y = tibble(z = "a")))
