@@ -5,7 +5,6 @@
 #include <R_ext/Rdynload.h>
 
 // Initialised at load time
-SEXP (*rlang_env_dots_list)(SEXP) = NULL;
 SEXP vctrs_method_table = NULL;
 SEXP base_method_table = NULL;
 SEXP s4_c_method_table = NULL;
@@ -2062,7 +2061,6 @@ void vctrs_init_utils(SEXP ns) {
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
 
-  rlang_env_dots_list = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_env_dots_list");
   rlang_sym_as_character = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_sym_as_character");
 
   syms_as_data_frame2 = Rf_install("as.data.frame2");

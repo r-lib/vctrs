@@ -217,7 +217,7 @@ vec_cbind <- function(
   ),
   .error_call = current_env()
 ) {
-  .External2(ffi_cbind, .ptype, .size, .name_repair)
+  .External2(ffi_cbind, list2(...), .ptype, .size, .name_repair)
 }
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")
 

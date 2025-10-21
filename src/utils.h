@@ -201,8 +201,6 @@ bool lgl_any_na(SEXP x);
 SEXP colnames(SEXP x);
 r_obj* colnames2(r_obj* x);
 
-extern SEXP (*rlang_env_dots_list)(SEXP);
-
 void* r_vec_deref_barrier(SEXP x);
 const void* r_vec_deref_barrier_const(SEXP x);
 
