@@ -1,24 +1,6 @@
 #ifndef VCTRS_ALTREP_H
 #define VCTRS_ALTREP_H
 
-#include "Rversion.h"
-
-#if (R_VERSION < R_Version(3, 5, 0)) ||                 \
-    (defined(_WIN32) && R_VERSION == R_Version(3, 5, 0))
-# define HAS_ALTREP 0
-#else
-# define HAS_ALTREP 1
-#endif
-
-
-#if !HAS_ALTREP
-
-# define ALTREP(x) false
-# define ALTVEC_EXTRACT_SUBSET_PROXY(x, indx, call)     \
-  ((void) x, (void) indx, (void) call, NULL)
-
-#else
-
 #include "R_ext/Altrep.h"
 
 #define ALTREP_METHODS                                 \
@@ -61,7 +43,5 @@ typedef struct { ALTVEC_METHODS; } altvec_methods_t;
 static inline SEXP ALTVEC_EXTRACT_SUBSET_PROXY(SEXP x, SEXP indx, SEXP call) {
   return ALTVEC_DISPATCH(Extract_subset, x, indx, call);
 }
-
-#endif
 
 #endif

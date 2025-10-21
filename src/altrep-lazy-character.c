@@ -1,24 +1,6 @@
 #include "vctrs.h"
 #include "altrep.h"
 
-#if (!HAS_ALTREP)
-
-#include <R_ext/Rdynload.h>
-
-void vctrs_init_altrep_lazy_character(DllInfo* dll) { }
-
-r_obj* ffi_altrep_lazy_character_is_materialized(r_obj* x) {
-  r_stop_internal("Need R 3.5+ for Altrep support.");
-  return r_null;
-}
-
-r_obj* ffi_altrep_new_lazy_character(r_obj* fn) {
-  r_stop_internal("Need R 3.5+ for Altrep support.");
-  return r_null;
-}
-
-#else
-
 // Initialised at load time
 R_altrep_class_t altrep_lazy_character_class;
 
@@ -135,5 +117,3 @@ void vctrs_init_altrep_lazy_character(DllInfo* dll) {
   R_set_altstring_Elt_method(altrep_lazy_character_class, altrep_lazy_character_Elt);
   R_set_altstring_Set_elt_method(altrep_lazy_character_class, altrep_lazy_character_Set_elt);
 }
-
-#endif // R version >= 3.5.0
