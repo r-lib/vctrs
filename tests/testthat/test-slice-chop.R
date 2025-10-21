@@ -341,8 +341,6 @@ test_that("vec_chop() with data frame proxies always uses the proxy's length inf
 })
 
 test_that("ALTREP objects always generate materialized chops (#1450)", {
-  skip_if(getRversion() <= "3.5.0")
-
   x <- .Call(vctrs_altrep_rle_Make, c(foo = 10L, bar = 5L))
 
   # `x` starts in compact form

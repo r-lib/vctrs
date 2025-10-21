@@ -11,17 +11,13 @@ base_order <- function(x, na.last = TRUE, decreasing = FALSE) {
     x <- list(x)
   }
 
-  args <- list(na.last = na.last, decreasing = decreasing)
+  args <- list(
+    na.last = na.last,
+    decreasing = decreasing,
+    method = "radix"
+  )
 
-  # `method` didn't exist on R < 3.3.
-  # It would sometimes use radix sorting automatically.
-  if (getRversion() < "3.3.0") {
-    method <- list()
-  } else {
-    method <- list(method = "radix")
-  }
-
-  args <- c(x, args, method)
+  args <- c(x, args)
 
   rlang::exec("order", !!!args)
 }

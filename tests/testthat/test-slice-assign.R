@@ -1371,6 +1371,9 @@ test_that("assignment allows a df `value`'s column to be a different type than i
 })
 
 test_that("monitoring: assignment to a data frame with unshared columns doesn't overwrite (#986)", {
+  # We now require R >= 4.0.0, so this test no longer needs the < 4.0.0
+  # branches, but we keep it around for historical reference
+
   x <- new_df_unshared_col()
   value <- new_data_frame(list(x = 2))
   expect <- new_data_frame(list(x = 1L))

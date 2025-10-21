@@ -270,11 +270,6 @@ test_that("complex missing values are always grouped together (#1403)", {
 })
 
 test_that("behavior with complex missing values matches base R", {
-  skip_if(
-    getRversion() < "3.4.0",
-    message = "`match()` is broken with complex missings"
-  )
-
   x <- complex(real = c(1, 1, 2, 2, 2), imaginary = c(NA, 1, NA, 2, NaN))
 
   expect_identical(
