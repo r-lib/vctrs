@@ -217,22 +217,6 @@
     }
   })
 
-  utils::globalVariables("vec_set_attributes")
-
-  # Prevent two copies from being made by `attributes(x) <- attrib` on R < 3.6.0
-  if (getRversion() >= '3.6.0') {
-    vec_set_attributes <- function(x, attrib) {
-      attributes(x) <- attrib
-      x
-    }
-  } else {
-    vec_set_attributes <- function(x, attrib) {
-      .Call(vctrs_set_attributes, x, attrib)
-    }
-  }
-
-  env_bind(ns, vec_set_attributes = vec_set_attributes)
-
   .Call(vctrs_init_library, ns_env())
 }
 
