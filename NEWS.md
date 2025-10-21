@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* R >=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the [5 most recent versions of R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+
 * `vec_interleave()` gains new `.size` and `.error_call` arguments.
 
 * `vec_interleave()` now reports the correct index in errors when `NULL`s are present.
