@@ -54,11 +54,17 @@ class(my_df) &amp;lt;- c(&quot;data.frame&quot;, &quot;my_class&quot;)
 vctrs::obj_check_vector(my_df)
 #&amp;gt; Error:
 #&amp;gt; ! `my_df` must be a vector, not a &amp;lt;data.frame&amp;gt; object.
+#&amp;gt; x Detected incompatible data frame structure. A data frame is normally treated as a vector, but an incompatible class ordering was detected. To be compatible, the subclass &amp;lt;my_class&amp;gt; must come before &amp;lt;data.frame&amp;gt;, not after. Class: &amp;lt;data.frame/my_class&amp;gt;.
+#&amp;gt; i If this object comes from a package, please report this error to the package author.
+#&amp;gt; i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 This is problematic as many tidyverse functions won’t work properly:
 dplyr::slice(my_df, 1)
 #&amp;gt; Error in `vec_slice()`:
 #&amp;gt; ! `x` must be a vector, not a &amp;lt;data.frame&amp;gt; object.
+#&amp;gt; x Detected incompatible data frame subclass. To be treated as a vector, the subclass must come before &amp;lt;data.frame&amp;gt; in the class, not after. Class: &amp;lt;data.frame/my_class&amp;gt;.
+#&amp;gt; i If this object comes from a package, please report this error to the package author.
+#&amp;gt; i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
@@ -129,11 +135,17 @@ class(my_df) &amp;lt;- c(&quot;data.frame&quot;, &quot;my_class&quot;)
 vctrs::obj_check_vector(my_df)
 #&amp;gt; Error:
 #&amp;gt; ! `my_df` must be a vector, not a &amp;lt;data.frame&amp;gt; object.
+#&amp;gt; x Detected incompatible data frame structure. A data frame is normally treated as a vector, but an incompatible class ordering was detected. To be compatible, the subclass &amp;lt;my_class&amp;gt; must come before &amp;lt;data.frame&amp;gt;, not after. Class: &amp;lt;data.frame/my_class&amp;gt;.
+#&amp;gt; i If this object comes from a package, please report this error to the package author.
+#&amp;gt; i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 This is problematic as many tidyverse functions won’t work properly:
 dplyr::slice(my_df, 1)
 #&amp;gt; Error in `vec_slice()`:
 #&amp;gt; ! `x` must be a vector, not a &amp;lt;data.frame&amp;gt; object.
+#&amp;gt; x Detected incompatible data frame subclass. To be treated as a vector, the subclass must come before &amp;lt;data.frame&amp;gt; in the class, not after. Class: &amp;lt;data.frame/my_class&amp;gt;.
+#&amp;gt; i If this object comes from a package, please report this error to the package author.
+#&amp;gt; i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
@@ -240,11 +252,17 @@ class</em> is not <code>"data.frame"</code>:</p>
 <span></span>
 <span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vector-checks.html">obj_check_vector</a></span><span class="op">(</span><span class="va">my_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error:</span></span>
-<span><span class="co">#&gt; ! `my_df` must be a vector, not a &lt;data.frame&gt; object.</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; ! `my_df` must be a vector, not a &lt;data.frame&gt; object.</span></span>
+<span><span class="co">#&gt; x Detected incompatible data frame structure. A data frame is normally treated as a vector, but an incompatible class ordering was detected. To be compatible, the subclass &lt;my_class&gt; must come before &lt;data.frame&gt;, not after. Class: &lt;data.frame/my_class&gt;.</span></span>
+<span><span class="co">#&gt; i If this object comes from a package, please report this error to the package author.</span></span>
+<span><span class="co">#&gt; i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.</span></span></code></pre><p></p></div>
 <p>This is problematic as many tidyverse functions won’t work properly:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="va">my_df</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in `vec_slice()`:</span></span>
-<span><span class="co">#&gt; ! `x` must be a vector, not a &lt;data.frame&gt; object.</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; ! `x` must be a vector, not a &lt;data.frame&gt; object.</span></span>
+<span><span class="co">#&gt; x Detected incompatible data frame subclass. To be treated as a vector, the subclass must come before &lt;data.frame&gt; in the class, not after. Class: &lt;data.frame/my_class&gt;.</span></span>
+<span><span class="co">#&gt; i If this object comes from a package, please report this error to the package author.</span></span>
+<span><span class="co">#&gt; i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.</span></span></code></pre><p></p></div>
 <p>It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
 To fix these errors, you can simply change the construction of your data

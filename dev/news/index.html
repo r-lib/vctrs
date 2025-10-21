@@ -40,7 +40,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p>R &gt;=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the <a href="https://www.tidyverse.org/blog/2019/04/r-version-support/" class="external-link">5 most recent versions of R</a>.</p></li>
+<ul><li><p><code><a href="../reference/vector-checks.html">obj_check_vector()</a></code> now throws a clearer error message. In particular, special info bullets have been added that link out to FAQ pages and explain common issues around incompatible S3 lists and data frames (<a href="https://github.com/r-lib/vctrs/issues/2061" class="external-link">#2061</a>).</p></li>
+<li><p>R &gt;=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the <a href="https://www.tidyverse.org/blog/2019/04/r-version-support/" class="external-link">5 most recent versions of R</a>.</p></li>
 <li><p><code><a href="../reference/vec_interleave.html">vec_interleave()</a></code> gains new <code>.size</code> and <code>.error_call</code> arguments.</p></li>
 <li><p><code><a href="../reference/vec_interleave.html">vec_interleave()</a></code> now reports the correct index in errors when <code>NULL</code>s are present.</p></li>
 <li>
