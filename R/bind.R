@@ -191,7 +191,7 @@ vec_rbind <- function(
   .name_spec = NULL,
   .error_call = current_env()
 ) {
-  .External2(ffi_rbind, .ptype, .names_to, .name_repair, .name_spec)
+  .External2(ffi_rbind, list2(...), .ptype, .names_to, .name_repair, .name_spec)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 

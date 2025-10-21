@@ -93,6 +93,22 @@
       ! Can't merge the outer name `foo` with a vector of length > 1.
       Please supply a `.name_spec` specification.
 
+# names of `...` are used for type and cast errors even when zapped
+
+    Code
+      vec_rbind(!!!xs)
+    Condition
+      Error in `vec_rbind()`:
+      ! Can't combine `a$x` <double> and `b$x` <character>.
+
+---
+
+    Code
+      vec_rbind(!!!xs, .ptype = data_frame(x = double()))
+    Condition
+      Error in `vec_rbind()`:
+      ! Can't convert `b$x` <character> to match type of `x` <double>.
+
 # vec_cbind() reports error context
 
     Code
@@ -165,19 +181,20 @@
 # can supply `.names_to` to `vec_rbind()` (#229)
 
     Code
-      (expect_error(vec_rbind(.names_to = letters)))
+      (expect_error(vec_rbind(data_frame(), .names_to = letters)))
     Output
       <error/rlang_error>
       Error in `vec_rbind()`:
       ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
     Code
-      (expect_error(vec_rbind(.names_to = 10)))
+      (expect_error(vec_rbind(data_frame(), .names_to = 10)))
     Output
       <error/rlang_error>
       Error in `vec_rbind()`:
       ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
     Code
-      (expect_error(vec_rbind(.names_to = letters, .error_call = call("foo"))))
+      (expect_error(vec_rbind(data_frame(), .names_to = letters, .error_call = call(
+        "foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:

@@ -2,44 +2,47 @@
 #include "type-data-frame.h"
 #include "decl/bind-decl.h"
 
+enum names_to_style {
+  // Outer names are zapped
+  NAMES_TO_STYLE_zap,
+
+  // Outer names are promoted to a column. Indices are used if no names are provided.
+  NAMES_TO_STYLE_column,
+
+  // Outer names are merged with inner names subject to `.name_spec`
+  NAMES_TO_STYLE_name_spec
+};
+
 // [[ register(external = TRUE) ]]
 r_obj* ffi_rbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
   args = r_node_cdr(args);
 
-  struct r_lazy error_call = { .x = syms.dot_error_call, .env = frame };
-
-  r_obj* xs = KEEP(rlang_env_dots_list(frame));
+  r_obj* xs = r_node_car(args); args = r_node_cdr(args);
   r_obj* ptype = r_node_car(args); args = r_node_cdr(args);
   r_obj* names_to = r_node_car(args); args = r_node_cdr(args);
   r_obj* name_repair = r_node_car(args); args = r_node_cdr(args);
   r_obj* name_spec = r_node_car(args);
 
-  if (names_to != r_null) {
-    if (r_inherits(names_to, "rlang_zap")) {
-      r_attrib_poke_names(xs, r_null);
-      names_to = r_null;
-    } else if (r_is_string(names_to)) {
-      names_to = r_chr_get(names_to, 0);
-    } else {
-      r_abort_lazy_call(error_call,
-                        "%s must be `NULL`, a string, or an `rlang::zap()` object.",
-                        r_c_str_format_error_arg(".names_to"));
-    }
-  }
+  struct r_lazy error_call = { .x = syms.dot_error_call, .env = frame };
 
-  struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, false);
+  struct name_repair_opts name_repair_opts = validate_bind_name_repair(
+    name_repair,
+    false
+  );
   KEEP(name_repair_opts.shelter);
 
   name_repair_opts.call = error_call;
 
-  r_obj* out = vec_rbind(xs,
-                         ptype,
-                         names_to,
-                         &name_repair_opts,
-                         name_spec,
-                         error_call);
+  r_obj* out = vec_rbind(
+    xs,
+    ptype,
+    names_to,
+    &name_repair_opts,
+    name_spec,
+    error_call
+  );
 
-  FREE(2);
+  FREE(1);
   return out;
 }
 
@@ -54,34 +57,39 @@ r_obj* vec_rbind(r_obj* xs,
   struct vctrs_arg* p_arg = vec_args.empty;
 
   int n_prot = 0;
-  r_ssize n_inputs = r_length(xs);
 
-  for (r_ssize i = 0; i < n_inputs; ++i) {
-    r_list_poke(xs, i, as_df_row(r_list_get(xs, i),
-                                 name_repair,
-                                 error_call));
+  const r_ssize xs_size = r_length(xs);
+
+  // We need to own `xs`, we are going to modify it via `as_df_row()`
+  xs = KEEP_N(r_clone_referenced(xs), &n_prot);
+
+  for (r_ssize i = 0; i < xs_size; ++i) {
+    r_obj* elt = r_list_get(xs, i);
+    r_list_poke(xs, i, as_df_row(elt, name_repair, error_call));
   }
 
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = vec_ptype_common_params(xs,
-                                  ptype,
-                                  S3_FALLBACK_true,
-                                  p_arg,
-                                  error_call);
+  ptype = vec_ptype_common_params(
+    xs,
+    ptype,
+    S3_FALLBACK_true,
+    p_arg,
+    error_call
+  );
   KEEP_N(ptype, &n_prot);
-
-  r_ssize n_cols = r_length(ptype);
 
   if (ptype == r_null) {
     FREE(n_prot);
     return new_data_frame(r_globals.empty_list, 0);
   }
-  if (r_typeof(ptype) == R_TYPE_logical && !n_cols) {
-    ptype = as_df_row_impl(vctrs_shared_missing_lgl,
-                           name_repair,
-                           error_call);
+  if (r_typeof(ptype) == R_TYPE_logical && r_length(ptype) == 0) {
+    ptype = as_df_row_impl(
+      vctrs_shared_missing_lgl,
+      name_repair,
+      error_call
+    );
     KEEP_N(ptype, &n_prot);
   }
   if (!is_data_frame(ptype)) {
@@ -90,43 +98,64 @@ r_obj* vec_rbind(r_obj* xs,
 
   bool assign_names = !r_inherits(name_spec, "rlang_zap");
 
-  bool has_names_to = names_to != r_null;
+  enum names_to_style names_to_style;
+  if (names_to == r_null) {
+    names_to_style = NAMES_TO_STYLE_name_spec;
+  } else if (r_inherits(names_to, "rlang_zap")) {
+    names_to_style = NAMES_TO_STYLE_zap;
+  } else if (r_is_string(names_to)) {
+    names_to_style = NAMES_TO_STYLE_column;
+  } else {
+    r_abort_lazy_call(
+      error_call,
+      "%s must be `NULL`, a string, or an `rlang::zap()` object.",
+      r_c_str_format_error_arg(".names_to")
+    );
+  }
+
   r_ssize names_to_loc = 0;
 
-  if (has_names_to) {
+  if (names_to_style == NAMES_TO_STYLE_column) {
+    // Add that column name to `ptype`
+    names_to = r_chr_get(names_to, 0);
+
     r_obj* ptype_nms = KEEP(r_names(ptype));
     names_to_loc = r_chr_find(ptype_nms, names_to);
     FREE(1);
 
     if (names_to_loc < 0) {
-      ptype = cbind_names_to(r_names(xs) != r_null,
-                             names_to,
-                             ptype,
-                             error_call);
+      ptype = cbind_names_to(
+        r_names(xs) != r_null,
+        names_to,
+        ptype,
+        error_call
+      );
       KEEP_N(ptype, &n_prot);
       names_to_loc = 0;
     }
   }
 
   // Must happen after the `names_to` column has been added to `ptype`
-  xs = vec_cast_common_params(xs,
-                              ptype,
-                              S3_FALLBACK_true,
-                              vec_args.empty,
-                              error_call);
+  xs = vec_cast_common_params(
+    xs,
+    ptype,
+    S3_FALLBACK_true,
+    vec_args.empty,
+    error_call
+  );
   KEEP_N(xs, &n_prot);
 
   // Find individual input sizes and total size of output
   r_ssize n_rows = 0;
 
-  r_obj* ns_placeholder = KEEP_N(r_alloc_integer(n_inputs), &n_prot);
-  int* ns = r_int_begin(ns_placeholder);
+  r_obj* sizes_shelter = KEEP_N(r_alloc_integer(xs_size), &n_prot);
+  int* sizes = r_int_begin(sizes_shelter);
 
-  for (r_ssize i = 0; i < n_inputs; ++i) {
+  for (r_ssize i = 0; i < xs_size; ++i) {
     r_obj* elt = r_list_get(xs, i);
     r_ssize size = (elt == r_null) ? 0 : vec_size(elt);
     n_rows += size;
-    ns[i] = size;
+    sizes[i] = size;
   }
 
   r_obj* proxy = KEEP_N(vec_proxy_recurse(ptype), &n_prot);
@@ -165,45 +194,63 @@ r_obj* vec_rbind(r_obj* xs,
   KEEP_HERE(row_names, &rownames_pi);
   ++n_prot;
 
-  r_obj* names_to_col = r_null;
+  const void* p_names_to_index = NULL;
+  r_obj* names_to_out = r_null;
+  void* p_names_to_out = NULL;
   enum r_type names_to_type = 99;
-  void* p_names_to_col = NULL;
-  const void* p_index = NULL;
 
-  r_obj* xs_names = KEEP_N(r_names(xs), &n_prot);
-  bool xs_is_named = xs_names != r_null;
+  // Set by the switch
+  r_obj* xs_names;
+  bool xs_is_named;
+  r_obj* const* p_xs_names;
 
-  if (has_names_to) {
-    r_obj* index = r_null;
-    if (xs_is_named) {
-      index = xs_names;
-    } else {
-      index = KEEP_N(r_alloc_integer(n_inputs), &n_prot);
-      r_int_fill_seq(index, 1, n_inputs);
-    }
-    names_to_type = r_typeof(index);
-    names_to_col = KEEP_N(r_alloc_vector(names_to_type, n_rows), &n_prot);
-
-    p_index = r_vec_deref_barrier_const(index);
-    p_names_to_col = r_vec_deref_barrier(names_to_col);
-
+  switch (names_to_style) {
+  case NAMES_TO_STYLE_zap: {
     xs_names = r_null;
     xs_is_named = false;
+    p_xs_names = NULL;
+    break;
   }
+  case NAMES_TO_STYLE_column: {
+    xs_names = r_null;
+    xs_is_named = false;
+    p_xs_names = NULL;
 
-  r_obj* const * p_xs_names = NULL;
-  if (xs_is_named) {
-    p_xs_names = r_chr_cbegin(xs_names);
+    r_obj* names_to_index = r_null;
+    if (r_names(xs) == r_null) {
+      names_to_index = KEEP_N(r_alloc_integer(xs_size), &n_prot);
+      r_int_fill_seq(names_to_index, 1, xs_size);
+    } else {
+      names_to_index = KEEP_N(r_names(xs), &n_prot);
+    }
+    names_to_type = r_typeof(names_to_index);
+    names_to_out = KEEP_N(r_alloc_vector(names_to_type, n_rows), &n_prot);
+
+    p_names_to_index = r_vec_deref_barrier_const(names_to_index);
+    p_names_to_out = r_vec_deref_barrier(names_to_out);
+    break;
+  }
+  case NAMES_TO_STYLE_name_spec: {
+    xs_names = KEEP_N(r_names(xs), &n_prot);
+    xs_is_named = xs_names != r_null;
+    p_xs_names = xs_is_named ? r_chr_cbegin(xs_names) : NULL;
+    break;
+  }
+  default: {
+    r_stop_unreachable();
+  }
   }
 
   // Compact sequences use 0-based counters
   r_ssize counter = 0;
 
-  for (r_ssize i = 0; i < n_inputs; ++i) {
-    r_ssize size = ns[i];
+  for (r_ssize i = 0; i < xs_size; ++i) {
+    const r_ssize size = sizes[i];
+
     if (!size) {
       continue;
     }
+
     r_obj* x = r_list_get(xs, i);
 
     // Update `loc` to assign within `out[counter:counter + size, ]`
@@ -240,8 +287,8 @@ r_obj* vec_rbind(r_obj* xs,
     }
 
     // Assign current name to group vector, if supplied
-    if (has_names_to) {
-      r_vec_fill(names_to_type, p_names_to_col, counter, p_index, i, size);
+    if (names_to_style == NAMES_TO_STYLE_column) {
+      r_vec_fill(names_to_type, p_names_to_out, counter, p_names_to_index, i, size);
     }
 
     counter += size;
@@ -290,8 +337,8 @@ r_obj* vec_rbind(r_obj* xs,
   out = vec_restore_opts(out, ptype, &bind_restore_opts);
   KEEP_AT(out, out_pi);
 
-  if (has_names_to) {
-    out = df_poke(out, names_to_loc, names_to_col);
+  if (names_to_style == NAMES_TO_STYLE_column) {
+    out = df_poke(out, names_to_loc, names_to_out);
     KEEP_AT(out, out_pi);
   }
 
