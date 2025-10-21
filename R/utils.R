@@ -343,3 +343,11 @@ vec_paste0 <- function(...) {
   args <- vec_recycle_common(...)
   exec(paste0, !!!args)
 }
+
+# On R <3.6.0, we used to have a special C version of this to avoid two copies
+# from being made by `attributes(x) <- attrib`. Now that we require R >=4.0.0,
+# we don't have the C utility anymore.
+vec_set_attributes <- function(x, attrib) {
+  attributes(x) <- attrib
+  x
+}

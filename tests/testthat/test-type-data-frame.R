@@ -372,8 +372,6 @@ test_that("`row.names` completely overrides `n` and the implied size of `x`, eve
 })
 
 test_that("ALTREP `row.names` are not materialized by `new_data_frame()` (tidyverse/dplyr#6596)", {
-  skip_if(getRversion() <= "3.5.0")
-
   # We are careful in `new_data_frame()` to not call the `Dataptr()` or
   # `Length()` ALTREP methods, both of which would materialize our lazy
   # character here

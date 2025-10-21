@@ -287,6 +287,20 @@ test_that("not equal if attributes not equal", {
 test_that("can compare expressions", {
   expect_true(obj_equal(expression(x), expression(x)))
   expect_false(obj_equal(expression(x), expression(y)))
+
+  # Attributes on the expression vectors
+  expect_true(obj_equal(
+    vec_set_attributes(expression(x), list(foo = 1)),
+    vec_set_attributes(expression(x), list(foo = 1))
+  ))
+  expect_false(obj_equal(
+    vec_set_attributes(expression(x), list(foo = 1)),
+    vec_set_attributes(expression(x), list(foo = 2))
+  ))
+
+  # Length check
+  expect_true(obj_equal(expression(x, y), expression(x, y)))
+  expect_false(obj_equal(expression(x, y), expression(x)))
 })
 
 # na ----------------------------------------------------------------------

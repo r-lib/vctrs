@@ -255,66 +255,6 @@ SEXP vctrs_new_df_unshared_col(void) {
   return out;
 }
 
-// An alternative to `attributes(x) <- attrib`, which makes
-// two copies on R < 3.6.0
-// [[ register() ]]
-SEXP vctrs_set_attributes(SEXP x, SEXP attrib) {
-  R_len_t n_attrib = Rf_length(attrib);
-  int n_protect = 0;
-
-  x = PROTECT(r_clone_referenced(x));
-  ++n_protect;
-
-  // Remove existing attributes, and unset the object bit
-  SET_ATTRIB(x, R_NilValue);
-  SET_OBJECT(x, 0);
-
-  // Possible early exit after removing attributes
-  if (n_attrib == 0) {
-    UNPROTECT(n_protect);
-    return x;
-  }
-
-  SEXP names = Rf_getAttrib(attrib, R_NamesSymbol);
-
-  if (Rf_isNull(names)) {
-    Rf_errorcall(R_NilValue, "Attributes must be named.");
-  }
-
-  // Check that each element of `names` is named.
-  for (R_len_t i = 0; i < n_attrib; ++i) {
-    SEXP name = STRING_ELT(names, i);
-
-    if (name == NA_STRING || name == R_BlankString) {
-      const char* msg = "All attributes must have names. Attribute %i does not.";
-      Rf_errorcall(R_NilValue, msg, i + 1);
-    }
-  }
-
-  // Always set `dim` first, if it exists. This way it is set before `dimnames`.
-  int dim_pos = -1;
-  for (R_len_t i = 0; i < n_attrib; ++i) {
-    if (!strcmp(CHAR(STRING_ELT(names, i)), "dim")) {
-      dim_pos = i;
-      break;
-    }
-  }
-
-  if (dim_pos != -1) {
-    Rf_setAttrib(x, R_DimSymbol, VECTOR_ELT(attrib, dim_pos));
-  }
-
-  for (R_len_t i = 0; i < n_attrib; ++i) {
-    if (i == dim_pos) {
-      continue;
-    }
-    Rf_setAttrib(x, Rf_installChar(STRING_ELT(names, i)), VECTOR_ELT(attrib, i));
-  }
-
-  UNPROTECT(n_protect);
-  return x;
-}
-
 // [[ include("utils.h") ]]
 SEXP map(SEXP x, SEXP (*fn)(SEXP)) {
   R_len_t n = Rf_length(x);

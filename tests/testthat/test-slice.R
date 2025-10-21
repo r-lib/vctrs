@@ -446,8 +446,6 @@ test_that("slicing an unspecified() object returns an unspecified()", {
 
 
 test_that("vec_slice() works with Altrep classes with custom extract methods", {
-  skip_if(getRversion() < "3.5")
-
   x <- .Call(vctrs_altrep_rle_Make, c(foo = 10L, bar = 5L))
 
   idx <- c(9, 10, 11)
@@ -519,10 +517,7 @@ test_that("vec_init() asserts vectorness (#301)", {
 })
 
 test_that("vec_init() works with Altrep classes", {
-  skip_if(getRversion() < "3.5")
-
   x <- .Call(vctrs_altrep_rle_Make, c(foo = 1L, bar = 2L))
-
   expect_equal(vec_init(x, 2), rep(NA_character_, 2))
 })
 
@@ -553,10 +548,7 @@ test_that("names are recycled correctly with compact reps", {
 })
 
 test_that("vec_slice() with compact_reps work with Altrep classes", {
-  skip_if(getRversion() < "3.5")
-
   x <- .Call(vctrs_altrep_rle_Make, c(foo = 10L, bar = 5L))
-
   expect_equal(vec_slice_rep(x, 10L, 3L), rep("foo", 3))
 })
 
@@ -796,10 +788,7 @@ test_that("can subset S3 objects using the fallback method with compact seqs", {
 })
 
 test_that("vec_slice() with compact_seqs work with Altrep classes", {
-  skip_if(getRversion() < "3.5")
-
   x <- .Call(vctrs_altrep_rle_Make, c(foo = 2L, bar = 3L))
-
   expect_equal(vec_slice_seq(x, 1L, 3L), c("foo", "bar", "bar"))
 })
 

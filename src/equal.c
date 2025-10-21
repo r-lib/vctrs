@@ -338,6 +338,23 @@ void vec_equal_col_na_propagate(
   }                                                       \
   while (0)
 
+// Same as implementation for lists where we check length and attributes as
+// well, but `VECTOR_PTR_RO()` doesn't support EXPRSXP, so we must use a
+// separate loop that uses `VECTOR_ELT()` instead.
+static inline
+bool expr_equal_all(SEXP x, SEXP y, R_len_t n) {
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP x_elt = VECTOR_ELT(x, i);
+    SEXP y_elt = VECTOR_ELT(y, i);
+
+    if (!equal_object_normalized(x_elt, y_elt)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 static inline bool vec_equal_attrib(SEXP x, SEXP y);
 
 // [[ include("vctrs.h") ]]
@@ -456,9 +473,13 @@ bool equal_object_normalized(SEXP x, SEXP y) {
   case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_na_equal);
   case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_na_equal);
   case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal);
-  case EXPRSXP:
   case VECSXP:  EQUAL_ALL(SEXP, VECTOR_PTR_RO, list_equal_na_equal);
-  default:      stop_unimplemented_type("equal_object", type);
+
+  // Want the length and attribute checks that are used on vectors,
+  // but needs its own special iteration loop
+  case EXPRSXP: return expr_equal_all(x, y, n);
+
+  default: stop_unimplemented_type("equal_object", type);
   }
 }
 

@@ -882,8 +882,6 @@ test_that("vec_rbind() works with simple homogeneous foreign S3 classes", {
 })
 
 test_that("vec_rbind() works with simple homogeneous foreign S4 classes", {
-  skip_if_cant_set_names_on_s4()
-
   joe1 <- .Counts(1L, name = "Joe")
   joe2 <- .Counts(2L, name = "Joe")
 
@@ -906,8 +904,6 @@ test_that("vec_rbind() fails with complex foreign S3 classes", {
 })
 
 test_that("vec_rbind() fails with complex foreign S4 classes", {
-  skip_if_cant_set_names_on_s4()
-
   expect_snapshot({
     joe <- .Counts(1L, name = "Joe")
     jane <- .Counts(2L, name = "Jane")

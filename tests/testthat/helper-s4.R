@@ -71,7 +71,3 @@ local_exit <- function(expr, frame = caller_env()) {
 
   invisible(expr)
 }
-
-skip_if_cant_set_names_on_s4 <- function() {
-  skip_if(getRversion() < "3.5.0", message = "Can't set names on S4 objects")
-}

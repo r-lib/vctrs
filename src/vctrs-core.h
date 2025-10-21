@@ -147,27 +147,17 @@ enum vctrs_dbl dbl_classify(double x) {
 
 // Compatibility ------------------------------------------------
 
-#if (R_VERSION < R_Version(3, 5, 0))
-# define LOGICAL_RO(x) ((const int*) LOGICAL(x))
-# define INTEGER_RO(x) ((const int*) INTEGER(x))
-# define REAL_RO(x) ((const double*) REAL(x))
-# define COMPLEX_RO(x) ((const Rcomplex*) COMPLEX(x))
-# define STRING_PTR_RO(x) ((const SEXP*) STRING_PTR(x))
-# define RAW_RO(x) ((const Rbyte*) RAW(x))
-# define DATAPTR_RO(x) ((const void*) STRING_PTR(x))
+#if (R_VERSION < R_Version(4, 5, 0))
+# define VECTOR_PTR_RO(x) ((const SEXP*) DATAPTR_RO(x))
 #endif
 
-#define VECTOR_PTR_RO(x) ((const SEXP*) DATAPTR_RO(x))
-
-// Likely supplied in R 4.4.0
 // https://github.com/wch/r-source/commit/38403c9c347dd5426da6009573b087188ec6be04
-#ifndef R_PRIdXLEN_T
+#if (R_VERSION < R_Version(4, 4, 0))
 # ifdef LONG_VECTOR_SUPPORT
 #  define R_PRIdXLEN_T "td"
 # else
 #  define R_PRIdXLEN_T "d"
 # endif
 #endif
-
 
 #endif

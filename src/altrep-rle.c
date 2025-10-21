@@ -2,25 +2,6 @@
 #include "altrep-rle.h"
 #include "altrep.h"
 
-#if (!HAS_ALTREP)
-
-#include <R_ext/Rdynload.h>
-
-void vctrs_init_altrep_rle(DllInfo* dll) { }
-
-SEXP altrep_rle_is_materialized(SEXP x) {
-  Rf_error("Need R 3.5+ for Altrep support.");
-  return R_NilValue;
-}
-
-SEXP altrep_rle_Make(SEXP input) {
-  Rf_error("Need R 3.5+ for Altrep support.");
-  return R_NilValue;
-}
-
-#else
-
-
 // Initialised at load time
 R_altrep_class_t altrep_rle_class;
 
@@ -189,5 +170,3 @@ void vctrs_init_altrep_rle(DllInfo* dll) {
   // altstring
   R_set_altstring_Elt_method(altrep_rle_class, altrep_rle_string_Elt);
 }
-
-#endif // R version >= 3.5.0
