@@ -49,4 +49,4 @@ Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Remotes:
-    r-lib/rlang
+    r-lib/rlang#1842
