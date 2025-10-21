@@ -352,6 +352,7 @@
     Condition
       Error:
       ! `quote(foo)` must be a vector, not a symbol.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -360,6 +361,9 @@
     Condition
       Error:
       ! `foobar()` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # vec_check_recyclable() error respects `arg` and `call`
 
@@ -376,6 +380,9 @@
     Condition
       Error in `my_check_recyclable()`:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # vec_check_recyclable() validates `size`
 
