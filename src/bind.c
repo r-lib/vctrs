@@ -526,9 +526,16 @@ r_obj* vec_cbind(r_obj* xs,
   // Convert inputs to data frames, validate, and collect total number of columns.
   // Converted inputs are stored in `xs_data_frames` so we can reuse that list
   // rather than cloning `xs`.
-  r_obj* xs_names = KEEP(r_names(xs));
-  bool has_names = xs_names != r_null;
-  r_obj* const* xs_names_p = has_names ? r_chr_cbegin(xs_names) : NULL;
+  r_keep_loc xs_names_pi;
+  r_obj* xs_names = r_names(xs);
+  KEEP_HERE(xs_names, &xs_names_pi);
+
+  const bool has_xs_names = xs_names != r_null;
+  r_obj* const* v_xs_names = has_xs_names ? r_chr_cbegin(xs_names) : NULL;
+
+  // We don't own `xs_names` so if we have to modify it, then we need to
+  // clone it first
+  bool has_cloned_xs_names = false;
 
   r_ssize ncol = 0;
   for (r_ssize i = 0; i < n; ++i) {
@@ -541,12 +548,18 @@ r_obj* vec_cbind(r_obj* xs,
 
     x = KEEP(vec_recycle(x, nrow, vec_args.empty, r_lazy_null));
 
-    r_obj* outer_name = has_names ? xs_names_p[i] : strings_empty;
+    r_obj* outer_name = has_xs_names ? v_xs_names[i] : strings_empty;
     bool allow_packing;
     x = KEEP(as_df_col(x, outer_name, &allow_packing, error_call));
 
     // Remove outer name of column vectors because they shouldn't be repacked
-    if (has_names && !allow_packing) {
+    if (has_xs_names && !allow_packing) {
+      if (!has_cloned_xs_names) {
+        has_cloned_xs_names = true;
+        xs_names = r_clone_referenced(xs_names);
+        KEEP_AT(xs_names, xs_names_pi);
+        v_xs_names = r_chr_cbegin(xs_names);
+      }
       r_chr_poke(xs_names, i, strings_empty);
     }
 
@@ -592,7 +605,7 @@ r_obj* vec_cbind(r_obj* xs,
       continue;
     }
 
-    r_obj* outer_name = has_names ? xs_names_p[i] : strings_empty;
+    r_obj* outer_name = has_xs_names ? v_xs_names[i] : strings_empty;
     if (outer_name != strings_empty) {
       r_list_poke(out, counter, x);
       r_chr_poke(names, counter, outer_name);
