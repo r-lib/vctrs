@@ -5,6 +5,7 @@
     Condition
       Error:
       ! `quote(foo)` must be a vector, not a symbol.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -13,6 +14,9 @@
     Condition
       Error:
       ! `foobar()` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # obj_check_vector() error respects `arg` and `call`
 
@@ -21,6 +25,40 @@
     Condition
       Error in `my_check_vector()`:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+
+# obj_check_vector() error contains FAQ links and correct bullets
+
+    Code
+      obj_check_vector(x)
+    Condition
+      Error:
+      ! `x` must be a vector, not an expression vector.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+
+---
+
+    Code
+      obj_check_vector(x)
+    Condition
+      Error:
+      ! `x` must be a vector, not a <my_list> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <my_list>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+
+---
+
+    Code
+      obj_check_vector(x)
+    Condition
+      Error:
+      ! `x` must be a vector, not a <data.frame> object.
+      x Detected incompatible data frame structure. A data frame is normally treated as a vector, but an incompatible class ordering was detected. To be compatible, the subclass <my_df> must come before <data.frame>, not after. Class: <data.frame/my_df>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # assertion failures are explained
 
@@ -235,6 +273,7 @@
     Condition
       Error:
       ! `quote(foo)` must be a vector, not a symbol.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -243,6 +282,9 @@
     Condition
       Error:
       ! `foobar()` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # vec_check_size() error respects `arg` and `call`
 
@@ -259,6 +301,9 @@
     Condition
       Error in `my_check_size()`:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # vec_check_size() validates `size`
 
@@ -307,6 +352,7 @@
     Condition
       Error:
       ! `quote(foo)` must be a vector, not a symbol.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -315,6 +361,9 @@
     Condition
       Error:
       ! `foobar()` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # vec_check_recyclable() error respects `arg` and `call`
 
@@ -331,6 +380,9 @@
     Condition
       Error in `my_check_recyclable()`:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 
 # vec_check_recyclable() validates `size`
 
@@ -398,18 +450,21 @@
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! `my_arg[[2]]` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
     Code
       (expect_error(my_function(list(1, name = env()))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! `my_arg$name` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
     Code
       (expect_error(my_function(list(1, foo = env()))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! `my_arg$foo` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 # list_check_all_size() works
 
@@ -465,6 +520,7 @@
       <error/vctrs_error_scalar_type>
       Error in `list_all_size()`:
       ! `x[[1]]` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
     Code
       my_function <- (function(my_arg, size) list_check_all_size(my_arg, size))
       (expect_error(my_function(x, 2)))
@@ -472,6 +528,7 @@
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! `my_arg[[1]]` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 # list_all_recyclable() and list_check_all_recyclable() error on scalars
 
@@ -481,6 +538,7 @@
       <error/vctrs_error_scalar_type>
       Error in `list_all_recyclable()`:
       ! `x[[1]]` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
     Code
       my_function <- (function(my_arg, size) {
         list_check_all_recyclable(my_arg, size)
@@ -490,6 +548,7 @@
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! `my_arg[[1]]` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 # list_all_size() and list_check_all_size() throw error using internal call on non-list input
 
@@ -567,6 +626,7 @@
     Condition
       Error:
       ! `x[[2]]` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -575,6 +635,7 @@
     Condition
       Error:
       ! `x[[2]]` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -583,6 +644,7 @@
     Condition
       Error:
       ! `x[[3]]` must be a vector, not an environment.
+      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 
 # list_check_all_recyclable() works with `allow_null`
 

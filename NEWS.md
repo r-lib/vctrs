@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `obj_check_vector()` now throws a clearer error message. In particular, special info bullets have been added that link out to FAQ pages and explain common issues around incompatible S3 lists and data frames (#2061).
+
 * R >=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the [5 most recent versions of R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
 
 * `vec_interleave()` gains new `.size` and `.error_call` arguments.

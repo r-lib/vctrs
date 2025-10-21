@@ -2,6 +2,7 @@
 % Please edit documentation in R/faq.R
 \name{faq-error-scalar-type}
 \alias{faq-error-scalar-type}
+\alias{faq_error_scalar_type}
 \title{FAQ - Error: Input must be a vector}
 \description{
 This error occurs when a function expects a vector and gets a scalar
@@ -51,6 +52,9 @@ fit[c(1, 4)]
 vctrs::vec_slice(fit, c(1, 4))
 #> Error in `vctrs::vec_slice()`:
 #> ! `x` must be a vector, not a <lm> object.
+#> x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <lm>.
+#> i If this object comes from a package, please report this error to the package author.
+#> i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
 }\if{html}{\out{</div>}}
 
 Defused function calls are another (more esoteric) example:
@@ -76,6 +80,7 @@ lapply(call, function(x) x)
 vctrs::vec_slice(call, 1:2)
 #> Error in `vctrs::vec_slice()`:
 #> ! `x` must be a vector, not a call.
+#> i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
 }\if{html}{\out{</div>}}
 }
 
