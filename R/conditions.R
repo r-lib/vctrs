@@ -724,7 +724,7 @@ with_incompatible_s3_list_bullets <- function(message, x) {
     i = "If this object comes from a package, please report this error to the package author.",
     i = cli::format_inline(paste(
       "Read our FAQ about",
-      "{.topic [creating vector types](howto_faq_fix_scalar_type_error)}",
+      "{.topic [creating vector types](vctrs::howto_faq_fix_scalar_type_error)}",
       "to learn more."
     ))
   )
@@ -763,7 +763,7 @@ with_incompatible_data_frame_bullets <- function(message, x) {
     i = "If this object comes from a package, please report this error to the package author.",
     i = cli::format_inline(paste(
       "Read our FAQ about",
-      "{.topic [creating vector types](howto_faq_fix_scalar_type_error)}",
+      "{.topic [creating vector types](vctrs::howto_faq_fix_scalar_type_error)}",
       "to learn more."
     ))
   )
@@ -773,7 +773,7 @@ with_scalar_faq_bullet <- function(message) {
   c(
     message,
     i = cli::format_inline(paste(
-      "Read our FAQ about {.topic [scalar types](faq_error_scalar_type)}",
+      "Read our FAQ about {.topic [scalar types](vctrs::faq_error_scalar_type)}",
       "to learn more."
     ))
   )
