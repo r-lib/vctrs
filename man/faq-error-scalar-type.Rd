@@ -42,9 +42,9 @@ class(fit)
 # S3 lists can be subset like a vector using base R:
 fit[c(1, 4)]
 #> $coefficients
-#> (Intercept) 
-#>           2 
-#> 
+#> (Intercept)
+#>           2
+#>
 #> $rank
 #> [1] 1
 
@@ -54,7 +54,7 @@ vctrs::vec_slice(fit, c(1, 4))
 #> ! `x` must be a vector, not a <lm> object.
 #> x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <lm>.
 #> i If this object comes from a package, please report this error to the package author.
-#> i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+#> i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 }\if{html}{\out{</div>}}
 
 Defused function calls are another (more esoteric) example:
@@ -69,10 +69,10 @@ call[1:2]
 lapply(call, function(x) x)
 #> [[1]]
 #> foo
-#> 
+#>
 #> $bar
 #> [1] TRUE
-#> 
+#>
 #> $baz
 #> [1] FALSE
 
