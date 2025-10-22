@@ -1366,18 +1366,6 @@ bool r_is_empty_names(SEXP x) {
   return true;
 }
 
-SEXP r_env_get(SEXP env, SEXP sym) {
-  SEXP obj = PROTECT(Rf_findVarInFrame3(env, sym, FALSE));
-
-  // Force lazy loaded bindings
-  if (TYPEOF(obj) == PROMSXP) {
-    obj = Rf_eval(obj, R_BaseEnv);
-  }
-
-  UNPROTECT(1);
-  return obj;
-}
-
 SEXP r_clone_referenced(SEXP x) {
   if (MAYBE_REFERENCED(x)) {
     return Rf_shallow_duplicate(x);
