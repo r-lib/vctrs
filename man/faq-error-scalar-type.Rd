@@ -42,9 +42,9 @@ class(fit)
 # S3 lists can be subset like a vector using base R:
 fit[c(1, 4)]
 #> $coefficients
-#> (Intercept)
-#>           2
-#>
+#> (Intercept) 
+#>           2 
+#> 
 #> $rank
 #> [1] 1
 
@@ -69,10 +69,10 @@ call[1:2]
 lapply(call, function(x) x)
 #> [[1]]
 #> foo
-#>
+#> 
 #> $bar
 #> [1] TRUE
-#>
+#> 
 #> $baz
 #> [1] FALSE
 
