@@ -80,7 +80,7 @@ lapply(call, function(x) x)
 vctrs::vec_slice(call, 1:2)
 #> Error in `vctrs::vec_slice()`:
 #> ! `x` must be a vector, not a call.
-#> i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+#> i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 }\if{html}{\out{</div>}}
 }
 

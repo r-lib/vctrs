@@ -263,7 +263,7 @@
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! Input must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
     Code
       (expect_error(my_function(foobar(list()))))
     Output
@@ -282,7 +282,7 @@
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! `x` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
     Code
       (expect_error(my_function(1, 2)))
     Output
@@ -325,21 +325,21 @@
       <error/vctrs_error_scalar_type>
       Error in `list_sizes()`:
       ! `x[[1]]` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
     Code
       (expect_error(list_sizes(list(1, 2, env()))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `list_sizes()`:
       ! `x[[3]]` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
     Code
       (expect_error(list_sizes(list(1, 2, foo = env()))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `list_sizes()`:
       ! `x$foo` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # vec_size() reports error context
 
@@ -349,7 +349,7 @@
       <error/vctrs_error_scalar_type>
       Error in `vec_size()`:
       ! `x` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # vec_cast_common() reports error context
 
