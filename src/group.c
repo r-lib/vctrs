@@ -215,7 +215,7 @@ SEXP vec_group_loc(SEXP x) {
   // Count of the number of elements in each group
   SEXP counts = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
   int* p_counts = INTEGER(counts);
-  memset(p_counts, 0, n_groups * sizeof(int));
+  r_memset(p_counts, 0, n_groups * sizeof(int));
 
   for (int i = 0; i < n; ++i) {
     const int group = p_groups[i];
@@ -244,7 +244,7 @@ SEXP vec_group_loc(SEXP x) {
   // The current location we are updating, each group has its own counter
   SEXP locations = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
   int* p_locations = INTEGER(locations);
-  memset(p_locations, 0, n_groups * sizeof(int));
+  r_memset(p_locations, 0, n_groups * sizeof(int));
 
   // Fill in the location values for each group
   for (int i = 0; i < n; ++i) {

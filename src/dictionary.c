@@ -98,7 +98,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
       Rf_errorcall(R_NilValue, "Can't allocate hash lookup table. Please free memory.");
     }
 
-    memset(d->hash, 0, n * sizeof(uint32_t));
+    r_memset(d->hash, 0, n * sizeof(uint32_t));
     vec_hash_fill(x, n, opts->na_equal, d->hash);
   } else {
     d->hash = NULL;
@@ -817,7 +817,7 @@ SEXP vctrs_duplicated(SEXP x) {
 
   SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n), &nprot);
   int* p_out = LOGICAL(out);
-  memset(p_out, 0, n * sizeof(int));
+  r_memset(p_out, 0, n * sizeof(int));
 
   uint32_t* p_hashes = (uint32_t*) R_alloc(n, sizeof(uint32_t));
 

@@ -323,7 +323,7 @@ r_obj* as_unique_names_impl(r_obj* names, bool quiet) {
     char buf[buf_size];
     buf[0] = '\0';
 
-    memcpy(buf, name, size);
+    r_memcpy(buf, name, size);
     int remaining = buf_size - size;
 
     int needed = snprintf(buf + size, remaining, "...%d", (int) i + 1);
@@ -692,7 +692,7 @@ r_obj* r_chr_paste_prefix(r_obj* names, const char* prefix, const char* sep) {
   buf[total_len - 1] = '\0';
   char* bufp = buf;
 
-  memcpy(bufp, prefix, outer_len); bufp += outer_len;
+  r_memcpy(bufp, prefix, outer_len); bufp += outer_len;
 
   for (int i = 0; i < sep_len; ++i) {
     *bufp++ = sep[i];
@@ -704,7 +704,7 @@ r_obj* r_chr_paste_prefix(r_obj* names, const char* prefix, const char* sep) {
     const char* inner = r_str_c_string(p_names[i]);
     int inner_n = strlen(inner);
 
-    memcpy(bufp, inner, inner_n);
+    r_memcpy(bufp, inner, inner_n);
     bufp[inner_n] = '\0';
 
     r_chr_poke(names, i, r_str(buf));
