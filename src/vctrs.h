@@ -156,7 +156,7 @@ static inline struct df_short_circuit_info new_df_short_circuit_info(R_len_t siz
     p_row_known = (bool*) RAW(row_known);
 
     // To begin with, no rows have a known comparison value
-    memset(p_row_known, false, size * sizeof(bool));
+    r_memset(p_row_known, false, size * sizeof(bool));
   }
 
   struct df_short_circuit_info info = {

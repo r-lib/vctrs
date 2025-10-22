@@ -460,7 +460,7 @@ r_obj* build_indices_for_to_as_list_of_vectors(
 
   r_obj* index_sizes = KEEP(r_alloc_raw(from_size * sizeof(r_ssize)));
   r_ssize* v_index_sizes = r_raw_begin(index_sizes);
-  memset(v_index_sizes, 0, from_size * sizeof(r_ssize));
+  r_memset(v_index_sizes, 0, from_size * sizeof(r_ssize));
 
   // First pass sums the `index` sizes. Using growables has too much
   // ambiguity when there are a large number of `from` elements.
@@ -487,7 +487,7 @@ r_obj* build_indices_for_to_as_list_of_vectors(
 
   // Set `v_index_sizes` to `0`. We are going to reuse this
   // to now track the location we are inserting at for a particular index.
-  memset(v_index_sizes, 0, from_size * sizeof(r_ssize));
+  r_memset(v_index_sizes, 0, from_size * sizeof(r_ssize));
   r_ssize* v_index_locs = v_index_sizes;
   v_index_sizes = NULL;
 

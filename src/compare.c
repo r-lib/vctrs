@@ -87,7 +87,7 @@ r_obj* df_compare(r_obj* x, r_obj* y, bool na_equal, r_ssize size) {
 
   // Initialize to "equality" value and only change if we learn that it differs.
   // This also determines the zero column result.
-  memset(v_out, 0, size * sizeof(int));
+  r_memset(v_out, 0, size * sizeof(int));
 
   struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
   struct df_short_circuit_info* p_info = &info;

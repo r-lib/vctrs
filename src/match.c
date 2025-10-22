@@ -1720,7 +1720,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   if (track_matches_haystack) {
     r_obj* detect_matches_haystack = KEEP_N(r_alloc_raw(size_haystack * sizeof(bool)), &n_prot);
     v_detect_matches_haystack = r_raw_begin(detect_matches_haystack);
-    memset(v_detect_matches_haystack, 0, size_haystack * sizeof(bool));
+    r_memset(v_detect_matches_haystack, 0, size_haystack * sizeof(bool));
   }
 
   // For `multiple = "first" / "last"`
@@ -2444,7 +2444,7 @@ r_obj* compute_nesting_container_ids(r_obj* x,
 
   // Initialize ids to 0, which is always our first container id value.
   // This means we start with 1 container.
-  memset(v_container_ids, 0, size * sizeof(int));
+  r_memset(v_container_ids, 0, size * sizeof(int));
   *p_n_container_ids = 1;
 
   if (size == 0) {

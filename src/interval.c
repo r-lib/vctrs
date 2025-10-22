@@ -211,7 +211,7 @@ r_obj* vec_interval_group_info(r_obj* start,
         int* v_loc = r_int_begin(loc);
 
         const int* v_order_start = v_order + loc_order_start;
-        memcpy(v_loc, v_order_start, loc_size * sizeof(*v_loc));
+        r_memcpy(v_loc, v_order_start, loc_size * sizeof(*v_loc));
       }
 
       loc_order_start = loc_order_end + 1;
@@ -237,7 +237,7 @@ r_obj* vec_interval_group_info(r_obj* start,
       int* v_loc = r_int_begin(loc);
 
       const int* v_order_start = v_order + loc_order_start;
-      memcpy(v_loc, v_order_start, loc_size * sizeof(*v_loc));
+      r_memcpy(v_loc, v_order_start, loc_size * sizeof(*v_loc));
     }
   }
 
@@ -258,7 +258,7 @@ r_obj* vec_interval_group_info(r_obj* start,
       int* v_loc = r_int_begin(loc);
 
       const int* v_order_start = v_order + loc_order_missing_start;
-      memcpy(v_loc, v_order_start, loc_size * sizeof(*v_loc));
+      r_memcpy(v_loc, v_order_start, loc_size * sizeof(*v_loc));
     }
   }
 

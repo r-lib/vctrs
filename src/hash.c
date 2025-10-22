@@ -11,7 +11,7 @@ r_obj* ffi_obj_hash(r_obj* x) {
   hash = hash_combine(hash, obj_hash(x));
 
   r_obj* out = KEEP(r_alloc_raw(sizeof(uint32_t)));
-  memcpy(r_raw_begin(out), &hash, sizeof(uint32_t));
+  r_memcpy(r_raw_begin(out), &hash, sizeof(uint32_t));
   FREE(1);
   return out;
 }
@@ -136,7 +136,7 @@ r_obj* ffi_vec_hash(r_obj* x) {
   r_obj* out = KEEP(r_alloc_raw(size * sizeof(uint32_t)));
   uint32_t* v_out = (uint32_t*) r_raw_begin(out);
 
-  memset(v_out, 0, size * sizeof(uint32_t));
+  r_memset(v_out, 0, size * sizeof(uint32_t));
   vec_hash_fill(x, size, true, v_out);
 
   FREE(2);

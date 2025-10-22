@@ -87,7 +87,7 @@ r_ssize str_arg_fill(const char* data, char* buf, r_ssize remaining) {
     return -1;
   }
 
-  memcpy(buf, data, len);
+  r_memcpy(buf, data, len);
   buf[len] = '\0';
 
   return len;

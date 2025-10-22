@@ -1019,7 +1019,7 @@ void int_order_chunk_impl(bool decreasing,
   uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
   r_ssize* p_counts = (r_ssize*) init_lazy_raw(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->size);
+  r_memset(p_counts, 0, p_lazy_counts->size);
 
   int_adjust(decreasing, na_last, size, p_x);
 
@@ -1063,7 +1063,7 @@ void int_order_impl(const int* p_x,
     void* p_x_chunk;
     if (copy) {
       p_x_chunk = init_lazy_raw(p_lazy_x_chunk);
-      memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
+      r_memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
     } else {
       p_x_chunk = p_lazy_x_chunk->p_data;
     }
@@ -1119,12 +1119,12 @@ void int_order_impl(const int* p_x,
   uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
   r_ssize* p_counts = (r_ssize*) init_lazy_raw(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->size);
+  r_memset(p_counts, 0, p_lazy_counts->size);
 
   void* p_x_chunk;
   if (copy) {
     p_x_chunk = init_lazy_raw(p_lazy_x_chunk);
-    memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
+    r_memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
   } else {
     p_x_chunk = p_lazy_x_chunk->p_data;
   }
@@ -1387,7 +1387,7 @@ void int_order_counting(const int* p_x,
       p_o_aux[loc] = p_o[i];
     }
 
-    memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
+    r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
   } else {
     for (r_ssize i = 0; i < size; ++i) {
       const int elt = p_x[i];
@@ -1400,7 +1400,7 @@ void int_order_counting(const int* p_x,
   // Reset counts for next column.
   // Only reset what we might have touched.
   // `+ 1` to reset the NA bucket too.
-  memset(p_counts, 0, (range + 1) * sizeof(r_ssize));
+  r_memset(p_counts, 0, (range + 1) * sizeof(r_ssize));
 }
 
 // -----------------------------------------------------------------------------
@@ -1646,8 +1646,8 @@ void int_order_radix_recurse(const r_ssize size,
   }
 
   // Copy back over
-  memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
-  memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
+  r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
+  r_memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
 
   r_ssize last_cumulative_count = 0;
 
@@ -2003,7 +2003,7 @@ void dbl_order_chunk_impl(bool decreasing,
   uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
   r_ssize* p_counts = (r_ssize*) init_lazy_raw(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->size);
+  r_memset(p_counts, 0, p_lazy_counts->size);
 
   dbl_order_radix(
     size,
@@ -2064,7 +2064,7 @@ void dbl_order_impl(const double* p_x,
   void* p_x_chunk;
   if (copy) {
     p_x_chunk = init_lazy_raw(p_lazy_x_chunk);
-    memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
+    r_memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
   } else {
     p_x_chunk = p_lazy_x_chunk->p_data;
   }
@@ -2083,7 +2083,7 @@ void dbl_order_impl(const double* p_x,
   uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
   r_ssize* p_counts = (r_ssize*) init_lazy_raw(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->size);
+  r_memset(p_counts, 0, p_lazy_counts->size);
 
   dbl_order_radix(
     size,
@@ -2499,8 +2499,8 @@ void dbl_order_radix_recurse(const r_ssize size,
   }
 
   // Copy back over
-  memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
-  memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
+  r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
+  r_memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
 
   r_ssize last_cumulative_count = 0;
 
@@ -3378,8 +3378,8 @@ void chr_order_radix_recurse(const r_ssize size,
   }
 
   // Copy back over
-  memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
-  memcpy(p_sizes, p_sizes_aux, size * sizeof(*p_sizes_aux));
+  r_memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
+  r_memcpy(p_sizes, p_sizes_aux, size * sizeof(*p_sizes_aux));
 
   r_ssize last_cumulative_count = 0;
 
@@ -3719,7 +3719,7 @@ void chr_appearance_counting(const SEXP* p_x,
       p_o_aux[loc] = p_o[i];
     }
 
-    memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
+    r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
   } else {
     for (r_ssize i = 0; i < size; ++i) {
       const SEXP elt = p_x[i];

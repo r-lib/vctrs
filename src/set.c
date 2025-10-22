@@ -86,7 +86,7 @@ r_obj* vec_set_intersect(r_obj* x,
 
   r_obj* marked_shelter = KEEP_N(r_alloc_raw(x_size * sizeof(bool)), &n_prot);
   bool* v_marked = (bool*) r_raw_begin(marked_shelter);
-  memset(v_marked, 0, x_size * sizeof(bool));
+  r_memset(v_marked, 0, x_size * sizeof(bool));
 
   vec_set_intersect_loop(x_dict, y_dict, x_size, y_size, v_marked);
 

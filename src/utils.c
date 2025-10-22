@@ -334,7 +334,7 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
                                                                \
   r_ssize copy_size = (size > x_size) ? x_size : size;         \
                                                                \
-  memcpy(p_out, p_x, copy_size * sizeof(CTYPE));               \
+  r_memcpy(p_out, p_x, copy_size * sizeof(CTYPE));             \
                                                                \
   UNPROTECT(1);                                                \
   return out;                                                  \
@@ -395,9 +395,9 @@ SEXP s3_paste_method_sym(const char* generic, const char* cls) {
 
   char* buf = s3_buf;
 
-  memcpy(buf, generic, gen_len); buf += gen_len;
+  r_memcpy(buf, generic, gen_len); buf += gen_len;
   *buf = '.'; ++buf;
-  memcpy(buf, cls, cls_len); buf += cls_len;
+  r_memcpy(buf, cls, cls_len); buf += cls_len;
   *buf = '\0';
 
   return Rf_install(s3_buf);
@@ -1237,7 +1237,7 @@ SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix) {
     r_stop_internal("Prefix is larger than iota buffer.");
   }
 
-  memcpy(buf, prefix, prefix_len);
+  r_memcpy(buf, prefix, prefix_len);
   len -= prefix_len;
   char* beg = buf + prefix_len;
 
