@@ -99,13 +99,20 @@ r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
                                            &x_method_sym));
 
     if (x_method != r_null) {
-      const char* x_method_str = r_sym_c_string(x_method_sym);
+      // Only `x_method`s contained within a package will
+      // have an S3 methods table to look in
       r_obj* x_table = s3_get_table(r_fn_env(x_method));
 
-      method = s3_find_method2(x_method_str,
-                               y,
-                               x_table,
-                               &method_sym);
+      if (x_table != r_null) {
+        const char* x_method_str = r_sym_c_string(x_method_sym);
+
+        method = s3_find_method2(
+          x_method_str,
+          y,
+          x_table,
+          &method_sym
+        );
+      }
     }
 
     FREE(1);

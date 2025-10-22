@@ -409,14 +409,21 @@ SEXP s3_get_method(const char* generic, const char* cls, SEXP table) {
   return s3_sym_get_method(sym, table);
 }
 SEXP s3_sym_get_method(SEXP sym, SEXP table) {
-  SEXP method = r_env_get(R_GlobalEnv, sym);
-  if (r_is_function(method)) {
-    return method;
+  // `r_env_get()` errors on missing bindings,
+  // so we have to check with `r_env_has()`
+
+  if (r_env_has(R_GlobalEnv, sym)) {
+    SEXP method = r_env_get(R_GlobalEnv, sym);
+    if (r_is_function(method)) {
+      return method;
+    }
   }
 
-  method = r_env_get(table, sym);
-  if (r_is_function(method)) {
-    return method;
+  if (r_env_has(table, sym)) {
+    SEXP method = r_env_get(table, sym);
+    if (r_is_function(method)) {
+      return method;
+    }
   }
 
   return R_NilValue;
@@ -569,9 +576,13 @@ SEXP s3_bare_class(SEXP x) {
 static SEXP s4_get_method(const char* cls, SEXP table) {
   SEXP sym = Rf_install(cls);
 
-  SEXP method = r_env_get(table, sym);
-  if (r_is_function(method)) {
-    return method;
+  // `r_env_get()` errors on missing bindings,
+  // so we have to check with `r_env_has()`
+  if (r_env_has(table, sym)) {
+    SEXP method = r_env_get(table, sym);
+    if (r_is_function(method)) {
+      return method;
+    }
   }
 
   return R_NilValue;
@@ -1364,18 +1375,6 @@ bool r_is_empty_names(SEXP x) {
   }
 
   return true;
-}
-
-SEXP r_env_get(SEXP env, SEXP sym) {
-  SEXP obj = PROTECT(Rf_findVarInFrame3(env, sym, FALSE));
-
-  // Force lazy loaded bindings
-  if (TYPEOF(obj) == PROMSXP) {
-    obj = Rf_eval(obj, R_BaseEnv);
-  }
-
-  UNPROTECT(1);
-  return obj;
 }
 
 SEXP r_clone_referenced(SEXP x) {

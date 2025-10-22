@@ -154,11 +154,15 @@ SEXP s4_find_method(SEXP x, SEXP table);
 SEXP s4_class_find_method(SEXP cls, SEXP table);
 bool vec_implements_ptype2(SEXP x);
 
-SEXP r_env_get(SEXP env, SEXP sym);
-
 extern SEXP syms_s3_methods_table;
+
+// Only namespace environments have `.__S3MethodsTable__.`
 static inline SEXP s3_get_table(SEXP env) {
-  return r_env_get(env, syms_s3_methods_table);
+  if (r_env_has(env, syms_s3_methods_table)) {
+    return r_env_get(env, syms_s3_methods_table);
+  } else {
+    return r_null;
+  }
 }
 
 

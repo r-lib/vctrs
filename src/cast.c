@@ -177,13 +177,20 @@ r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
                                              &to_method_sym));
 
     if (to_method != r_null) {
-      const char* to_method_str = CHAR(PRINTNAME(to_method_sym));
-      r_obj* to_table = s3_get_table(CLOENV(to_method));
+      // Only `to_method`s contained within a package will
+      // have an S3 methods table to look in
+      r_obj* to_table = s3_get_table(r_fn_env(to_method));
 
-      method = s3_find_method2(to_method_str,
-                               x,
-                               to_table,
-                               &method_sym);
+      if (to_table != r_null) {
+        const char* to_method_str = r_sym_c_string(to_method_sym);
+
+        method = s3_find_method2(
+          to_method_str,
+          x,
+          to_table,
+          &method_sym
+        );
+      }
     }
 
     FREE(1);
