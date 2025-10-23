@@ -51,7 +51,7 @@ bool vec_is_unspecified(SEXP x) {
     if (Rf_inherits(x, "vctrs_unspecified")) {
       return true;
     }
-    if (OBJECT(x)) {
+    if (r_is_object(x)) {
       return false;
     }
     if (has_dim(x)) {

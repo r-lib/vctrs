@@ -449,7 +449,7 @@ r_obj* ffi_s3_get_method(r_obj* generic, r_obj* cls, r_obj* table) {
 
 // [[ include("utils.h") ]]
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
-  if (!OBJECT(x)) {
+  if (!r_is_object(x)) {
     return R_NilValue;
   }
 
@@ -462,7 +462,7 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
 
 // [[ include("utils.h") ]]
 SEXP s3_class_find_method(const char* generic, SEXP cls, SEXP table) {
-  // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
+  // Avoid corrupt objects where `x` passes `r_is_object()`, but the class is NULL
   if (cls == R_NilValue) {
     return R_NilValue;
   }
@@ -484,12 +484,12 @@ SEXP s3_class_find_method(const char* generic, SEXP cls, SEXP table) {
 SEXP s3_get_class(SEXP x) {
   SEXP cls = R_NilValue;
 
-  if (OBJECT(x)) {
+  if (r_is_object(x)) {
     cls = Rf_getAttrib(x, R_ClassSymbol);
   }
 
   // This handles unclassed objects as well as gremlins objects where
-  // `x` is an OBJECT(), but the class is NULL
+  // `x` passes `r_is_object()`, but the class is NULL
   if (cls == R_NilValue) {
     cls = s3_bare_class(x);
   }
@@ -601,7 +601,7 @@ SEXP s4_find_method(SEXP x, SEXP table) {
   return out;
 }
 SEXP s4_class_find_method(SEXP cls, SEXP table) {
-  // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
+  // Avoid corrupt objects where `x` passes `r_is_object()`, but the class is NULL
   if (cls == R_NilValue) {
     return R_NilValue;
   }
