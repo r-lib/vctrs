@@ -432,13 +432,13 @@ bool equal_object_normalized(SEXP x, SEXP y) {
     if (!equal_object_normalized(ATTRIB(x), ATTRIB(y))) {
       return false;
     }
-    if (!equal_object_normalized(BODY(x), BODY(y))) {
+    if (!equal_object_normalized(r_fn_body(x), r_fn_body(y))) {
       return false;
     }
-    if (!equal_object_normalized(CLOENV(x), CLOENV(y))) {
+    if (!equal_object_normalized(r_fn_env(x), r_fn_env(y))) {
       return false;
     }
-    if (!equal_object_normalized(FORMALS(x), FORMALS(y))) {
+    if (!equal_object_normalized(r_fn_formals(x), r_fn_formals(y))) {
       return false;
     }
     return true;
