@@ -32,7 +32,7 @@
     Condition
       Error in `vec_expand_grid()`:
       ! `y` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # can adjust the `.error_call`
 
@@ -41,7 +41,7 @@
     Condition
       Error in `my_expand_grid()`:
       ! `x` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # errors nicely when expansion results in a size larger than `R_len_t`
 

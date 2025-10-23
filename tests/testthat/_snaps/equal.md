@@ -5,7 +5,7 @@
     Condition <vctrs_error_scalar_type>
       Error in `vec_equal()`:
       ! `x` must be a vector, not an expression vector.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # `na_equal` is validated
 

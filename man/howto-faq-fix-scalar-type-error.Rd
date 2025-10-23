@@ -68,7 +68,7 @@ vctrs::obj_check_vector(my_df)
 #> ! `my_df` must be a vector, not a <data.frame> object.
 #> x Detected incompatible data frame structure. A data frame is normally treated as a vector, but an incompatible class ordering was detected. To be compatible, the subclass <my_class> must come before <data.frame>, not after. Class: <data.frame/my_class>.
 #> i If this object comes from a package, please report this error to the package author.
-#> i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+#> i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 }\if{html}{\out{</div>}}
 
 This is problematic as many tidyverse functions won’t work properly:
@@ -78,7 +78,7 @@ This is problematic as many tidyverse functions won’t work properly:
 #> ! `x` must be a vector, not a <data.frame> object.
 #> x Detected incompatible data frame structure. A data frame is normally treated as a vector, but an incompatible class ordering was detected. To be compatible, the subclass <my_class> must come before <data.frame>, not after. Class: <data.frame/my_class>.
 #> i If this object comes from a package, please report this error to the package author.
-#> i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+#> i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 }\if{html}{\out{</div>}}
 
 It is generally not appropriate to declare your class to be a superclass

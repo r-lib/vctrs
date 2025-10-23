@@ -90,7 +90,7 @@
       ! `foobar()` must be a vector, not a <vctrs_foobar> object.
       x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
-      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+      i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 
 # size error reports correct error call
 
@@ -263,7 +263,7 @@
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! Input must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
     Code
       (expect_error(my_function(foobar(list()))))
     Output
@@ -272,7 +272,7 @@
       ! Input must be a vector, not a <vctrs_foobar> object.
       x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
-      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+      i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 
 # `vec_slice()` uses `error_call`
 
@@ -282,7 +282,7 @@
       <error/vctrs_error_scalar_type>
       Error in `my_function()`:
       ! `x` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
     Code
       (expect_error(my_function(1, 2)))
     Output
@@ -302,7 +302,7 @@
       ! `x` must be a vector, not a <vctrs_foobar> object.
       x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <vctrs_foobar>.
       i If this object comes from a package, please report this error to the package author.
-      i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+      i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
     Code
       (expect_error(vec_slice(list(), env())))
     Output
@@ -325,21 +325,21 @@
       <error/vctrs_error_scalar_type>
       Error in `list_sizes()`:
       ! `x[[1]]` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
     Code
       (expect_error(list_sizes(list(1, 2, env()))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `list_sizes()`:
       ! `x[[3]]` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
     Code
       (expect_error(list_sizes(list(1, 2, foo = env()))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `list_sizes()`:
       ! `x$foo` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # vec_size() reports error context
 
@@ -349,7 +349,7 @@
       <error/vctrs_error_scalar_type>
       Error in `vec_size()`:
       ! `x` must be a vector, not an environment.
-      i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # vec_cast_common() reports error context
 

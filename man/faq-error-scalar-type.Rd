@@ -54,7 +54,7 @@ vctrs::vec_slice(fit, c(1, 4))
 #> ! `x` must be a vector, not a <lm> object.
 #> x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <lm>.
 #> i If this object comes from a package, please report this error to the package author.
-#> i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.
+#> i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 }\if{html}{\out{</div>}}
 
 Defused function calls are another (more esoteric) example:
@@ -80,7 +80,7 @@ lapply(call, function(x) x)
 vctrs::vec_slice(call, 1:2)
 #> Error in `vctrs::vec_slice()`:
 #> ! `x` must be a vector, not a call.
-#> i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.
+#> i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 }\if{html}{\out{</div>}}
 }
 
