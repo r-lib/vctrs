@@ -71,7 +71,7 @@ r_obj* vec_restore_dispatch(r_obj* x, r_obj* to) {
 r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_ownership ownership) {
   r_obj* attrib = r_attrib(to);
 
-  const bool is_s4 = Rf_isS4(to);
+  const bool is_s4 = r_is_s4(to);
 
   if (attrib == r_null && !is_s4) {
     return x;
@@ -158,7 +158,7 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_ownership ownership) 
   }
 
   if (is_s4) {
-    r_mark_s4(x);
+    x = r_as_s4(x);
   }
 
   FREE(n_prot);

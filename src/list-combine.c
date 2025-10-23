@@ -1573,7 +1573,7 @@ bool vec_implements_base_c(r_obj* x) {
     return false;
   }
 
-  if (Rf_isS4(x)) {
+  if (r_is_s4(x)) {
     return s4_find_method(x, s4_c_method_table) != r_null;
   } else {
     return s3_find_method("c", x, base_method_table) != r_null;

@@ -247,10 +247,8 @@ r_obj* vec_proxy_unwrap(r_obj* x) {
 }
 
 
-r_obj* ffi_unset_s4(r_obj* x) {
-  x = r_clone_referenced(x);
-  r_unmark_s4(x);
-  return x;
+r_obj* ffi_as_not_s4(r_obj* x) {
+  return r_as_not_s4(x);
 }
 
 

@@ -60,16 +60,16 @@ test_that("proxy and data", {
   expect_true(isS4(vec_restore(vec_data(x), x)))
 })
 
-test_that("unset_s4() copies and works", {
+test_that("as_not_s4() copies and works", {
   # Initial condition
   x <- rando()
   expect_true(isS4(x))
 
   # Unsetting has no side effect on x
-  unset_s4(x)
+  as_not_s4(x)
   expect_true(isS4(x))
 
   # Unsetting actually works
-  y <- unset_s4(x)
+  y <- as_not_s4(x)
   expect_false(isS4(y))
 })
