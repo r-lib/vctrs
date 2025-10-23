@@ -546,7 +546,7 @@ vctrs makes it easy to create new record-style classes using `new_rcrd()`, which
 
 ### Rational class
 
-A fraction, or rational number, can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same.
+A vector of fractions, or rational numbers, can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same.
 To represent such a data structure we turn to a new base data type: the record (or rcrd for short).
 
 As usual we start with low-level and user-friendly constructors.
@@ -771,11 +771,18 @@ x == rational(1, 1)
 unique(x)
 ```
 
-We now need to fix the comparison operations similarly, since comparison currently happens lexicographically by `n`, then by `d`:
+We now need to fix the comparison operations similarly, since comparison currently happens lexicographically by `n`, then by `d`.
+The default implementation of `vec_proxy_compare()` calls `vec_proxy_equal()`.
+Since we implemented `vec_proxy_equal()` previously, the default order is
+more specifically happening by `n/gcd`, then by `d/gcd`.
 
 ```{r}
+# The expected behaviour
 rational(1, 2) < rational(2, 3)
+# True but misleading, actually doing rational(1, 2) < rational(2, 3)
 rational(2, 4) < rational(2, 3)
+# Wrong because of lexicographical order
+rational(2, 5) < rational(2, 3)
 ```
 
 The easiest fix is to convert the fraction to a floating point number and use this as a proxy:
@@ -785,7 +792,7 @@ vec_proxy_compare.vctrs_rational <- function(x, ...) {
   field(x, "n") / field(x, "d")
 }
 
-rational(2, 4) < rational(2, 3)
+rational(2, 5) < rational(2, 3)
 ```
 
 This also fixes `sort()`, because the default implementation of `vec_proxy_order()` calls `vec_proxy_compare()`.
@@ -794,7 +801,14 @@ This also fixes `sort()`, because the default implementation of `vec_proxy_order
 sort(x)
 ```
 
-(We could have used the same approach in `vec_proxy_equal()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+We could have used the same approach in `vec_proxy_equal()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.
+
+These floating point precision issues are something to keep in mind if using
+our rational example seriously. Our original `vec_proxy_equal()` implementation
+using the greatest common divisor is completely accurate, but our floating point
+implementation of `vec_proxy_compare()` is not. A correct comparison check
+between two rationals `a/b < c/d` would be `a*d < c*b`, but this is not possible
+with our proxy values approach. Always be cautious with floating point numbers.
 
 ### Polynomial class
 
