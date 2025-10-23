@@ -285,7 +285,7 @@ them in a list:</p>
 <span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt; function (x, ...) </span></span>
 <span><span class="co">#&gt; UseMethod("mean")</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x563f4a94a940&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x559db1cd4d30&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
@@ -308,7 +308,7 @@ not automatically coercible:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="va">mean</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">globalenv</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_size()`:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> `x` must be a vector, not a function.</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>, <span class="st">"x"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_c()`:</span></span></span>
@@ -561,7 +561,7 @@ inputs should either be mutually recycling or not.</p></li>
 <span><span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span></span>
 <span><span class="co">#&gt; Levels: small big</span></span>
 <span><span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">7</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] NA           "2025-10-29" "2025-10-29" "2025-10-22" "2025-10-22"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] NA           "2025-10-30" "2025-10-30" "2025-10-23" "2025-10-23"</span></span></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this
 definition of <code>if_else()</code> automatically works with
 data.frames and matrices:</p>

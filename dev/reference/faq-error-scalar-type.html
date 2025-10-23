@@ -116,7 +116,7 @@ but in the tidyverse that’s not the case by default:</p>
 <span><span class="co">#&gt; ! `x` must be a vector, not a &lt;lm&gt; object.</span></span>
 <span><span class="co">#&gt; x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from &lt;list&gt; or should implement a `vec_proxy()` method. Class: &lt;lm&gt;.</span></span>
 <span><span class="co">#&gt; i If this object comes from a package, please report this error to the package author.</span></span>
-<span><span class="co">#&gt; i Read our FAQ about creating vector types (`?howto_faq_fix_scalar_type_error`) to learn more.</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.</span></span></code></pre><p></p></div>
 <p>Defused function calls are another (more esoteric) example:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">call</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="fu">foo</span><span class="op">(</span>bar <span class="op">=</span> <span class="cn">TRUE</span>, baz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">call</span></span>
@@ -139,7 +139,7 @@ but in the tidyverse that’s not the case by default:</p>
 <span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">call</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in `vctrs::vec_slice()`:</span></span>
 <span><span class="co">#&gt; ! `x` must be a vector, not a call.</span></span>
-<span><span class="co">#&gt; i Read our FAQ about scalar types (`?faq_error_scalar_type`) to learn more.</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.</span></span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="i-get-a-scalar-type-error-but-i-think-this-is-a-bug">I get a scalar type error but I think this is a bug<a class="anchor" aria-label="anchor" href="#i-get-a-scalar-type-error-but-i-think-this-is-a-bug"></a></h2>
