@@ -41,6 +41,7 @@ Suggests:
     zeallot
 VignetteBuilder:
     knitr
+Config/build/compilation-database: true
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/testthat/parallel: true
