@@ -122,7 +122,7 @@ static inline uint32_t fn_hash(r_obj* x) {
   uint32_t hash = 0;
   hash = hash_combine(hash, obj_hash(r_fn_body(x)));
   hash = hash_combine(hash, obj_hash(r_fn_env(x)));
-  hash = hash_combine(hash, obj_hash(FORMALS(x)));
+  hash = hash_combine(hash, obj_hash(r_fn_formals(x)));
   return hash;
 }
 
