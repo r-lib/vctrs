@@ -40,7 +40,16 @@ r_obj* altrep_lazy_character_Materialize(r_obj* vec) {
 }
 
 void* altrep_lazy_character_Dataptr(r_obj* vec, Rboolean writeable) {
-  return STDVEC_DATAPTR(altrep_lazy_character_Materialize(vec));
+  if (writeable) {
+    r_stop_internal("Can't get writeable `DATAPTR()` to `<altrep_lazy_character>`");
+  } else {
+    // R promises not to write to this array, but we still have to return a
+    // `void*` pointer rather than a `const void*` pointer. `STRING_PTR()` is
+    // non-API so we use `STRING_PTR_RO()` and cast. This is really a bad ALTREP
+    // API. It should have been separated into `void* Dataptr()` and `const
+    // void* Dataptr_ro()`.
+    return (void*) STRING_PTR_RO(altrep_lazy_character_Materialize(vec));
+  }
 }
 
 const void* altrep_lazy_character_Dataptr_or_null(r_obj* vec) {
@@ -49,7 +58,7 @@ const void* altrep_lazy_character_Dataptr_or_null(r_obj* vec) {
   if (out == r_null) {
     return NULL;
   } else {
-    return STDVEC_DATAPTR(out);
+    return r_chr_cbegin(out);
   }
 }
 
