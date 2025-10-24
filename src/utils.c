@@ -590,7 +590,7 @@ static SEXP s4_get_method(const char* cls, SEXP table) {
 
 // For S4 objects, the `table` is specific to the generic
 SEXP s4_find_method(SEXP x, SEXP table) {
-  if (!IS_S4_OBJECT(x)) {
+  if (!r_is_s4(x)) {
     return R_NilValue;
   }
 

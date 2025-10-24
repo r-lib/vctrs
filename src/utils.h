@@ -271,13 +271,29 @@ SEXP r_clone_referenced(SEXP x);
 
 SEXP r_call_n(SEXP fn, SEXP* tags, SEXP* cars);
 
-static inline SEXP r_mark_s4(SEXP x) {
-  SET_S4_OBJECT(x);
-  return(x);
+static inline bool r_is_s4(SEXP x) {
+  return Rf_isS4(x);
 }
-static inline SEXP r_unmark_s4(SEXP x) {
-  UNSET_S4_OBJECT(x);
-  return(x);
+static inline SEXP r_as_s4(SEXP x) {
+  // - Return value must be used, unlike `SET_S4_OBJECT()`
+  // - `Rf_asS4()` calls `shallow_duplicate(x)` if `MAYBE_SHARED(x)`
+  // - `flag = 1` goes through `SET_S4_OBJECT()`
+  // - `complete` is never utilized when `flag = 1`
+  const Rboolean flag = 1;
+  const int complete = 0;
+  return Rf_asS4(x, flag, complete);
+}
+static inline SEXP r_as_not_s4(SEXP x) {
+  // - Return value must be used, unlike `UNSET_S4_OBJECT()`
+  // - `Rf_asS4()` calls `shallow_duplicate(x)` if `MAYBE_SHARED(x)`
+  // - `flag = 0` goes through `UNSET_S4_OBJECT()`
+  // - `complete` is for S4 objects that wrap a "complete" S3 object by placing
+  //   it in the `.Data` slot. If you set `complete = 1`, it will unwrap and
+  //   return that, which we don't want. If `complete = 0`, no additional
+  //   behavior will happen beyond the `UNSET_S4_OBJECT()` call.
+  const Rboolean flag = 0;
+  const int complete = 0;
+  return Rf_asS4(x, flag, complete);
 }
 
 bool r_has_name_at(SEXP names, R_len_t i);

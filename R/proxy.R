@@ -213,9 +213,9 @@ vec_data <- function(x) {
     x <- vec_set_attributes(x, list(names = names(x)))
   }
 
-  # Reset S4 bit in vector-like S4 objects
-  unset_s4(x)
+  # Unset S4 bit in vector-like S4 objects
+  as_not_s4(x)
 }
-unset_s4 <- function(x) {
-  .Call(ffi_unset_s4, x)
+as_not_s4 <- function(x) {
+  .Call(ffi_as_not_s4, x)
 }
