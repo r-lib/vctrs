@@ -39,6 +39,22 @@ SEXP vec_normalize_encoding(SEXP x) {
   return obj_normalize_encoding(x);
 }
 
+// Testing
+r_obj* ffi_chr_is_normalized(r_obj* x) {
+  const r_ssize size = r_length(x);
+  r_obj* const* v_x = r_chr_cbegin(x);
+
+  r_obj* out = KEEP(r_alloc_logical(size));
+  int* v_out = r_lgl_begin(out);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    v_out[i] = string_is_ascii_or_utf8(v_x[i]);
+  }
+
+  FREE(1);
+  return out;
+}
+
 // -----------------------------------------------------------------------------
 
 static SEXP chr_normalize_encoding(SEXP x);
@@ -85,11 +101,11 @@ SEXP chr_normalize_encoding(SEXP x) {
   for (r_ssize i = start; i < size; ++i) {
     const SEXP elt = p_x[i];
 
-    if (string_is_normalized(elt)) {
+    if (string_is_ascii_or_utf8(elt)) {
       continue;
     }
 
-    SET_STRING_ELT(x, i, string_normalize(elt));
+    SET_STRING_ELT(x, i, string_as_utf8(elt));
   }
 
   vmaxset(vmax);
@@ -104,7 +120,7 @@ r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
   for (r_ssize i = 0; i < size; ++i) {
     const SEXP elt = p_x[i];
 
-    if (string_is_normalized(elt)) {
+    if (string_is_ascii_or_utf8(elt)) {
       continue;
     }
 
