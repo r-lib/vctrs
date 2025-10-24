@@ -341,15 +341,15 @@ test_that("vec_chop() with data frame proxies always uses the proxy's length inf
 })
 
 test_that("ALTREP objects always generate materialized chops (#1450)", {
-  x <- .Call(vctrs_altrep_rle_Make, c(foo = 10L, bar = 5L))
+  x <- chr_rle(foo = 10L, bar = 5L)
 
   # `x` starts in compact form
-  expect_false(.Call(vctrs_altrep_rle_is_materialized, x))
+  expect_false(chr_rle_is_materialized(x))
 
   result <- vec_chop(x)
 
   # Chopping materializes `x`
-  expect_true(.Call(vctrs_altrep_rle_is_materialized, x))
+  expect_true(chr_rle_is_materialized(x))
 
   # And chopped elements are not ALTREP vectors
   expect_false(any(map_lgl(result, is_altrep)))

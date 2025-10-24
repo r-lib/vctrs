@@ -1,6 +1,4 @@
-#include "vctrs.h"
 #include "altrep-rle.h"
-#include "altrep.h"
 
 // Initialised at load time
 R_altrep_class_t altrep_rle_class;

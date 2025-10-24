@@ -219,6 +219,26 @@ vec_slice_dispatch_integer64 <- function(x, i) {
   out
 }
 
+vec_slice_altrep <- function(x, i) {
+  # We have already validated `i`, it is one of:
+  # - Integer vector from `vec_as_location()`
+  # - Integer vector from materializing a `compact_rep()`
+  # - Integer vector from materializing a `compact_seq()`
+  # - Logical vector from materializing a `compact_condition()`
+  #   (which `VectorSubset()` will convert to an integer vector)
+
+  # For the main case we care about (an ALTREP vector with an Extract_Subset
+  # method, like vroom), `.subset()` will:
+  # - Call `do_subset_dflt()` (bypassing S3 dispatch!)
+  # - Call `VectorSubset()`
+  # - Call `ExtractSubset()`
+  # - Call `ALTVEC_EXTRACT_SUBSET()`
+  # - If that returns `NULL`, i.e. if this ALTREP class has not implemented an
+  #   ALTREP `Extract_Subset` method, then it will use the `Elt` method to
+  #   subset
+  .subset(x, i)
+}
+
 
 #' @rdname vec_slice
 #' @export

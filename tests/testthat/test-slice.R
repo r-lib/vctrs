@@ -446,10 +446,53 @@ test_that("slicing an unspecified() object returns an unspecified()", {
 
 
 test_that("vec_slice() works with Altrep classes with custom extract methods", {
-  x <- .Call(vctrs_altrep_rle_Make, c(foo = 10L, bar = 5L))
+  x <- chr_rle(foo = 10L, bar = 5L)
+  expect_false(chr_rle_is_materialized(x))
 
   idx <- c(9, 10, 11)
   expect_equal(vec_slice(x, idx), c("foo", "foo", "bar"))
+  expect_false(chr_rle_is_materialized(x))
+
+  # With zero
+  idx <- c(0, 1)
+  expect_equal(vec_slice(x, idx), "foo")
+  expect_false(chr_rle_is_materialized(x))
+
+  # With integer missing values
+  idx <- c(0, NA, 2, NA)
+  expect_equal(vec_slice(x, idx), c(NA, "foo", NA))
+  expect_false(chr_rle_is_materialized(x))
+
+  # With logical condition index
+  idx <- c(TRUE, rep(FALSE, 8), TRUE, rep(FALSE, 2), TRUE, TRUE, TRUE)
+  expect_equal(vec_slice(x, idx), c("foo", "foo", "bar", "bar", "bar"))
+  expect_false(chr_rle_is_materialized(x))
+
+  # Everything
+  idx <- TRUE
+  expect_equal(vec_slice(x, idx), c(rep("foo", 10), rep("bar", 5)))
+  expect_false(chr_rle_is_materialized(x))
+
+  # Nothing
+  idx <- FALSE
+  expect_equal(vec_slice(x, idx), character())
+  expect_false(chr_rle_is_materialized(x))
+
+  # Whole vector of missing values
+  idx <- NA
+  expect_equal(vec_slice(x, idx), rep(NA_character_, 15))
+  expect_false(chr_rle_is_materialized(x))
+
+  # Just 1 missing value
+  idx <- NA_integer_
+  expect_equal(vec_slice(x, idx), rep(NA_character_, 1))
+  expect_false(chr_rle_is_materialized(x))
+
+  # OOB
+  idx <- 16
+  expect_snapshot(error = TRUE, {
+    vec_slice(x, idx)
+  })
 })
 
 test_that("Unnamed vector with character subscript is caught", {
@@ -517,8 +560,10 @@ test_that("vec_init() asserts vectorness (#301)", {
 })
 
 test_that("vec_init() works with Altrep classes", {
-  x <- .Call(vctrs_altrep_rle_Make, c(foo = 1L, bar = 2L))
+  x <- chr_rle(foo = 1L, bar = 2L)
+  expect_false(chr_rle_is_materialized(x))
   expect_equal(vec_init(x, 2), rep(NA_character_, 2))
+  expect_false(chr_rle_is_materialized(x))
 })
 
 test_that("vec_init() validates `n`", {
@@ -548,8 +593,10 @@ test_that("names are recycled correctly with compact reps", {
 })
 
 test_that("vec_slice() with compact_reps work with Altrep classes", {
-  x <- .Call(vctrs_altrep_rle_Make, c(foo = 10L, bar = 5L))
+  x <- chr_rle(foo = 10L, bar = 5L)
+  expect_false(chr_rle_is_materialized(x))
   expect_equal(vec_slice_rep(x, 10L, 3L), rep("foo", 3))
+  expect_false(chr_rle_is_materialized(x))
 })
 
 # vec_slice + compact_seq -------------------------------------------------
@@ -788,8 +835,10 @@ test_that("can subset S3 objects using the fallback method with compact seqs", {
 })
 
 test_that("vec_slice() with compact_seqs work with Altrep classes", {
-  x <- .Call(vctrs_altrep_rle_Make, c(foo = 2L, bar = 3L))
+  x <- chr_rle(foo = 2L, bar = 3L)
+  expect_false(chr_rle_is_materialized(x))
   expect_equal(vec_slice_seq(x, 1L, 3L), c("foo", "bar", "bar"))
+  expect_false(chr_rle_is_materialized(x))
 })
 
 test_that("vec_slice() handles symbols and OO objects", {
