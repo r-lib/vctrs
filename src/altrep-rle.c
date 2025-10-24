@@ -143,15 +143,26 @@ SEXP altrep_rle_string_Materialize(SEXP vec) {
 }
 
 void* altrep_rle_Dataptr(SEXP vec, Rboolean writeable) {
-  return STDVEC_DATAPTR(altrep_rle_string_Materialize(vec));
+  if (writeable) {
+    r_stop_internal("Can't get writeable `DATAPTR()` to `<altrep_rle>`");
+  } else {
+    // R promises not to write to this array, but we still have to return a
+    // `void*` pointer rather than a `const void*` pointer. `STRING_PTR()` is
+    // non-API so we use `STRING_PTR_RO()` and cast. This is really a bad ALTREP
+    // API. It should have been separated into `void* Dataptr()` and `const
+    // void* Dataptr_ro()`.
+    return (void*) STRING_PTR_RO(altrep_rle_string_Materialize(vec));
+  }
 }
 
 const void* altrep_rle_Dataptr_or_null(SEXP vec) {
   SEXP data2 = R_altrep_data2(vec);
-  if (data2 == R_NilValue)
-    return NULL;
 
-  return STDVEC_DATAPTR(data2);
+  if (data2 == R_NilValue) {
+    return NULL;
+  } else {
+    return r_chr_cbegin(data2);
+  }
 }
 
 
