@@ -1,5 +1,5 @@
 #include "vctrs.h"
-#include "altrep.h"
+#include "R_ext/Altrep.h"
 
 // Initialised at load time
 R_altrep_class_t altrep_lazy_character_class;

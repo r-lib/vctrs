@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "altrep.h"
+
+#include "decl/slice-decl.h"
 
 #define SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)     \
   const CTYPE* data = CONST_DEREF(x);                                   \
@@ -57,14 +58,8 @@
 
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)               \
   if (!materialize && ALTREP(x)) {                                      \
-    r_obj* alt_subscript = KEEP(vec_subscript_materialize(subscript));  \
-    r_obj* out = ALTVEC_EXTRACT_SUBSET_PROXY(x, alt_subscript, r_null); \
-    FREE(1);                                                            \
-    if (out != NULL) {                                                  \
-      return out;                                                       \
-    }                                                                   \
-  }                                                                     \
-  if (is_compact_rep(subscript)) {                                      \
+    return vec_slice_altrep(x, subscript);                              \
+  } else if (is_compact_rep(subscript)) {                               \
     SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);      \
   } else if (is_compact_seq(subscript)) {                               \
     SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);                \
@@ -148,7 +143,9 @@ r_obj* raw_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize)
   return out
 
 #define SLICE_BARRIER(RTYPE, CONST_DEREF, SET, NA_VALUE)                \
-  if (is_compact_rep(subscript)) {                                      \
+  if (!materialize && ALTREP(x)) {                                      \
+    return vec_slice_altrep(x, subscript);                              \
+  } else if (is_compact_rep(subscript)) {                               \
     SLICE_BARRIER_COMPACT_REP(RTYPE, CONST_DEREF, SET, NA_VALUE);       \
   } else if (is_compact_seq(subscript)) {                               \
     SLICE_BARRIER_COMPACT_SEQ(RTYPE, CONST_DEREF, SET);                 \
@@ -165,7 +162,7 @@ r_obj* chr_names_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materi
   SLICE_BARRIER(R_TYPE_character, r_chr_cbegin, r_chr_poke, r_strs.empty);
 }
 static
-r_obj* list_slice(r_obj* x, r_obj* subscript) {
+r_obj* list_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize) {
   SLICE_BARRIER(R_TYPE_list, r_list_cbegin, r_list_poke, r_null);
 }
 
@@ -207,7 +204,6 @@ r_obj* df_slice(r_obj* x, r_obj* subscript) {
   return out;
 }
 
-
 r_obj* vec_slice_fallback(r_obj* x, r_obj* subscript) {
   // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
   // objects to ensure correct slicing with `NA_integer_`.
@@ -237,6 +233,22 @@ r_obj* vec_slice_dispatch(r_obj* x, r_obj* subscript) {
                          syms_i, subscript);
 }
 
+r_obj* vec_slice_altrep(r_obj* x, r_obj* subscript) {
+  subscript = KEEP(vec_subscript_materialize(subscript));
+
+  r_obj* out = vctrs_dispatch2(
+    syms.vec_slice_altrep,
+    fns.vec_slice_altrep,
+    syms_x,
+    x,
+    syms_i,
+    subscript
+  );
+
+  FREE(1);
+  return out;
+}
+
 bool vec_requires_fallback(r_obj* x, struct vctrs_proxy_info info) {
   return r_is_object(x) &&
     !info.had_proxy_method &&
@@ -254,7 +266,7 @@ r_obj* vec_slice_base(enum vctrs_type type,
   case VCTRS_TYPE_complex:   return cpl_slice(x, subscript, materialize);
   case VCTRS_TYPE_character: return chr_slice(x, subscript, materialize);
   case VCTRS_TYPE_raw:       return raw_slice(x, subscript, materialize);
-  case VCTRS_TYPE_list:      return list_slice(x, subscript);
+  case VCTRS_TYPE_list:      return list_slice(x, subscript, materialize);
   default: stop_unimplemented_vctrs_type("vec_slice_base", type);
   }
 }
@@ -520,10 +532,12 @@ r_obj* ffi_slice_rep(r_obj* x, r_obj* ffi_i, r_obj* ffi_n) {
 
 
 void vctrs_init_slice(r_obj* ns) {
+  syms.vec_slice_altrep = r_sym("vec_slice_altrep");
   syms.vec_slice_dispatch_integer64 = r_sym("vec_slice_dispatch_integer64");
   syms.vec_slice_fallback = r_sym("vec_slice_fallback");
   syms.vec_slice_fallback_integer64 = r_sym("vec_slice_fallback_integer64");
 
+  fns.vec_slice_altrep = r_eval(syms.vec_slice_altrep, ns);
   fns.vec_slice_dispatch_integer64 = r_eval(syms.vec_slice_dispatch_integer64, ns);
   fns.vec_slice_fallback = r_eval(syms.vec_slice_fallback, ns);
   fns.vec_slice_fallback_integer64 = r_eval(syms.vec_slice_fallback_integer64, ns);
