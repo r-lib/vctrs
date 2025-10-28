@@ -33,12 +33,12 @@ struct truelength_info* new_truelength_info(r_ssize n_max) {
 
   p_truelength_info->self = self;
 
-  p_truelength_info->strings = r_globals.empty_chr;
+  p_truelength_info->strings = r_globals.empty_raw;
   p_truelength_info->truelengths = r_globals.empty_raw;
   p_truelength_info->n_strings_alloc = 0;
   p_truelength_info->n_strings_used = 0;
 
-  p_truelength_info->uniques = r_globals.empty_chr;
+  p_truelength_info->uniques = r_globals.empty_raw;
   p_truelength_info->n_uniques_alloc = 0;
   p_truelength_info->n_uniques_used = 0;
 
@@ -101,7 +101,8 @@ void truelength_reset(struct truelength_info* p_truelength_info) {
 
 static r_ssize truelength_realloc_size(r_ssize n_x, r_ssize n_max);
 
-static inline SEXP truelengths_resize(SEXP x, r_ssize x_size, r_ssize size);
+static inline SEXP truelength_strings_resize(SEXP x, r_ssize x_size, r_ssize size);
+static inline SEXP truelength_truelengths_resize(SEXP x, r_ssize x_size, r_ssize size);
 
 void truelength_realloc_strings(struct truelength_info* p_truelength_info) {
   r_ssize size = truelength_realloc_size(
@@ -109,15 +110,15 @@ void truelength_realloc_strings(struct truelength_info* p_truelength_info) {
     p_truelength_info->n_max
   );
 
-  p_truelength_info->strings = chr_resize(
+  p_truelength_info->strings = truelength_strings_resize(
     p_truelength_info->strings,
     p_truelength_info->n_strings_alloc,
     size
   );
   REPROTECT(p_truelength_info->strings, p_truelength_info->strings_pi);
-  p_truelength_info->p_strings = STRING_PTR(p_truelength_info->strings);
+  p_truelength_info->p_strings = (SEXP*) RAW(p_truelength_info->strings);
 
-  p_truelength_info->truelengths = truelengths_resize(
+  p_truelength_info->truelengths = truelength_truelengths_resize(
     p_truelength_info->truelengths,
     p_truelength_info->n_strings_alloc,
     size
@@ -129,7 +130,16 @@ void truelength_realloc_strings(struct truelength_info* p_truelength_info) {
 }
 
 static inline
-SEXP truelengths_resize(SEXP x, r_ssize x_size, r_ssize size) {
+SEXP truelength_strings_resize(SEXP x, r_ssize x_size, r_ssize size) {
+  return raw_resize(
+    x,
+    x_size * sizeof(SEXP),
+    size * sizeof(SEXP)
+  );
+}
+
+static inline
+SEXP truelength_truelengths_resize(SEXP x, r_ssize x_size, r_ssize size) {
   return raw_resize(
     x,
     x_size * sizeof(r_ssize),
@@ -139,21 +149,32 @@ SEXP truelengths_resize(SEXP x, r_ssize x_size, r_ssize size) {
 
 // -----------------------------------------------------------------------------
 
+static inline SEXP truelength_uniques_resize(SEXP x, r_ssize x_size, r_ssize size);
+
 void truelength_realloc_uniques(struct truelength_info* p_truelength_info) {
   r_ssize size = truelength_realloc_size(
     p_truelength_info->n_uniques_alloc,
     p_truelength_info->n_max
   );
 
-  p_truelength_info->uniques = chr_resize(
+  p_truelength_info->uniques = truelength_uniques_resize(
     p_truelength_info->uniques,
     p_truelength_info->n_uniques_alloc,
     size
   );
   REPROTECT(p_truelength_info->uniques, p_truelength_info->uniques_pi);
-  p_truelength_info->p_uniques = STRING_PTR(p_truelength_info->uniques);
+  p_truelength_info->p_uniques = (SEXP*) RAW(p_truelength_info->uniques);
 
   p_truelength_info->n_uniques_alloc = size;
+}
+
+static inline
+SEXP truelength_uniques_resize(SEXP x, r_ssize x_size, r_ssize size) {
+  return raw_resize(
+    x,
+    x_size * sizeof(SEXP),
+    size * sizeof(SEXP)
+  );
 }
 
 // -----------------------------------------------------------------------------
