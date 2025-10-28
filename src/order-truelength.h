@@ -32,7 +32,10 @@
  *
  * @members strings,p_strings,strings_pi CHARSXPs originally containing a
  *   TRUELENGTH value >0, implying that base R was already using it and we
- *   need to reset it. These are rare.
+ *   need to reset it. These are rare. Stored in a RAWSXP rather than a
+ *   STRSXP because we need to push to this array, but we don't care about
+ *   tracking references via something like `SET_STRING_ELT()` because we
+ *   aren't taking ownership in any way and the strings can't outlive us.
  * @members truelengths,p_truelengths,truelengths_pi The original TRUELENGTHs
  *   of `strings`.
  * @member n_strings_alloc The allocated length of `strings`
@@ -42,6 +45,7 @@
  * @members uniques,p_uniques,uniques_pi Unique CHARSXPs. Will be sorted in
  *   place by `chr_mark_sorted_uniques()`. We reset the TRUELENGTH of these
  *   to 0 (R's default) after ordering, then reset the TRUELENGTH of `strings`.
+ *   Stored in a RAWSXP for the same reason as `strings`.
  * @member n_uniques_alloc The allocated length of `uniques`.
  * @member n_uniques_used The number of `uniques` currently in use.
  *
