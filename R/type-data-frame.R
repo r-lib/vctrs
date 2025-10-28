@@ -405,10 +405,6 @@ df_lossy_cast <- function(
   )
 }
 
-is_informative_error_vctrs_error_cast_lossy_dropped <- function(x, ...) {
-  FALSE
-}
-
 df_attrib <- function(x) {
   attributes(x)[c("row.names", "names")]
 }

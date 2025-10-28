@@ -252,7 +252,3 @@ is_bare_df <- function(x) {
   inherits_only(x, "data.frame") ||
     inherits_only(x, c("tbl_df", "tbl", "data.frame"))
 }
-
-is_informative_error_vctrs_error_cast_lossy <- function(x, ...) {
-  FALSE
-}
