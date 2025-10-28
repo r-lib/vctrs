@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Methods for the deprecated testthat function `is_informative_error()` have been removed (#2089).
+
 * `obj_check_vector()` now throws a clearer error message. In particular, special info bullets have been added that link out to FAQ pages and explain common issues around incompatible S3 lists and data frames (#2061).
 
 * R >=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the [5 most recent versions of R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
