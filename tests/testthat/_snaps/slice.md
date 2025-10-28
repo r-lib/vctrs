@@ -45,6 +45,16 @@
       ! Can't subset elements with `2^31`.
       x Can't convert from `2^31` <double> to <integer> due to loss of precision.
 
+# vec_slice() works with Altrep classes with custom extract methods
+
+    Code
+      vec_slice(x, idx)
+    Condition
+      Error in `vec_slice()`:
+      ! Can't subset elements past the end.
+      i Location 16 doesn't exist.
+      i There are only 15 elements.
+
 # Unnamed vector with character subscript is caught
 
     Code

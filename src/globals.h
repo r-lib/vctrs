@@ -27,6 +27,7 @@ struct syms {
   r_obj* value_arg;
   r_obj* values_arg;
   r_obj* vec_default_cast;
+  r_obj* vec_slice_altrep;
   r_obj* vec_slice_dispatch_integer64;
   r_obj* vec_slice_fallback;
   r_obj* vec_slice_fallback_integer64;
@@ -50,6 +51,7 @@ struct chrs {
 };
 
 struct fns {
+  r_obj* vec_slice_altrep;
   r_obj* vec_slice_dispatch_integer64;
   r_obj* vec_slice_fallback;
   r_obj* vec_slice_fallback_integer64;

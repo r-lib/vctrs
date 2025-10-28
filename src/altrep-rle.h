@@ -1,7 +1,8 @@
 #ifndef ALTREP_RLE_H
 #define ALTREP_RLE_H
 
-#include "altrep.h"
+#include "vctrs-core.h"
+#include "R_ext/Altrep.h"
 
 SEXP altrep_rle_Make(SEXP input);
 R_xlen_t altrep_rle_Length(SEXP vec);
