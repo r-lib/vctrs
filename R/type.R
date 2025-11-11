@@ -117,41 +117,27 @@ vec_ptype_common <- function(
   .External2(ffi_ptype_common, list2(...), .ptype)
 }
 
-vec_ptype_common_opts <- function(
-  ...,
-  .ptype = NULL,
-  .opts = fallback_opts(),
-  .call = caller_env()
-) {
-  .External2(ffi_ptype_common_opts, list2(...), .ptype, .opts)
-}
-
 vec_ptype_common_params <- function(
   ...,
   .ptype = NULL,
-  .s3_fallback = NULL,
+  .fallback_opts = fallback_opts(),
+  .arg = "",
   .call = caller_env()
 ) {
-  opts <- fallback_opts(
-    s3_fallback = .s3_fallback
-  )
-  vec_ptype_common_opts(
-    ...,
-    .ptype = .ptype,
-    .opts = opts,
-    .call = .call
-  )
+  .External2(ffi_ptype_common_params, list2(...), .ptype, .fallback_opts)
 }
 
 vec_ptype_common_fallback <- function(
   ...,
   .ptype = NULL,
+  .arg = "",
   .call = caller_env()
 ) {
-  vec_ptype_common_opts(
+  vec_ptype_common_params(
     ...,
     .ptype = .ptype,
-    .opts = full_fallback_opts(),
+    .fallback_opts = enabled_fallback_opts(),
+    .arg = .arg,
     .call = .call
   )
 }

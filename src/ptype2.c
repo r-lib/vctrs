@@ -167,13 +167,13 @@ r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
     return vec_ptype(other, other_arg, opts->call);
   }
 
-  if (opts->fallback.s3) {
+  if (opts->s3_fallback) {
     const struct ptype2_opts self_self_opts = (const struct ptype2_opts) {
       .x = other,
       .y = other,
       .p_x_arg = other_arg,
       .p_y_arg = other_arg,
-      .fallback = opts->fallback
+      .s3_fallback = opts->s3_fallback
     };
     int _left = 0;
     return vec_ptype2_opts(&self_self_opts, &_left);
@@ -290,14 +290,13 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
     .p_x_arg = p_x_arg,
     .p_y_arg = p_y_arg,
     .call = call,
-    .fallback = new_fallback_opts(opts)
+    .s3_fallback = s3_fallback_from_opts(opts)
   };
 }
 
-struct fallback_opts new_fallback_opts(r_obj* opts) {
-  return (struct fallback_opts) {
-    .s3 = r_int_get(r_list_get(opts, 0), 0)
-  };
+// Order on R side is important
+enum s3_fallback s3_fallback_from_opts(r_obj* opts) {
+  return (enum s3_fallback) r_int_get(r_list_get(opts, 0), 0);
 }
 
 

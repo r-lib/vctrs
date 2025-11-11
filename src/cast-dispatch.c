@@ -85,7 +85,7 @@ r_obj* vec_cast_dispatch_native(const struct cast_opts* opts,
 // [[ register() ]]
 r_obj* ffi_cast_dispatch_native(r_obj* x,
                                 r_obj* to,
-                                r_obj* fallback_opts,
+                                r_obj* opts,
                                 r_obj* x_arg,
                                 r_obj* to_arg,
                                 r_obj* frame) {
@@ -93,23 +93,25 @@ r_obj* ffi_cast_dispatch_native(r_obj* x,
   struct vctrs_arg c_to_arg = vec_as_arg(to_arg);
   struct r_lazy call = { .x = syms_call, .env = frame };
 
-  struct cast_opts c_opts = new_cast_opts(x,
-                                          to,
-                                          &c_x_arg,
-                                          &c_to_arg,
-                                          call,
-                                          fallback_opts);
+  struct cast_opts cast_opts = new_cast_opts(
+    x,
+    to,
+    &c_x_arg,
+    &c_to_arg,
+    call,
+    opts
+  );
 
   bool lossy = false;
-  r_obj* out = vec_cast_dispatch_native(&c_opts, vec_typeof(x), vec_typeof(to), &lossy);
+  r_obj* out = vec_cast_dispatch_native(&cast_opts, vec_typeof(x), vec_typeof(to), &lossy);
 
   if (lossy || out == r_null) {
     return vec_cast_default(x,
                             to,
                             &c_x_arg,
                             &c_to_arg,
-                            c_opts.call,
-                            &c_opts.fallback);
+                            cast_opts.call,
+                            cast_opts.s3_fallback);
   } else {
     return out;
   }

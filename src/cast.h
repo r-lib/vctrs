@@ -10,7 +10,7 @@ struct cast_opts {
   struct vctrs_arg* p_x_arg;
   struct vctrs_arg* p_to_arg;
   struct r_lazy call;
-  struct fallback_opts fallback;
+  enum s3_fallback s3_fallback;
 };
 
 // FIXME: Should we merge these two structs?
@@ -22,14 +22,14 @@ struct ptype2_opts cast_opts_as_ptype2_opts(const struct cast_opts* p_opts) {
     .p_x_arg = p_opts->p_x_arg,
     .p_y_arg = p_opts->p_to_arg,
     .call = p_opts->call,
-    .fallback = p_opts->fallback,
+    .s3_fallback = p_opts->s3_fallback,
   };
 }
 
 struct cast_common_opts {
   struct vctrs_arg* p_arg;
   struct r_lazy call;
-  struct fallback_opts fallback;
+  enum s3_fallback s3_fallback;
 };
 
 r_obj* vec_cast_opts(const struct cast_opts* opts);
@@ -63,9 +63,7 @@ r_obj* vec_cast_params(r_obj* x,
     .p_x_arg = p_x_arg,
     .p_to_arg = p_to_arg,
     .call = call,
-    .fallback = {
-      .s3 = s3_fallback
-    }
+    .s3_fallback = s3_fallback
   };
   return vec_cast_opts(&opts);
 }
@@ -100,7 +98,7 @@ r_obj* vec_cast_default(r_obj* x,
                         struct vctrs_arg* p_x_arg,
                         struct vctrs_arg* p_to_arg,
                         struct r_lazy call,
-                        const struct fallback_opts* p_opts);
+                        enum s3_fallback s3_fallback);
 
 
 #endif

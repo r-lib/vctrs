@@ -731,7 +731,7 @@ r_obj* df_cast_match(const struct cast_opts* opts,
       // `vec_assign()` in `vec_rbind()` before falling back. Attach
       // an attribute to recognise unspecified vectors in
       // `base_c_invoke()`.
-      if (opts->fallback.s3 && vec_is_common_class_fallback(to_col)) {
+      if (opts->s3_fallback && vec_is_common_class_fallback(to_col)) {
         KEEP(col);
         r_attrib_poke(col, r_sym("vctrs:::unspecified"), r_true);
         FREE(1);
@@ -747,7 +747,7 @@ r_obj* df_cast_match(const struct cast_opts* opts,
         .p_x_arg = named_x_arg,
         .p_to_arg = named_to_arg,
         .call = opts->call,
-        .fallback = opts->fallback
+        .s3_fallback = opts->s3_fallback
       };
       col = vec_cast_opts(&col_opts);
     }
@@ -805,7 +805,7 @@ r_obj* df_cast_loop(const struct cast_opts* opts, r_obj* names) {
       .p_x_arg = named_x_arg,
       .p_to_arg = named_to_arg,
       .call = opts->call,
-      .fallback = opts->fallback
+      .s3_fallback = opts->s3_fallback
     };
     r_obj* col = vec_cast_opts(&col_opts);
 

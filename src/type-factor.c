@@ -58,7 +58,7 @@ r_obj* ord_ptype2(const struct ptype2_opts* p_opts) {
                               p_opts->p_x_arg,
                               p_opts->p_y_arg,
                               r_lazy_null,
-                              &p_opts->fallback);
+                              p_opts->s3_fallback);
   }
 }
 
@@ -270,7 +270,7 @@ SEXP ord_as_ordered(const struct cast_opts* p_opts) {
                             p_opts->p_x_arg,
                             p_opts->p_to_arg,
                             p_opts->call,
-                            &p_opts->fallback);
+                            p_opts->s3_fallback);
   }
 }
 

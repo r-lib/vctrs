@@ -379,7 +379,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 
 extern r_obj* ffi_ptype_common(r_obj*, r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_ptype_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_ptype_common_params(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_size_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_recycle_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_common(r_obj*, r_obj*, r_obj*, r_obj*);
@@ -392,7 +392,7 @@ extern r_obj* ffi_new_data_frame(r_obj*);
 static
 const R_ExternalMethodDef ExtEntries[] = {
   {"ffi_ptype_common",                 (DL_FUNC) &ffi_ptype_common, 2},
-  {"ffi_ptype_common_opts",            (DL_FUNC) &ffi_ptype_common_opts, 3},
+  {"ffi_ptype_common_params",          (DL_FUNC) &ffi_ptype_common_params, 3},
   {"ffi_size_common",                  (DL_FUNC) &ffi_size_common, 3},
   {"ffi_recycle_common",               (DL_FUNC) &ffi_recycle_common, 2},
   {"ffi_cast_common",                  (DL_FUNC) &ffi_cast_common, 2},
