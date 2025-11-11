@@ -255,6 +255,7 @@ r_obj* vec_cast_common_opts(r_obj* xs,
   r_obj* type = KEEP(vec_ptype_common(
     xs,
     to,
+    PTYPE_FINALISE_DEFAULT,
     opts->s3_fallback,
     opts->p_arg,
     opts->call

@@ -1,29 +1,53 @@
 #' Find the prototype of a set of vectors
 #'
-#' `vec_ptype()` returns the unfinalised prototype of a single vector.
-#' `vec_ptype_common()` finds the common type of multiple vectors.
-#' `vec_ptype_show()` nicely prints the common type of any number of
-#' inputs, and is designed for interactive exploration.
+#' @description
+#' - `vec_ptype()` returns the [unfinalised][vec_ptype_finalise] prototype of a
+#'   single vector.
+#'
+#' - `vec_ptype_common()` returns the common type of multiple vectors. By
+#'   default, this is [finalised][vec_ptype_finalise] for immediate usage, but
+#'   can optionally be left unfinalised for advanced common type determination.
+#'
+#' - `vec_ptype_show()` nicely prints the common type of any number of inputs,
+#'   and is designed for interactive exploration.
 #'
 #' @inheritParams rlang::args_error_context
 #'
 #' @param x A vector
+#'
 #' @param ... For `vec_ptype()`, these dots are for future extensions and must
 #'   be empty.
 #'
 #'   For `vec_ptype_common()` and `vec_ptype_show()`, vector inputs.
+#'
 #' @param x_arg Argument name for `x`. This is used in error messages to inform
 #'   the user about the locations of incompatible types.
+#'
 #' @param .ptype If `NULL`, the default, the output type is determined by
 #'   computing the common type across all elements of `...`.
 #'
 #'   Alternatively, you can supply `.ptype` to give the output known type.
 #'   If `getOption("vctrs.no_guessing")` is `TRUE` you must supply this value:
 #'   this is a convenient way to make production code demand fixed types.
+#'
+#' @param .finalise Should `vec_ptype_common()` [finalise][vec_ptype_finalise]
+#'   its output?
+#'
+#'   - If `TRUE`, [vec_ptype_finalise()] is called on the final `ptype` before
+#'     it is returned. Practically this has the effect of converting any
+#'     types from [unspecified] to logical.
+#'
+#'   - If `FALSE`, [unspecified] types are left unfinalised, which can be useful
+#'     for advanced cases where you combine one common type result with another
+#'     type via [vec_ptype2()]. Note that you must manually call
+#'     [vec_ptype_finalise()] on the final `ptype` before supplying it to any
+#'     other vctrs functions.
+#'
 #' @return `vec_ptype()` and `vec_ptype_common()` return a prototype
-#'   (a size-0 vector)
+#'   (a size-0 vector).
 #'
 #' @section `vec_ptype()`:
+#'
 #' `vec_ptype()` returns [size][vec_size] 0 vectors potentially
 #' containing attributes but no data. Generally, this is just
 #' `vec_slice(x, 0L)`, but some inputs require special
@@ -36,7 +60,8 @@
 #' * The prototype of logical vectors that only contain missing values
 #'   is the special [unspecified] type, which can be coerced to any
 #'   other 1d type. This allows bare `NA`s to represent missing values
-#'   for any 1d vector type.
+#'   for any 1d vector type. [Finalising][vec_ptype_finalise] this type
+#'   converts it from unspecified back to logical.
 #'
 #' See [internal-faq-ptype2-identity] for more information about
 #' identity values.
@@ -49,15 +74,16 @@
 #' improve the performance of your class in many cases ([common
 #' type][vec_ptype2] imputation in particular).
 #'
-#' Because it may contain unspecified vectors, the prototype returned
-#' by `vec_ptype()` is said to be __unfinalised__. Call
-#' [vec_ptype_finalise()] to finalise it. Commonly you will need the
-#' finalised prototype as returned by `vec_slice(x, 0L)`.
+#' Because it may contain unspecified vectors, the prototype returned by
+#' `vec_ptype()` is said to be __unfinalised__. Call [vec_ptype_finalise()] to
+#' finalise it.
 #'
 #' @section `vec_ptype_common()`:
+#'
 #' `vec_ptype_common()` first finds the prototype of each input, then
-#' successively calls [vec_ptype2()] to find a common type. It returns
-#' a [finalised][vec_ptype_finalise] prototype.
+#' successively calls [vec_ptype2()] to find a common type. It returns a
+#' [finalised][vec_ptype_finalise] prototype by default, but can optionally be
+#' left unfinalised for advanced common type determination.
 #'
 #' @section Dependencies of `vec_ptype()`:
 #' - [vec_slice()] for returning an empty slice
@@ -70,7 +96,6 @@
 #' @examples
 #' # Unknown types ------------------------------------------
 #' vec_ptype_show()
-#' vec_ptype_show(NA)
 #' vec_ptype_show(NULL)
 #'
 #' # Vectors ------------------------------------------------
@@ -100,6 +125,30 @@
 #'   data.frame(y = 2),
 #'   data.frame(z = "a")
 #' )
+#'
+#' # Finalisation -------------------------------------------
+#'
+#' # `vec_ptype()` and `vec_ptype2()` return unfinalised ptypes so that they
+#' # can be coerced to any other type
+#' vec_ptype(NA)
+#' vec_ptype2(NA, NA)
+#'
+#' # By default `vec_ptype_common()` finalises so that you can use its result
+#' # directly in other vctrs functions
+#' vec_ptype_common(NA, NA)
+#'
+#' # You can opt out of finalisation to make it work like `vec_ptype()` and
+#' # `vec_ptype2()` with `.finalise = FALSE`, but don't forget that you must
+#' # call `vec_ptype_finalise()` manually if you do so!
+#' vec_ptype_common(NA, NA, .finalise = FALSE)
+#' vec_ptype_finalise(vec_ptype_common(NA, NA, .finalise = FALSE))
+#'
+#' # This can be useful in rare scenarios, like including a separate `default`
+#' # argument in the ptype computation
+#' xs <- list(NA, NA)
+#' default <- "a"
+#' try(vec_ptype2(vec_ptype_common(!!!xs), default))
+#' vec_ptype2(vec_ptype_common(!!!xs, .finalise = FALSE), default)
 vec_ptype <- function(x, ..., x_arg = "", call = caller_env()) {
   check_dots_empty0(...)
   return(.Call(ffi_ptype, x, x_arg, environment()))
@@ -111,20 +160,28 @@ vec_ptype <- function(x, ..., x_arg = "", call = caller_env()) {
 vec_ptype_common <- function(
   ...,
   .ptype = NULL,
+  .finalise = TRUE,
   .arg = "",
   .call = caller_env()
 ) {
-  .External2(ffi_ptype_common, list2(...), .ptype)
+  .External2(ffi_ptype_common, list2(...), .ptype, .finalise)
 }
 
 vec_ptype_common_params <- function(
   ...,
   .ptype = NULL,
+  .finalise = TRUE,
   .fallback_opts = fallback_opts(),
   .arg = "",
   .call = caller_env()
 ) {
-  .External2(ffi_ptype_common_params, list2(...), .ptype, .fallback_opts)
+  .External2(
+    ffi_ptype_common_params,
+    list2(...),
+    .ptype,
+    .finalise,
+    .fallback_opts
+  )
 }
 
 vec_ptype_common_fallback <- function(

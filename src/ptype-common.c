@@ -12,16 +12,23 @@ r_obj* ffi_ptype_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
   r_obj* xs = r_node_car(args); args = r_node_cdr(args);
-  r_obj* ptype = r_node_car(args);
+  r_obj* ptype = r_node_car(args); args = r_node_cdr(args);
+  r_obj* ffi_finalise = r_node_car(args);
 
   struct r_lazy call = { .x = syms.dot_call, .env = env };
   struct r_lazy xs_arg_lazy = { .x = syms.dot_arg, .env = env };
   struct vctrs_arg xs_arg = new_lazy_arg(&xs_arg_lazy);
 
+  const enum ptype_finalise finalise = r_arg_as_bool(ffi_finalise, ".finalise") ?
+    PTYPE_FINALISE_true :
+    PTYPE_FINALISE_false;
+  const enum s3_fallback s3_fallback = S3_FALLBACK_false;
+
   r_obj* out = vec_ptype_common(
     xs,
     ptype,
-    S3_FALLBACK_false,
+    finalise,
+    s3_fallback,
     &xs_arg,
     call
   );
@@ -35,17 +42,22 @@ r_obj* ffi_ptype_common_params(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* e
 
   r_obj* xs = r_node_car(args); args = r_node_cdr(args);
   r_obj* ptype = r_node_car(args); args = r_node_cdr(args);
+  r_obj* ffi_finalise = r_node_car(args); args = r_node_cdr(args);
   r_obj* opts = r_node_car(args);
 
   struct r_lazy call = { .x = syms.dot_call, .env = env };
   struct r_lazy xs_arg_lazy = { .x = syms.dot_arg, .env = env };
   struct vctrs_arg xs_arg = new_lazy_arg(&xs_arg_lazy);
 
+  const enum ptype_finalise finalise = r_arg_as_bool(ffi_finalise, ".finalise") ?
+    PTYPE_FINALISE_true :
+    PTYPE_FINALISE_false;
   const enum s3_fallback s3_fallback = s3_fallback_from_opts(opts);
 
   r_obj* out = vec_ptype_common(
     xs,
     ptype,
+    finalise,
     s3_fallback,
     &xs_arg,
     call
@@ -55,39 +67,50 @@ r_obj* ffi_ptype_common_params(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* e
 }
 
 // Invariant of `vec_ptype_common()` is that the output is always a finalised `ptype`,
-// even if the user provided their own
+// even if the user provided their own, unless `PTYPE_FINALISE_false` is specified.
 r_obj* vec_ptype_common(
   r_obj* dots,
   r_obj* ptype,
+  enum ptype_finalise finalise,
   enum s3_fallback s3_fallback,
   struct vctrs_arg* p_arg,
   struct r_lazy call
 ) {
+  int n_prot = 0;
+
+  r_obj* out;
+
   if (ptype != r_null) {
-    return vec_ptype_final(ptype, vec_args.dot_ptype, call);
+    out = KEEP_N(vec_ptype(ptype, vec_args.dot_ptype, call), &n_prot);
+  } else {
+    if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
+      r_abort_lazy_call(r_lazy_null, "strict mode is activated; you must supply complete `.ptype`.");
+    }
+
+    struct ptype_common_reduce_opts reduce_opts = {
+      .call = call,
+      .s3_fallback = s3_fallback
+    };
+
+    out = KEEP_N(
+      reduce(
+        r_null,
+        vec_args.empty,
+        p_arg,
+        dots,
+        &ptype2_common,
+        &reduce_opts
+      ),
+      &n_prot
+    );
   }
 
-  if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
-    r_abort_lazy_call(r_lazy_null, "strict mode is activated; you must supply complete `.ptype`.");
+  if (should_finalise(finalise)) {
+    out = KEEP_N(vec_ptype_finalise(out), &n_prot);
   }
 
-  struct ptype_common_reduce_opts reduce_opts = {
-    .call = call,
-    .s3_fallback = s3_fallback
-  };
-
-  r_obj* type = KEEP(reduce(
-    r_null,
-    vec_args.empty,
-    p_arg,
-    dots,
-    &ptype2_common,
-    &reduce_opts
-  ));
-  type = vec_ptype_finalise(type);
-
-  FREE(1);
-  return type;
+  FREE(n_prot);
+  return out;
 }
 
 static

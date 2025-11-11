@@ -74,6 +74,7 @@ r_obj* vec_rbind(r_obj* xs,
   ptype = vec_ptype_common(
     xs,
     ptype,
+    PTYPE_FINALISE_DEFAULT,
     S3_FALLBACK_true,
     p_arg,
     error_call
@@ -498,6 +499,7 @@ r_obj* vec_cbind(r_obj* xs,
   r_obj* type = KEEP(vec_ptype_common(
     xs_data_frames,
     ptype,
+    PTYPE_FINALISE_DEFAULT,
     S3_FALLBACK_false,
     p_arg,
     error_call
