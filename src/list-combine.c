@@ -1363,7 +1363,7 @@ r_obj* build_fallback_index(r_obj* indices, r_ssize size, struct r_lazy error_ca
   r_obj* index = KEEP(vec_c(
     indices,
     r_globals.empty_int,
-    r_null,
+    name_spec_inner,
     &name_repair_opts,
     vec_args.indices,
     error_call
