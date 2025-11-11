@@ -2504,6 +2504,43 @@ test_that("list_combine() does not support non-numeric S3 indices", {
   })
 })
 
+test_that("list_combine() supports named `indices` (#2095)", {
+  # Particularly in the fallback case where we have to `vec_c()` the `indices`
+
+  # With outer names on `indices`:
+  expect_identical_list_combine(
+    x = list(c("a", "b")),
+    indices = list(a = c(1, 2)),
+    size = 2,
+    expect = c("a", "b")
+  )
+  expect_identical_list_combine(
+    x = list(c("a", "b", "c", "d")),
+    indices = list(a = c(FALSE, TRUE, FALSE, TRUE)),
+    size = 4,
+    slice_x = TRUE,
+    expect = c(NA, "b", NA, "d")
+  )
+
+  # With outer and inner names on `indices`:
+  expect_identical_list_combine(
+    x = list(c("a", "b"), c("c", "d")),
+    indices = list(a = c(x = 1, y = 2), b = c(x = 3, y = 4)),
+    size = 4,
+    expect = c("a", "b", "c", "d")
+  )
+  expect_identical_list_combine(
+    x = list(c("a", "b", "c", "d"), c("e", "f", "g", "h")),
+    indices = list(
+      a = c(w = FALSE, x = TRUE, y = FALSE, z = TRUE),
+      b = c(w = FALSE, x = FALSE, y = TRUE, z = FALSE)
+    ),
+    size = 4,
+    slice_x = TRUE,
+    expect = c(NA, "b", "g", "d")
+  )
+})
+
 test_that("`list_combine()` with `slice_x = FALSE`", {
   values <- list(1:2, 3:4)
   size <- 4
