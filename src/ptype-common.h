@@ -8,7 +8,7 @@
 struct ptype_common_opts {
   struct r_lazy call;
   struct vctrs_arg* p_arg;
-  struct fallback_opts fallback;
+  enum s3_fallback s3_fallback;
 };
 
 static inline

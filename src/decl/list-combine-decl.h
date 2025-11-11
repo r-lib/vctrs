@@ -17,7 +17,7 @@ r_obj* list_combine_impl(
   struct vctrs_arg* p_indices_arg,
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call,
-  const struct fallback_opts fallback_opts
+  enum s3_fallback s3_fallback
 );
 
 static
@@ -174,5 +174,5 @@ r_obj* ptype_common_with_default(
   struct vctrs_arg* p_xs_arg,
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call,
-  const struct fallback_opts fallback_opts
+  enum s3_fallback s3_fallback
 );

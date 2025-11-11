@@ -54,9 +54,9 @@ r_obj* vec_ptype2_default_full(r_obj* x,
                                struct vctrs_arg* x_arg,
                                struct vctrs_arg* y_arg,
                                struct r_lazy call,
-                               const struct fallback_opts* opts,
+                               enum s3_fallback s3_fallback,
                                bool from_dispatch) {
-  r_obj* ffi_s3_fallback = KEEP(r_int(opts->s3));
+  r_obj* ffi_s3_fallback = KEEP(r_int(s3_fallback));
   r_obj* ffi_x_arg = KEEP(vctrs_arg(x_arg));
   r_obj* ffi_y_arg = KEEP(vctrs_arg(y_arg));
   r_obj* ffi_call = KEEP(r_lazy_eval(call));
@@ -79,8 +79,8 @@ r_obj* vec_ptype2_default(r_obj* x,
                           struct vctrs_arg* x_arg,
                           struct vctrs_arg* y_arg,
                           struct r_lazy call,
-                          const struct fallback_opts* p_opts) {
-  return vec_ptype2_default_full(x, y, x_arg, y_arg, call, p_opts, false);
+                          enum s3_fallback s3_fallback) {
+  return vec_ptype2_default_full(x, y, x_arg, y_arg, call, s3_fallback, false);
 }
 
 r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
@@ -126,7 +126,7 @@ r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
                                          opts->p_x_arg,
                                          opts->p_y_arg,
                                          opts->call,
-                                         &(opts->fallback),
+                                         opts->s3_fallback,
                                          true);
     FREE(3);
     return out;
@@ -141,7 +141,7 @@ r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
                                         syms_x_arg, ffi_x_arg,
                                         syms_y_arg, ffi_y_arg,
                                         opts->call,
-                                        &(opts->fallback));
+                                        opts->s3_fallback);
 
   FREE(5);
   return out;
@@ -153,11 +153,11 @@ r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
                                 r_obj* x_arg_sym, r_obj* x_arg,
                                 r_obj* y_arg_sym, r_obj* y_arg,
                                 struct r_lazy lazy_call,
-                                const struct fallback_opts* opts) {
+                                enum s3_fallback s3_fallback) {
   r_obj* call = KEEP(r_lazy_eval(lazy_call));
 
-  if (opts->s3 != S3_FALLBACK_DEFAULT) {
-    r_obj* ffi_s3_fallback = KEEP(r_int(opts->s3));
+  if (s3_fallback != S3_FALLBACK_DEFAULT) {
+    r_obj* ffi_s3_fallback = KEEP(r_int(s3_fallback));
 
     r_obj* out = vctrs_dispatch6(method_sym, method,
                                  x_sym, x,
@@ -183,7 +183,7 @@ r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
 // [[ register() ]]
 r_obj* ffi_ptype2_dispatch_native(r_obj* x,
                                   r_obj* y,
-                                  r_obj* fallback_opts,
+                                  r_obj* opts,
                                   r_obj* frame) {
   struct r_lazy x_arg_lazy = { .x = syms.x_arg, .env = frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_lazy);
@@ -193,24 +193,26 @@ r_obj* ffi_ptype2_dispatch_native(r_obj* x,
 
   struct r_lazy call = { .x = syms_call, .env = frame };
 
-  const struct ptype2_opts opts = new_ptype2_opts(x,
-                                                    y,
-                                                    &x_arg,
-                                                    &y_arg,
-                                                    call,
-                                                    fallback_opts);
+  const struct ptype2_opts ptype2_opts = new_ptype2_opts(
+    x,
+    y,
+    &x_arg,
+    &y_arg,
+    call,
+    opts
+  );
 
   int _left;
 
-  r_obj* out = vec_ptype2_dispatch_native(&opts, vec_typeof(x), vec_typeof(y), &_left);
+  r_obj* out = vec_ptype2_dispatch_native(&ptype2_opts, vec_typeof(x), vec_typeof(y), &_left);
 
   if (out == r_null) {
     out = vec_ptype2_default_full(x,
                                   y,
                                   &x_arg,
                                   &y_arg,
-                                  opts.call,
-                                  &opts.fallback,
+                                  ptype2_opts.call,
+                                  ptype2_opts.s3_fallback,
                                   true);
     return out;
   } else {

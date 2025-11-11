@@ -33,7 +33,7 @@ r_obj* ffi_ptype_common_opts(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
 
   struct ptype_common_opts ptype_opts = {
     .call = { .x = syms.dot_call, .env = env },
-    .fallback = new_fallback_opts(opts)
+    .s3_fallback = s3_fallback_from_opts(opts)
   };
   r_obj* out = vec_ptype_common_opts(xs, ptype, &ptype_opts);
 
@@ -75,11 +75,8 @@ r_obj* vec_ptype_common_params(r_obj* dots,
   struct ptype_common_opts opts = {
     .call = call,
     .p_arg = p_arg,
-    .fallback = {
-      .s3 = s3_fallback
-    }
+    .s3_fallback = s3_fallback
   };
-
   return vec_ptype_common_opts(dots, ptype, &opts);
 }
 
@@ -98,7 +95,7 @@ r_obj* ptype2_common(r_obj* current,
     .p_x_arg = counters->curr_arg,
     .p_y_arg = counters->next_arg,
     .call = p_common_opts->call,
-    .fallback = p_common_opts->fallback
+    .s3_fallback = p_common_opts->s3_fallback
   };
 
   current = vec_ptype2_opts(&opts, &left);

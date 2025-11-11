@@ -13,17 +13,13 @@ enum s3_fallback {
   S3_FALLBACK_true
 };
 
-struct fallback_opts {
-  enum s3_fallback s3;
-};
-
 struct ptype2_opts {
   r_obj* x;
   r_obj* y;
   struct vctrs_arg* p_x_arg;
   struct vctrs_arg* p_y_arg;
   struct r_lazy call;
-  struct fallback_opts fallback;
+  enum s3_fallback s3_fallback;
 };
 
 r_obj* vec_ptype2_opts(const struct ptype2_opts* opts,
@@ -76,7 +72,7 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
                                    struct r_lazy call,
                                    r_obj* opts);
 
-struct fallback_opts new_fallback_opts(r_obj* opts);
+enum s3_fallback s3_fallback_from_opts(r_obj* opts);
 
 r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
                                    enum vctrs_type other_type,

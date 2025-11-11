@@ -85,11 +85,9 @@ r_obj* list_combine(
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call
 ) {
-  const struct fallback_opts fallback_opts = {
-    .s3 = r_is_true(r_peek_option("vctrs:::base_c_in_progress")) ?
+  const enum s3_fallback s3_fallback = r_is_true(r_peek_option("vctrs:::base_c_in_progress")) ?
       S3_FALLBACK_false :
-      S3_FALLBACK_true
-  };
+      S3_FALLBACK_true;
 
   // `list_combine_impl()` supports `NULL` `indices` for `vec_c()` and
   // `list_unchop()`, which `list_combine()` does not, so we early check here
@@ -121,7 +119,7 @@ r_obj* list_combine(
     p_indices_arg,
     p_default_arg,
     error_call,
-    fallback_opts
+    s3_fallback
   );
 }
 
@@ -161,11 +159,9 @@ r_obj* list_combine_for_list_unchop(
   struct vctrs_arg* p_xs_arg,
   struct r_lazy error_call
 ) {
-  const struct fallback_opts fallback_opts = {
-    .s3 = r_is_true(r_peek_option("vctrs:::base_c_in_progress")) ?
+  const enum s3_fallback s3_fallback = r_is_true(r_peek_option("vctrs:::base_c_in_progress")) ?
       S3_FALLBACK_false :
-      S3_FALLBACK_true
-  };
+      S3_FALLBACK_true;
 
   bool has_indices = indices != r_null;
   struct vctrs_arg* p_indices_arg = vec_args.indices;
@@ -221,7 +217,7 @@ r_obj* list_combine_for_list_unchop(
     p_indices_arg,
     p_default_arg,
     error_call,
-    fallback_opts
+    s3_fallback
   ));
 
   if (vec_is_unspecified(out) && r_is_object(out)) {
@@ -267,7 +263,7 @@ r_obj* list_combine_for_list_unchop(
 /**
  * Actual implementation for `list_combine()`
  *
- * Exposes `fallback_opts` here for use in the fallback
+ * Exposes `s3_fallback` here for use in the fallback
  */
 static
 r_obj* list_combine_impl(
@@ -288,7 +284,7 @@ r_obj* list_combine_impl(
   struct vctrs_arg* p_indices_arg,
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call,
-  const struct fallback_opts fallback_opts
+  enum s3_fallback s3_fallback
 ) {
   int n_protect = 0;
 
@@ -392,7 +388,7 @@ r_obj* list_combine_impl(
       p_xs_arg,
       p_default_arg,
       error_call,
-      fallback_opts
+      s3_fallback
     ),
     &n_protect
   );
@@ -521,7 +517,7 @@ r_obj* list_combine_impl(
     .to = ptype,
     .p_x_arg = p_x_arg,
     .call = error_call,
-    .fallback = fallback_opts
+    .s3_fallback = s3_fallback
   };
 
   r_keep_loc x_pi;
@@ -684,7 +680,7 @@ r_obj* list_combine_impl(
   }
 
   if (
-    fallback_opts.s3 == S3_FALLBACK_true &&
+    s3_fallback == S3_FALLBACK_true &&
       is_data_frame(out) &&
       needs_df_list_combine_common_class_fallback(out)
   ) {
@@ -801,13 +797,12 @@ r_obj* list_combine_common_class_fallback(
       error_call
     );
   } else {
-    struct fallback_opts fallback_opts = {
-      .s3 = S3_FALLBACK_false
-    };
+    const enum s3_fallback s3_fallback = S3_FALLBACK_false;
+
     struct ptype_common_opts ptype_common_opts = {
       .p_arg = p_xs_arg,
       .call = error_call,
-      .fallback = fallback_opts
+      .s3_fallback = s3_fallback
     };
 
     // Throw out the `vctrs:::common_class_fallback` ptype,
@@ -843,7 +838,7 @@ r_obj* list_combine_common_class_fallback(
       p_indices_arg,
       p_default_arg,
       error_call,
-      fallback_opts
+      s3_fallback
     );
   }
 }
@@ -1798,7 +1793,7 @@ r_obj* ptype_common_with_default(
   struct vctrs_arg* p_xs_arg,
   struct vctrs_arg* p_default_arg,
   struct r_lazy error_call,
-  const struct fallback_opts fallback_opts
+  enum s3_fallback s3_fallback
 ) {
   if (ptype != r_null) {
     // Performs scalar checks and whatnot
@@ -1810,7 +1805,7 @@ r_obj* ptype_common_with_default(
   const struct ptype_common_opts ptype_common_opts = {
     .p_arg = p_xs_arg,
     .call = error_call,
-    .fallback = fallback_opts
+    .s3_fallback = s3_fallback
   };
 
   // Use only `xs` and `p_xs_arg` first for best errors
@@ -1828,7 +1823,7 @@ r_obj* ptype_common_with_default(
       .p_x_arg = vec_args.empty,
       .p_y_arg = p_default_arg,
       .call = error_call,
-      .fallback = fallback_opts
+      .s3_fallback = s3_fallback
     };
     int _;
     ptype = vec_ptype2_opts(&ptype2_opts, &_);

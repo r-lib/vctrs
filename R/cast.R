@@ -144,7 +144,7 @@ vec_cast_common_fallback <- function(
   vec_cast_common_opts(
     ...,
     .to = .to,
-    .opts = full_fallback_opts(),
+    .opts = enabled_fallback_opts(),
     .arg = .arg,
     .call = .call
   )

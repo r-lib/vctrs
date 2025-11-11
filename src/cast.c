@@ -132,9 +132,9 @@ r_obj* vec_cast_default_full(r_obj* x,
                              struct vctrs_arg* p_x_arg,
                              struct vctrs_arg* p_to_arg,
                              struct r_lazy call,
-                             const struct fallback_opts* opts,
+                             enum s3_fallback s3_fallback,
                              bool from_dispatch) {
-  r_obj* s3_fallback = KEEP(r_int(opts->s3));
+  r_obj* ffi_s3_fallback = KEEP(r_int(s3_fallback));
 
   r_obj* ffi_x_arg = KEEP(vctrs_arg(p_x_arg));
   r_obj* ffi_to_arg = KEEP(vctrs_arg(p_to_arg));
@@ -147,7 +147,7 @@ r_obj* vec_cast_default_full(r_obj* x,
                                 syms_to_arg, ffi_to_arg,
                                 syms_call, ffi_call,
                                 syms_from_dispatch, r_lgl(from_dispatch),
-                                syms_s3_fallback, s3_fallback);
+                                syms_s3_fallback, ffi_s3_fallback);
   FREE(4);
   return out;
 }
@@ -157,8 +157,8 @@ r_obj* vec_cast_default(r_obj* x,
                         struct vctrs_arg* p_x_arg,
                         struct vctrs_arg* p_to_arg,
                         struct r_lazy call,
-                        const struct fallback_opts* p_opts) {
-  return vec_cast_default_full(x, to, p_x_arg, p_to_arg, call, p_opts, false);
+                        enum s3_fallback s3_fallback) {
+  return vec_cast_default_full(x, to, p_x_arg, p_to_arg, call, s3_fallback, false);
 }
 
 static
@@ -204,7 +204,7 @@ r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
                                        opts->p_x_arg,
                                        opts->p_to_arg,
                                        opts->call,
-                                       &(opts->fallback),
+                                       opts->s3_fallback,
                                        true);
     FREE(1);
     return out;
@@ -219,7 +219,7 @@ r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
                                         syms_x_arg, r_x_arg,
                                         syms_to_arg, r_to_arg,
                                         opts->call,
-                                        &(opts->fallback));
+                                        opts->s3_fallback);
 
   FREE(3);
   return out;
@@ -257,7 +257,7 @@ r_obj* vec_cast_common_opts(r_obj* xs,
   struct ptype_common_opts ptype_opts = {
     .p_arg = opts->p_arg,
     .call = opts->call,
-    .fallback = opts->fallback
+    .s3_fallback = opts->s3_fallback
   };
   r_obj* type = KEEP(vec_ptype_common_opts(xs, to, &ptype_opts));
 
@@ -284,7 +284,7 @@ r_obj* vec_cast_common_opts(r_obj* xs,
       .to = type,
       .p_x_arg = p_x_arg,
       .call = opts->call,
-      .fallback = opts->fallback
+      .s3_fallback = opts->s3_fallback
     };
     r_list_poke(out, i, vec_cast_opts(&cast_opts));
   }
@@ -300,9 +300,7 @@ r_obj* vec_cast_common_params(r_obj* xs,
   struct cast_common_opts opts = {
     .p_arg = p_arg,
     .call = call,
-    .fallback = {
-      .s3 = s3_fallback
-    }
+    .s3_fallback = s3_fallback
   };
   return vec_cast_common_opts(xs, to, &opts);
 }
@@ -341,7 +339,7 @@ r_obj* ffi_cast_common_opts(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env)
 
   r_obj* xs = r_node_car(args); args = r_node_cdr(args);
   r_obj* to = r_node_car(args); args = r_node_cdr(args);
-  r_obj* ffi_fallback_opts = r_node_car(args);
+  r_obj* ffi_opts = r_node_car(args);
 
   struct r_lazy call = { .x = syms.dot_call, .env = env };
 
@@ -351,7 +349,7 @@ r_obj* ffi_cast_common_opts(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env)
   struct cast_common_opts opts = {
     .p_arg = &xs_arg,
     .call = call,
-    .fallback = new_fallback_opts(ffi_fallback_opts)
+    .s3_fallback = s3_fallback_from_opts(ffi_opts)
   };
 
   r_obj* out = vec_cast_common_opts(xs, to, &opts);
@@ -371,9 +369,7 @@ struct cast_opts new_cast_opts(r_obj* x,
     .p_x_arg = p_x_arg,
     .p_to_arg = p_to_arg,
     .call = call,
-    .fallback = {
-      .s3 = r_int_get(r_list_get(opts, 0), 0)
-    }
+    .s3_fallback = s3_fallback_from_opts(opts)
   };
 }
 

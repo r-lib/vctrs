@@ -151,7 +151,7 @@ vec_ptype_common_fallback <- function(
   vec_ptype_common_opts(
     ...,
     .ptype = .ptype,
-    .opts = full_fallback_opts(),
+    .opts = enabled_fallback_opts(),
     .call = .call
   )
 }

@@ -301,7 +301,7 @@ fallback_opts <- function(s3_fallback = NULL) {
   )
 }
 
-full_fallback_opts <- function() {
+enabled_fallback_opts <- function() {
   fallback_opts(
     s3_fallback = S3_FALLBACK_true
   )
