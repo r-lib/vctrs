@@ -254,12 +254,13 @@ r_obj* vec_cast_e(const struct cast_opts* opts,
 r_obj* vec_cast_common_opts(r_obj* xs,
                             r_obj* to,
                             const struct cast_common_opts* opts) {
-  struct ptype_common_opts ptype_opts = {
-    .p_arg = opts->p_arg,
-    .call = opts->call,
-    .s3_fallback = opts->s3_fallback
-  };
-  r_obj* type = KEEP(vec_ptype_common_opts(xs, to, &ptype_opts));
+  r_obj* type = KEEP(vec_ptype_common(
+    xs,
+    to,
+    opts->s3_fallback,
+    opts->p_arg,
+    opts->call
+  ));
 
   const r_ssize xs_size = r_length(xs);
   r_obj* const* v_xs = r_list_cbegin(xs);

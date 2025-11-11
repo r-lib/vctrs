@@ -797,22 +797,22 @@ r_obj* list_combine_common_class_fallback(
       error_call
     );
   } else {
-    const enum s3_fallback s3_fallback = S3_FALLBACK_false;
-
-    struct ptype_common_opts ptype_common_opts = {
-      .p_arg = p_xs_arg,
-      .call = error_call,
-      .s3_fallback = s3_fallback
-    };
-
     // Throw out the `vctrs:::common_class_fallback` ptype,
     // it's served its purpose by getting us here
     ptype = r_null;
 
+    const enum s3_fallback s3_fallback = S3_FALLBACK_false;
+
     // Should cause a common type error, unless another fallback
     // kicks in (for instance, homogeneous class with homogeneous
     // attributes)
-    vec_ptype_common_opts(xs, ptype, &ptype_common_opts);
+    vec_ptype_common(
+      xs,
+      ptype,
+      s3_fallback,
+      p_xs_arg,
+      error_call
+    );
 
     // We will have already checked `unmatched` before the fallback
     // is invoked, so no need to check it again
@@ -1802,17 +1802,13 @@ r_obj* ptype_common_with_default(
 
   // Okay `ptype` is `NULL`. We determine it from `xs` and `default`.
 
-  const struct ptype_common_opts ptype_common_opts = {
-    .p_arg = p_xs_arg,
-    .call = error_call,
-    .s3_fallback = s3_fallback
-  };
-
   // Use only `xs` and `p_xs_arg` first for best errors
-  ptype = KEEP(vec_ptype_common_opts(
+  ptype = KEEP(vec_ptype_common(
     xs,
     ptype,
-    &ptype_common_opts
+    s3_fallback,
+    p_xs_arg,
+    error_call
   ));
 
   // Now incorporate `default` and `p_default_arg` if required

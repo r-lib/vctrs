@@ -180,38 +180,46 @@ test_that("vec_ptype_common() optionally falls back to base class", {
   y_df <- data_frame(x = y)
 
   expect_error(
-    vec_ptype_common_opts(x, y, .opts = enabled_fallback_opts()),
+    vec_ptype_common_params(x, y, .fallback_opts = enabled_fallback_opts()),
     class = "vctrs_error_incompatible_type"
   )
   expect_error(
-    vec_ptype_common_opts(x_df, y_df, .opts = enabled_fallback_opts()),
+    vec_ptype_common_params(
+      x_df,
+      y_df,
+      .fallback_opts = enabled_fallback_opts()
+    ),
     class = "vctrs_error_incompatible_type"
   )
 
   expect_error(
-    vec_cast_common_opts(x, y, .opts = enabled_fallback_opts()),
+    vec_ptype_common_params(x, y, .fallback_opts = enabled_fallback_opts()),
     class = "vctrs_error_incompatible_type"
   )
   expect_error(
-    vec_cast_common_opts(x_df, y_df, .opts = enabled_fallback_opts()),
+    vec_ptype_common_params(
+      x_df,
+      y_df,
+      .fallback_opts = enabled_fallback_opts()
+    ),
     class = "vctrs_error_incompatible_type"
   )
 
   class(y) <- c("foo", class(x))
   y_df <- data_frame(x = y)
 
-  common_sentinel <- vec_ptype_common_opts(
+  common_sentinel <- vec_ptype_common_params(
     x,
     y,
-    .opts = enabled_fallback_opts()
+    .fallback_opts = enabled_fallback_opts()
   )
   expect_true(is_common_class_fallback(common_sentinel))
   expect_identical(fallback_class(common_sentinel), "vctrs_foobar")
 
-  common_sentinel <- vec_ptype_common_opts(
+  common_sentinel <- vec_ptype_common_params(
     x_df,
     y_df,
-    .opts = enabled_fallback_opts()
+    .fallback_opts = enabled_fallback_opts()
   )
   expect_true(is_common_class_fallback(common_sentinel$x))
   expect_identical(fallback_class(common_sentinel$x), "vctrs_foobar")
