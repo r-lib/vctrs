@@ -774,7 +774,7 @@ r_obj* ptype_finalize(
 
   if (to_as_list_of_vectors) {
     // Use only `to` and `p_to_arg` first for best errors
-    ptype = KEEP(vec_ptype_common_params(
+    ptype = KEEP(vec_ptype_common(
       to,
       r_null,
       S3_FALLBACK_DEFAULT,

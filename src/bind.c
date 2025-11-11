@@ -71,7 +71,7 @@ r_obj* vec_rbind(r_obj* xs,
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = vec_ptype_common_params(
+  ptype = vec_ptype_common(
     xs,
     ptype,
     S3_FALLBACK_true,
@@ -495,11 +495,13 @@ r_obj* vec_cbind(r_obj* xs,
 
   ptype = KEEP(cbind_container_type(ptype, &rownames));
 
-  r_obj* type = KEEP(vec_ptype_common_params(xs_data_frames,
-                                             ptype,
-                                             S3_FALLBACK_false,
-                                             p_arg,
-                                             error_call));
+  r_obj* type = KEEP(vec_ptype_common(
+    xs_data_frames,
+    ptype,
+    S3_FALLBACK_false,
+    p_arg,
+    error_call
+  ));
   if (type == r_null) {
     type = new_data_frame(r_globals.empty_list, 0);
   } else if (!is_data_frame(type)) {

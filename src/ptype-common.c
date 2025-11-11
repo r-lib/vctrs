@@ -12,7 +12,7 @@ r_obj* ffi_ptype_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   struct r_lazy xs_arg_lazy = { .x = syms.dot_arg, .env = env };
   struct vctrs_arg xs_arg = new_lazy_arg(&xs_arg_lazy);
 
-  r_obj* out = vec_ptype_common_params(
+  r_obj* out = vec_ptype_common(
     xs,
     ptype,
     S3_FALLBACK_false,
@@ -67,11 +67,13 @@ r_obj* vec_ptype_common_opts(r_obj* dots,
   return type;
 }
 
-r_obj* vec_ptype_common_params(r_obj* dots,
-                               r_obj* ptype,
-                               enum s3_fallback s3_fallback,
-                               struct vctrs_arg* p_arg,
-                               struct r_lazy call) {
+r_obj* vec_ptype_common(
+  r_obj* dots,
+  r_obj* ptype,
+  enum s3_fallback s3_fallback,
+  struct vctrs_arg* p_arg,
+  struct r_lazy call
+) {
   struct ptype_common_opts opts = {
     .call = call,
     .p_arg = p_arg,
