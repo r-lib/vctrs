@@ -777,6 +777,7 @@ r_obj* ptype_finalize(
     ptype = KEEP(vec_ptype_common(
       to,
       r_null,
+      PTYPE_FINALISE_DEFAULT,
       S3_FALLBACK_DEFAULT,
       p_to_arg,
       error_call

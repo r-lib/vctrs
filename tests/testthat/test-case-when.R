@@ -272,6 +272,17 @@ test_that("`default` that is an unused logical `NA` can still be cast to `values
   expect_identical(vec_case_when(list(TRUE), list("x"), default = NA), "x")
 })
 
+test_that("`default` type is used when all values are logical `NA` (#2094)", {
+  expect_identical(
+    vec_case_when(list(TRUE), list(NA), default = "a"),
+    NA_character_
+  )
+  expect_identical(
+    vec_case_when(list(c(TRUE, FALSE)), list(NA), default = "a"),
+    c(NA_character_, "a")
+  )
+})
+
 test_that("`default_arg` can be customized", {
   expect_snapshot(error = TRUE, {
     vec_case_when(list(FALSE), list(1L), default = 2:3, default_arg = "foo")

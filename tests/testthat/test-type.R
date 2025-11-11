@@ -333,3 +333,33 @@ test_that("vec_ptype_common() always finalizes its output (#2099)", {
     logical()
   )
 })
+
+test_that("vec_ptype_common_params() lets you opt out of ptype finalization (#2094)", {
+  # Can opt out of finalization using low level `.finalise` option
+  expect_identical(
+    vec_ptype_common_params(NA, .finalise = FALSE),
+    unspecified()
+  )
+  expect_identical(
+    vec_ptype_common_params(NA, NA, .finalise = FALSE),
+    unspecified()
+  )
+  expect_identical(
+    vec_ptype_common_params(unspecified(1), .finalise = FALSE),
+    unspecified()
+  )
+  expect_identical(
+    vec_ptype_common_params(unspecified(1), unspecified(1), .finalise = FALSE),
+    unspecified()
+  )
+
+  # Works for explicit `.ptype` too
+  expect_identical(
+    vec_ptype_common_params(.ptype = NA, .finalise = FALSE),
+    unspecified()
+  )
+  expect_identical(
+    vec_ptype_common_params(.ptype = unspecified(1), .finalise = FALSE),
+    unspecified()
+  )
+})
