@@ -32,7 +32,7 @@ vec_c(NA, factor("x"))
 vec_c(NA, Sys.Date())
 #> [1] NA           "2025-11-11"
 vec_c(NA, Sys.time())
-#> [1] NA                        "2025-11-11 19:11:06 UTC"
+#> [1] NA                        "2025-11-11 19:17:18 UTC"
 vec_c(NA, list(1:3, 4:5))
 #> [[1]]
 #> NULL

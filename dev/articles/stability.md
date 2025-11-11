@@ -235,7 +235,7 @@ c(mean, globalenv())
 #> [[1]]
 #> function (x, ...) 
 #> UseMethod("mean")
-#> <bytecode: 0x55cd22a85b58>
+#> <bytecode: 0x55655ed21b58>
 #> <environment: namespace:base>
 #> 
 #> [[2]]
