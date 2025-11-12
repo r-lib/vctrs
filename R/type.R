@@ -120,11 +120,18 @@ vec_ptype_common <- function(
 vec_ptype_common_params <- function(
   ...,
   .ptype = NULL,
+  .finalise = TRUE,
   .fallback_opts = fallback_opts(),
   .arg = "",
   .call = caller_env()
 ) {
-  .External2(ffi_ptype_common_params, list2(...), .ptype, .fallback_opts)
+  .External2(
+    ffi_ptype_common_params,
+    list2(...),
+    .ptype,
+    .finalise,
+    .fallback_opts
+  )
 }
 
 vec_ptype_common_fallback <- function(

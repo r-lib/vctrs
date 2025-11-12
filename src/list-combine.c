@@ -809,6 +809,7 @@ r_obj* list_combine_common_class_fallback(
     vec_ptype_common(
       xs,
       ptype,
+      PTYPE_FINALISE_DEFAULT,
       s3_fallback,
       p_xs_arg,
       error_call
@@ -1802,10 +1803,12 @@ r_obj* ptype_common_with_default(
 
   // Okay `ptype` is `NULL`. We determine it from `xs` and `default`.
 
-  // Use only `xs` and `p_xs_arg` first for best errors
+  // Use only `xs` and `p_xs_arg` first for best errors.
+  // Not finalising `ptype` yet in case we need to incorporate `default`!
   ptype = KEEP(vec_ptype_common(
     xs,
     ptype,
+    PTYPE_FINALISE_false,
     s3_fallback,
     p_xs_arg,
     error_call
@@ -1826,7 +1829,10 @@ r_obj* ptype_common_with_default(
   }
   KEEP(ptype);
 
-  FREE(2);
+  // Now finalise after incorporating `default`
+  ptype = KEEP(vec_ptype_finalise(ptype));
+
+  FREE(3);
   return ptype;
 }
 
