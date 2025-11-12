@@ -304,3 +304,32 @@ test_that("vec_ptype_common() handles spliced names consistently (#1570)", {
     )
   })
 })
+
+test_that("vec_ptype() and vec_ptype2() don't finalize their output", {
+  expect_identical(vec_ptype(NA), unspecified())
+  expect_identical(vec_ptype2(NA, NA), unspecified())
+  expect_identical(vec_ptype2(NA, NULL), unspecified())
+  expect_identical(vec_ptype2(NULL, NA), unspecified())
+
+  expect_identical(vec_ptype(unspecified()), unspecified())
+  expect_identical(vec_ptype2(unspecified(), unspecified()), unspecified())
+  expect_identical(vec_ptype2(unspecified(), NULL), unspecified())
+  expect_identical(vec_ptype2(NULL, unspecified()), unspecified())
+})
+
+test_that("vec_ptype_common() always finalizes its output (#2099)", {
+  expect_identical(vec_ptype_common(NA), logical())
+  expect_identical(vec_ptype_common(NA, NA), logical())
+  expect_identical(vec_ptype_common(unspecified(1)), logical())
+  expect_identical(vec_ptype_common(unspecified(1), unspecified(1)), logical())
+
+  # Even explicit `.ptype`s
+  expect_identical(
+    vec_ptype_common(.ptype = NA),
+    logical()
+  )
+  expect_identical(
+    vec_ptype_common(.ptype = unspecified(1)),
+    logical()
+  )
+})
