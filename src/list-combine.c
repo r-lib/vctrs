@@ -1804,7 +1804,7 @@ r_obj* ptype_common_with_default(
   // Okay `ptype` is `NULL`. We determine it from `xs` and `default`.
 
   // Use only `xs` and `p_xs_arg` first for best errors.
-  // Not finalising `ptype` yet in case we need to incorporating `default`!
+  // Not finalising `ptype` yet in case we need to incorporate `default`!
   ptype = KEEP(vec_ptype_common(
     xs,
     ptype,
