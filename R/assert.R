@@ -486,14 +486,6 @@ stop_non_list_type <- function(x, arg, call) {
 }
 
 is_same_type <- function(x, ptype) {
-  if (is_partial(ptype)) {
-    env <- environment()
-    ptype <- tryCatch(
-      vctrs_error_incompatible_type = function(...) return_from(env, FALSE),
-      vec_ptype_common(x, ptype)
-    )
-  }
-
   x <- vec_slice(x, integer())
   ptype <- vec_slice(ptype, integer())
 

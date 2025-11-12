@@ -64,10 +64,6 @@ r_obj* s3_ptype(r_obj* x,
     break;
   }
 
-  if (vec_is_partial(x)) {
-    return x;
-  }
-
   r_obj* method = KEEP(vec_ptype_method(x));
 
   r_obj* out;
@@ -130,10 +126,6 @@ r_obj* vec_ptype_finalise(r_obj* x) {
 
   if (vec_is_unspecified(x)) {
     return vec_ptype_finalise_unspecified(x);
-  }
-
-  if (vec_is_partial(x)) {
-    return vec_ptype_finalise_dispatch(x);
   }
 
   obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, call);

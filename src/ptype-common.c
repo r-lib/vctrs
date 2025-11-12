@@ -61,7 +61,7 @@ r_obj* vec_ptype_common(
   struct vctrs_arg* p_arg,
   struct r_lazy call
 ) {
-  if (!vec_is_partial(ptype)) {
+  if (ptype != r_null) {
     return vec_ptype(ptype, vec_args.dot_ptype, call);
   }
 
@@ -74,10 +74,9 @@ r_obj* vec_ptype_common(
     .s3_fallback = s3_fallback
   };
 
-  // Start reduction with the `.ptype` argument
   r_obj* type = KEEP(reduce(
-    ptype,
-    vec_args.dot_ptype,
+    r_null,
+    vec_args.empty,
     p_arg,
     dots,
     &ptype2_common,

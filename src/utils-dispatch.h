@@ -32,7 +32,4 @@ bool class_type_is_data_frame(enum vctrs_class_type type) {
   }
 }
 
-bool vec_is_partial(r_obj* x);
-
-
 #endif
