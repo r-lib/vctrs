@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_pany()` and `vec_pall()`, parallel variants of `any()` and `all()` (in the same way that `pmin()` and `pmax()` are parallel variants of `min()` and `max()`).
+
 * Experimental "partial" type support has been removed. This idea never panned out and was not widely used. The following functions have been removed (#2101):
 
   * `is_partial()`
