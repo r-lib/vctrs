@@ -65,7 +65,7 @@ extern SEXP vec_proxy_order(SEXP);
 extern r_obj* ffi_df_proxy(r_obj*, r_obj*);
 extern SEXP vctrs_unspecified(SEXP);
 extern r_obj* ffi_ptype(r_obj*, r_obj*, r_obj*);
-extern SEXP vec_ptype_finalise(SEXP);
+extern r_obj* vec_ptype_finalise(r_obj*);
 extern r_obj* ffi_minimal_names(r_obj*);
 extern r_obj* ffi_unique_names(r_obj*, r_obj*);
 extern SEXP ffi_as_minimal_names(SEXP);
