@@ -337,3 +337,23 @@ test_that("bare-type fallback for df-cast works", {
 
   expect_error(vec_rbind(gdf, gdf), NA)
 })
+
+test_that("can cast to unspecified `NA` with `vec_cast()` and `vec_cast_common()` (#2099)", {
+  # In the `vec_cast()` case no `vec_ptype()` call is made, which means that no
+  # finalization step is required. In the `vec_cast_common()` case, the
+  # underlying call to `vec_ptype_common()` calls `vec_ptype(NA)` but also
+  # finalizes that to `logical()` on the way out, so this still works.
+  expect_identical(vec_cast(TRUE, to = NA), TRUE)
+  expect_identical(vec_cast_common(TRUE, .to = NA), list(TRUE))
+
+  # `vec_cast()` itself does not call `vec_ptype()` and does not finalize,
+  # so this stays <unspecified> and the cast fails
+  # (this behavior is questionable, but is very much an edge case)
+  expect_snapshot(error = TRUE, {
+    vec_cast(TRUE, to = unspecified(1))
+  })
+
+  # `vec_cast_common()` calls `vec_ptype_common()`, which always finalises,
+  # so this technically works (but again, it is an edge case)
+  expect_identical(vec_cast_common(TRUE, .to = unspecified(1)), list(TRUE))
+})

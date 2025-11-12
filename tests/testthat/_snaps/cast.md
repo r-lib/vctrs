@@ -83,3 +83,11 @@
       i Please use `allow_lossy_cast()` instead.
       i We detected a lossy transformation from `x` <fct> to `to` <fct>. The result will contain lower-resolution values or missing values. To suppress this warning, wrap your code with `allow_lossy_cast()`.
 
+# can cast to unspecified `NA` with `vec_cast()` and `vec_cast_common()` (#2099)
+
+    Code
+      vec_cast(TRUE, to = unspecified(1))
+    Condition
+      Error:
+      ! Can't convert `TRUE` <logical> to <vctrs_unspecified>.
+

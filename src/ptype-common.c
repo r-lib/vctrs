@@ -54,6 +54,8 @@ r_obj* ffi_ptype_common_params(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* e
   return out;
 }
 
+// Invariant of `vec_ptype_common()` is that the output is always a finalised `ptype`,
+// even if the user provided their own
 r_obj* vec_ptype_common(
   r_obj* dots,
   r_obj* ptype,
@@ -62,7 +64,7 @@ r_obj* vec_ptype_common(
   struct r_lazy call
 ) {
   if (ptype != r_null) {
-    return vec_ptype(ptype, vec_args.dot_ptype, call);
+    return vec_ptype_final(ptype, vec_args.dot_ptype, call);
   }
 
   if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
