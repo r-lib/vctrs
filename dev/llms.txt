@@ -349,10 +349,6 @@ matrices.
 - [`vec_ptype_full()`](https://vctrs.r-lib.org/dev/reference/vec_ptype_full.md)
   [`vec_ptype_abbr()`](https://vctrs.r-lib.org/dev/reference/vec_ptype_full.md)
   : Vector type as a string
-- [`new_partial()`](https://vctrs.r-lib.org/dev/reference/new_partial.md)
-  [`is_partial()`](https://vctrs.r-lib.org/dev/reference/new_partial.md)
-  [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/new_partial.md)
-  **\[experimental\]** : Partial type
 - [`stop_incompatible_type()`](https://vctrs.r-lib.org/dev/reference/vctrs-conditions.md)
   [`stop_incompatible_cast()`](https://vctrs.r-lib.org/dev/reference/vctrs-conditions.md)
   [`stop_incompatible_op()`](https://vctrs.r-lib.org/dev/reference/vctrs-conditions.md)
@@ -375,7 +371,8 @@ matrices.
 - [`vec_math()`](https://vctrs.r-lib.org/dev/reference/vec_math.md)
   [`vec_math_base()`](https://vctrs.r-lib.org/dev/reference/vec_math.md)
   : Mathematical operations
-- [`unspecified()`](https://vctrs.r-lib.org/dev/reference/unspecified.md)
+- [`unspecified()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+  [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
   : A 1d vector of unspecified type
 - [`vec_default_cast()`](https://vctrs.r-lib.org/dev/reference/vec_default_ptype2.md)
   [`vec_default_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_default_ptype2.md)

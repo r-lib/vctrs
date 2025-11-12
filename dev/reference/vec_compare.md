@@ -54,7 +54,7 @@ vec_compare(c(TRUE, FALSE, NA), FALSE, na_equal = TRUE)
 vec_compare(1:10, 5)
 #>  [1] -1 -1 -1 -1  0  1  1  1  1  1
 vec_compare(runif(10), 0.5)
-#>  [1] -1 -1 -1 -1 -1 -1 -1 -1  1  1
+#>  [1] -1  1  1  1 -1 -1 -1 -1 -1 -1
 vec_compare(letters[1:10], "d")
 #>  [1] -1 -1 -1  0  1  1  1  1  1  1
 

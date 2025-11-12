@@ -104,6 +104,24 @@ the caller:
     vec_ptype_common(NA, NULL)
     #> logical(0)
 
-Note that **partial** types in vctrs make use of the same mechanism.
-They are finalised with
-[`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/new_partial.md).
+[`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+is an S3 generic, but the only time you should ever need to write an S3
+method for it is if your class *wraps* another vector in some way and
+needs special handling to propagate the default finalisation. For
+example, the ivs package contains an interval class that wraps `start`
+and `end` vectors of the same type and has a `vec_ptype_finalize()`
+method that finalises those wrapped vectors:
+
+    vec_ptype_finalise.ivs_iv <- function(x, ...) {
+      start <- unclass(x)[[1L]]
+      ptype <- vec_ptype_finalise(start, ...)
+      new_bare_iv(ptype, ptype)
+    }
+
+This ensures that `vec_ptype_finalise(vec_ptype(ivs::iv(NA, NA)))`
+correctly finalises to `<iv<logical>>` rather than `<iv<unspecified>>`.
+
+Note that data frames are already recursively finalised, so you don’t
+need a
+[`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+method for a data frame subclass.

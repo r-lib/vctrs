@@ -75,7 +75,7 @@ potentially containing attributes but no data. Generally, this is just
 
 - The prototype of logical vectors that only contain missing values is
   the special
-  [unspecified](https://vctrs.r-lib.org/dev/reference/unspecified.md)
+  [unspecified](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
   type, which can be coerced to any other 1d type. This allows bare
   `NA`s to represent missing values for any 1d vector type.
 
@@ -96,7 +96,7 @@ particular).
 
 Because it may contain unspecified vectors, the prototype returned by
 `vec_ptype()` is said to be **unfinalised**. Call
-[`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/new_partial.md)
+[`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
 to finalise it. Commonly you will need the finalised prototype as
 returned by `vec_slice(x, 0L)`.
 
@@ -106,7 +106,7 @@ returned by `vec_slice(x, 0L)`.
 successively calls
 [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md) to
 find a common type. It returns a
-[finalised](https://vctrs.r-lib.org/dev/reference/new_partial.md)
+[finalised](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
 prototype.
 
 ## Dependencies of `vec_ptype()`
@@ -118,7 +118,7 @@ prototype.
 
 - [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md)
 
-- [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/new_partial.md)
+- [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
 
 ## Examples
 

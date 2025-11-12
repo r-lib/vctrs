@@ -10,8 +10,8 @@ your class, but it should not usually be called directly. If you need to
 find the common type of a set of inputs, call
 [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
 instead. This function supports multiple inputs and
-[finalises](https://vctrs.r-lib.org/dev/reference/new_partial.md) the
-common type.
+[finalises](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+the common type.
 
 ## Usage
 

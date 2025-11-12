@@ -117,7 +117,7 @@ handling.</p><ul><li><p>While you can't slice <code>NULL</code>, the prototype o
 itself. This is because we treat <code>NULL</code> as an identity value in
 the <code><a href="vec_ptype2.html">vec_ptype2()</a></code> monoid.</p></li>
 <li><p>The prototype of logical vectors that only contain missing values
-is the special <a href="unspecified.html">unspecified</a> type, which can be coerced to any
+is the special <a href="vctrs-unspecified.html">unspecified</a> type, which can be coerced to any
 other 1d type. This allows bare <code>NA</code>s to represent missing values
 for any 1d vector type.</p></li>
 </ul><p>See <a href="internal-faq-ptype2-identity.html">internal-faq-ptype2-identity</a> for more information about
@@ -130,7 +130,7 @@ implementing a custom <code>vec_ptype()</code> method that returns a constant. T
 improve the performance of your class in many cases (<a href="vec_ptype2.html">common type</a> imputation in particular).</p>
 <p>Because it may contain unspecified vectors, the prototype returned
 by <code>vec_ptype()</code> is said to be <strong>unfinalised</strong>. Call
-<code><a href="new_partial.html">vec_ptype_finalise()</a></code> to finalise it. Commonly you will need the
+<code><a href="vctrs-unspecified.html">vec_ptype_finalise()</a></code> to finalise it. Commonly you will need the
 finalised prototype as returned by <code>vec_slice(x, 0L)</code>.</p>
     </div>
     <div class="section level2">
@@ -139,7 +139,7 @@ finalised prototype as returned by <code>vec_slice(x, 0L)</code>.</p>
 
 <p><code>vec_ptype_common()</code> first finds the prototype of each input, then
 successively calls <code><a href="vec_ptype2.html">vec_ptype2()</a></code> to find a common type. It returns
-a <a href="new_partial.html">finalised</a> prototype.</p>
+a <a href="vctrs-unspecified.html">finalised</a> prototype.</p>
     </div>
     <div class="section level2">
     <h2 id="dependencies-of-vec-ptype-">Dependencies of <code>vec_ptype()</code><a class="anchor" aria-label="anchor" href="#dependencies-of-vec-ptype-"></a></h2>
@@ -152,7 +152,7 @@ a <a href="new_partial.html">finalised</a> prototype.</p>
 
 
 <ul><li><p><code><a href="vec_ptype2.html">vec_ptype2()</a></code></p></li>
-<li><p><code><a href="new_partial.html">vec_ptype_finalise()</a></code></p></li>
+<li><p><code><a href="vctrs-unspecified.html">vec_ptype_finalise()</a></code></p></li>
 </ul></div>
 
     <div class="section level2">

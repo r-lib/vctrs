@@ -103,8 +103,22 @@ vec_ptype_common(NULL, NULL)
 vec_ptype_common(NA, NULL)
 #&amp;gt; logical(0)
 
-Note that partial types in vctrs make use of the same mechanism.
-They are finalised with vec_ptype_finalise().
+vec_ptype_finalise() is an S3 generic, but the only time you should
+ever need to write an S3 method for it is if your class wraps another
+vector in some way and needs special handling to propagate the default
+finalisation. For example, the ivs package contains an interval class
+that wraps start and end vectors of the same type and has a
+vec_ptype_finalize() method that finalises those wrapped vectors:
+vec_ptype_finalise.ivs_iv &amp;lt;- function(x, ...) {
+  start &amp;lt;- unclass(x)[[1L]]
+  ptype &amp;lt;- vec_ptype_finalise(start, ...)
+  new_bare_iv(ptype, ptype)
+}
+
+This ensures that vec_ptype_finalise(vec_ptype(ivs::iv(NA, NA)))
+correctly finalises to &amp;lt;iv&amp;lt;logical&amp;gt;&amp;gt; rather than &amp;lt;iv&amp;lt;unspecified&amp;gt;&amp;gt;.
+Note that data frames are already recursively finalised, so you don’t
+need a vec_ptype_finalise() method for a data frame subclass.
 
 '><meta property="og:description" content='
 
@@ -210,8 +224,22 @@ vec_ptype_common(NULL, NULL)
 vec_ptype_common(NA, NULL)
 #&amp;gt; logical(0)
 
-Note that partial types in vctrs make use of the same mechanism.
-They are finalised with vec_ptype_finalise().
+vec_ptype_finalise() is an S3 generic, but the only time you should
+ever need to write an S3 method for it is if your class wraps another
+vector in some way and needs special handling to propagate the default
+finalisation. For example, the ivs package contains an interval class
+that wraps start and end vectors of the same type and has a
+vec_ptype_finalize() method that finalises those wrapped vectors:
+vec_ptype_finalise.ivs_iv &amp;lt;- function(x, ...) {
+  start &amp;lt;- unclass(x)[[1L]]
+  ptype &amp;lt;- vec_ptype_finalise(start, ...)
+  new_bare_iv(ptype, ptype)
+}
+
+This ensures that vec_ptype_finalise(vec_ptype(ivs::iv(NA, NA)))
+correctly finalises to &amp;lt;iv&amp;lt;logical&amp;gt;&amp;gt; rather than &amp;lt;iv&amp;lt;unspecified&amp;gt;&amp;gt;.
+Note that data frames are already recursively finalised, so you don’t
+need a vec_ptype_finalise() method for a data frame subclass.
 
 '><meta property="og:image" content="https://vctrs.r-lib.org/logo.png"><meta name="robots" content="noindex"><script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="vctrs.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
@@ -339,7 +367,7 @@ value:</p>
 vectors. We also can’t return <code>NULL</code> because unspecified vectors need to
 be recognised as logical vectors if they haven’t been promoted at the
 end of the reduction.</p>
-<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/new_partial.html">vec_ptype_finalise</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vctrs-unspecified.html">vec_ptype_finalise</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; logical(0)</span></span></code></pre><p></p></div>
 <p>See the output of <code><a href="vec_ptype.html">vec_ptype_common()</a></code> which performs the reduction and
 finalises the type, ready to be used by the caller:</p>
@@ -347,8 +375,21 @@ finalises the type, ready to be used by the caller:</p>
 <span><span class="co">#&gt; NULL</span></span>
 <span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="co">#&gt; logical(0)</span></span></code></pre><p></p></div>
-<p>Note that <strong>partial</strong> types in vctrs make use of the same mechanism.
-They are finalised with <code><a href="new_partial.html">vec_ptype_finalise()</a></code>.</p>
+<p><code><a href="vctrs-unspecified.html">vec_ptype_finalise()</a></code> is an S3 generic, but the only time you should
+ever need to write an S3 method for it is if your class <em>wraps</em> another
+vector in some way and needs special handling to propagate the default
+finalisation. For example, the ivs package contains an interval class
+that wraps <code>start</code> and <code>end</code> vectors of the same type and has a
+<code>vec_ptype_finalize()</code> method that finalises those wrapped vectors:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">vec_ptype_finalise.ivs_iv</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">start</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">unclass</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">ptype</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vctrs-unspecified.html">vec_ptype_finalise</a></span><span class="op">(</span><span class="va">start</span>, <span class="va">...</span><span class="op">)</span></span>
+<span>  <span class="fu">new_bare_iv</span><span class="op">(</span><span class="va">ptype</span>, <span class="va">ptype</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre><p></p></div>
+<p>This ensures that <code>vec_ptype_finalise(vec_ptype(ivs::iv(NA, NA)))</code>
+correctly finalises to <code>&lt;iv&lt;logical&gt;&gt;</code> rather than <code>&lt;iv&lt;unspecified&gt;&gt;</code>.</p>
+<p>Note that data frames are already recursively finalised, so you don’t
+need a <code><a href="vctrs-unspecified.html">vec_ptype_finalise()</a></code> method for a data frame subclass.</p>
 </div>
 
     </div>

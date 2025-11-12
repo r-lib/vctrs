@@ -2,6 +2,15 @@
 
 ## vctrs (development version)
 
+- Experimental “partial” type support has been removed. This idea never
+  panned out and was not widely used. The following functions have been
+  removed ([\#2101](https://github.com/r-lib/vctrs/issues/2101)):
+
+  - `is_partial()`
+  - `new_partial()`
+  - `partial_factor()`
+  - `partial_frame()`
+
 - Methods for the deprecated testthat function `is_informative_error()`
   have been removed
   ([\#2089](https://github.com/r-lib/vctrs/issues/2089)).
@@ -1765,7 +1774,7 @@ CRAN release: 2020-02-20
   now errors on scalar inputs
   ([\#807](https://github.com/r-lib/vctrs/issues/807)).
 
-- [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/new_partial.md)
+- [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
   is now recursive over all data frame types, ensuring that unspecified
   columns are correctly finalised to logical
   ([\#800](https://github.com/r-lib/vctrs/issues/800)).

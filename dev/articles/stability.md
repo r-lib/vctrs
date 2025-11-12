@@ -235,7 +235,7 @@ c(mean, globalenv())
 #> [[1]]
 #> function (x, ...) 
 #> UseMethod("mean")
-#> <bytecode: 0x55655ed21b58>
+#> <bytecode: 0x55ce7e9a1b58>
 #> <environment: namespace:base>
 #> 
 #> [[2]]
@@ -396,7 +396,7 @@ c(NA, datetime)
 [`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md) takes a
 different approach treating a logical vector consisting only of `NA` as
 the
-[`unspecified()`](https://vctrs.r-lib.org/dev/reference/unspecified.md)
+[`unspecified()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
 class which can be converted to any other 1d type:
 
 ``` r
@@ -563,7 +563,7 @@ if_else(x > 2, factor("small"), factor("big"))
 #> [1] <NA>  big   big   small small
 #> Levels: small big
 if_else(x > 2, Sys.Date(), Sys.Date() + 7)
-#> [1] NA           "2025-11-18" "2025-11-18" "2025-11-11" "2025-11-11"
+#> [1] NA           "2025-11-19" "2025-11-19" "2025-11-12" "2025-11-12"
 ```
 
 By using
