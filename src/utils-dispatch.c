@@ -109,13 +109,3 @@ const char* class_type_as_str(enum vctrs_class_type type) {
   }
   never_reached("class_type_as_str");
 }
-
-
-bool vec_is_partial(r_obj* x) {
-  return x == r_null || (r_typeof(x) == R_TYPE_list && r_inherits(x, "vctrs_partial"));
-}
-
-// [[ register() ]]
-r_obj* ffi_is_partial(r_obj* x) {
-  return r_lgl(vec_is_partial(x));
-}

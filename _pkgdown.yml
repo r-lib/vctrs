@@ -125,7 +125,6 @@ reference:
   contents:
   - vctr
   - vec_ptype_full
-  - vec_ptype_finalise
   - "vctrs-conditions"
   - rcrd
   - fields

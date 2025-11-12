@@ -1,5 +1,12 @@
 # vctrs (development version)
 
+* Experimental "partial" type support has been removed. This idea never panned out and was not widely used. The following functions have been removed (#2101):
+
+  * `is_partial()`
+  * `new_partial()`
+  * `partial_factor()`
+  * `partial_frame()`
+
 * Methods for the deprecated testthat function `is_informative_error()` have been removed (#2089).
 
 * `obj_check_vector()` now throws a clearer error message. In particular, special info bullets have been added that link out to FAQ pages and explain common issues around incompatible S3 lists and data frames (#2061).

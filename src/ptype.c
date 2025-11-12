@@ -64,10 +64,6 @@ r_obj* s3_ptype(r_obj* x,
     break;
   }
 
-  if (vec_is_partial(x)) {
-    return x;
-  }
-
   r_obj* method = KEEP(vec_ptype_method(x));
 
   r_obj* out;
@@ -114,69 +110,6 @@ r_obj* df_ptype(r_obj* x, bool bare) {
   return ptype;
 }
 
-
-// [[ register() ]]
-r_obj* vec_ptype_finalise(r_obj* x) {
-  if (x == r_null) {
-    return x;
-  }
-
-  struct r_lazy call = lazy_calls.vec_ptype_finalise;
-
-  if (!r_is_object(x)) {
-    obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, call);
-    return x;
-  }
-
-  if (vec_is_unspecified(x)) {
-    return vec_ptype_finalise_unspecified(x);
-  }
-
-  if (vec_is_partial(x)) {
-    return vec_ptype_finalise_dispatch(x);
-  }
-
-  obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, call);
-
-  switch (class_type(x)) {
-  case VCTRS_CLASS_bare_tibble:
-  case VCTRS_CLASS_bare_data_frame:
-    return bare_df_map(x, &vec_ptype_finalise);
-
-  case VCTRS_CLASS_data_frame:
-    return df_map(x, &vec_ptype_finalise);
-
-  case VCTRS_CLASS_none:
-    r_stop_internal("Non-S3 classes should have returned by now.");
-
-  default:
-    return vec_ptype_finalise_dispatch(x);
-  }
-}
-
-static
-r_obj* vec_ptype_finalise_unspecified(r_obj* x) {
-  r_ssize size = r_length(x);
-
-  if (size == 0) {
-    return r_globals.empty_lgl;
-  }
-
-  r_obj* out = KEEP(r_alloc_logical(size));
-  r_lgl_fill(out, r_globals.na_lgl, size);
-
-  FREE(1);
-  return out;
-}
-
-static
-r_obj* vec_ptype_finalise_dispatch(r_obj* x) {
-  return vctrs_dispatch1(
-    syms_vec_ptype_finalise_dispatch, fns_vec_ptype_finalise_dispatch,
-    syms_x, x
-  );
-}
-
 r_obj* vec_ptype_final(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   r_obj* out = KEEP(vec_ptype(x, x_arg, call));
   out = vec_ptype_finalise(out);
@@ -184,14 +117,8 @@ r_obj* vec_ptype_final(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   return out;
 }
 
-
 void vctrs_init_ptype(r_obj* ns) {
   syms_vec_ptype = r_sym("vec_ptype");
-
-  syms_vec_ptype_finalise_dispatch = r_sym("vec_ptype_finalise_dispatch");
-  fns_vec_ptype_finalise_dispatch = r_eval(syms_vec_ptype_finalise_dispatch, ns);
 }
 
 static r_obj* syms_vec_ptype = NULL;
-static r_obj* syms_vec_ptype_finalise_dispatch = NULL;
-static r_obj* fns_vec_ptype_finalise_dispatch = NULL;

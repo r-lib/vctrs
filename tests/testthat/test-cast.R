@@ -24,11 +24,6 @@ test_that("casting requires vectors", {
   )
 })
 
-test_that("casting between `NULL` and partial types is allowed", {
-  expect_identical(vec_cast(NULL, partial_factor()), NULL)
-  expect_identical(vec_cast(partial_factor(), NULL), partial_factor())
-})
-
 test_that("dimensionality matches output", {
   x1 <- matrix(TRUE, nrow = 1, ncol = 1)
   x2 <- matrix(1, nrow = 0, ncol = 2)
