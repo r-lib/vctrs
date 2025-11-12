@@ -1,6 +1,6 @@
 # vctrs (development version)
 
-* Experimental "partial" type support has been removed. This idea never panned out and was not widely used. The following functions have been removed:
+* Experimental "partial" type support has been removed. This idea never panned out and was not widely used. The following functions have been removed (#2101):
 
   * `is_partial()`
   * `new_partial()`
