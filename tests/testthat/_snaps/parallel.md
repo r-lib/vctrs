@@ -1,258 +1,212 @@
 # no casting is done
 
     Code
-      list_pall(list(1))
+      vec_pall(1)
     Condition
-      Error in `list_pall()`:
-      ! `list(1)[[1]]` must be a logical vector, not the number 1.
+      Error in `vec_pall()`:
+      ! `..1` must be a logical vector, not the number 1.
 
 ---
 
     Code
-      list_pany(list(1))
+      vec_pany(1)
     Condition
-      Error in `list_pany()`:
-      ! `list(1)[[1]]` must be a logical vector, not the number 1.
+      Error in `vec_pany()`:
+      ! `..1` must be a logical vector, not the number 1.
 
 ---
 
     Code
-      list_pall(list(array(TRUE)))
+      vec_pall(array(TRUE))
     Condition
-      Error in `list_pall()`:
-      ! `list(array(TRUE))[[1]]` must be a logical vector, not a logical 1D array.
+      Error in `vec_pall()`:
+      ! `..1` must be a logical vector, not a logical 1D array.
 
 ---
 
     Code
-      list_pany(list(array(TRUE)))
+      vec_pany(array(TRUE))
     Condition
-      Error in `list_pany()`:
-      ! `list(array(TRUE))[[1]]` must be a logical vector, not a logical 1D array.
+      Error in `vec_pany()`:
+      ! `..1` must be a logical vector, not a logical 1D array.
 
 ---
 
     Code
-      list_pall(list(structure(TRUE, class = "foo")))
+      vec_pall(structure(TRUE, class = "foo"))
     Condition
-      Error in `list_pall()`:
-      ! `list(structure(TRUE, class = "foo"))[[1]]` must be a logical vector, not a <foo> object.
+      Error in `vec_pall()`:
+      ! `..1` must be a logical vector, not a <foo> object.
 
 ---
 
     Code
-      list_pany(list(structure(TRUE, class = "foo")))
+      vec_pany(structure(TRUE, class = "foo"))
     Condition
-      Error in `list_pany()`:
-      ! `list(structure(TRUE, class = "foo"))[[1]]` must be a logical vector, not a <foo> object.
+      Error in `vec_pany()`:
+      ! `..1` must be a logical vector, not a <foo> object.
 
 # no recycling is done
 
     Code
-      list_pall(list(TRUE, c(TRUE, TRUE, TRUE)))
+      vec_pall(TRUE, c(TRUE, TRUE, TRUE))
     Condition
-      Error in `list_pall()`:
-      ! `list(TRUE, c(TRUE, TRUE, TRUE))[[2]]` must have size 1, not size 3.
+      Error in `vec_pall()`:
+      ! `..2` must have size 1, not size 3.
 
 ---
 
     Code
-      list_pany(list(TRUE, c(TRUE, TRUE, TRUE)))
+      vec_pany(TRUE, c(TRUE, TRUE, TRUE))
     Condition
-      Error in `list_pany()`:
-      ! `list(TRUE, c(TRUE, TRUE, TRUE))[[2]]` must have size 1, not size 3.
+      Error in `vec_pany()`:
+      ! `..2` must have size 1, not size 3.
 
 ---
 
     Code
-      list_pall(list(TRUE, c(TRUE, TRUE, TRUE)), size = 3L)
+      vec_pall(TRUE, c(TRUE, TRUE, TRUE), .size = 3L)
     Condition
-      Error in `list_pall()`:
-      ! `list(TRUE, c(TRUE, TRUE, TRUE))[[1]]` must have size 3, not size 1.
+      Error in `vec_pall()`:
+      ! `..1` must have size 3, not size 1.
 
 ---
 
     Code
-      list_pany(list(TRUE, c(TRUE, TRUE, TRUE)), size = 3L)
+      vec_pany(TRUE, c(TRUE, TRUE, TRUE), .size = 3L)
     Condition
-      Error in `list_pany()`:
-      ! `list(TRUE, c(TRUE, TRUE, TRUE))[[1]]` must have size 3, not size 1.
+      Error in `vec_pany()`:
+      ! `..1` must have size 3, not size 1.
 
-# validates `x`
+# validates `.missing`
 
     Code
-      list_pall(1)
+      vec_pall(.missing = c(TRUE, FALSE))
     Condition
-      Error in `list_pall()`:
-      ! `1` must be a list, not the number 1.
+      Error in `vec_pall()`:
+      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
 
 ---
 
     Code
-      list_pany(1)
+      vec_pany(.missing = c(TRUE, FALSE))
     Condition
-      Error in `list_pany()`:
-      ! `1` must be a list, not the number 1.
+      Error in `vec_pany()`:
+      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
 
 ---
 
     Code
-      list_pall(1, x_arg = "")
+      vec_pall(.missing = 1)
     Condition
-      Error in `list_pall()`:
-      ! Input must be a list, not the number 1.
+      Error in `vec_pall()`:
+      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
 
 ---
 
     Code
-      list_pany(1, x_arg = "")
+      vec_pany(.missing = 1)
     Condition
-      Error in `list_pany()`:
-      ! Input must be a list, not the number 1.
+      Error in `vec_pany()`:
+      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
 
 ---
 
     Code
-      list_pall(1, x_arg = "foo")
+      vec_pall(.missing = NA)
     Condition
-      Error in `list_pall()`:
-      ! `foo` must be a list, not the number 1.
+      Error in `vec_pall()`:
+      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
 
 ---
 
     Code
-      list_pany(1, x_arg = "foo")
+      vec_pany(.missing = NA)
     Condition
-      Error in `list_pany()`:
-      ! `foo` must be a list, not the number 1.
+      Error in `vec_pany()`:
+      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
+
+# validates `.size`
+
+    Code
+      vec_pall(.size = c(1, 2))
+    Condition
+      Error in `vec_pall()`:
+      ! `.size` must be a scalar integer or double.
 
 ---
 
     Code
-      list_pall(data_frame(x = 1))
+      vec_pany(.size = c(1, 2))
     Condition
-      Error in `list_pall()`:
-      ! `data_frame(x = 1)` must be a list, not a <data.frame> object.
+      Error in `vec_pany()`:
+      ! `.size` must be a scalar integer or double.
 
 ---
 
     Code
-      list_pany(data_frame(x = 1))
+      vec_pall(.size = 1.5)
     Condition
-      Error in `list_pany()`:
-      ! `data_frame(x = 1)` must be a list, not a <data.frame> object.
-
-# validates `missing`
-
-    Code
-      list_pall(list(), missing = c(TRUE, FALSE))
-    Condition
-      Error in `list_pall()`:
-      ! `missing` must be `NULL`, `TRUE`, or `FALSE`.
+      Error in `vec_pall()`:
+      ! `.size` must be a whole number, not a decimal number.
 
 ---
 
     Code
-      list_pany(list(), missing = c(TRUE, FALSE))
+      vec_pany(.size = 1.5)
     Condition
-      Error in `list_pany()`:
-      ! `missing` must be `NULL`, `TRUE`, or `FALSE`.
+      Error in `vec_pany()`:
+      ! `.size` must be a whole number, not a decimal number.
 
 ---
 
     Code
-      list_pall(list(), missing = 1)
+      vec_pall(.size = NA_integer_)
     Condition
-      Error in `list_pall()`:
-      ! `missing` must be `NULL`, `TRUE`, or `FALSE`.
-
----
-
-    Code
-      list_pany(list(), missing = 1)
-    Condition
-      Error in `list_pany()`:
-      ! `missing` must be `NULL`, `TRUE`, or `FALSE`.
-
----
-
-    Code
-      list_pall(list(), missing = NA)
-    Condition
-      Error in `list_pall()`:
-      ! `missing` must be `NULL`, `TRUE`, or `FALSE`.
-
----
-
-    Code
-      list_pany(list(), missing = NA)
-    Condition
-      Error in `list_pany()`:
-      ! `missing` must be `NULL`, `TRUE`, or `FALSE`.
-
-# validates `size`
-
-    Code
-      list_pall(list(), size = c(1, 2))
-    Condition
-      Error in `list_pall()`:
-      ! `size` must be a scalar integer or double.
-
----
-
-    Code
-      list_pany(list(), size = c(1, 2))
-    Condition
-      Error in `list_pany()`:
-      ! `size` must be a scalar integer or double.
-
----
-
-    Code
-      list_pall(list(), size = 1.5)
-    Condition
-      Error in `list_pall()`:
-      ! `size` must be a whole number, not a decimal number.
-
----
-
-    Code
-      list_pany(list(), size = 1.5)
-    Condition
-      Error in `list_pany()`:
-      ! `size` must be a whole number, not a decimal number.
-
----
-
-    Code
-      list_pall(list(), size = NA_integer_)
-    Condition
-      Error in `list_pall()`:
+      Error in `vec_pall()`:
       ! negative length vectors are not allowed
 
 ---
 
     Code
-      list_pany(list(), size = NA_integer_)
+      vec_pany(.size = NA_integer_)
     Condition
-      Error in `list_pany()`:
+      Error in `vec_pany()`:
       ! negative length vectors are not allowed
 
 # names are used in errors
 
     Code
-      foo <- list(x = 1.5)
-      list_pall(foo)
+      vec_pall(1.5, .arg = "x")
     Condition
-      Error in `list_pall()`:
-      ! `foo$x` must be a logical vector, not the number 1.5.
+      Error in `vec_pall()`:
+      ! `x[[1]]` must be a logical vector, not the number 1.5.
 
 ---
 
     Code
-      foo <- list(x = c(TRUE, FALSE), y = logical())
-      list_pany(foo)
+      vec_pall(a = 1.5, .arg = "x")
     Condition
-      Error in `list_pany()`:
-      ! `foo$y` must have size 2, not size 0.
+      Error in `vec_pall()`:
+      ! `x$a` must be a logical vector, not the number 1.5.
+
+---
+
+    Code
+      x <- c(TRUE, FALSE)
+      y <- logical()
+      vec_pany(x, y)
+    Condition
+      Error in `vec_pany()`:
+      ! `..2` must have size 2, not size 0.
+
+---
+
+    Code
+      x <- c(TRUE, FALSE)
+      y <- logical()
+      vec_pany(a = x, b = y, .arg = "x", .error_call = quote(foo()))
+    Condition
+      Error in `foo()`:
+      ! `x$b` must have size 2, not size 0.
 
