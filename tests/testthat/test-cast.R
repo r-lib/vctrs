@@ -339,7 +339,7 @@ test_that("bare-type fallback for df-cast works", {
 })
 
 test_that("can cast to unspecified `NA` with `vec_cast()` and `vec_cast_common()` (#2099)", {
-  # In the `vec_cast()` cast no `vec_ptype()` call is made, which means that no
+  # In the `vec_cast()` case no `vec_ptype()` call is made, which means that no
   # finalization step is required. In the `vec_cast_common()` case, the
   # underlying call to `vec_ptype_common()` calls `vec_ptype(NA)` but also
   # finalizes that to `logical()` on the way out, so this still works.
