@@ -187,7 +187,7 @@ extern SEXP exp_vec_slice_impl(SEXP, SEXP);
 extern SEXP exp_vec_names(SEXP);
 extern SEXP exp_vec_set_names(SEXP, SEXP);
 extern SEXP exp_short_compact_seq(R_len_t, R_len_t, bool);
-extern SEXP exp_short_init_compact_seq(int*, R_len_t, R_len_t, bool);
+extern void exp_short_init_compact_seq(int*, R_len_t, R_len_t, bool);
 
 // Defined below
 SEXP vctrs_init_library(SEXP);
