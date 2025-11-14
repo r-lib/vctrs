@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* The deprecated C callable for `vec_is_vector()` has been removed.
+
 * Fixed the C level signature for the `exp_short_init_compact_seq()` callable.
 
 * Experimental "partial" type support has been removed. This idea never panned out and was not widely used. The following functions have been removed (#2101):
