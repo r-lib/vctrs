@@ -413,11 +413,6 @@ export void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "short_vec_size",     (DL_FUNC) &short_vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle",  (DL_FUNC) &short_vec_recycle);
 
-    // Deprecated
-    // In the public header
-    // See `inst/include/vctrs.h` for details
-    R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &maturing_obj_is_vector);
-
     // Experimental
     // Exported but not available in the public header
     R_RegisterCCallable("vctrs", "exp_vec_cast",                (DL_FUNC) &exp_vec_cast);
