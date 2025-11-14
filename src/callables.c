@@ -7,11 +7,11 @@ bool maturing_obj_is_vector(SEXP x) {
   return obj_is_vector(x, VCTRS_ALLOW_NULL_no);
 }
 
-R_len_t short_vec_size(SEXP x) {
+R_len_t maturing_short_vec_size(SEXP x) {
   return vec_size(x);
 }
 
-SEXP short_vec_recycle(SEXP x, R_len_t size) {
+SEXP maturing_short_vec_recycle(SEXP x, R_len_t size) {
   return vec_recycle(x, size, vec_args.x, lazy_calls.vec_recycle);
 }
 

@@ -176,8 +176,8 @@ extern r_obj* ffi_vec_if_else(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 // Maturing
 // In the public header
 extern bool maturing_obj_is_vector(SEXP);
-extern R_len_t short_vec_size(SEXP);
-extern SEXP short_vec_recycle(SEXP, R_len_t);
+extern R_len_t maturing_short_vec_size(SEXP);
+extern SEXP maturing_short_vec_recycle(SEXP, R_len_t);
 
 // Experimental
 // Exported but not available in the public header
@@ -410,8 +410,8 @@ export void R_init_vctrs(DllInfo *dll)
     // Maturing
     // In the public header
     R_RegisterCCallable("vctrs", "obj_is_vector",      (DL_FUNC) &maturing_obj_is_vector);
-    R_RegisterCCallable("vctrs", "short_vec_size",     (DL_FUNC) &short_vec_size);
-    R_RegisterCCallable("vctrs", "short_vec_recycle",  (DL_FUNC) &short_vec_recycle);
+    R_RegisterCCallable("vctrs", "short_vec_size",     (DL_FUNC) &maturing_short_vec_size);
+    R_RegisterCCallable("vctrs", "short_vec_recycle",  (DL_FUNC) &maturing_short_vec_recycle);
 
     // Experimental
     // Exported but not available in the public header
