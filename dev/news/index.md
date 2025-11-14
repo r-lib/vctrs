@@ -2,6 +2,9 @@
 
 ## vctrs (development version)
 
+- Fixed the C level signature for the `exp_short_init_compact_seq()`
+  callable.
+
 - Experimental “partial” type support has been removed. This idea never
   panned out and was not widely used. The following functions have been
   removed ([\#2101](https://github.com/r-lib/vctrs/issues/2101)):
