@@ -22,7 +22,7 @@ Imports:
     cli (>= 3.4.0),
     glue,
     lifecycle (>= 1.0.3),
-    rlang (>= 1.1.0)
+    rlang (>= 1.1.6.9000)
 Suggests:
     bit64,
     covr,
