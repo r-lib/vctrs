@@ -196,6 +196,15 @@
 - [`vec_expand_grid()`](https://vctrs.r-lib.org/dev/reference/vec_expand_grid.md)
   : Create a data frame from all combinations of the inputs
 
+## Reducers
+
+- [`vec_pany()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md)
+  [`vec_pall()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md)
+  :
+
+  Parallel [`any()`](https://rdrr.io/r/base/any.html) and
+  [`all()`](https://rdrr.io/r/base/all.html)
+
 ## New classes
 
 - [`list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md)

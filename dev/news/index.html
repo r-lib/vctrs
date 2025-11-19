@@ -40,7 +40,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p>The deprecated C callable for <code>vec_is_vector()</code> has been removed.</p></li>
+<ul><li><p>New <code><a href="../reference/parallel-operators.html">vec_pany()</a></code> and <code><a href="../reference/parallel-operators.html">vec_pall()</a></code>, parallel variants of <code><a href="https://rdrr.io/r/base/any.html" class="external-link">any()</a></code> and <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> (in the same way that <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin()</a></code> and <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax()</a></code> are parallel variants of <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min()</a></code> and <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code>).</p></li>
+<li><p>The deprecated C callable for <code>vec_is_vector()</code> has been removed.</p></li>
 <li><p>Fixed the C level signature for the <code>exp_short_init_compact_seq()</code> callable.</p></li>
 <li>
 <p>Experimental “partial” type support has been removed. This idea never panned out and was not widely used. The following functions have been removed (<a href="https://github.com/r-lib/vctrs/issues/2101" class="external-link">#2101</a>):</p>

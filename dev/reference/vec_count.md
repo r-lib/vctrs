@@ -74,12 +74,12 @@ x <- letters[rpois(100, 6)]
 # default is to sort by frequency
 vec_count(x)
 #>    key count
-#> 1    f    19
+#> 1    f    18
 #> 2    d    16
 #> 3    g    14
-#> 4    i    11
+#> 4    e    12
 #> 5    h    11
-#> 6    e    10
+#> 6    i    10
 #> 7    j     5
 #> 8    b     4
 #> 9    c     3
@@ -95,11 +95,11 @@ vec_count(x, sort = "key")
 #> 2    b     4
 #> 3    c     3
 #> 4    d    16
-#> 5    e    10
-#> 6    f    19
+#> 5    e    12
+#> 6    f    18
 #> 7    g    14
 #> 8    h    11
-#> 9    i    11
+#> 9    i    10
 #> 10   j     5
 #> 11   k     1
 #> 12   m     2
@@ -108,36 +108,36 @@ vec_count(x, sort = "key")
 # or location of first value
 vec_count(x, sort = "location")
 #>    key count
-#> 1    f    19
-#> 2    i    11
-#> 3    e    10
-#> 4    d    16
-#> 5    j     5
-#> 6    g    14
-#> 7    b     4
-#> 8    n     2
-#> 9    c     3
-#> 10   h    11
+#> 1    e    12
+#> 2    f    18
+#> 3    d    16
+#> 4    j     5
+#> 5    g    14
+#> 6    b     4
+#> 7    n     2
+#> 8    c     3
+#> 9    h    11
+#> 10   i    10
 #> 11   a     2
 #> 12   m     2
 #> 13   k     1
 head(x)
-#> [1] "f" "i" "e" "f" "f" "d"
+#> [1] "e" "f" "f" "d" "e" "f"
 
 # or not at all
 vec_count(x, sort = "none")
 #>    key count
-#> 1    c     3
-#> 2    d    16
-#> 3    f    19
-#> 4    m     2
-#> 5    b     4
-#> 6    g    14
-#> 7    i    11
-#> 8    e    10
-#> 9    n     2
-#> 10   a     2
-#> 11   j     5
-#> 12   h    11
-#> 13   k     1
+#> 1    j     5
+#> 2    g    14
+#> 3    e    12
+#> 4    k     1
+#> 5    h    11
+#> 6    a     2
+#> 7    c     3
+#> 8    i    10
+#> 9    f    18
+#> 10   m     2
+#> 11   b     4
+#> 12   n     2
+#> 13   d    16
 ```

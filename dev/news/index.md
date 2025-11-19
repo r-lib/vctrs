@@ -2,6 +2,17 @@
 
 ## vctrs (development version)
 
+- New
+  [`vec_pany()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md)
+  and
+  [`vec_pall()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md),
+  parallel variants of [`any()`](https://rdrr.io/r/base/any.html) and
+  [`all()`](https://rdrr.io/r/base/all.html) (in the same way that
+  [`pmin()`](https://rdrr.io/r/base/Extremes.html) and
+  [`pmax()`](https://rdrr.io/r/base/Extremes.html) are parallel variants
+  of [`min()`](https://rdrr.io/r/base/Extremes.html) and
+  [`max()`](https://rdrr.io/r/base/Extremes.html)).
+
 - The deprecated C callable for `vec_is_vector()` has been removed.
 
 - Fixed the C level signature for the `exp_short_init_compact_seq()`
