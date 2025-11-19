@@ -9,10 +9,10 @@
 #'
 #' @param ... Logical vectors of equal size.
 #'
-#' @param .missing Handling of missing values. One of:
+#' @param .missing Value to use when a missing value is encountered. One of:
 #'
-#'   - `NULL`, no special behavior is applied. Missings are treated the same way
-#'     as `|` or `&`.
+#'   - `NA` to propagate missing values. With this, missings are treated the
+#'     same way as `|` or `&`.
 #'
 #'   - `FALSE` to treat missing values as `FALSE`.
 #'
@@ -83,7 +83,7 @@ NULL
 #' @export
 vec_pany <- function(
   ...,
-  .missing = NULL,
+  .missing = NA,
   .size = NULL,
   .arg = "",
   .error_call = current_env()
@@ -95,7 +95,7 @@ vec_pany <- function(
 #' @export
 vec_pall <- function(
   ...,
-  .missing = NULL,
+  .missing = NA,
   .size = NULL,
   .arg = "",
   .error_call = current_env()

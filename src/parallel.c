@@ -328,20 +328,27 @@ void vec_pall_fill_missing_as_true(const int* v_x, r_ssize size, int* v_out) {
 // -----------------------------------------------------------------------------
 
 static
+bool r_is_scalar_logical(r_obj* x) {
+  return r_typeof(x) == R_TYPE_logical && r_length(x) == 1;
+}
+
+static
 enum vec_parallel_missing parse_vec_parallel_missing(r_obj* missing, struct r_lazy error_call) {
-  if (missing == r_null) {
+  if (!r_is_scalar_logical(missing)) {
+    r_abort_lazy_call(error_call, "`.missing` must be `NA`, `FALSE`, or `TRUE`.");
+  }
+
+  const int c_missing = r_lgl_get(missing, 0);
+
+  if (c_missing == r_globals.na_lgl) {
     return VEC_PARALLEL_MISSING_na;
+  } else if (c_missing == 0) {
+    return VEC_PARALLEL_MISSING_false;
+  } else if (c_missing == 1) {
+    return VEC_PARALLEL_MISSING_true;
+  } else {
+    r_stop_internal("Unexpected `missing` value, %i.", c_missing);
   }
-
-  if (r_is_bool(missing)) {
-    if (r_lgl_get(missing, 0)) {
-      return VEC_PARALLEL_MISSING_true;
-    } else {
-      return VEC_PARALLEL_MISSING_false;
-    }
-  }
-
-  r_abort_lazy_call(error_call, "`.missing` must be `NULL`, `TRUE`, or `FALSE`.");
 }
 
 // Figure out the output size

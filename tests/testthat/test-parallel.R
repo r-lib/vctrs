@@ -1,15 +1,15 @@
 test_that("9 possible variations of each combination are right", {
   N <- NA
 
-  expect_identical(vec_pall(T, T, .missing = NULL), T)
-  expect_identical(vec_pall(T, F, .missing = NULL), F)
-  expect_identical(vec_pall(T, N, .missing = NULL), N)
-  expect_identical(vec_pall(F, T, .missing = NULL), F)
-  expect_identical(vec_pall(F, F, .missing = NULL), F)
-  expect_identical(vec_pall(F, N, .missing = NULL), F)
-  expect_identical(vec_pall(N, T, .missing = NULL), N)
-  expect_identical(vec_pall(N, F, .missing = NULL), F)
-  expect_identical(vec_pall(N, N, .missing = NULL), N)
+  expect_identical(vec_pall(T, T, .missing = NA), T)
+  expect_identical(vec_pall(T, F, .missing = NA), F)
+  expect_identical(vec_pall(T, N, .missing = NA), N)
+  expect_identical(vec_pall(F, T, .missing = NA), F)
+  expect_identical(vec_pall(F, F, .missing = NA), F)
+  expect_identical(vec_pall(F, N, .missing = NA), F)
+  expect_identical(vec_pall(N, T, .missing = NA), N)
+  expect_identical(vec_pall(N, F, .missing = NA), F)
+  expect_identical(vec_pall(N, N, .missing = NA), N)
 
   expect_identical(vec_pall(T, T, .missing = TRUE), T)
   expect_identical(vec_pall(T, F, .missing = TRUE), F)
@@ -31,15 +31,15 @@ test_that("9 possible variations of each combination are right", {
   expect_identical(vec_pall(N, F, .missing = FALSE), F)
   expect_identical(vec_pall(N, N, .missing = FALSE), F)
 
-  expect_identical(vec_pany(T, T, .missing = NULL), T)
-  expect_identical(vec_pany(T, F, .missing = NULL), T)
-  expect_identical(vec_pany(T, N, .missing = NULL), T)
-  expect_identical(vec_pany(F, T, .missing = NULL), T)
-  expect_identical(vec_pany(F, F, .missing = NULL), F)
-  expect_identical(vec_pany(F, N, .missing = NULL), N)
-  expect_identical(vec_pany(N, T, .missing = NULL), T)
-  expect_identical(vec_pany(N, F, .missing = NULL), N)
-  expect_identical(vec_pany(N, N, .missing = NULL), N)
+  expect_identical(vec_pany(T, T, .missing = NA), T)
+  expect_identical(vec_pany(T, F, .missing = NA), T)
+  expect_identical(vec_pany(T, N, .missing = NA), T)
+  expect_identical(vec_pany(F, T, .missing = NA), T)
+  expect_identical(vec_pany(F, F, .missing = NA), F)
+  expect_identical(vec_pany(F, N, .missing = NA), N)
+  expect_identical(vec_pany(N, T, .missing = NA), T)
+  expect_identical(vec_pany(N, F, .missing = NA), N)
+  expect_identical(vec_pany(N, N, .missing = NA), N)
 
   expect_identical(vec_pany(T, T, .missing = TRUE), T)
   expect_identical(vec_pany(T, F, .missing = TRUE), T)
@@ -126,8 +126,8 @@ test_that("validates `.missing`", {
   expect_snapshot(error = TRUE, vec_pall(.missing = 1))
   expect_snapshot(error = TRUE, vec_pany(.missing = 1))
 
-  expect_snapshot(error = TRUE, vec_pall(.missing = NA))
-  expect_snapshot(error = TRUE, vec_pany(.missing = NA))
+  expect_snapshot(error = TRUE, vec_pall(.missing = NULL))
+  expect_snapshot(error = TRUE, vec_pany(.missing = NULL))
 })
 
 test_that("validates `.size`", {

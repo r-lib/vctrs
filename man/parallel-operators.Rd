@@ -8,7 +8,7 @@
 \usage{
 vec_pany(
   ...,
-  .missing = NULL,
+  .missing = NA,
   .size = NULL,
   .arg = "",
   .error_call = current_env()
@@ -16,7 +16,7 @@ vec_pany(
 
 vec_pall(
   ...,
-  .missing = NULL,
+  .missing = NA,
   .size = NULL,
   .arg = "",
   .error_call = current_env()
@@ -25,10 +25,10 @@ vec_pall(
 \arguments{
 \item{...}{Logical vectors of equal size.}
 
-\item{.missing}{Handling of missing values. One of:
+\item{.missing}{Value to use when a missing value is encountered. One of:
 \itemize{
-\item \code{NULL}, no special behavior is applied. Missings are treated the same way
-as \code{|} or \code{&}.
+\item \code{NA} to propagate missing values. With this, missings are treated the
+same way as \code{|} or \code{&}.
 \item \code{FALSE} to treat missing values as \code{FALSE}.
 \item \code{TRUE} to treat missing values as \code{TRUE}.
 }}

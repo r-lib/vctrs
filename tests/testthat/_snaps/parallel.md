@@ -84,7 +84,7 @@
       vec_pall(.missing = c(TRUE, FALSE))
     Condition
       Error in `vec_pall()`:
-      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
+      ! `.missing` must be `NA`, `FALSE`, or `TRUE`.
 
 ---
 
@@ -92,7 +92,7 @@
       vec_pany(.missing = c(TRUE, FALSE))
     Condition
       Error in `vec_pany()`:
-      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
+      ! `.missing` must be `NA`, `FALSE`, or `TRUE`.
 
 ---
 
@@ -100,7 +100,7 @@
       vec_pall(.missing = 1)
     Condition
       Error in `vec_pall()`:
-      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
+      ! `.missing` must be `NA`, `FALSE`, or `TRUE`.
 
 ---
 
@@ -108,23 +108,23 @@
       vec_pany(.missing = 1)
     Condition
       Error in `vec_pany()`:
-      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
+      ! `.missing` must be `NA`, `FALSE`, or `TRUE`.
 
 ---
 
     Code
-      vec_pall(.missing = NA)
+      vec_pall(.missing = NULL)
     Condition
       Error in `vec_pall()`:
-      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
+      ! `.missing` must be `NA`, `FALSE`, or `TRUE`.
 
 ---
 
     Code
-      vec_pany(.missing = NA)
+      vec_pany(.missing = NULL)
     Condition
       Error in `vec_pany()`:
-      ! `.missing` must be `NULL`, `TRUE`, or `FALSE`.
+      ! `.missing` must be `NA`, `FALSE`, or `TRUE`.
 
 # validates `.size`
 
