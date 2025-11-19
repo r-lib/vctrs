@@ -103,6 +103,10 @@ reference:
   - vec_identify_runs
   - vec_expand_grid
 
+- title: Reducers
+  contents:
+  - vec_pall
+
 - title: New classes
   contents:
   - list_of
