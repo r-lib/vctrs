@@ -333,3 +333,53 @@ test_that("vec_ptype_common() always finalizes its output (#2099)", {
     logical()
   )
 })
+
+test_that("vec_ptype_common() lets you opt out of ptype finalization (#2094)", {
+  expect_identical(
+    vec_ptype_common(NA, .finalise = FALSE),
+    unspecified()
+  )
+  expect_identical(
+    vec_ptype_common(NA, NA, .finalise = FALSE),
+    unspecified()
+  )
+  expect_identical(
+    vec_ptype_common(unspecified(1), .finalise = FALSE),
+    unspecified()
+  )
+  expect_identical(
+    vec_ptype_common(unspecified(1), unspecified(1), .finalise = FALSE),
+    unspecified()
+  )
+
+  # Works for explicit `.ptype` too
+  expect_identical(
+    vec_ptype_common(.ptype = NA, .finalise = FALSE),
+    unspecified()
+  )
+  expect_identical(
+    vec_ptype_common(.ptype = unspecified(1), .finalise = FALSE),
+    unspecified()
+  )
+})
+
+test_that("vec_ptype_common_params() lets you opt out of ptype finalization", {
+  expect_identical(
+    vec_ptype_common_params(NA, .finalise = FALSE),
+    unspecified()
+  )
+  # Works for explicit `.ptype` too
+  expect_identical(
+    vec_ptype_common_params(.ptype = NA, .finalise = FALSE),
+    unspecified()
+  )
+})
+
+test_that("`.finalise` is validated", {
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(.finalise = 1)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common_params(.finalise = 1)
+  })
+})

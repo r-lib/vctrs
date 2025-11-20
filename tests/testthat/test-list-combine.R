@@ -1886,6 +1886,27 @@ test_that("can specify a ptype to override common type", {
   })
 })
 
+test_that("common type is correctly computed with unspecified values and a `default` (#2094)", {
+  expect_identical(
+    list_combine(
+      x = list(NA),
+      indices = list(1),
+      size = 1,
+      default = "a"
+    ),
+    NA_character_
+  )
+  expect_identical(
+    list_combine(
+      x = list(NA),
+      indices = list(1),
+      size = 2,
+      default = "a"
+    ),
+    c(NA, "a")
+  )
+})
+
 test_that("outer names are kept", {
   x <- list(x = 1, y = 2)
   expect_named_list_combine(

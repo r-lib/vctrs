@@ -393,8 +393,8 @@ extern r_obj* ffi_new_data_frame(r_obj*);
 
 static
 const R_ExternalMethodDef ExtEntries[] = {
-  {"ffi_ptype_common",                 (DL_FUNC) &ffi_ptype_common, 2},
-  {"ffi_ptype_common_params",          (DL_FUNC) &ffi_ptype_common_params, 3},
+  {"ffi_ptype_common",                 (DL_FUNC) &ffi_ptype_common, 3},
+  {"ffi_ptype_common_params",          (DL_FUNC) &ffi_ptype_common_params, 4},
   {"ffi_size_common",                  (DL_FUNC) &ffi_size_common, 3},
   {"ffi_recycle_common",               (DL_FUNC) &ffi_recycle_common, 2},
   {"ffi_cast_common",                  (DL_FUNC) &ffi_cast_common, 2},

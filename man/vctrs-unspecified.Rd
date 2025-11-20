@@ -4,7 +4,7 @@
 \alias{vctrs-unspecified}
 \alias{unspecified}
 \alias{vec_ptype_finalise}
-\title{A 1d vector of unspecified type}
+\title{Unspecified vectors and prototype finalisation}
 \usage{
 unspecified(n = 0)
 
@@ -13,24 +13,34 @@ vec_ptype_finalise(x, ...)
 \arguments{
 \item{n}{Length of vector}
 
-\item{x}{A \code{ptype} to finalize, typically a result of \code{\link[=vec_ptype]{vec_ptype()}} or
-\code{\link[=vec_ptype2]{vec_ptype2()}}.}
+\item{x}{A \code{ptype} to finalize, typically a result of \code{\link[=vec_ptype]{vec_ptype()}},
+\code{\link[=vec_ptype2]{vec_ptype2()}}, or \code{\link[=vec_ptype_common]{vec_ptype_common(.finalise = FALSE)}}.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 }
 \description{
-This is the underlying type used to represent logical vectors that only
-contain \code{NA}. These require special handling because we want to allow logical
-\code{NA} to specify missingness that can be cast to any other type.
+\code{unspecified()} is the underlying type used to represent logical vectors that
+only contain \code{NA}. These require special handling because we want to allow
+logical \code{NA} to specify missingness that can be cast to any other type.
 
-\code{\link[=vec_ptype]{vec_ptype()}} and \code{\link[=vec_ptype2]{vec_ptype2()}} convert a logical vector of \code{NA} into an
-empty \verb{<unspecified>} type. This type can combine with any other type.
+In vctrs, the \verb{<unspecified>} type is considered \emph{unfinalised} and is not
+suitable for use in most vctrs functions that take a \code{ptype} argument, like
+\code{\link[=vec_c]{vec_c()}}. The purpose of \code{vec_ptype_finalise()} is to finalise any
+\verb{<unspecified>} types into \verb{<logical>} after common type determination
+has been completed.
+
+\code{\link[=vec_ptype]{vec_ptype()}} and \code{\link[=vec_ptype2]{vec_ptype2()}} return \emph{unfinalised} types, and will convert
+a logical vector of \code{NA} into an empty \verb{<unspecified>} type that can combine
+with any other type. It is unlikely that you will call these yourself, but,
+if you do, you'll need to manually finalise with \code{vec_ptype_finalise()} to
+take care of any \verb{<unspecified>} types.
 
 \code{\link[=vec_ptype_common]{vec_ptype_common()}} uses both \code{\link[=vec_ptype]{vec_ptype()}} and \code{\link[=vec_ptype2]{vec_ptype2()}} to compute
-the common type, but then returns a \emph{finalised} type using
-\code{\link[=vec_ptype_finalise]{vec_ptype_finalise()}}. The purpose of \code{vec_ptype_finalise()} is to turn any
-remaining \verb{<unspecified>} types back into \verb{<logical>}, which is the more
-useful type for callers of \code{vec_ptype_common()}.
+the common type, but typically returns a \emph{finalised} type for immediate usage
+in other vctrs functions. You can optionally skip finalisation by setting
+\code{.finalise = FALSE}, in which case \code{vec_ptype_common()} can return
+\verb{<unspecified>} and you'll need to manually call \code{vec_ptype_finalise()}
+yourself.
 
 \code{vec_ptype_finalise()} is an S3 generic, but it is extremely rare to need to
 write an S3 method for this. Data frames (and data frame subclasses) are
@@ -78,5 +88,9 @@ vec_ptype_show(vec_ptype_finalise(vec_ptype(df)))
 vec_ptype_common(NA)
 vec_ptype_common(NA, NA)
 vec_ptype_show(vec_ptype_common(df))
+
+# `vec_ptype_common()` lets you opt out of finalisation using `.finalise`
+vec_ptype_common(NA, .finalise = FALSE)
+vec_ptype_show(vec_ptype_common(df, .finalise = FALSE))
 }
 \keyword{internal}

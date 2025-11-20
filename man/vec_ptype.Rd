@@ -8,7 +8,13 @@
 \usage{
 vec_ptype(x, ..., x_arg = "", call = caller_env())
 
-vec_ptype_common(..., .ptype = NULL, .arg = "", .call = caller_env())
+vec_ptype_common(
+  ...,
+  .ptype = NULL,
+  .finalise = TRUE,
+  .arg = "",
+  .call = caller_env()
+)
 
 vec_ptype_show(...)
 }
@@ -35,21 +41,40 @@ Alternatively, you can supply \code{.ptype} to give the output known type.
 If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
 this is a convenient way to make production code demand fixed types.}
 
+\item{.finalise}{Should \code{vec_ptype_common()} \link[=vec_ptype_finalise]{finalise}
+its output?
+\itemize{
+\item If \code{TRUE}, \code{\link[=vec_ptype_finalise]{vec_ptype_finalise()}} is called on the final \code{ptype} before
+it is returned. Practically this has the effect of converting any
+types from \link{unspecified} to logical.
+\item If \code{FALSE}, \link{unspecified} types are left unfinalised, which can be useful
+for advanced cases where you combine one common type result with another
+type via \code{\link[=vec_ptype2]{vec_ptype2()}}. Note that you must manually call
+\code{\link[=vec_ptype_finalise]{vec_ptype_finalise()}} on the final \code{ptype} before supplying it to any
+other vctrs functions.
+}}
+
 \item{.arg}{An argument name as a string. This argument
 will be mentioned in error messages as the input that is at the
 origin of a problem.}
 }
 \value{
 \code{vec_ptype()} and \code{vec_ptype_common()} return a prototype
-(a size-0 vector)
+(a size-0 vector).
 }
 \description{
-\code{vec_ptype()} returns the unfinalised prototype of a single vector.
-\code{vec_ptype_common()} finds the common type of multiple vectors.
-\code{vec_ptype_show()} nicely prints the common type of any number of
-inputs, and is designed for interactive exploration.
+\itemize{
+\item \code{vec_ptype()} returns the \link[=vec_ptype_finalise]{unfinalised} prototype of a
+single vector.
+\item \code{vec_ptype_common()} returns the common type of multiple vectors. By
+default, this is \link[=vec_ptype_finalise]{finalised} for immediate usage, but
+can optionally be left unfinalised for advanced common type determination.
+\item \code{vec_ptype_show()} nicely prints the common type of any number of inputs,
+and is designed for interactive exploration.
+}
 }
 \section{\code{vec_ptype()}}{
+
 
 \code{vec_ptype()} returns \link[=vec_size]{size} 0 vectors potentially
 containing attributes but no data. Generally, this is just
@@ -62,7 +87,8 @@ the \code{vec_ptype2()} monoid.
 \item The prototype of logical vectors that only contain missing values
 is the special \link{unspecified} type, which can be coerced to any
 other 1d type. This allows bare \code{NA}s to represent missing values
-for any 1d vector type.
+for any 1d vector type. \link[=vec_ptype_finalise]{Finalising} this type
+converts it from unspecified back to logical.
 }
 
 See \link{internal-faq-ptype2-identity} for more information about
@@ -75,17 +101,18 @@ performance costs. If your class has a static prototype, you might consider
 implementing a custom \code{vec_ptype()} method that returns a constant. This will
 improve the performance of your class in many cases (\link[=vec_ptype2]{common type} imputation in particular).
 
-Because it may contain unspecified vectors, the prototype returned
-by \code{vec_ptype()} is said to be \strong{unfinalised}. Call
-\code{\link[=vec_ptype_finalise]{vec_ptype_finalise()}} to finalise it. Commonly you will need the
-finalised prototype as returned by \code{vec_slice(x, 0L)}.
+Because it may contain unspecified vectors, the prototype returned by
+\code{vec_ptype()} is said to be \strong{unfinalised}. Call \code{\link[=vec_ptype_finalise]{vec_ptype_finalise()}} to
+finalise it.
 }
 
 \section{\code{vec_ptype_common()}}{
 
+
 \code{vec_ptype_common()} first finds the prototype of each input, then
-successively calls \code{\link[=vec_ptype2]{vec_ptype2()}} to find a common type. It returns
-a \link[=vec_ptype_finalise]{finalised} prototype.
+successively calls \code{\link[=vec_ptype2]{vec_ptype2()}} to find a common type. It returns a
+\link[=vec_ptype_finalise]{finalised} prototype by default, but can optionally be
+left unfinalised for advanced common type determination.
 }
 
 \section{Dependencies of \code{vec_ptype()}}{
@@ -106,7 +133,6 @@ a \link[=vec_ptype_finalise]{finalised} prototype.
 \examples{
 # Unknown types ------------------------------------------
 vec_ptype_show()
-vec_ptype_show(NA)
 vec_ptype_show(NULL)
 
 # Vectors ------------------------------------------------
@@ -136,4 +162,28 @@ vec_ptype_show(
   data.frame(y = 2),
   data.frame(z = "a")
 )
+
+# Finalisation -------------------------------------------
+
+# `vec_ptype()` and `vec_ptype2()` return unfinalised ptypes so that they
+# can be coerced to any other type
+vec_ptype(NA)
+vec_ptype2(NA, NA)
+
+# By default `vec_ptype_common()` finalises so that you can use its result
+# directly in other vctrs functions
+vec_ptype_common(NA, NA)
+
+# You can opt out of finalisation to make it work like `vec_ptype()` and
+# `vec_ptype2()` with `.finalise = FALSE`, but don't forget that you must
+# call `vec_ptype_finalise()` manually if you do so!
+vec_ptype_common(NA, NA, .finalise = FALSE)
+vec_ptype_finalise(vec_ptype_common(NA, NA, .finalise = FALSE))
+
+# This can be useful in rare scenarios, like including a separate `default`
+# argument in the ptype computation
+xs <- list(NA, NA)
+default <- "a"
+try(vec_ptype2(vec_ptype_common(!!!xs), default))
+vec_ptype2(vec_ptype_common(!!!xs, .finalise = FALSE), default)
 }

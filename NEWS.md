@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_ptype_common()` has gained a `.finalise` argument that defaults to `TRUE`. Setting this to `FALSE` lets you opt out of prototype finalisation, which allows `vec_ptype_common()` to act like `vec_ptype()` and `vec_ptype2()`, which don't finalise. This can be useful in some advanced common type determination cases (#2100).
+
 * New `vec_pany()` and `vec_pall()`, parallel variants of `any()` and `all()` (in the same way that `pmin()` and `pmax()` are parallel variants of `min()` and `max()`).
 
 * The deprecated C callable for `vec_is_vector()` has been removed.
