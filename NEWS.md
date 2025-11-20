@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_pany()` and `vec_pall()`, parallel variants of `any()` and `all()` (in the same way that `pmin()` and `pmax()` are parallel variants of `min()` and `max()`).
+
 * The deprecated C callable for `vec_is_vector()` has been removed.
 
 * Fixed the C level signature for the `exp_short_init_compact_seq()` callable.
