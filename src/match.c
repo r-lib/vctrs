@@ -1,3 +1,4 @@
+#include "unspecified.h"
 #include "vctrs.h"
 
 // -----------------------------------------------------------------------------
@@ -154,6 +155,8 @@ r_obj* vec_locate_matches(r_obj* needles,
     error_call,
     &_
   ), &n_prot);
+
+  ptype = vec_ptype_finalise(ptype);
 
   needles = KEEP_N(vec_cast_params(
     needles,
