@@ -382,7 +382,7 @@ matrices.
   : Mathematical operations
 - [`unspecified()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
   [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
-  : A 1d vector of unspecified type
+  : Unspecified vectors and prototype finalisation
 - [`vec_default_cast()`](https://vctrs.r-lib.org/dev/reference/vec_default_ptype2.md)
   [`vec_default_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_default_ptype2.md)
   : Default cast and ptype2 methods

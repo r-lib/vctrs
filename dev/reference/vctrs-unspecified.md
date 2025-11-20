@@ -1,23 +1,35 @@
-# A 1d vector of unspecified type
+# Unspecified vectors and prototype finalisation
 
-This is the underlying type used to represent logical vectors that only
-contain `NA`. These require special handling because we want to allow
-logical `NA` to specify missingness that can be cast to any other type.
+`unspecified()` is the underlying type used to represent logical vectors
+that only contain `NA`. These require special handling because we want
+to allow logical `NA` to specify missingness that can be cast to any
+other type.
+
+In vctrs, the `<unspecified>` type is considered *unfinalised* and is
+not suitable for use in most vctrs functions that take a `ptype`
+argument, like
+[`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md). The purpose
+of `vec_ptype_finalise()` is to finalise any `<unspecified>` types into
+`<logical>` after common type determination has been completed.
 
 [`vec_ptype()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md) and
 [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md)
-convert a logical vector of `NA` into an empty `<unspecified>` type.
-This type can combine with any other type.
+return *unfinalised* types, and will convert a logical vector of `NA`
+into an empty `<unspecified>` type that can combine with any other type.
+It is unlikely that you will call these yourself, but, if you do, you'll
+need to manually finalise with `vec_ptype_finalise()` to take care of
+any `<unspecified>` types.
 
 [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
 uses both
 [`vec_ptype()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md) and
 [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md) to
-compute the common type, but then returns a *finalised* type using
-`vec_ptype_finalise()`. The purpose of `vec_ptype_finalise()` is to turn
-any remaining `<unspecified>` types back into `<logical>`, which is the
-more useful type for callers of
-[`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md).
+compute the common type, but typically returns a *finalised* type for
+immediate usage in other vctrs functions. You can optionally skip
+finalisation by setting `.finalise = FALSE`, in which case
+[`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
+can return `<unspecified>` and you'll need to manually call
+`vec_ptype_finalise()` yourself.
 
 `vec_ptype_finalise()` is an S3 generic, but it is extremely rare to
 need to write an S3 method for this. Data frames (and data frame
@@ -45,8 +57,10 @@ vec_ptype_finalise(x, ...)
 - x:
 
   A `ptype` to finalize, typically a result of
-  [`vec_ptype()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md) or
-  [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md).
+  [`vec_ptype()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md),
+  [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md),
+  or
+  [`vec_ptype_common(.finalise = FALSE)`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md).
 
 - ...:
 
@@ -116,5 +130,14 @@ vec_ptype_show(vec_ptype_common(df))
 #> Prototype: data.frame<
 #>   x: logical
 #>   y: data.frame<z:logical>
+#> >
+
+# `vec_ptype_common()` lets you opt out of finalisation using `.finalise`
+vec_ptype_common(NA, .finalise = FALSE)
+#> <unspecified> [0]
+vec_ptype_show(vec_ptype_common(df, .finalise = FALSE))
+#> Prototype: data.frame<
+#>   x: vctrs_unspecified
+#>   y: data.frame<z:vctrs_unspecified>
 #> >
 ```

@@ -235,7 +235,7 @@ c(mean, globalenv())
 #> [[1]]
 #> function (x, ...) 
 #> UseMethod("mean")
-#> <bytecode: 0x55aa4786ab58>
+#> <bytecode: 0x5592fcb66b58>
 #> <environment: namespace:base>
 #> 
 #> [[2]]
@@ -563,7 +563,7 @@ if_else(x > 2, factor("small"), factor("big"))
 #> [1] <NA>  big   big   small small
 #> Levels: small big
 if_else(x > 2, Sys.Date(), Sys.Date() + 7)
-#> [1] NA           "2025-11-26" "2025-11-26" "2025-11-19" "2025-11-19"
+#> [1] NA           "2025-11-27" "2025-11-27" "2025-11-20" "2025-11-20"
 ```
 
 By using

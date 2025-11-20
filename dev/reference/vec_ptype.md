@@ -1,16 +1,30 @@
 # Find the prototype of a set of vectors
 
-`vec_ptype()` returns the unfinalised prototype of a single vector.
-`vec_ptype_common()` finds the common type of multiple vectors.
-`vec_ptype_show()` nicely prints the common type of any number of
-inputs, and is designed for interactive exploration.
+- `vec_ptype()` returns the
+  [unfinalised](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+  prototype of a single vector.
+
+- `vec_ptype_common()` returns the common type of multiple vectors. By
+  default, this is
+  [finalised](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+  for immediate usage, but can optionally be left unfinalised for
+  advanced common type determination.
+
+- `vec_ptype_show()` nicely prints the common type of any number of
+  inputs, and is designed for interactive exploration.
 
 ## Usage
 
 ``` r
 vec_ptype(x, ..., x_arg = "", call = caller_env())
 
-vec_ptype_common(..., .ptype = NULL, .arg = "", .call = caller_env())
+vec_ptype_common(
+  ...,
+  .ptype = NULL,
+  .finalise = TRUE,
+  .arg = "",
+  .call = caller_env()
+)
 
 vec_ptype_show(...)
 ```
@@ -51,6 +65,29 @@ vec_ptype_show(...)
   value: this is a convenient way to make production code demand fixed
   types.
 
+- .finalise:
+
+  Should `vec_ptype_common()`
+  [finalise](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+  its output?
+
+  - If `TRUE`,
+    [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+    is called on the final `ptype` before it is returned. Practically
+    this has the effect of converting any types from
+    [unspecified](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+    to logical.
+
+  - If `FALSE`,
+    [unspecified](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+    types are left unfinalised, which can be useful for advanced cases
+    where you combine one common type result with another type via
+    [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md).
+    Note that you must manually call
+    [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+    on the final `ptype` before supplying it to any other vctrs
+    functions.
+
 - .arg:
 
   An argument name as a string. This argument will be mentioned in error
@@ -59,7 +96,7 @@ vec_ptype_show(...)
 ## Value
 
 `vec_ptype()` and `vec_ptype_common()` return a prototype (a size-0
-vector)
+vector).
 
 ## `vec_ptype()`
 
@@ -78,6 +115,8 @@ potentially containing attributes but no data. Generally, this is just
   [unspecified](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
   type, which can be coerced to any other 1d type. This allows bare
   `NA`s to represent missing values for any 1d vector type.
+  [Finalising](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
+  this type converts it from unspecified back to logical.
 
 See
 [internal-faq-ptype2-identity](https://vctrs.r-lib.org/dev/reference/internal-faq-ptype2-identity.md)
@@ -97,8 +136,7 @@ particular).
 Because it may contain unspecified vectors, the prototype returned by
 `vec_ptype()` is said to be **unfinalised**. Call
 [`vec_ptype_finalise()`](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
-to finalise it. Commonly you will need the finalised prototype as
-returned by `vec_slice(x, 0L)`.
+to finalise it.
 
 ## `vec_ptype_common()`
 
@@ -107,7 +145,8 @@ successively calls
 [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md) to
 find a common type. It returns a
 [finalised](https://vctrs.r-lib.org/dev/reference/vctrs-unspecified.md)
-prototype.
+prototype by default, but can optionally be left unfinalised for
+advanced common type determination.
 
 ## Dependencies of `vec_ptype()`
 
@@ -126,8 +165,6 @@ prototype.
 # Unknown types ------------------------------------------
 vec_ptype_show()
 #> Prototype: NULL
-vec_ptype_show(NA)
-#> Prototype: logical
 vec_ptype_show(NULL)
 #> Prototype: NULL
 
@@ -189,4 +226,36 @@ vec_ptype_show(
 #>    │   y: double                                         │     y: double            
 #>    │ >>                                                  │     z: character         
 #>    └                                                     ┘   >>                     
+
+# Finalisation -------------------------------------------
+
+# `vec_ptype()` and `vec_ptype2()` return unfinalised ptypes so that they
+# can be coerced to any other type
+vec_ptype(NA)
+#> <unspecified> [0]
+vec_ptype2(NA, NA)
+#> <unspecified> [0]
+
+# By default `vec_ptype_common()` finalises so that you can use its result
+# directly in other vctrs functions
+vec_ptype_common(NA, NA)
+#> logical(0)
+
+# You can opt out of finalisation to make it work like `vec_ptype()` and
+# `vec_ptype2()` with `.finalise = FALSE`, but don't forget that you must
+# call `vec_ptype_finalise()` manually if you do so!
+vec_ptype_common(NA, NA, .finalise = FALSE)
+#> <unspecified> [0]
+vec_ptype_finalise(vec_ptype_common(NA, NA, .finalise = FALSE))
+#> logical(0)
+
+# This can be useful in rare scenarios, like including a separate `default`
+# argument in the ptype computation
+xs <- list(NA, NA)
+default <- "a"
+try(vec_ptype2(vec_ptype_common(!!!xs), default))
+#> Error in eval(expr, envir) : 
+#>   Can't combine `vec_ptype_common(!!!xs)` <logical> and `default` <character>.
+vec_ptype2(vec_ptype_common(!!!xs, .finalise = FALSE), default)
+#> character(0)
 ```

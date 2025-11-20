@@ -2,6 +2,19 @@
 
 ## vctrs (development version)
 
+- [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
+  has gained a `.finalise` argument that defaults to `TRUE`. Setting
+  this to `FALSE` lets you opt out of prototype finalisation, which
+  allows
+  [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
+  to act like
+  [`vec_ptype()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
+  and
+  [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md),
+  which don’t finalise. This can be useful in some advanced common type
+  determination cases
+  ([\#2100](https://github.com/r-lib/vctrs/issues/2100)).
+
 - New
   [`vec_pany()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md)
   and
