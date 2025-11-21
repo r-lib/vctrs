@@ -1,9 +1,6 @@
 static
 SEXP syms_vec_ptype;
 
-static inline
-r_obj* vec_ptype_slice(r_obj* x, r_obj* empty);
-
 static
 r_obj* df_ptype(r_obj* x, bool bare);
 

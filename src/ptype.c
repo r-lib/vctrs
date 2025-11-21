@@ -14,13 +14,13 @@ r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   switch (vec_typeof(x)) {
   case VCTRS_TYPE_null:        return r_null;
   case VCTRS_TYPE_unspecified: return vctrs_shared_empty_uns;
-  case VCTRS_TYPE_logical:     return vec_ptype_slice(x, r_globals.empty_lgl);
-  case VCTRS_TYPE_integer:     return vec_ptype_slice(x, r_globals.empty_int);
-  case VCTRS_TYPE_double:      return vec_ptype_slice(x, r_globals.empty_dbl);
-  case VCTRS_TYPE_complex:     return vec_ptype_slice(x, r_globals.empty_cpl);
-  case VCTRS_TYPE_character:   return vec_ptype_slice(x, r_globals.empty_chr);
-  case VCTRS_TYPE_raw:         return vec_ptype_slice(x, r_globals.empty_raw);
-  case VCTRS_TYPE_list:        return vec_ptype_slice(x, r_globals.empty_list);
+  case VCTRS_TYPE_logical:     return vec_shaped_ptype(r_globals.empty_lgl, x);
+  case VCTRS_TYPE_integer:     return vec_shaped_ptype(r_globals.empty_int, x);
+  case VCTRS_TYPE_double:      return vec_shaped_ptype(r_globals.empty_dbl, x);
+  case VCTRS_TYPE_complex:     return vec_shaped_ptype(r_globals.empty_cpl, x);
+  case VCTRS_TYPE_character:   return vec_shaped_ptype(r_globals.empty_chr, x);
+  case VCTRS_TYPE_raw:         return vec_shaped_ptype(r_globals.empty_raw, x);
+  case VCTRS_TYPE_list:        return vec_shaped_ptype(r_globals.empty_list, x);
   case VCTRS_TYPE_dataframe:   return df_ptype(x, true);
   case VCTRS_TYPE_s3:          return s3_ptype(x, x_arg, call);
   case VCTRS_TYPE_scalar:      stop_scalar_type(x, x_arg, call);
@@ -31,16 +31,6 @@ r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
 static
 r_obj* col_ptype(r_obj* x) {
   return vec_ptype(x, vec_args.empty, r_lazy_null);
-}
-
-static inline
-r_obj* vec_ptype_slice(r_obj* x, r_obj* empty) {
-  if (r_attrib(x) == r_null) {
-    return empty;
-  } else {
-    // Slicing preserves attributes
-    return vec_slice(x, r_null);
-  }
 }
 
 static
