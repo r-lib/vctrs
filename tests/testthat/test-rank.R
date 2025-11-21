@@ -191,12 +191,15 @@ test_that("`x` must be a vector", {
   expect_error(vec_rank(identity), class = "vctrs_error_scalar_type")
 })
 
-test_that("`x` must not be `NULL` (#1823)", {
+test_that("`x` must not be `NULL` (#1823, #1967)", {
   expect_snapshot(error = TRUE, {
     vec_rank(NULL)
   })
   expect_snapshot(error = TRUE, {
     vec_rank(NULL, incomplete = "na")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rank(NULL, ties = "sequential", incomplete = "na")
   })
 })
 

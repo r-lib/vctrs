@@ -45,6 +45,8 @@ r_obj* vec_rank(r_obj* x,
                 r_obj* na_value,
                 bool nan_distinct,
                 r_obj* chr_proxy_collate) {
+  obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, r_lazy_null);
+
   r_ssize size = vec_size(x);
 
   r_keep_loc pi_x;
