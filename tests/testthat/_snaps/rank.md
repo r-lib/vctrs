@@ -1,10 +1,11 @@
-# `x` must not be `NULL` (#1823)
+# `x` must not be `NULL` (#1823, #1967)
 
     Code
       vec_rank(NULL)
     Condition
       Error:
-      ! This type is not supported by `vec_order()`.
+      ! `x` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 ---
 
@@ -12,7 +13,17 @@
       vec_rank(NULL, incomplete = "na")
     Condition
       Error:
-      ! This type is not supported by `vec_order()`.
+      ! `x` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
+
+---
+
+    Code
+      vec_rank(NULL, ties = "sequential", incomplete = "na")
+    Condition
+      Error:
+      ! `x` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # `ties` is validated
 
