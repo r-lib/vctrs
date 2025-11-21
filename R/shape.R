@@ -7,6 +7,10 @@ new_shape <- function(type, shape = integer()) {
   structure(type, dim = c(0L, shape))
 }
 
+vec_shaped_ptype <- function(ptype, x) {
+  .Call(ffi_vec_shaped_ptype, ptype, x)
+}
+
 vec_shaped_ptype2 <- function(ptype, x, y, ..., x_arg = "", y_arg = "") {
   check_dots_empty0(...)
   .Call(ffi_vec_shaped_ptype2, ptype, x, y, environment())

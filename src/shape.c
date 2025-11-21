@@ -1,6 +1,30 @@
 #include "vctrs.h"
 #include "decl/shape-decl.h"
 
+// -----------------------------------------------------------------------------
+
+r_obj* ffi_vec_shaped_ptype(r_obj* ffi_ptype, r_obj* ffi_x) {
+  return vec_shaped_ptype(ffi_ptype, ffi_x);
+}
+
+r_obj* vec_shaped_ptype(r_obj* ptype, r_obj* x) {
+  if (!has_dim(x)) {
+    // By far the most common case
+    return ptype;
+  }
+
+  r_obj* x_dimensions = r_dim(x);
+  r_obj* x_shape = KEEP(dims_shape(x_dimensions));
+
+  ptype = KEEP(r_clone_referenced(ptype));
+  r_attrib_poke_dim(ptype, x_shape);
+
+  FREE(2);
+  return ptype;
+}
+
+// -----------------------------------------------------------------------------
+
 r_obj* ffi_vec_shaped_ptype2(r_obj* ptype, r_obj* x, r_obj* y, r_obj* frame) {
   struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);

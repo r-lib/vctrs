@@ -22,6 +22,56 @@ test_that("default cast allows objects with the same type", {
   expect_equal(vec_cast(x, x), x)
 })
 
+# vec_shaped_ptype -------------------------------------------------------
+
+test_that("non-arrays don't adjust the `ptype`", {
+  expect_identical(vec_shaped_ptype(integer(), 1L), integer())
+})
+
+test_that("arrays pass on their shape", {
+  ptype <- logical()
+
+  # 1D arrays do turn `ptype` into an empty 1D array
+  x <- array(logical(), dim = 0)
+  expect_identical(
+    vec_shaped_ptype(ptype, x),
+    array(logical(), dim = 0)
+  )
+
+  x <- array(logical(), dim = 1)
+  expect_identical(
+    vec_shaped_ptype(ptype, x),
+    array(logical(), dim = 0)
+  )
+
+  x <- array(logical(), dim = c(2, 3, 4))
+  expect_identical(
+    vec_shaped_ptype(ptype, x),
+    array(logical(), dim = c(0, 3, 4))
+  )
+})
+
+test_that("dim names aren't passed along as part of the shape", {
+  ptype <- logical()
+
+  x <- array(
+    logical(),
+    dim = c(0, 2, 3),
+    dimnames = list(character(), c("a", "b"), c("x", "y", "z"))
+  )
+
+  expect_identical(
+    vec_shaped_ptype(ptype, x),
+    array(logical(), dim = c(0, 2, 3))
+  )
+})
+
+test_that("`ptype` isn't modified in place", {
+  ptype <- logical()
+  vec_shaped_ptype(ptype, array(logical(), dim = c(0, 2, 3)))
+  expect_identical(ptype, logical())
+})
+
 # vec_shaped_ptype2 ------------------------------------------------------
 
 test_that("array dimensions are preserved", {
