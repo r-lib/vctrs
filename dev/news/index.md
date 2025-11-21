@@ -2,6 +2,10 @@
 
 ## vctrs (development version)
 
+- [`vec_cast()`](https://vctrs.r-lib.org/dev/reference/vec_cast.md) with
+  arrays no longer clones when no casting is required
+  ([\#2006](https://github.com/r-lib/vctrs/issues/2006)).
+
 - [`vec_rank()`](https://vctrs.r-lib.org/dev/reference/vec_rank.md) now
   throws an improved error on non-vector types, like `NULL`
   ([\#1967](https://github.com/r-lib/vctrs/issues/1967)).
