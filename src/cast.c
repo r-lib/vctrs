@@ -20,17 +20,18 @@ r_obj* ffi_cast(r_obj* x,
 r_obj* vec_cast_opts(const struct cast_opts* opts) {
   r_obj* x = opts->x;
   r_obj* to = opts->to;
-  struct vctrs_arg* x_arg = opts->p_x_arg;
-  struct vctrs_arg* to_arg = opts->p_to_arg;
+  struct vctrs_arg* p_x_arg = opts->p_x_arg;
+  struct vctrs_arg* p_to_arg = opts->p_to_arg;
+  struct r_lazy call = opts->call;
 
   if (x == r_null) {
     // Allow both `vec_cast(NULL, <vector>)` and `vec_cast(NULL, NULL)`
-    obj_check_vector(to, VCTRS_ALLOW_NULL_yes, to_arg, opts->call);
+    obj_check_vector(to, VCTRS_ALLOW_NULL_yes, p_to_arg, call);
     return x;
   }
   if (to == r_null) {
     // Allow `vec_cast(<vector>, NULL)`
-    obj_check_vector(x, VCTRS_ALLOW_NULL_no, x_arg, opts->call);
+    obj_check_vector(x, VCTRS_ALLOW_NULL_no, p_x_arg, call);
     return x;
   }
 
@@ -42,10 +43,10 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
   }
 
   if (x_type == VCTRS_TYPE_scalar) {
-    stop_scalar_type(x, x_arg, opts->call);
+    stop_scalar_type(x, p_x_arg, call);
   }
   if (to_type == VCTRS_TYPE_scalar) {
-    stop_scalar_type(to, to_arg, opts->call);
+    stop_scalar_type(to, p_to_arg, call);
   }
 
   r_obj* out = r_null;
@@ -64,7 +65,26 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
   }
 
   if (has_dim(x) || has_dim(to)) {
-    out = vec_shape_broadcast(out, opts);
+    r_obj* x_dim = r_dim(x);
+    r_obj* x_dim_names = r_dim_names(x);
+
+    // Ensure `out` has the shape of `x`.
+    // Native casting doesn't propagate shape.
+    if (
+      !equal_object(r_dim(out), x_dim) ||
+      !equal_object(r_dim_names(out), x_dim_names)
+    ) {
+      out = KEEP(r_clone_referenced(out));
+      r_attrib_poke_dim(out, x_dim);
+      r_attrib_poke_dim_names(out, x_dim_names);
+      FREE(1);
+    }
+    KEEP(out);
+
+    // Broadcast `out` to the shape of `to`
+    out = vec_shape_broadcast(out, to, p_x_arg, p_to_arg, call);
+
+    FREE(1);
   }
 
   FREE(1);
