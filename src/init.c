@@ -108,7 +108,7 @@ extern r_obj* ffi_vec_rep(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_rep_each(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_maybe_shared_col(SEXP, SEXP);
 extern SEXP vctrs_new_df_unshared_col(void);
-extern r_obj* ffi_vec_shaped_ptype(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_shaped_ptype2(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_shape2(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
@@ -311,7 +311,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_rep_each",                          (DL_FUNC) &ffi_vec_rep_each, 3},
   {"vctrs_maybe_shared_col",                    (DL_FUNC) &vctrs_maybe_shared_col, 2},
   {"vctrs_new_df_unshared_col",                 (DL_FUNC) &vctrs_new_df_unshared_col, 0},
-  {"ffi_vec_shaped_ptype",                      (DL_FUNC) &ffi_vec_shaped_ptype, 4},
+  {"ffi_vec_shaped_ptype2",                     (DL_FUNC) &ffi_vec_shaped_ptype2, 4},
   {"ffi_vec_shape2",                            (DL_FUNC) &ffi_vec_shape2, 3},
   {"vctrs_new_date",                            (DL_FUNC) &vctrs_new_date, 1},
   {"vctrs_date_validate",                       (DL_FUNC) &vctrs_date_validate, 1},

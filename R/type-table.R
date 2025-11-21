@@ -29,7 +29,7 @@ vec_ptype_abbr.table <- function(x, ...) {
 #' @export
 vec_ptype2.table.table <- function(x, y, ..., x_arg = "", y_arg = "") {
   ptype <- vec_ptype2(unstructure(x), unstructure(y))
-  vec_shaped_ptype(new_table(ptype), x, y, x_arg = x_arg, y_arg = y_arg)
+  vec_shaped_ptype2(new_table(ptype), x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
 #' @export

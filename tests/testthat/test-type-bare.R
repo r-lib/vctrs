@@ -22,7 +22,7 @@ test_that("default cast allows objects with the same type", {
   expect_equal(vec_cast(x, x), x)
 })
 
-# vec_shaped_ptype -------------------------------------------------------
+# vec_shaped_ptype2 ------------------------------------------------------
 
 test_that("array dimensions are preserved", {
   mat1 <- matrix(lgl(), nrow = 1, ncol = 1)
@@ -34,31 +34,31 @@ test_that("array dimensions are preserved", {
   expect_error(vec_ptype2(mat2, mat3), class = "vctrs_error_incompatible_type")
 })
 
-test_that("vec_shaped_ptype()", {
+test_that("vec_shaped_ptype2()", {
   int <- function(...) array(NA_integer_, c(...))
 
   expect_identical(
-    vec_shaped_ptype(integer(), int(5), int(10)),
+    vec_shaped_ptype2(integer(), int(5), int(10)),
     new_shape(integer())
   )
   expect_identical(
-    vec_shaped_ptype(integer(), int(5, 1), int(10, 1)),
+    vec_shaped_ptype2(integer(), int(5, 1), int(10, 1)),
     new_shape(integer(), 1)
   )
   expect_identical(
-    vec_shaped_ptype(integer(), int(5, 1, 2), int(10, 1, 2)),
+    vec_shaped_ptype2(integer(), int(5, 1, 2), int(10, 1, 2)),
     new_shape(integer(), 1:2)
   )
 })
 
-test_that("vec_shaped_ptype() evaluates arg lazily", {
-  expect_silent(vec_shaped_ptype(
+test_that("vec_shaped_ptype2() evaluates arg lazily", {
+  expect_silent(vec_shaped_ptype2(
     integer(),
     int(5),
     int(10),
     x_arg = print("oof")
   ))
-  expect_silent(vec_shaped_ptype(
+  expect_silent(vec_shaped_ptype2(
     integer(),
     int(5),
     int(10),

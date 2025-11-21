@@ -1,17 +1,17 @@
 #include "vctrs.h"
 #include "decl/shape-decl.h"
 
-r_obj* ffi_vec_shaped_ptype(r_obj* ptype, r_obj* x, r_obj* y, r_obj* frame) {
+r_obj* ffi_vec_shaped_ptype2(r_obj* ptype, r_obj* x, r_obj* y, r_obj* frame) {
   struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
 
   struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame };
   struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
-  return vec_shaped_ptype(ptype, x, y, &x_arg, &y_arg);
+  return vec_shaped_ptype2(ptype, x, y, &x_arg, &y_arg);
 }
 
-r_obj* vec_shaped_ptype(
+r_obj* vec_shaped_ptype2(
   r_obj* ptype,
   r_obj* x,
   r_obj* y,
@@ -54,7 +54,7 @@ r_obj* vec_shape2(
   struct vctrs_arg* p_y_arg
 ) {
   // Expect that `r_dim()` does not allocate, so we don't protect these!
-  // This is somewhat important for performance, because `vec_shaped_ptype()`
+  // This is somewhat important for performance, because `vec_shaped_ptype2()`
   // is called on every ptype2 iteration.
   r_obj* x_dimensions = r_dim(x);
   r_obj* y_dimensions = r_dim(y);
