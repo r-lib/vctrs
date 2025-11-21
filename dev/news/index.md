@@ -2,6 +2,10 @@
 
 ## vctrs (development version)
 
+- [`vec_rank()`](https://vctrs.r-lib.org/dev/reference/vec_rank.md) now
+  throws an improved error on non-vector types, like `NULL`
+  ([\#1967](https://github.com/r-lib/vctrs/issues/1967)).
+
 - [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
   has gained a `.finalise` argument that defaults to `TRUE`. Setting
   this to `FALSE` lets you opt out of prototype finalisation, which
