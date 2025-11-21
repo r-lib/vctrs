@@ -357,3 +357,18 @@ test_that("can cast to unspecified `NA` with `vec_cast()` and `vec_cast_common()
   # so this technically works (but again, it is an edge case)
   expect_identical(vec_cast_common(TRUE, .to = unspecified(1)), list(TRUE))
 })
+
+# Golden tests -------------------------------------------------------
+
+test_that("casting performs expected allocations", {
+  expect_snapshot({
+    # No allocations when shape doesn't change (#2006)
+    x <- matrix(rep(1L, 1e2), ncol = 2)
+    with_memory_prof(vec_cast(x, x))
+
+    # One allocation when type changes
+    x <- matrix(rep(1L, 1e2), ncol = 2)
+    y <- matrix(rep(1, 1e2), ncol = 2)
+    with_memory_prof(vec_cast(x, y))
+  })
+})
