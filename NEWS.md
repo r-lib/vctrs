@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_cast()` with arrays no longer clones when no casting is required (#2006).
+
 * `vec_rank()` now throws an improved error on non-vector types, like `NULL` (#1967).
 
 * `vec_ptype_common()` has gained a `.finalise` argument that defaults to `TRUE`. Setting this to `FALSE` lets you opt out of prototype finalisation, which allows `vec_ptype_common()` to act like `vec_ptype()` and `vec_ptype2()`, which don't finalise. This can be useful in some advanced common type determination cases (#2100).

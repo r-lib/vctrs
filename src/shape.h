@@ -2,7 +2,6 @@
 #define VCTRS_SHAPE_H
 
 #include "vctrs-core.h"
-#include "cast.h"
 
 // Computes the common shape of `x` and `y` and attaches it as the
 // dimensions of `ptype`. If `x` and `y` are both atomic with `NULL` dimensions,
@@ -15,7 +14,12 @@ r_obj* vec_shaped_ptype(
   struct vctrs_arg* p_y_arg
 );
 
-r_obj* vec_shape_broadcast(r_obj* out, const struct cast_opts* p_opts);
-
+r_obj* vec_shape_broadcast(
+  r_obj* x,
+  r_obj* to,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_to_arg,
+  struct r_lazy call
+);
 
 #endif

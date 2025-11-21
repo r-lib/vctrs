@@ -186,30 +186,31 @@ int dim2(
 
 // -----------------------------------------------------------------------------
 
-r_obj* vec_shape_broadcast(r_obj* out, const struct cast_opts* p_opts) {
-  r_obj* r_x_arg = KEEP(vctrs_arg(p_opts->p_x_arg));
-  r_obj* r_to_arg = KEEP(vctrs_arg(p_opts->p_to_arg));
-  r_obj* call = KEEP(r_lazy_eval(p_opts->call));
+r_obj* vec_shape_broadcast(
+  r_obj* x,
+  r_obj* to,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_to_arg,
+  struct r_lazy call
+) {
+  r_obj* ffi_x_arg = KEEP(vctrs_arg(p_x_arg));
+  r_obj* ffi_to_arg = KEEP(vctrs_arg(p_to_arg));
+  r_obj* ffi_call = KEEP(r_lazy_eval(call));
 
-  out = KEEP(r_clone_referenced(out));
-
-  r_attrib_poke_dim(out, r_dim(p_opts->x));
-  r_attrib_poke_dim_names(out, r_dim_names(p_opts->x));
-
-  out = vctrs_eval_mask5(
+  r_obj* out = vctrs_eval_mask5(
     r_sym("shape_broadcast"),
     r_syms.x,
-    out,
+    x,
     r_sym("to"),
-    p_opts->to,
+    to,
     syms.x_arg,
-    r_x_arg,
+    ffi_x_arg,
     syms.to_arg,
-    r_to_arg,
+    ffi_to_arg,
     r_syms.call,
-    call
+    ffi_call
   );
 
-  FREE(4);
+  FREE(3);
   return out;
 }

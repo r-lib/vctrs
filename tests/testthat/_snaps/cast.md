@@ -91,3 +91,17 @@
       Error:
       ! Can't convert `TRUE` <logical> to <vctrs_unspecified>.
 
+# casting performs expected allocations
+
+    Code
+      x <- matrix(rep(1L, 100), ncol = 2)
+      with_memory_prof(vec_cast(x, x))
+    Output
+      [1] 0B
+    Code
+      x <- matrix(rep(1L, 100), ncol = 2)
+      y <- matrix(rep(1, 100), ncol = 2)
+      with_memory_prof(vec_cast(x, y))
+    Output
+      [1] 848B
+
