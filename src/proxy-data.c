@@ -1,6 +1,5 @@
 #include "proxy-data.h"
 #include "dim.h"
-#include "size.h"
 #include "type-data-frame.h"
 #include "utils.h"
 
@@ -22,14 +21,31 @@ r_obj* proxy_data(r_obj* x) {
 
 static inline
 r_obj* df_proxy_data(r_obj* x) {
-  // We do need to protect this, as we are about to clear `x`
+  // We do need to protect these, as we are about to clear `x`
+  r_obj* names = KEEP(r_names(x));
   r_obj* row_names = KEEP(df_rownames(x));
+  const enum rownames_type row_names_type = rownames_type(row_names);
+  const r_ssize size = rownames_size(row_names, row_names_type);
 
-  r_obj* out = KEEP(new_data_frame(x, df_size(x)));
+  // TODO!: At least add documentation on how this always ALTREP clones,
+  // and some golden tests about it for `proxy_data()` itself.
+  //
+  // Presumably we are modifying `x` in place, which WE created
+  // at the C level but ALSO need it to remain unmodified for
+  // some future use of our own.
 
-  r_attrib_poke(out, r_syms.row_names, row_names);
+  // This clones `x` as required, and creates a cheap ALTREP shallow duplicate
+  // of `x` with its own attribute pairlist
+  r_obj* out = KEEP(vec_set_attributes(x, r_null));
 
-  FREE(2);
+  r_attrib_poke_names(out, names);
+  r_init_data_frame(out, size);
+
+  if (row_names_type == ROWNAMES_TYPE_identifiers) {
+    r_attrib_poke(out, r_syms.row_names, row_names);
+  }
+
+  FREE(3);
   return out;
 }
 
