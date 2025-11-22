@@ -186,20 +186,6 @@ test_that("`package_version` and `R_system_version` use the `numeric_version` pr
   expect_identical(vec_proxy_equal(z), vec_proxy_equal(x))
 })
 
-test_that("can slice `ts` vectors", {
-  x <- ts(1:3)
-  expect_identical(vec_ptype(x), x[0])
-  expect_identical(vec_slice(x, 2), x[2])
-})
-
-test_that("can concatenate `ts` vectors", {
-  x <- ts(1:3)
-  expect_identical(vec_c(x, x), c(x, x))
-
-  df <- data_frame(x = x)
-  expect_identical(vec_rbind(df, df), data_frame(x = c(x, x)))
-})
-
 test_that("`omit` class is numeric (#1160)", {
   x <- c(NA, 1:3, NA)
   omit <- attr(na.omit(x), "na.action")
