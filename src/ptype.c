@@ -107,8 +107,7 @@ r_obj* vec_ptype(r_obj* x, struct vctrs_arg* p_x_arg, struct r_lazy call) {
       return df_ptype(x, /*tibble=*/true);
     }
     default: {
-      obj_check_vector(x, VCTRS_ALLOW_NULL_no, p_x_arg, call);
-      return s3_ptype(x);
+      return s3_ptype(x, p_x_arg, call);
     }
     }
   }
@@ -122,7 +121,7 @@ r_obj* vec_ptype(r_obj* x, struct vctrs_arg* p_x_arg, struct r_lazy call) {
 }
 
 static
-r_obj* s3_ptype(r_obj* x) {
+r_obj* s3_ptype(r_obj* x, struct vctrs_arg* p_x_arg, struct r_lazy call) {
   // Use `vec_ptype()` S3 method if one exists.
   // For maximal performance, no additional checking is done.
   r_obj* method = vec_ptype_method(x);
@@ -132,6 +131,9 @@ r_obj* s3_ptype(r_obj* x) {
     FREE(1);
     return out;
   }
+
+  // This check is done after checking for an S3 method!
+  obj_check_vector(x, VCTRS_ALLOW_NULL_no, p_x_arg, call);
 
   // Otherwise use "fallback" approach of calling `vec_ptype()` on the proxy's
   // native data. `proxy_data()` prevents this from being an infloop.
