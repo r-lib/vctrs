@@ -277,9 +277,14 @@ test_that("vec_ptype() does not preserve names, dim names, or row names (#2025)"
     array(dbl(), dim = c(0, 1, 1))
   )
 
-  # TODO!: Row names should not be preserved
-  expect_identical(vec_ptype(mtcars), mtcars[0, ])
-  expect_identical(vec_ptype(foobar(mtcars)), foobar(mtcars[0, ]))
+  expect_identical(
+    vec_ptype(mtcars),
+    set_rownames_dispatch(mtcars[0, ], NULL)
+  )
+  expect_identical(
+    vec_ptype(foobar(mtcars)),
+    foobar(set_rownames_dispatch(mtcars[0, ], NULL))
+  )
 })
 
 test_that("vec_ptype_common() handles spliced names consistently (#1570)", {

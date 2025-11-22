@@ -414,10 +414,24 @@ test_that("vec_rbind() requires a data frame proxy for data frame ptypes", {
     vec_proxy.vctrs_foobar = function(x, ...) 1
   )
 
-  expect_error(
-    vec_rbind(df, df),
-    "Can't fill a data frame that doesn't have a data frame proxy"
+  expect_snapshot(
+    error = TRUE,
+    transform = scrub_internal_error_line_number,
+    vec_rbind(df, df)
   )
+
+  # It used to be the case that `vec_ptype()` would do `vec_slice(x, 0L)`, which
+  # would work fine on this `df` and we'd eventually fall through to this rbind
+  # specific error. But now it does proxy/ptype/restore, and we end up with a
+  # different restoration error about trying to restore a double to a data
+  # frame, which is also a good error (#2025). We no longer have a test that
+  # hits this error in particular, but I'm not sure we can actually hit it
+  # anymore.
+  #
+  # expect_error(
+  #   vec_rbind(df, df),
+  #   "Can't fill a data frame that doesn't have a data frame proxy"
+  # )
 })
 
 test_that("names of `...` are used for type and cast errors even when zapped", {
