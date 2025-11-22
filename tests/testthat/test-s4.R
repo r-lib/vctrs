@@ -61,6 +61,8 @@ test_that("proxy and data", {
 })
 
 test_that("as_not_s4() copies and works", {
+  # TODO!: Translate to `vec_data()` tests
+
   # Initial condition
   x <- rando()
   expect_true(isS4(x))
