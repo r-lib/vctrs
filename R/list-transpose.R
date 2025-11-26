@@ -10,6 +10,12 @@
 #' - Input: List of size 2, elements of size 3
 #' - Output: List of size 3, elements of size 2
 #'
+#' Note that if `list_transpose()` cannot infer the element type or element
+#' size, then it refuses to guess and will throw an error. Supplying `ptype` and
+#' `size` explicitly removes all ambiguity and ensures that `list_transpose()`
+#' works in all cases. Supplying both of these is recommended when programming
+#' with `list_transpose()`.
+#'
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context
 #'
@@ -30,17 +36,22 @@
 #'   - Will be [recycled][theory-faq-recycling] to the common size of `x` before
 #'     transposing.
 #'
-#'   - Will participate in determining the common type, and will be
-#'     [cast][theory-faq-coercion] to that type before transposing.
-#'
-#'   Note that `null` can alter the output type, but cannot alter the output
-#'   size. See the examples for consequences of this.
+#'   - Will be [cast][theory-faq-coercion] to the common type of `x` before
+#'     transposing.
 #'
 #' @param size The expected size of each element of `x`. If not provided,
 #'   computed automatically by [vec_size_common()].
 #'
+#'   If no vector inputs are provided, the common size cannot be determined
+#'   automatically and `size` must be provided, otherwise an error will be
+#'   thrown.
+#'
 #' @param ptype The expected type of each element of `x`. If not provided,
 #'   computed automatically by [vec_ptype_common()].
+#'
+#'   If no vector inputs are provided, the common type cannot be determined
+#'   automatically and `ptype` must be provided, otherwise an error will be
+#'   thrown.
 #'
 #' @param x_arg Argument name used in error messages.
 #'
@@ -59,8 +70,8 @@
 #'
 #' @export
 #' @examples
-#' # I: List size 3, Element size 2
-#' # O: List size 2, Element size 3
+#' # I: List size 3, Element size 2, Element type integer
+#' # O: List size 2, Element size 3, Element type integer
 #' list_transpose(list(1:2, 3:4, 5:6))
 #'
 #' # With data frames
@@ -72,25 +83,75 @@
 #' list_transpose(list(1, 2:3, 4))
 #'
 #' # ---------------------------------------------------------------------------
-#' # Using `size` and `ptype`
+#' # `NULL` handling
 #'
-#' # With size 0 elements, the invariants are a bit tricky!
-#' # This must return a size 0 list, but then you lose expected
-#' # type (integer) and size (2) information about the elements.
-#' # Losing that information makes it difficult to reverse the
-#' # transposition.
-#' #
-#' # I: List size 2, Element size 0
-#' # O: List size 0, Element size 2
+#' # `NULL` values aren't allowed in `list_transpose()`
+#' x <- list(1:3, NULL, 5:7, NULL)
+#' try(list_transpose(x))
+#'
+#' # Replace them with `null`, which will be recycled to the common size,
+#' # and cast to the common type
+#' list_transpose(x, null = NA)
+#' list_transpose(x, null = -(1:3))
+#'
+#' # ---------------------------------------------------------------------------
+#' # Unknown size and type
+#'
+#' # `list_transpose()` refuses to guess the element size and element type when
+#' # no vector inputs have been provided.
+#'
+#' # I: List size 0, Element size ?, Element type ?
+#' # O: List size ?, Element size 0, Element type ?
+#' try(list_transpose(list()))
+#'
+#' # I: List size 0, Element size 2, Element type ?
+#' # O: List size 2, Element size 0, Element type ?
+#' try(list_transpose(list(), size = 2L))
+#'
+#' # Explicitly supplying both `size` and `ptype` removes all ambiguity
+#'
+#' # I: List size 0, Element size 2, Element type integer
+#' # O: List size 2, Element size 0, Element type integer
+#' list_transpose(list(), size = 2L, ptype = integer())
+#'
+#' # `NULL` does not contribute to the element size or element type, so a list
+#' # of `NULL` also has an unknown element size and element type and will fail
+#' # unless `size` and `ptype` are provided.
+#'
+#' # I: List size 2, Element size ?, Element type ?
+#' # O: List size ?, Element size 2, Element type ?
+#' try(list_transpose(list(NULL, NULL), null = NA))
+#'
+#' # I: List size 2, Element size 3, Element type double
+#' # O: List size 3, Element size 2, Element type double
+#' list_transpose(list(NULL, NULL), null = NA, size = 3, ptype = double())
+#'
+#' # ---------------------------------------------------------------------------
+#' # Size 0 elements
+#'
+#' # With size 0 elements, the invariants are a bit tricky! This must return a
+#' # size 0 list, but then you lose expected type (integer) and size (2)
+#' # information about the elements. Losing that information makes it difficult
+#' # to reverse the transposition.
+#'
+#' # I: List size 2, Element size 0, Element type integer
+#' # O: List size 0, Element size 2, Element type integer
 #' x <- list(integer(), integer())
 #' out <- list_transpose(x)
 #' out
 #'
-#' # Note how transposing a second time doesn't recover the original list
+#' # Note how transposing a second time fails because it can't infer the element
+#' # size or element type.
+#'
+#' # I: List size 0, Element size ?, Element type ?
+#' # O: List size ?, Element size 0, Element type ?
 #' list_transpose(out)
 #'
-#' # To work around this, provide the lost `size` and `ptype` manually
-#' list_transpose(out, size = vec_size(x), ptype = vec_ptype_common(!!!x))
+#' # To work around this, provide the expected `size` and `ptype` manually
+#'
+#' # I: List size 0, Element size 2, Element type integer
+#' # O: List size 2, Element size 0, Element type integer
+#' list_transpose(out, size = 2L, ptype = integer())
 #'
 #' # ---------------------------------------------------------------------------
 #' # Padding
@@ -111,71 +172,6 @@
 #' x
 #'
 #' list_transpose(x)
-#'
-#' # ---------------------------------------------------------------------------
-#' # `NULL` handling
-#'
-#' # `NULL` values aren't allowed in `list_transpose()`
-#' x <- list(1:3, NULL, 5:7, NULL)
-#' try(list_transpose(x))
-#'
-#' # Replace them with `null`
-#' list_transpose(x, null = NA)
-#' list_transpose(x, null = -(1:3))
-#'
-#' # When you don't know the list element size up front, but you still want
-#' # to replace `NULL`s with something, use a size 1 `null` value which will
-#' # get recycled to the element size after it has been computed
-#' list_transpose(list(), null = NA)
-#' list_transpose(list(1, NULL, 3), null = NA)
-#' list_transpose(list(1, NULL, 3:4), null = NA)
-#'
-#' # When you do know the list element size up front, it's best to also provide
-#' # that information as `size`, as this helps direct the recycling process
-#' # for `null`, particularly in the cases of an empty list, a list of `NULL`s,
-#' # or a list of size 1 elements. You typically know the list element size if
-#' # you are providing a `null` of size != 1, because otherwise you wouldn't
-#' # have been able to make `null` in the first place!
-#' size <- 2L
-#' null <- 3:4
-#'
-#' # `size` overrides the inferred element size of 0
-#' #
-#' # I: List size 0, Element size 0
-#' # O: List size 0, Element size 0
-#' try(list_transpose(list(), null = null))
-#' # I: List size 0, Element size 2
-#' # O: List size 2, Element size 0
-#' list_transpose(list(), null = null, size = size)
-#'
-#' # Same idea here
-#' #
-#' # I: List size 1, Element size 0
-#' # O: List size 0, Element size 1
-#' try(list_transpose(list(NULL), null = null))
-#' # I: List size 1, Element size 2
-#' # O: List size 2, Element size 1
-#' list_transpose(list(NULL), null = null, size = size)
-#'
-#' # `size` overrides the inferred element size of 1
-#' #
-#' # I: List size 2, Element size 1
-#' # O: List size 1, Element size 2
-#' try(list_transpose(list(1, 2), null = null))
-#' # I: List size 2, Element size 2
-#' # O: List size 2, Element size 2
-#' list_transpose(list(1, 2), null = null, size = size)
-#'
-#' # The reason that `list_transpose()` recycles `null` to the common size
-#' # rather than letting `null` participate in common size determination is
-#' # due to this example. When supplying a size 1 `null`, most of the time
-#' # you don't know the element size, and you just want `null` to recycle to
-#' # whatever the required size will be. If `null` participated in determining
-#' # the common size, the output of this would be `list(logical())` rather than
-#' # `list()` because the element size would be computed as 1. Since a size 1
-#' # `null` is much more common than a size !=1 `null`, we've optimized for this
-#' # case at the cost of needing to specify `size` explicitly in some scenarios.
-#' list_transpose(list(), null = NA)
 list_transpose <- function(
   x,
   ...,
@@ -197,23 +193,36 @@ list_transpose <- function(
     call = error_call
   )
 
-  # `size` only comes from `x` and `size`.
-  # `null` is recycled to this size but doesn't contribute to it!
+  # `size` and `ptype` only come from `x`.
+  # `null` is recycled to the common size and cast to the common type.
   size <- vec_size_common(
     !!!x,
     .size = size,
+    .absent = -1L,
+    .arg = x_arg,
+    .call = error_call
+  )
+  ptype <- vec_ptype_common(
+    !!!x,
+    .ptype = ptype,
     .arg = x_arg,
     .call = error_call
   )
 
-  # `ptype` comes from `x`, `null`, and `ptype`
-  ptype <- list_transpose_ptype_common(
-    x,
-    null,
-    ptype,
-    x_arg,
-    error_call
-  )
+  # Refuse to guess if no vector inputs were provided.
+  # Best practice is to always provide both when programming with this function.
+  if (size == -1L) {
+    abort(
+      "Can't automatically infer the element size. Please supply `size` directly.",
+      call = error_call
+    )
+  }
+  if (is_null(ptype)) {
+    abort(
+      "Can't automatically infer the element type. Please supply `ptype` directly.",
+      call = error_call
+    )
+  }
 
   if (is.object(x)) {
     # The list input type should not affect the transposition process in any
@@ -263,35 +272,4 @@ list_transpose <- function(
   out <- vec_chop(out, sizes = sizes)
 
   out
-}
-
-# Same as `ptype_finalize()` in `vec_recode_values()` and `vec_if_else()`
-list_transpose_ptype_common <- function(
-  x,
-  null,
-  ptype,
-  x_arg,
-  error_call
-) {
-  if (!is_null(ptype)) {
-    # Validate and return user specified `ptype`
-    ptype <- vec_ptype(ptype, x_arg = "ptype", call = error_call)
-    return(vec_ptype_finalise(ptype))
-  }
-
-  # Compute from `x`
-  ptype <- vec_ptype_common(!!!x, .arg = x_arg, .call = error_call)
-
-  if (!is_null(null)) {
-    # Layer in `null`
-    ptype <- vec_ptype2(
-      x = null,
-      y = ptype,
-      x_arg = "null",
-      y_arg = "",
-      call = error_call
-    )
-  }
-
-  ptype
 }
