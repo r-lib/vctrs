@@ -476,34 +476,23 @@ test_that("proof that `ptype` finalization is important", {
 test_that("extraneous `to` attributes don't end up on the final output", {
   x <- c(1, 2, 3)
 
-  # TODO: Ideally the attributes wouldn't show up on the output, but
-  # `list_combine()` doesn't clear them because `vec_ptype(to)` retains
-  # them for some reason
-  # https://github.com/r-lib/vctrs/issues/2025
   from <- c(2, 3)
   to <- structure(c(0, -1), foo = "bar")
   expect_identical(
     vec_recode_values(x, from = from, to = to),
-    structure(c(NA, 0, -1), foo = "bar")
+    c(NA, 0, -1)
   )
 
-  # TODO: Ideally the attributes wouldn't show up on the output, but
-  # `list_combine()` doesn't clear them because `vec_ptype(to)` retains
-  # them for some reason
-  # https://github.com/r-lib/vctrs/issues/2025
   from <- 2
   to <- list(
     structure(c(0, -1, -2), foo = "bar")
   )
   expect_identical(
     vec_recode_values(x, from = from, to = to, to_as_list_of_vectors = TRUE),
-    structure(c(NA, -1, NA), foo = "bar")
+    c(NA, -1, NA)
   )
 
-  # Note that as soon as you force a `ptype2` computation, the attributes
-  # disappear anyways, suggesting an inconsistency
-
-  # `ptype2` forced by `default`
+  # With `ptype2` computation forced by `default`
   from <- c(2, 3)
   to <- structure(c(0, -1), foo = "bar")
   expect_identical(
@@ -511,7 +500,7 @@ test_that("extraneous `to` attributes don't end up on the final output", {
     c(NA, 0, -1)
   )
 
-  # `ptype2` forced by multiple `to` values
+  # With `ptype2` computation forced by multiple `to` values
   from <- c(2, 3)
   to <- list(
     structure(c(0, -1, -2), foo = "bar"),
@@ -524,16 +513,12 @@ test_that("extraneous `to` attributes don't end up on the final output", {
 })
 
 test_that("extraneous `x` attributes don't end up on the final output", {
-  # TODO: Ideally the attributes wouldn't show up on the output, but
-  # `list_combine()` doesn't clear them because `vec_ptype(x)` retains
-  # them for some reason
-  # https://github.com/r-lib/vctrs/issues/2025
+  # Because it is built on `vec_recode_values()`
   x <- structure(1, foo = "bar")
 
   expect_identical(
     vec_replace_values(x, from = 1, to = 2),
-    structure(2, foo = "bar")
-    # 2
+    2
   )
 })
 

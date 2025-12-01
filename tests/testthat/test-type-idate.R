@@ -17,6 +17,15 @@ as_IDate_with_names <- function(x) {
 # ------------------------------------------------------------------------------
 # ptype
 
+test_that("ptype", {
+  x <- as.IDate("2019-01-01")
+  expect_identical(vec_ptype(x), as.IDate(integer()))
+
+  # Note how names are correctly dropped (#2025)
+  x <- as_IDate_with_names(c(a = "2019-01-01"))
+  expect_identical(vec_ptype(x), as.IDate(integer()))
+})
+
 test_that("ptype abbr", {
   x <- as.IDate("2019-01-01")
   expect_identical(vec_ptype_abbr(x), "IDate")
@@ -31,11 +40,9 @@ test_that("ptype full", {
 # ptype2
 
 test_that("can get common type of IDate and IDate", {
+  # Note how names are correctly dropped (#2025)
   x <- as_IDate_with_names(c(a = "2019-01-01"))
-
-  # It shouldn't have names, but thats a vctrs problem
-  expect <- as_IDate_with_names(set_names(integer(), character()))
-
+  expect <- as.IDate(integer())
   expect_identical(vec_ptype2(x, x), expect)
 })
 

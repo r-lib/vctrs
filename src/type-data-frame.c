@@ -420,8 +420,8 @@ r_ssize compact_rownames_length(r_obj* x) {
 }
 
 // [[ include("type-data-frame.h") ]]
-r_ssize rownames_size(r_obj* rn) {
-  switch (rownames_type(rn)) {
+r_ssize rownames_size(r_obj* rn, enum rownames_type type) {
+  switch (type) {
   case ROWNAMES_TYPE_identifiers:
   case ROWNAMES_TYPE_automatic:
     return r_length(rn);

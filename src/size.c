@@ -107,7 +107,8 @@ r_ssize df_rownames_size(r_obj* x) {
       continue;
     }
 
-    return rownames_size(r_node_car(attr));
+    r_obj* rn = r_node_car(attr);
+    return rownames_size(rn, rownames_type(rn));
   }
 
   return -1;

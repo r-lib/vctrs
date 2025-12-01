@@ -3,10 +3,14 @@
 
 #include "vctrs-core.h"
 
+// Attaches the shape of `x` as the dimensions of `ptype`.
+// If `x` is atomic with `NULL` dimensions, then `ptype` is returned unmodified.
+r_obj* vec_shaped_ptype(r_obj* ptype, r_obj* x);
+
 // Computes the common shape of `x` and `y` and attaches it as the
 // dimensions of `ptype`. If `x` and `y` are both atomic with `NULL` dimensions,
 // then no dimensions are attached and `ptype` is returned unmodified.
-r_obj* vec_shaped_ptype(
+r_obj* vec_shaped_ptype2(
   r_obj* ptype,
   r_obj* x,
   r_obj* y,

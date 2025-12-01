@@ -202,20 +202,9 @@ vec_restore_recurse <- function(x, to, ...) {
 vec_data <- function(x) {
   obj_check_vector(x)
   x <- vec_proxy(x)
-
-  if (is.data.frame(x)) {
-    return(new_data_frame(x, row.names = .row_names_info(x, 0L)))
-  }
-
-  if (has_dim(x)) {
-    x <- vec_set_attributes(x, list(dim = dim(x), dimnames = dimnames(x)))
-  } else {
-    x <- vec_set_attributes(x, list(names = names(x)))
-  }
-
-  # Unset S4 bit in vector-like S4 objects
-  as_not_s4(x)
+  proxy_data(x)
 }
-as_not_s4 <- function(x) {
-  .Call(ffi_as_not_s4, x)
+
+proxy_data <- function(x) {
+  .Call(ffi_proxy_data, x)
 }
