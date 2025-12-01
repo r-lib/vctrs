@@ -98,6 +98,7 @@
     Condition
       Error in `list_transpose()`:
       ! `list(1:4, NULL, 5:8)[[2]]` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # doesn't allow scalar elements
 
@@ -106,6 +107,9 @@
     Condition
       Error in `list_transpose()`:
       ! `list(1:4, lm(1 ~ 1))[[2]]` must be a vector, not a <lm> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <lm>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 
 ---
 
@@ -114,6 +118,9 @@
     Condition
       Error in `foo()`:
       ! `x[[2]]` must be a vector, not a <lm> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <lm>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 
 # `x` being a list subclass can't affect the transposition
 
@@ -138,6 +145,7 @@
     Condition
       Error in `list_transpose()`:
       ! `x[[1]]` must be a vector, not `NULL`.
+      i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
 
 # `null` must be a vector
 
@@ -146,6 +154,9 @@
     Condition
       Error in `list_transpose()`:
       ! `null` must be a vector, not a <lm> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <lm>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 
 ---
 
@@ -154,6 +165,9 @@
     Condition
       Error in `list_transpose()`:
       ! `null` must be a vector, not a <lm> object.
+      x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <lm>.
+      i If this object comes from a package, please report this error to the package author.
+      i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
 
 # `null` is cast to common type (not part of common type determination)
 
