@@ -174,7 +174,7 @@ out
 
 # I: List size 0, Element size ?, Element type ?
 # O: List size ?, Element size 0, Element type ?
-list_transpose(out)
+try(list_transpose(out))
 
 # To work around this, provide the expected `size` and `ptype` manually
 
