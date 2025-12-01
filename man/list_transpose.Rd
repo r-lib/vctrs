@@ -74,21 +74,29 @@ For the list elements:
 }
 }
 \description{
-\code{list_transpose()} takes a list of vectors, transposes it, and returns a new
-list of vectors.
-
-To predict the output from \code{list_transpose()}, swap the size of the list
-with the size of the list elements. For example:
+\code{list_transpose()} takes a list of vectors, transposes it, and
+returns a new list of vectors. To perform a transpose, three pieces of
+information are required:
 \itemize{
-\item Input: List of size 2, elements of size 3
-\item Output: List of size 3, elements of size 2
+\item The \emph{list size}. This is always known, and is \code{vec_size(x)}.
+\item The \emph{element size}. This is computed as \code{vec_size_common(!!!x)}. If \code{x}
+does not contain any vector inputs, then \code{size} must be provided, otherwise
+an error is thrown.
+\item The \emph{element type}. This is computed as \code{vec_ptype_common(!!!x)}. If \code{x}
+does not contain any vector inputs, then \code{ptype} must be provided,
+otherwise an error is thrown.
 }
 
-Note that if \code{list_transpose()} cannot infer the element type or element
-size, then it refuses to guess and will throw an error. Supplying \code{ptype} and
-\code{size} explicitly removes all ambiguity and ensures that \code{list_transpose()}
-works in all cases. Supplying both of these is recommended when programming
-with \code{list_transpose()}.
+Supplying both \code{size} and \code{ptype} is recommended when programming with
+\code{list_transpose()}, as this removes all ambiguity and ensures an error is
+never thrown.
+
+To predict the output from \code{list_transpose()}, swap the list size with the
+element size. For example:
+\itemize{
+\item Input: List size 2, Element size 3, Element type integer
+\item Output: List size 3, Element size 2, Element type integer
+}
 }
 \examples{
 # I: List size 3, Element size 2, Element type integer
@@ -156,7 +164,7 @@ list_transpose(list(NULL, NULL), null = NA, size = 3, ptype = double())
 # to reverse the transposition.
 
 # I: List size 2, Element size 0, Element type integer
-# O: List size 0, Element size 2, Element type integer
+# O: List size 0, Element size 2, Element type integer (but 0 elements)
 x <- list(integer(), integer())
 out <- list_transpose(x)
 out

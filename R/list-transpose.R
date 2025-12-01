@@ -1,20 +1,29 @@
 #' Transpose a list of vectors
 #'
 #' @description
-#' `list_transpose()` takes a list of vectors, transposes it, and returns a new
-#' list of vectors.
+#' `list_transpose()` takes a list of vectors, transposes it, and
+#' returns a new list of vectors. To perform a transpose, three pieces of
+#' information are required:
 #'
-#' To predict the output from `list_transpose()`, swap the size of the list
-#' with the size of the list elements. For example:
+#' - The _list size_. This is always known, and is `vec_size(x)`.
 #'
-#' - Input: List of size 2, elements of size 3
-#' - Output: List of size 3, elements of size 2
+#' - The _element size_. This is computed as `vec_size_common(!!!x)`. If `x`
+#'   does not contain any vector inputs, then `size` must be provided, otherwise
+#'   an error is thrown.
 #'
-#' Note that if `list_transpose()` cannot infer the element type or element
-#' size, then it refuses to guess and will throw an error. Supplying `ptype` and
-#' `size` explicitly removes all ambiguity and ensures that `list_transpose()`
-#' works in all cases. Supplying both of these is recommended when programming
-#' with `list_transpose()`.
+#' - The _element type_. This is computed as `vec_ptype_common(!!!x)`. If `x`
+#'   does not contain any vector inputs, then `ptype` must be provided,
+#'   otherwise an error is thrown.
+#'
+#' Supplying both `size` and `ptype` is recommended when programming with
+#' `list_transpose()`, as this removes all ambiguity and ensures an error is
+#' never thrown.
+#'
+#' To predict the output from `list_transpose()`, swap the list size with the
+#' element size. For example:
+#'
+#' - Input: List size 2, Element size 3, Element type integer
+#' - Output: List size 3, Element size 2, Element type integer
 #'
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context
@@ -135,7 +144,7 @@
 #' # to reverse the transposition.
 #'
 #' # I: List size 2, Element size 0, Element type integer
-#' # O: List size 0, Element size 2, Element type integer
+#' # O: List size 0, Element size 2, Element type integer (but 0 elements)
 #' x <- list(integer(), integer())
 #' out <- list_transpose(x)
 #' out
@@ -224,14 +233,14 @@ list_transpose <- function(
     )
   }
 
-  if (is.object(x)) {
-    # The list input type should not affect the transposition process in any
-    # way. In particular, supplying a list subclass that doesn't have a
-    # `vec_cast.subclass.list` method shouldn't prevent the insertion of
-    # `list(null)` before the transposition. The fact that we must insert
-    # `list(null)` should be considered an internal detail.
-    x <- unclass(x)
-  }
+  # The list input type should not affect the transposition process in any
+  # way. In particular, supplying a list subclass that doesn't have a
+  # `vec_cast.subclass.list` method shouldn't prevent the insertion of
+  # `list(null)` before the transposition. The fact that we must insert
+  # `list(null)` should be considered an internal detail. We must assign
+  # to `x_data` not `x`, because `x_arg` needs to refer to the original `x`
+  # if we hit an error down in `list_interleave()`.
+  x_data <- vec_data(x)
 
   if (!is_null(null)) {
     # Always perform `null` checks
@@ -252,17 +261,17 @@ list_transpose <- function(
       call = error_call
     )
 
-    if (vec_any_missing(x)) {
+    if (vec_any_missing(x_data)) {
       null <- list(null)
-      x <- vec_assign(x, vec_detect_missing(x), null)
+      x_data <- vec_assign(x_data, vec_detect_missing(x_data), null)
     }
   }
 
-  x_size <- vec_size(x)
+  x_size <- vec_size(x_data)
   sizes <- vec_rep(x_size, times = size)
 
   out <- list_interleave(
-    x,
+    x_data,
     size = size,
     ptype = ptype,
     name_spec = "inner",
