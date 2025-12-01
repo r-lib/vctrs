@@ -235,6 +235,8 @@ list_transpose <- function(
 
   if (!is_null(null)) {
     # Always perform `null` checks
+    obj_check_vector(null, arg = "null", call = error_call)
+
     null <- vec_cast(
       x = null,
       to = ptype,

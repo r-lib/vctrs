@@ -1,5 +1,3 @@
-# TODO!: Now update all tests to reflect new semantics
-
 test_that("transposes vectors", {
   expect_identical(
     list_transpose(list(1:2, 3:4, 5:6)),
@@ -21,33 +19,27 @@ test_that("transposes data frames", {
   )
 })
 
-test_that("works with empty `x`", {
-  # Input:
-  # - List size 0
-  # - Element size 0 (inferred)
-  expect_identical(list_transpose(list()), list())
+test_that("empty `x` requires both `ptype` and `size`", {
+  # I: List size 0, Element size ?, Element type ?
+  # O: List size ?, Element size 0, Element type ?
+  expect_snapshot(error = TRUE, {
+    list_transpose(list())
+  })
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(), size = 1)
+  })
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(), ptype = integer())
+  })
 
-  # Input
-  # - List size 0
-  # - Element size 2 (provided)
-  # - Element type unspecified (inferred)
-  # Output
-  # - List size 2
-  # - Element size 0
-  # - Element type unspecified
   expect_identical(
-    list_transpose(list(), size = 2),
-    list(unspecified(), unspecified())
+    list_transpose(list(), size = 0, ptype = integer()),
+    list()
   )
-
-  # Input
-  # - List size 0
-  # - Element size 2 (provided)
-  # - Element type integer (provided)
-  # Output
-  # - List size 2
-  # - Element size 0
-  # - Element type integer
+  expect_identical(
+    list_transpose(list(), size = 1, ptype = integer()),
+    list(integer())
+  )
   expect_identical(
     list_transpose(list(), size = 2, ptype = integer()),
     list(integer(), integer())
@@ -55,19 +47,19 @@ test_that("works with empty `x`", {
 })
 
 test_that("can recover original type and size with manual `ptype` and `size`", {
-  # - List size 2
-  # - Element size 0
-  # - Element type integer
   x <- list(integer(), integer())
 
-  # - List size 0
-  # - Element size 2 (but no elements)
-  # - Element type integer (but no elements)
+  # I: List size 2, Element size 0, Element type integer
+  # O: List size 0, Element size 2, Element type integer (but no elements)
   out <- list_transpose(x)
   expect_identical(out, list())
 
-  # Simply transposing again doesn't recover the original `x`, but supplying
-  # a known `ptype` and `size` does
+  # Can't transpose again because its an empty list with ambiguity
+  expect_snapshot(error = TRUE, {
+    list_transpose(out)
+  })
+
+  # Supplying a known `ptype` and `size` works
   expect_identical(
     list_transpose(out, size = vec_size(x), ptype = vec_ptype_common(!!!x)),
     x
@@ -204,21 +196,26 @@ test_that("`x` being a <list_of> doesn't affect the transposition", {
   # As a primitive function, `list_transpose()` doesn't know anything
   # about `<list_of>`, and shouldn't treat it specially
 
-  # No preservation of type
+  # No knowledge about `.ptype` attribute
   x <- list_of(.ptype = integer())
-  expect_identical(list_transpose(x), list())
-  expect_identical(list_transpose(x, ptype = character()), list())
+  expect_snapshot(error = TRUE, {
+    list_transpose(x, size = 0)
+  })
+  expect_identical(
+    list_transpose(x, size = 0, ptype = character()),
+    list()
+  )
 
   x <- list_of(NULL, .ptype = integer())
   expect_snapshot(error = TRUE, {
     list_transpose(x)
   })
   expect_identical(
-    list_transpose(x, null = "x"),
+    list_transpose(x, null = "x", size = 0, ptype = character()),
     list()
   )
   expect_identical(
-    list_transpose(x, null = "x", size = 2),
+    list_transpose(x, null = "x", size = 2, ptype = character()),
     list("x", "x")
   )
 
@@ -227,13 +224,6 @@ test_that("`x` being a <list_of> doesn't affect the transposition", {
   expect_identical(
     list_transpose(x, ptype = double()),
     list(c(1, 2))
-  )
-
-  # Common type determination with `null` overrules list-of type
-  x <- list_of(1L, NULL, 2L)
-  expect_identical(
-    list_transpose(x, null = 0),
-    list(c(1, 0, 2))
   )
 })
 
@@ -262,11 +252,11 @@ test_that("`null` must be a vector", {
   })
 })
 
-test_that("`null` participates in common type determination", {
+test_that("`null` is cast to common type (not part of common type determination)", {
   x <- list(1L, NULL)
   expect_identical(
     list_transpose(x, null = 0),
-    list(c(1, 0))
+    list(c(1L, 0L))
   )
   expect_snapshot(error = TRUE, {
     list_transpose(x, null = "x")
@@ -279,7 +269,7 @@ test_that("`null` participates in common type determination", {
   x <- list(1L, 2L)
   expect_identical(
     list_transpose(x, null = 0),
-    list(c(1, 2))
+    list(c(1L, 2L))
   )
   expect_snapshot(error = TRUE, {
     list_transpose(x, null = "x")
@@ -289,7 +279,7 @@ test_that("`null` participates in common type determination", {
   })
 })
 
-test_that("`null` is recycled to common size of inputs or `size`", {
+test_that("`null` is recycled to common size (not part of common size determination)", {
   x <- list(1:2, NULL, 5:6)
   expect_identical(
     list_transpose(x, null = NA),
@@ -301,33 +291,30 @@ test_that("`null` is recycled to common size of inputs or `size`", {
     list_transpose(x, null = 3:4),
     list(c(1L, 3L, 5L), c(2L, 4L, 6L))
   )
+  expect_snapshot(error = TRUE, {
+    list_transpose(x, null = 7:9)
+  })
 })
 
 test_that("`null` size 0 behavior", {
-  # Element common size is inferred to be 0 from `x`
-  #
-  # I: List size 0, Element size 0
-  # O: List size 0, Element size 0
-  expect_identical(
-    list_transpose(list(), null = double()),
-    list()
-  )
-  # I: List size 1, Element size 0
-  # O: List size 0, Element size 1
-  expect_identical(
-    list_transpose(list(NULL), null = double()),
-    list()
-  )
+  # These tests mattered more when size / type were inferred more liberally. We
+  # keep them for consideration if we ever try to change `list_transpose()`'s
+  # behavior.
 
-  # Element common size is inferred to be 1 from `x`
-  #
-  # I: List size 2, Element size 1 (can't recycle `null` to this)
-  # O: List size 1, Element size 2
+  # I: List size 0, Element size ?
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(), null = double())
+  })
+  # I: List size 1, Element size ?
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(NULL), null = double())
+  })
+
+  # I: List size 0, Element size 1
+  # Can't recycle `null` to this
   expect_snapshot(error = TRUE, {
     list_transpose(list(1, 2), null = double())
   })
-  # I: List size 3, Element size 1 (can't recycle `null` to this)
-  # O: List size 1, Element size 3
   expect_snapshot(error = TRUE, {
     list_transpose(list(1, 2, NULL), null = double())
   })
@@ -349,6 +336,10 @@ test_that("`null` size 0 behavior", {
 })
 
 test_that("`null` size 1 behavior", {
+  # These tests mattered more when size / type were inferred more liberally. We
+  # keep them for consideration if we ever try to change `list_transpose()`'s
+  # behavior.
+
   # This example of `list_transpose(list(), null = 3)` is a big reason why
   # we recycle `null` rather than letting it participate in common size
   # determination. A size 1 `null` is a very common way to say "I don't know
@@ -357,23 +348,28 @@ test_that("`null` size 1 behavior", {
   # size of `null` should not impact the output, and you should get `list()`,
   # not `list(numeric())`.
 
-  # Element common size is inferred to be 0 from `x`
-  #
+  # I: List size 0, Element size ?
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(), null = 3)
+  })
+  # I: List size 1, Element size ?
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(NULL), null = 3)
+  })
+
   # I: List size 0, Element size 0 (can recycle `null` to this)
   # O: List size 0, Element size 0
   expect_identical(
-    list_transpose(list(), null = 3),
+    list_transpose(list(), null = 3, size = 0, ptype = double()),
     list()
   )
   # I: List size 1, Element size 0 (can recycle `null` to this)
   # O: List size 0, Element size 1
   expect_identical(
-    list_transpose(list(NULL), null = 3),
+    list_transpose(list(NULL), null = 3, size = 0, ptype = double()),
     list()
   )
 
-  # Element common size is inferred to be 1 from `x`
-  #
   # I: List size 2, Element size 1
   # O: List size 1, Element size 2
   expect_identical(
@@ -395,33 +391,42 @@ test_that("`null` size 1 behavior", {
   # I: List size 0, Element size 1
   # O: List size 1, Element size 0
   expect_identical(
-    list_transpose(list(), null = null, size = size),
+    list_transpose(list(), null = null, size = size, ptype = double()),
     list(numeric())
   )
   # I: List size 1, Element size 1
   # O: List size 1, Element size 1
   expect_identical(
-    list_transpose(list(NULL), null = null, size = size),
+    list_transpose(list(NULL), null = null, size = size, ptype = double()),
     list(3)
   )
 })
 
 test_that("`null` size >1 behavior", {
-  # Element common size is inferred to be 0 from `x`
-  #
-  # I: List size 0, Element size 0 (can't recycle `null` to this)
-  # O: List size 0, Element size 0
+  # These tests mattered more when size / type were inferred more liberally. We
+  # keep them for consideration if we ever try to change `list_transpose()`'s
+  # behavior.
+
+  # I: List size 0, Element size ?
   expect_snapshot(error = TRUE, {
     list_transpose(list(), null = 3:4)
   })
-  # I: List size 1, Element size 0 (can't recycle `null` to this)
-  # O: List size 0, Element size 1
+  # I: List size 1, Element size ?
   expect_snapshot(error = TRUE, {
     list_transpose(list(NULL), null = 3:4)
   })
 
-  # Element common size is inferred to be 1 from `x`
-  #
+  # I: List size 0, Element size 0 (can't recycle `null` to this)
+  # O: List size 0, Element size 0
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(), null = 3:4, size = 0, ptype = integer())
+  })
+  # I: List size 1, Element size 0 (can't recycle `null` to this)
+  # O: List size 0, Element size 1
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(NULL), null = 3:4, size = 0, ptype = integer())
+  })
+
   # I: List size 2, Element size 1 (can't recycle `null` to this)
   # O: List size 1, Element size 2
   expect_snapshot(error = TRUE, {
@@ -445,100 +450,71 @@ test_that("`null` size >1 behavior", {
   # I: List size 0, Element size 2
   # O: List size 2, Element size 0
   expect_identical(
-    list_transpose(list(), null = null, size = size),
+    list_transpose(list(), null = null, size = size, ptype = double()),
     list(double(), double())
   )
   # I: List size 1, Element size 2
   # O: List size 2, Element size 1
   expect_identical(
-    list_transpose(list(NULL), null = null, size = size),
+    list_transpose(list(NULL), null = null, size = size, ptype = double()),
     list(3, 4)
   )
 
   # I: List size 2, Element size 2
   # O: List size 2, Element size 2
   expect_identical(
-    list_transpose(list(1, 2), null = null, size = size),
+    list_transpose(list(1, 2), null = null, size = size, ptype = double()),
     list(c(1, 2), c(1, 2))
   )
   # I: List size 3, Element size 2
   # O: List size 2, Element size 3
   expect_identical(
-    list_transpose(list(1, 2, NULL), null = null, size = size),
+    list_transpose(
+      list(1, 2, NULL),
+      null = null,
+      size = size,
+      ptype = double()
+    ),
     list(c(1, 2, 3), c(1, 2, 4))
   )
 })
 
-test_that("`null` influences type in the empty `list()` case", {
-  # Input
-  # - List size 0
-  # - Element size 0 (inferred from list)
-  # - Element type integer (inferred from `null`)
-  # Output
-  # - List size 0
-  # - Element size 0
-  # - Element type integer
+test_that("`null` can't influence the output type in the empty `list()` case", {
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(), null = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(), null = 1L, size = 0)
+  })
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(), null = 1L, size = 1)
+  })
+
   expect_identical(
-    list_transpose(list(), null = 1L),
+    list_transpose(list(), null = 1L, size = 0, ptype = double()),
     list()
   )
-
-  # Input
-  # - List size 0
-  # - Element size 0 (supplied by `size`)
-  # - Element type integer (inferred from `null`)
-  # Output
-  # - List size 0
-  # - Element size 0
-  # - Element type integer
   expect_identical(
-    list_transpose(list(), null = 1L, size = 0),
-    list()
-  )
-
-  # Input
-  # - List size 0
-  # - Element size 1 (supplied by `size`)
-  # - Element type integer (inferred from `null`)
-  # Output
-  # - List size 1
-  # - Element size 0
-  # - Element type integer
-  expect_identical(
-    list_transpose(list(), null = 1L, size = 1),
-    list(integer())
-  )
-
-  # Input
-  # - List size 0
-  # - Element size 2 (supplied by `size`)
-  # - Element type integer (inferred from `null`)
-  # Output
-  # - List size 2
-  # - Element size 0
-  # - Element type integer
-  expect_identical(
-    list_transpose(list(), null = 1L, size = 2),
-    list(integer(), integer())
+    list_transpose(list(), null = 1L, size = 1, ptype = double()),
+    list(double())
   )
 })
 
-test_that("`null` influences type in the only `NULL` case", {
-  # Input
-  # - List size 2
-  # - Element size 1 (inferred from `NULL` being treated as size 1)
-  # - Element type integer (inferred from `null`)
-  # Output
-  # - List size 1
-  # - Element size 2
-  # - Element type integer
-  expect_identical(
-    list_transpose(list(NULL, NULL), null = 1L, size = 1L),
-    list(c(1L, 1L))
-  )
+test_that("`null` can't influence the output type in the only `NULL` case", {
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(NULL, NULL), null = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    list_transpose(list(NULL, NULL), null = 1L, size = 1)
+  })
+
   expect_identical(
     list_transpose(list(NULL, NULL), null = 1L, size = 1L, ptype = double()),
     list(c(1, 1))
+  )
+  expect_identical(
+    list_transpose(list(NULL, NULL), null = 1:2, size = 2L, ptype = double()),
+    list(c(1, 1), c(2, 2))
   )
 })
 
