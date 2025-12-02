@@ -4,12 +4,22 @@
 \alias{new_list_of}
 \title{Create list_of subclass}
 \usage{
-new_list_of(x = list(), ptype = logical(), ..., class = character())
+new_list_of(
+  x = list(),
+  ptype = logical(),
+  size = NULL,
+  ...,
+  class = character()
+)
 }
 \arguments{
 \item{x}{A list}
 
-\item{ptype}{The prototype which every element of \code{x} belongs to}
+\item{ptype}{The prototype which every element of \code{x} belongs to. If \code{NULL},
+the prototype is not specified.}
+
+\item{size}{The size which every element of \code{x} has. If \code{NULL}, the size is
+not specified.}
 
 \item{...}{Additional attributes used by subclass}
 
