@@ -76,8 +76,7 @@ type of the list elements. You cannot set both of these to \code{rlang::zap()},
 as that would be the same as a bare \code{list()} with no restrictions.
 
 Modifying a \code{list_of} with \verb{$<-}, \verb{[<-}, and \verb{[[<-} preserves the constraints
-by coercing and recycling all input items. Unlike regular lists, setting a
-list element to \code{NULL} with these setters does not shorten the list.
+by coercing and recycling all input items.
 }
 \examples{
 # Restrict the type, but not the size

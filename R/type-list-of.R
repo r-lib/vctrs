@@ -29,8 +29,7 @@
 #' as that would be the same as a bare `list()` with no restrictions.
 #'
 #' Modifying a `list_of` with `$<-`, `[<-`, and `[[<-` preserves the constraints
-#' by coercing and recycling all input items. Unlike regular lists, setting a
-#' list element to `NULL` with these setters does not shorten the list.
+#' by coercing and recycling all input items.
 #'
 #' @param ... For `list_of()`, vectors to include in the list.
 #'
@@ -304,9 +303,7 @@ as.character.vctrs_list_of <- function(x, ...) {
 #' @export
 `[<-.vctrs_list_of` <- function(x, i, value) {
   if (is_null(value)) {
-    # Setting to NULL via [<- shortens the list! Example:
-    # `[<-`(list(1), 1, NULL)
-    value <- list(value)
+    return(NextMethod())
   }
 
   if (!obj_is_list(value)) {
@@ -338,10 +335,7 @@ as.character.vctrs_list_of <- function(x, ...) {
 #' @export
 `[[<-.vctrs_list_of` <- function(x, i, value) {
   if (is_null(value)) {
-    # Setting to NULL via [[ shortens the list! Example:
-    # `[[<-`(list(1), 1, NULL)
-    x[i] <- list(value)
-    return(x)
+    return(NextMethod())
   }
 
   ptype <- list_of_ptype(x)
@@ -360,10 +354,7 @@ as.character.vctrs_list_of <- function(x, ...) {
 #' @export
 `$<-.vctrs_list_of` <- function(x, i, value) {
   if (is_null(value)) {
-    # Setting to NULL via [[ shortens the list! Example:
-    # `$<-`(list(x = 1), "x", NULL)
-    x[i] <- list(value)
-    return(x)
+    return(NextMethod())
   }
 
   ptype <- list_of_ptype(x)
