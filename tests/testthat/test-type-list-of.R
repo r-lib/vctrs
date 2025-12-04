@@ -405,42 +405,42 @@ test_that("[<- chops non list `value`s", {
   )
 })
 
-test_that("[<- doesn't shorten with `NULL`", {
+test_that("[<- can shorten with `NULL` (#2112)", {
   x <- list_of(a = 1, b = 2, c = 3)
   x[2] <- NULL
-  expect_identical(x, list_of(a = 1, b = NULL, c = 3))
+  expect_identical(x, list_of(a = 1, c = 3))
 
   x <- list_of(a = 1, b = 2, c = 3)
   x[2:3] <- NULL
-  expect_identical(x, list_of(a = 1, b = NULL, c = NULL))
+  expect_identical(x, list_of(a = 1))
 
-  # Difference from list
+  # Like base lists
   x <- list(a = 1, b = 2, c = 3)
   x[2] <- NULL
   expect_identical(x, list(a = 1, c = 3))
 })
 
-test_that("[[<- doesn't shorten with `NULL`", {
+test_that("[[<- can shorten with `NULL` (#2112)", {
   x <- list_of(a = 1, b = 2)
   x[[2]] <- NULL
-  expect_identical(x, list_of(a = 1, b = NULL))
+  expect_identical(x, list_of(a = 1))
 
   x <- list_of(a = 1, b = 2)
   x[["b"]] <- NULL
-  expect_identical(x, list_of(a = 1, b = NULL))
+  expect_identical(x, list_of(a = 1))
 
-  # Difference from list
+  # Like base lists
   x <- list(a = 1, b = 2)
   x[[2]] <- NULL
   expect_identical(x, list(a = 1))
 })
 
-test_that("$<- doesn't shorten with `NULL`", {
+test_that("$<- can shorten with `NULL` (#2112)", {
   x <- list_of(a = 1, b = 2)
   x$b <- NULL
-  expect_identical(x, list_of(a = 1, b = NULL))
+  expect_identical(x, list_of(a = 1))
 
-  # Difference from list
+  # Like base lists
   x <- list(a = 1, b = 2)
   x$b <- NULL
   expect_identical(x, list(a = 1))
