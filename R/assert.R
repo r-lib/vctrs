@@ -320,9 +320,11 @@ vec_check_recyclable <- function(
 #'
 #' @description
 #' - `obj_is_list()` tests if `x` is considered a list in the vctrs sense. It
-#'   returns `TRUE` if:
-#'   - `x` is a bare list with no class.
-#'   - `x` is a list explicitly inheriting from `"list"`.
+#'   returns `TRUE` if all of the following hold:
+#'   - `x` must have list storage, i.e. `typeof(x)` returns `"list"`
+#'   - `x` must not have a `dim` attribute
+#'   - `x` must not have a `class` attribute, or must explicitly inherit from
+#'     `"list"` as the last class
 #'
 #' - `list_all_vectors()` takes a list and returns `TRUE` if all elements of
 #'   that list are vectors.

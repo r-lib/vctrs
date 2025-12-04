@@ -70,10 +70,12 @@ automatically or not.}
 \description{
 \itemize{
 \item \code{obj_is_list()} tests if \code{x} is considered a list in the vctrs sense. It
-returns \code{TRUE} if:
+returns \code{TRUE} if all of the following hold:
 \itemize{
-\item \code{x} is a bare list with no class.
-\item \code{x} is a list explicitly inheriting from \code{"list"}.
+\item \code{x} must have list storage, i.e. \code{typeof(x)} returns \code{"list"}
+\item \code{x} must not have a \code{dim} attribute
+\item \code{x} must not have a \code{class} attribute, or must explicitly inherit from
+\code{"list"} as the last class
 }
 \item \code{list_all_vectors()} takes a list and returns \code{TRUE} if all elements of
 that list are vectors.

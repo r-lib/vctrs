@@ -432,6 +432,16 @@ test_that("Vectors with a non-VECSXP type are not lists", {
   expect_false(obj_is_list(quote(name)))
 })
 
+test_that("List arrays are not lists", {
+  # Bare list arrays
+  x <- array(list(1))
+  expect_false(obj_is_list(x))
+
+  # Classed list arrays
+  x <- structure(list(1), class = "list", dim = 1)
+  expect_false(obj_is_list(x))
+})
+
 test_that("explicitly classed lists are lists", {
   x <- structure(list(), class = "list")
 

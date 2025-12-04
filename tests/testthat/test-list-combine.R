@@ -1460,6 +1460,9 @@ test_that("`x` must be a list", {
   expect_snapshot(error = TRUE, {
     list_combine(data.frame(x = 1), indices = list(1), size = 1)
   })
+  expect_snapshot(error = TRUE, {
+    list_combine(array(list(1)), indices = list(1), size = 1)
+  })
 })
 
 test_that("`indices` must be a list", {
