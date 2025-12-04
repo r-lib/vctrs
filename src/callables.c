@@ -16,6 +16,13 @@ SEXP maturing_short_vec_recycle(SEXP x, R_len_t size) {
 }
 
 // -----------------------------------------------------------------------------
+// Defunct
+
+bool defunct_vec_is_vector(SEXP x) {
+  Rf_errorcall(R_NilValue, "`vec_is_vector()` is defunct.");
+}
+
+// -----------------------------------------------------------------------------
 // Experimental
 
 SEXP exp_vec_cast(SEXP x, SEXP to) {

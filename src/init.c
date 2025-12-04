@@ -181,6 +181,13 @@ extern bool maturing_obj_is_vector(SEXP);
 extern R_len_t maturing_short_vec_size(SEXP);
 extern SEXP maturing_short_vec_recycle(SEXP, R_len_t);
 
+// Defunct
+// Previously were in the public header, but have since been removed
+// Must be removed from the public header but still exist as a C callable for 1 CRAN release of vctrs,
+// so that dependent CRAN binaries (slider or tibblify) can be rebuilt with the new public header that
+// no longer looks for these callables.
+extern bool defunct_vec_is_vector(SEXP);
+
 // Experimental
 // Exported but not available in the public header
 extern SEXP exp_vec_cast(SEXP, SEXP);
@@ -416,6 +423,10 @@ export void R_init_vctrs(DllInfo *dll)
     R_RegisterCCallable("vctrs", "obj_is_vector",      (DL_FUNC) &maturing_obj_is_vector);
     R_RegisterCCallable("vctrs", "short_vec_size",     (DL_FUNC) &maturing_short_vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle",  (DL_FUNC) &maturing_short_vec_recycle);
+
+    // Defunct
+    // Previously were in the public header, but have since been removed
+    R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &defunct_vec_is_vector);
 
     // Experimental
     // Exported but not available in the public header
