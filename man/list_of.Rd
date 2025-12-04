@@ -69,8 +69,7 @@ errors if no vector inputs were provided.
 }
 }
 
-The default behavior infers the element type, but doesn't restrict the
-size in any way.
+The default behavior infers the element type and doesn't restrict the size.
 
 Both \code{.ptype} and \code{.size} may be specified to restrict both the size and
 type of the list elements. You cannot set both of these to \code{rlang::zap()},
