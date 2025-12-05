@@ -5,7 +5,13 @@ Create list_of subclass
 ## Usage
 
 ``` r
-new_list_of(x = list(), ptype = logical(), ..., class = character())
+new_list_of(
+  x = list(),
+  ptype = logical(),
+  size = NULL,
+  ...,
+  class = character()
+)
 ```
 
 ## Arguments
@@ -16,7 +22,13 @@ new_list_of(x = list(), ptype = logical(), ..., class = character())
 
 - ptype:
 
-  The prototype which every element of `x` belongs to
+  The prototype which every element of `x` belongs to. If `NULL`, the
+  prototype is not specified.
+
+- size:
+
+  The size which every element of `x` has. If `NULL`, the size is not
+  specified.
 
 - ...:
 

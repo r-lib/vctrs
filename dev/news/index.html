@@ -40,7 +40,21 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p><code><a href="../reference/obj_is_list.html">obj_is_list()</a></code> now returns <code>FALSE</code> for list arrays. Functions such as <code><a href="../reference/list_drop_empty.html">list_drop_empty()</a></code> and <code><a href="../reference/list_combine.html">list_combine()</a></code> validate their input using <code><a href="../reference/obj_is_list.html">obj_is_list()</a></code>, but aren’t well defined on list arrays.</p></li>
+<ul><li><p>Assigning <code>NULL</code> into a <code>&lt;list_of&gt;</code> via <code>x[[i]] &lt;- NULL</code> now shortens the list to better align with base R and the existing <code>$&lt;-</code> and <code>[&lt;-</code> methods (<a href="https://github.com/r-lib/vctrs/issues/2112" class="external-link">#2112</a>).</p></li>
+<li><p><code><a href="../reference/list_of.html">as_list_of()</a></code> on an existing <code>&lt;list_of&gt;</code> no longer has a <code>.ptype</code> argument for changing the type on the fly, as this feels incompatible with the new system that allows restricting both the type and size. If you really need this, coerce to a bare list with <code><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list()</a></code> first, then coerce back to a <code>&lt;list_of&gt;</code> using the <code>&lt;list&gt;</code> method of <code><a href="../reference/list_of.html">as_list_of()</a></code>.</p></li>
+<li>
+<p><code><a href="../reference/list_of.html">list_of()</a></code> can now restrict the element size in addition to the element type. For example:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Restricts the element type, but not the size (default behavior)</span></span>
+<span><span class="fu"><a href="../reference/list_of.html">list_of</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">4</span>, .ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, .size <span class="op">=</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">zap</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Restricts the element size, but not the type</span></span>
+<span><span class="fu"><a href="../reference/list_of.html">list_of</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">4</span>, .ptype <span class="op">=</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">zap</a></span><span class="op">(</span><span class="op">)</span>, .size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Restricts the element type and size</span></span>
+<span><span class="fu"><a href="../reference/list_of.html">list_of</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">4</span>, .ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, .size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+</li>
+<li><p><code><a href="../reference/obj_is_list.html">obj_is_list()</a></code> now returns <code>FALSE</code> for list arrays. Functions such as <code><a href="../reference/list_drop_empty.html">list_drop_empty()</a></code> and <code><a href="../reference/list_combine.html">list_combine()</a></code> validate their input using <code><a href="../reference/obj_is_list.html">obj_is_list()</a></code>, but aren’t well defined on list arrays.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> with arrays no longer clones when no casting is required (<a href="https://github.com/r-lib/vctrs/issues/2006" class="external-link">#2006</a>).</p></li>
 <li><p><code><a href="../reference/vec_rank.html">vec_rank()</a></code> now throws an improved error on non-vector types, like <code>NULL</code> (<a href="https://github.com/r-lib/vctrs/issues/1967" class="external-link">#1967</a>).</p></li>
 <li><p><code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> has gained a <code>.finalise</code> argument that defaults to <code>TRUE</code>. Setting this to <code>FALSE</code> lets you opt out of prototype finalisation, which allows <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> to act like <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> and <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>, which don’t finalise. This can be useful in some advanced common type determination cases (<a href="https://github.com/r-lib/vctrs/issues/2100" class="external-link">#2100</a>).</p></li>
@@ -635,23 +649,23 @@
 </li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">vec_cbind</span>(data, <span class="at">packed =</span> data)</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>data</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co"># A tibble: 3 x 3</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>      x y     packed<span class="sc">$</span>x <span class="sc">$</span>y</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">vec_cbind</span>(data, <span class="at">packed =</span> data)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>data</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># A tibble: 3 x 3</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>      x y     packed<span class="sc">$</span>x <span class="sc">$</span>y</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
 <p>Packed data frames are nested in a single column. This makes it possible to access it through a single name:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>data<span class="sc">$</span>packed</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co"># A tibble: 3 x 2</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>      x y</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>data<span class="sc">$</span>packed</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co"># A tibble: 3 x 2</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>      x y</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
 <p>We are planning to use this syntax more widely in the tidyverse.</p>
 </li>
 <li>

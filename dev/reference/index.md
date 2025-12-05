@@ -212,9 +212,7 @@
   [`is_list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md)
   [`vec_ptype2(`*`<vctrs_list_of>`*`)`](https://vctrs.r-lib.org/dev/reference/list_of.md)
   [`vec_cast(`*`<vctrs_list_of>`*`)`](https://vctrs.r-lib.org/dev/reference/list_of.md)
-  :
-
-  `list_of` S3 class for homogenous lists
+  : Construct a list of homogenous vectors
 
 ## Data frame
 

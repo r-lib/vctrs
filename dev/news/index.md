@@ -2,6 +2,34 @@
 
 ## vctrs (development version)
 
+- Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens
+  the list to better align with base R and the existing `$<-` and `[<-`
+  methods ([\#2112](https://github.com/r-lib/vctrs/issues/2112)).
+
+- [`as_list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md) on
+  an existing `<list_of>` no longer has a `.ptype` argument for changing
+  the type on the fly, as this feels incompatible with the new system
+  that allows restricting both the type and size. If you really need
+  this, coerce to a bare list with
+  [`as.list()`](https://rdrr.io/r/base/list.html) first, then coerce
+  back to a `<list_of>` using the `<list>` method of
+  [`as_list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md).
+
+- [`list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md) can
+  now restrict the element size in addition to the element type. For
+  example:
+
+  ``` r
+  # Restricts the element type, but not the size (default behavior)
+  list_of(1:2, 3:4, .ptype = integer(), .size = zap())
+
+  # Restricts the element size, but not the type
+  list_of(1:2, 3:4, .ptype = zap(), .size = 2)
+
+  # Restricts the element type and size
+  list_of(1:2, 3:4, .ptype = integer(), .size = 2)
+  ```
+
 - [`obj_is_list()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md)
   now returns `FALSE` for list arrays. Functions such as
   [`list_drop_empty()`](https://vctrs.r-lib.org/dev/reference/list_drop_empty.md)
