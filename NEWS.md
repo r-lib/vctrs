@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `obj_is_list()` now returns `FALSE` for list arrays. Functions such as `list_drop_empty()` and `list_combine()` validate their input using `obj_is_list()`, but aren't well defined on list arrays.
+
 * `vec_cast()` with arrays no longer clones when no casting is required (#2006).
 
 * `vec_rank()` now throws an improved error on non-vector types, like `NULL` (#1967).

@@ -3,6 +3,7 @@
 
 #include "vctrs-core.h"
 #include "conditions.h"
+#include "dim.h"
 #include "size.h"
 #include "utils-dispatch.h"
 
@@ -130,6 +131,14 @@ static inline
 bool obj_is_list(r_obj* x) {
   // Require `x` to be a list internally
   if (r_typeof(x) != R_TYPE_list) {
+    return false;
+  }
+
+  // List arrays are not lists for vctrs purposes. We have pretty deep
+  // assumptions that if an object is a list, then `r_length(x) == vec_size(x)`.
+  // See `list_drop_empty()` and `list_combine()` for examples of
+  // implementations that would be broken if this wasn't true.
+  if (has_dim(x)) {
     return false;
   }
 

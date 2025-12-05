@@ -38,4 +38,11 @@ test_that("retains list type", {
 test_that("validates `x`", {
   expect_error(list_drop_empty(1), "must be a list")
   expect_error(list_drop_empty(data_frame()), "must be a list")
+
+  # List arrays are not allowed, because we would not iterate over them
+  # correctly
+  expect_snapshot(error = TRUE, {
+    x <- array(list(1), dim = c(1, 1))
+    list_drop_empty(x)
+  })
 })

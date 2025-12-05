@@ -626,6 +626,14 @@
       Error in `list_combine()`:
       ! `x` must be a list, not a <data.frame> object.
 
+---
+
+    Code
+      list_combine(array(list(1)), indices = list(1), size = 1)
+    Condition
+      Error in `list_combine()`:
+      ! `x` must be a list, not a list 1D array.
+
 # `indices` must be a list
 
     Code
