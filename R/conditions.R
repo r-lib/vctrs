@@ -992,6 +992,14 @@ format_arg_label <- function(type, arg = "") {
   }
 }
 
+arg_backtick <- function(arg, or = "Input") {
+  if (nzchar(arg)) {
+    glue::backtick(arg)
+  } else {
+    or
+  }
+}
+
 arg_as_string <- function(arg) {
   if (is_null(arg)) {
     ""
