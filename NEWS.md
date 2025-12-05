@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* New `list_of_transpose()` for transposing a `<list_of>` (#2059).
+
+* New `list_of_ptype()` and `list_of_size()` accessors.
+
 * Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens the list to better align with base R and the existing `$<-` and `[<-` methods (#2112).
 
 * `as_list_of()` on an existing `<list_of>` no longer has a `.ptype` argument for changing the type on the fly, as this feels incompatible with the new system that allows restricting both the type and size. If you really need this, coerce to a bare list with `as.list()` first, then coerce back to a `<list_of>` using the `<list>` method of `as_list_of()`.
