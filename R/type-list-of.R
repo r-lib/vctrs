@@ -191,11 +191,48 @@ list_of_unstructure <- function(x) {
   x
 }
 
+#' `list_of` attributes
+#'
+#' @description
+#' - `list_of_ptype()` returns the `ptype` required by the `list_of`.
+#'   If no `ptype` is required, then `NULL` is returned.
+#'
+#' - `list_of_size()` returns the `size` required by the `list_of`.
+#'   If no `size` is required, then `NULL` is returned.
+#'
+#' @param x A [list_of][list_of()].
+#'
+#' @name list-of-attributes
+#'
+#' @examples
+#' x <- list_of(1, 2)
+#' list_of_ptype(x)
+#' list_of_size(x)
+#'
+#' x <- list_of(.ptype = integer(), .size = 5)
+#' list_of_ptype(x)
+#' list_of_size(x)
+NULL
+
+#' @rdname list-of-attributes
+#' @export
 list_of_ptype <- function(x) {
+  check_list_of(x)
+  list_of_ptype0(x)
+}
+
+#' @rdname list-of-attributes
+#' @export
+list_of_size <- function(x) {
+  check_list_of(x)
+  list_of_size0(x)
+}
+
+list_of_ptype0 <- function(x) {
   attr(x, "ptype", exact = TRUE)
 }
 
-list_of_size <- function(x) {
+list_of_size0 <- function(x) {
   attr(x, "size", exact = TRUE)
 }
 
@@ -242,14 +279,14 @@ format.vctrs_list_of <- function(x, ...) {
 
 #' @export
 vec_ptype_full.vctrs_list_of <- function(x, ...) {
-  size <- list_of_size(x)
+  size <- list_of_size0(x)
   if (is_null(size)) {
     size <- ""
   } else {
     size <- paste0("[", size, "]")
   }
 
-  ptype <- list_of_ptype(x)
+  ptype <- list_of_ptype0(x)
   if (is_null(ptype)) {
     ptype <- "any"
   } else {
@@ -267,14 +304,14 @@ vec_ptype_full.vctrs_list_of <- function(x, ...) {
 
 #' @export
 vec_ptype_abbr.vctrs_list_of <- function(x, ...) {
-  size <- list_of_size(x)
+  size <- list_of_size0(x)
   if (is_null(size)) {
     size <- ""
   } else {
     size <- paste0("[", size, "]")
   }
 
-  ptype <- list_of_ptype(x)
+  ptype <- list_of_ptype0(x)
   if (is_null(ptype)) {
     ptype <- "any"
   } else {
@@ -326,12 +363,12 @@ as.character.vctrs_list_of <- function(x, ...) {
     value <- vec_chop(value)
   }
 
-  ptype <- list_of_ptype(x)
+  ptype <- list_of_ptype0(x)
   if (!is_null(ptype)) {
     value <- map(value, vec_cast, to = ptype)
   }
 
-  size <- list_of_size(x)
+  size <- list_of_size0(x)
   if (!is_null(size)) {
     value <- map(value, vec_recycle, size = size)
   }
@@ -347,12 +384,12 @@ as.character.vctrs_list_of <- function(x, ...) {
     return(NextMethod())
   }
 
-  ptype <- list_of_ptype(x)
+  ptype <- list_of_ptype0(x)
   if (!is_null(ptype)) {
     value <- vec_cast(value, ptype)
   }
 
-  size <- list_of_size(x)
+  size <- list_of_size0(x)
   if (!is_null(size)) {
     value <- vec_recycle(value, size)
   }
@@ -366,12 +403,12 @@ as.character.vctrs_list_of <- function(x, ...) {
     return(NextMethod())
   }
 
-  ptype <- list_of_ptype(x)
+  ptype <- list_of_ptype0(x)
   if (!is_null(ptype)) {
     value <- vec_cast(value, ptype)
   }
 
-  size <- list_of_size(x)
+  size <- list_of_size0(x)
   if (!is_null(size)) {
     value <- vec_recycle(value, size)
   }
@@ -399,11 +436,11 @@ vec_ptype2.vctrs_list_of.vctrs_list_of <- function(
   x_arg = "",
   y_arg = ""
 ) {
-  x_ptype <- list_of_ptype(x)
-  y_ptype <- list_of_ptype(y)
+  x_ptype <- list_of_ptype0(x)
+  y_ptype <- list_of_ptype0(y)
 
-  x_size <- list_of_size(x)
-  y_size <- list_of_size(y)
+  x_size <- list_of_size0(x)
+  y_size <- list_of_size0(y)
 
   if (identical(x_ptype, y_ptype) && identical(x_size, y_size)) {
     return(x)
@@ -476,11 +513,11 @@ vec_cast.vctrs_list_of.vctrs_list_of <- function(
   ...,
   call = caller_env()
 ) {
-  x_ptype <- list_of_ptype(x)
-  to_ptype <- list_of_ptype(to)
+  x_ptype <- list_of_ptype0(x)
+  to_ptype <- list_of_ptype0(to)
 
-  x_size <- list_of_size(x)
-  to_size <- list_of_size(to)
+  x_size <- list_of_size0(x)
+  to_size <- list_of_size0(to)
 
   if (identical(x_ptype, to_ptype) && identical(x_size, to_size)) {
     # FIXME: Suboptimal check for "same type", but should be good enough for the
@@ -508,8 +545,8 @@ vec_cast.list.vctrs_list_of <- function(x, to, ...) {
 }
 #' @export
 vec_cast.vctrs_list_of.list <- function(x, to, ..., call = caller_env()) {
-  ptype <- list_of_ptype(to) %||% zap()
-  size <- list_of_size(to) %||% zap()
+  ptype <- list_of_ptype0(to) %||% zap()
+  size <- list_of_size0(to) %||% zap()
   list_as_list_of(x, ptype = ptype, size = size, error_call = call)
 }
 

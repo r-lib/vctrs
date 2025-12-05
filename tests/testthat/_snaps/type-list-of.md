@@ -113,6 +113,22 @@
       Error in `as_list_of()`:
       ! Can't find common size for elements of `x`.
 
+# `list_of_size()` validates `x`
+
+    Code
+      list_of_size(list(1))
+    Condition
+      Error in `list_of_size()`:
+      ! `x` must be a `<list_of>`, not a list.
+
+# `list_of_ptype()` validates `x`
+
+    Code
+      list_of_ptype(list(1))
+    Condition
+      Error in `list_of_ptype()`:
+      ! `x` must be a `<list_of>`, not a list.
+
 # can print empty list-of
 
     Code

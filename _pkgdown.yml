@@ -111,6 +111,7 @@ reference:
 - title: New classes
   contents:
   - list_of
+  - list_of_ptype
 
 - title: Data frame
   contents:
