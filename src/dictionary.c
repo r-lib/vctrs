@@ -401,7 +401,10 @@ SEXP vec_match_params(SEXP needles,
                                 needles_arg, haystack_arg,
                                 call,
                                 &_);
+
   PROTECT_N(type, &nprot);
+
+  type = vec_ptype_finalise(type);
 
   needles = vec_cast_params(needles, type,
                             needles_arg, vec_args.empty,
@@ -569,6 +572,8 @@ SEXP vec_in(
     &_
   );
   PROTECT_N(type, &nprot);
+
+  type = vec_ptype_finalise(type);
 
   needles = vec_cast_params(
     needles,
