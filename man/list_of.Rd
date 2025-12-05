@@ -6,9 +6,9 @@
 \alias{is_list_of}
 \alias{vec_ptype2.vctrs_list_of}
 \alias{vec_cast.vctrs_list_of}
-\title{\code{list_of} S3 class for homogenous lists}
+\title{Construct a list of homogenous vectors}
 \usage{
-list_of(..., .ptype = NULL)
+list_of(..., .ptype = NULL, .size = zap())
 
 as_list_of(x, ...)
 
@@ -19,16 +19,29 @@ is_list_of(x)
 \method{vec_cast}{vctrs_list_of}(x, to, ...)
 }
 \arguments{
-\item{...}{Vectors to coerce.}
+\item{...}{For \code{list_of()}, vectors to include in the list.
 
-\item{.ptype}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all elements of \code{...}.
+For other methods, these dots must be empty.}
 
-Alternatively, you can supply \code{.ptype} to give the output known type.
-If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
-this is a convenient way to make production code demand fixed types.}
+\item{.ptype}{The type to restrict each list element to. One of:
+\itemize{
+\item A prototype like \code{integer()} or \code{double()}.
+\item \code{NULL}, to infer the type from \code{...}. If no vector inputs are provided,
+an error is thrown.
+\item \code{\link[rlang:zap]{rlang::zap()}} to avoid placing any restrictions on the type.
+}}
 
-\item{x}{For \code{as_list_of()}, a vector to be coerced to list_of.}
+\item{.size}{The size to restrict each list element to. One of:
+\itemize{
+\item A scalar integer size.
+\item \code{NULL}, to infer the size from \code{...}. If no vector inputs are provided,
+an error is thrown.
+\item \code{\link[rlang:zap]{rlang::zap()}} to avoid placing any restrictions on the size.
+}}
+
+\item{x}{For \code{as_list_of()}, a vector to be coerced to list_of.
+
+For \code{is_list_of()}, an object to test.}
 
 \item{y, to}{Arguments to \code{vec_ptype2()} and \code{vec_cast()}.}
 
@@ -37,19 +50,85 @@ in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \description{
-A \code{list_of} object is a list where each element has the same type.
-Modifying the list with \code{$}, \code{[}, and \code{[[} preserves the constraint
-by coercing all input items.
+A \code{list_of} is a restricted version of a list that adds constraints on the
+list elements.
+\itemize{
+\item \code{list_of(.ptype = )} restricts the \emph{type} of each element.
+\itemize{
+\item \verb{.ptype = <type>} asserts that each element has type \verb{<type>}.
+\item \code{.ptype = NULL} infers the type from the original set of elements, or
+errors if no vector inputs were provided.
+\item \code{.ptype = rlang::zap()} doesn't restrict the type.
 }
-\details{
-Unlike regular lists, setting a list element to \code{NULL} using \code{[[}
-does not remove it.
+\item \code{list_of(.size = )} restricts the \emph{size} of each element.
+\itemize{
+\item \verb{.size = <size>} asserts that each element has size \verb{<size>}.
+\item \code{.size = NULL} infers the size from the original set of elements, or
+errors if no vector inputs were provided.
+\item \code{.size = rlang::zap()} doesn't restrict the size.
+}
+}
+
+The default behavior infers the element type and doesn't restrict the size.
+
+Both \code{.ptype} and \code{.size} may be specified to restrict both the size and
+type of the list elements. You cannot set both of these to \code{rlang::zap()},
+as that would be the same as a bare \code{list()} with no restrictions.
+
+Modifying a \code{list_of} with \verb{$<-}, \verb{[<-}, and \verb{[[<-} preserves the constraints
+by coercing and recycling all input items.
 }
 \examples{
+# Restrict the type, but not the size
 x <- list_of(1:3, 5:6, 10:15)
+x
+
 if (requireNamespace("tibble", quietly = TRUE)) {
+  # As a column in a tibble
   tibble::tibble(x = x)
 }
 
-vec_c(list_of(1, 2), list_of(FALSE, TRUE))
+# Coercion happens during assignment
+x[1] <- list(4)
+typeof(x[[1]])
+
+try(x[1] <- list(4.5))
+
+# Restrict the size, but not the type
+x <- list_of(1, 2:3, .ptype = rlang::zap(), .size = 2)
+x
+
+# Recycling happens during assignment
+x[1] <- list(4)
+x
+
+try(x[1] <- list(3:6))
+
+# Restricting both size and type
+x <- list_of(1L, 2:3, .ptype = integer(), .size = 2)
+x
+
+# Setting an element to `NULL`
+x[2] <- list(NULL)
+x
+
+# Note that using `NULL` shortens the list, like a base R list
+x[2] <- NULL
+x
+
+# Combining a list_of with a list results in a list
+vec_c(list_of(1), list(2, "x"))
+
+# Combining a list_of with another list_of tries to find a common element
+# type and common element size, but will remove the constraint if that
+# fails
+x <- list_of(1, .ptype = double())
+y <- list_of(c("a", "b"), .ptype = character(), .size = 2)
+z <- list_of(c("c", "d", "e"), .ptype = character(), .size = 3)
+
+# Falls back to a list
+vec_c(x, y)
+
+# Falls back to a `list_of<character>` with no size restriction
+vec_c(y, z)
 }

@@ -1,5 +1,22 @@
 # vctrs (development version)
 
+* Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens the list to better align with base R and the existing `$<-` and `[<-` methods (#2112).
+
+* `as_list_of()` on an existing `<list_of>` no longer has a `.ptype` argument for changing the type on the fly, as this feels incompatible with the new system that allows restricting both the type and size. If you really need this, coerce to a bare list with `as.list()` first, then coerce back to a `<list_of>` using the `<list>` method of `as_list_of()`.
+
+* `list_of()` can now restrict the element size in addition to the element type. For example:
+
+  ``` r
+  # Restricts the element type, but not the size (default behavior)
+  list_of(1:2, 3:4, .ptype = integer(), .size = zap())
+
+  # Restricts the element size, but not the type
+  list_of(1:2, 3:4, .ptype = zap(), .size = 2)
+
+  # Restricts the element type and size
+  list_of(1:2, 3:4, .ptype = integer(), .size = 2)
+  ```
+
 * `obj_is_list()` now returns `FALSE` for list arrays. Functions such as `list_drop_empty()` and `list_combine()` validate their input using `obj_is_list()`, but aren't well defined on list arrays.
 
 * `vec_cast()` with arrays no longer clones when no casting is required (#2006).
