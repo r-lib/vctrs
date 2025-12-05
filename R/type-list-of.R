@@ -90,6 +90,14 @@
 #' x <- list_of(1L, 2:3, .ptype = integer(), .size = 2)
 #' x
 #'
+#' # Setting an element to `NULL`
+#' x[2] <- list(NULL)
+#' x
+#'
+#' # Note that using `NULL` shortens the list, like a base R list
+#' x[2] <- NULL
+#' x
+#'
 #' # Combining a list_of with a list results in a list
 #' vec_c(list_of(1), list(2, "x"))
 #'
@@ -284,6 +292,7 @@ vec_ptype_abbr.vctrs_list_of <- function(x, ...) {
 as.list.vctrs_list_of <- function(x, ...) {
   list_of_unstructure(x)
 }
+
 #' @export
 as.character.vctrs_list_of <- function(x, ...) {
   # For compatibility with the RStudio Viewer. See tidyverse/tidyr#654.
