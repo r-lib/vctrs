@@ -2,6 +2,15 @@
 
 ## vctrs (development version)
 
+- [`obj_is_list()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md)
+  now returns `FALSE` for list arrays. Functions such as
+  [`list_drop_empty()`](https://vctrs.r-lib.org/dev/reference/list_drop_empty.md)
+  and
+  [`list_combine()`](https://vctrs.r-lib.org/dev/reference/list_combine.md)
+  validate their input using
+  [`obj_is_list()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
+  but aren’t well defined on list arrays.
+
 - [`vec_cast()`](https://vctrs.r-lib.org/dev/reference/vec_cast.md) with
   arrays no longer clones when no casting is required
   ([\#2006](https://github.com/r-lib/vctrs/issues/2006)).
