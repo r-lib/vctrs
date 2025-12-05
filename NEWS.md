@@ -1,6 +1,6 @@
 # vctrs (development version)
 
-* New `list_transpose()` for transposing a list of vectors (#2059).
+* New `list_of_transpose()` for transposing a `<list_of>` (#2059).
 
 * New `list_of_ptype()` and `list_of_size()` accessors.
 
