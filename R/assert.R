@@ -107,12 +107,7 @@ vec_assert <- function(
 
 # Also thrown from C
 stop_assert_size <- function(actual, required, arg, call = caller_env()) {
-  if (!nzchar(arg)) {
-    arg <- "Input"
-  } else {
-    arg <- glue::backtick(arg)
-  }
-
+  arg <- arg_backtick(arg)
   message <- glue::glue("{arg} must have size {required}, not size {actual}.")
 
   stop_assert(
@@ -475,11 +470,7 @@ list_check_all_recyclable <- function(
 
 # Called from C
 stop_non_list_type <- function(x, arg, call) {
-  if (nzchar(arg)) {
-    arg <- cli::format_inline("{.arg {arg}}")
-  } else {
-    arg <- "Input"
-  }
+  arg <- arg_backtick(arg)
 
   cli::cli_abort(
     "{arg} must be a list, not {obj_type_friendly(x)}.",

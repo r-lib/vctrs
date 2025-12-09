@@ -185,6 +185,40 @@ test_that("as_list_of on list_of is a no-op", {
 })
 
 # ------------------------------------------------------------------------------
+# list_of_size
+
+test_that("`list_of_size()` returns the `size`", {
+  x <- list_of(1:2, .size = 2, .ptype = zap())
+  expect_identical(list_of_size(x), 2L)
+
+  x <- list_of(1:2, .size = zap(), .ptype = integer())
+  expect_null(list_of_size(x))
+})
+
+test_that("`list_of_size()` validates `x`", {
+  expect_snapshot(error = TRUE, {
+    list_of_size(list(1))
+  })
+})
+
+# ------------------------------------------------------------------------------
+# list_of_ptype
+
+test_that("`list_of_ptype()` returns the `size`", {
+  x <- list_of(1:2, .ptype = integer(), .size = zap())
+  expect_identical(list_of_ptype(x), integer())
+
+  x <- list_of(1:2, .ptype = zap(), .size = 2L)
+  expect_null(list_of_ptype(x))
+})
+
+test_that("`list_of_ptype()` validates `x`", {
+  expect_snapshot(error = TRUE, {
+    list_of_ptype(list(1))
+  })
+})
+
+# ------------------------------------------------------------------------------
 # as.list()
 
 test_that("can convert to base list", {

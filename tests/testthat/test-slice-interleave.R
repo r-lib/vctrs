@@ -79,7 +79,7 @@ test_that("recycles inputs", {
 
 test_that("works with no inputs", {
   # Purposefully returns `unspecified()`, which is the more useful result
-  # for generic programming against this, like in `list_transpose()`
+  # for generic programming against this
   expect_identical(vec_interleave(), unspecified())
   expect_identical(vec_interleave(NULL), unspecified())
 

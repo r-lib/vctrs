@@ -110,6 +110,8 @@ reference:
 - title: New classes
   contents:
   - list_of
+  - list_of_ptype
+  - list_of_transpose
 
 - title: Data frame
   contents:
