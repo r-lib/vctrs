@@ -25,18 +25,6 @@
 #'
 #' @param x A [list_of][list_of()] with both `size` and `ptype` specified.
 #'
-#' @param null A value to replace `NULL` elements with before transposing.
-#'
-#'   If left unspecified, any `NULL` elements in `x` result in an error.
-#'
-#'   If specified:
-#'
-#'   - Will be [recycled][theory-faq-recycling] to
-#'     [`list_of_size(x)`][list_of_size()] before transposing.
-#'
-#'   - Will be [cast][theory-faq-coercion] to
-#'     [`list_of_ptype(x)`][list_of_ptype()] before transposing.
-#'
 #' @param x_arg Argument name used in error messages.
 #'
 #' @returns
@@ -69,10 +57,17 @@
 #' x <- list_of2(1:3, NULL, 5:7, NULL)
 #' try(list_of_transpose(x))
 #'
-#' # Replace them with `null`, which will be recycled to the element size,
-#' # and cast to the element type
-#' list_of_transpose(x, null = NA)
-#' list_of_transpose(x, null = -(1:3))
+#' # Either drop them entirely or replace them up front before transposing
+#'
+#' x_dropped <- vec_slice(x, !vec_detect_missing(x))
+#' x_dropped
+#'
+#' list_of_transpose(x_dropped)
+#'
+#' x_replaced <- vec_assign(x, vec_detect_missing(x), list(NA))
+#' x_replaced
+#'
+#' list_of_transpose(x_replaced)
 #'
 #' # ---------------------------------------------------------------------------
 #' # Reversibility
@@ -119,13 +114,21 @@
 list_of_transpose <- function(
   x,
   ...,
-  null = NULL,
   x_arg = caller_arg(x),
   error_call = current_env()
 ) {
   check_dots_empty0(...)
 
   check_list_of(x, arg = x_arg, call = error_call)
+
+  if (vec_any_missing(x)) {
+    abort(
+      cli::format_inline(
+        "{arg_backtick(x_arg)} can't contain `NULL` values."
+      ),
+      call = error_call
+    )
+  }
 
   size <- list_of_size0(x)
   ptype <- list_of_ptype0(x)
@@ -153,50 +156,12 @@ list_of_transpose <- function(
     )
   }
 
-  x_data <- vec_data(x)
-
-  if (is_null(null)) {
-    if (vec_any_missing(x_data)) {
-      abort(
-        c(
-          cli::format_inline(
-            "{arg_backtick(x_arg)} can't contain `NULL` values."
-          ),
-          i = "Specify `null` to replace them."
-        ),
-        call = error_call
-      )
-    }
-  } else {
-    # Always perform `null` checks
-    obj_check_vector(null, arg = "null", call = error_call)
-
-    null <- vec_cast(
-      x = null,
-      to = ptype,
-      x_arg = "null",
-      to_arg = "",
-      call = error_call
-    )
-
-    vec_check_recyclable(
-      x = null,
-      size = size,
-      arg = "null",
-      call = error_call
-    )
-
-    if (vec_any_missing(x_data)) {
-      null <- list(null)
-      x_data <- vec_assign(x_data, vec_detect_missing(x_data), null)
-    }
-  }
-
-  x_size <- vec_size(x_data)
+  x_size <- vec_size(x)
   sizes <- vec_rep(x_size, times = size)
 
+  # Flatten pieces into one big vector
   out <- list_interleave(
-    x_data,
+    x,
     size = size,
     ptype = ptype,
     name_spec = "inner",

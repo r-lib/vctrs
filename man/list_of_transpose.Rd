@@ -4,30 +4,12 @@
 \alias{list_of_transpose}
 \title{Transpose a list of homogenous vectors}
 \usage{
-list_of_transpose(
-  x,
-  ...,
-  null = NULL,
-  x_arg = caller_arg(x),
-  error_call = current_env()
-)
+list_of_transpose(x, ..., x_arg = caller_arg(x), error_call = current_env())
 }
 \arguments{
 \item{x}{A \link[=list_of]{list_of} with both \code{size} and \code{ptype} specified.}
 
 \item{...}{These dots are for future extensions and must be empty.}
-
-\item{null}{A value to replace \code{NULL} elements with before transposing.
-
-If left unspecified, any \code{NULL} elements in \code{x} result in an error.
-
-If specified:
-\itemize{
-\item Will be \link[=theory-faq-recycling]{recycled} to
-\code{\link[=list_of_size]{list_of_size(x)}} before transposing.
-\item Will be \link[=theory-faq-coercion]{cast} to
-\code{\link[=list_of_ptype]{list_of_ptype(x)}} before transposing.
-}}
 
 \item{x_arg}{Argument name used in error messages.}
 
@@ -85,10 +67,17 @@ list_of_transpose(list_of2(1, 2:3, 4))
 x <- list_of2(1:3, NULL, 5:7, NULL)
 try(list_of_transpose(x))
 
-# Replace them with `null`, which will be recycled to the element size,
-# and cast to the element type
-list_of_transpose(x, null = NA)
-list_of_transpose(x, null = -(1:3))
+# Either drop them entirely or replace them up front before transposing
+
+x_dropped <- vec_slice(x, !vec_detect_missing(x))
+x_dropped
+
+list_of_transpose(x_dropped)
+
+x_replaced <- vec_assign(x, vec_detect_missing(x), list(NA))
+x_replaced
+
+list_of_transpose(x_replaced)
 
 # ---------------------------------------------------------------------------
 # Reversibility

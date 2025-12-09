@@ -94,7 +94,9 @@ test_that("`...` must be empty", {
 
 test_that("doesn't allow `NULL` elements", {
   # These would break the invariants around the size of the output relative
-  # to the size of the input if we just dropped them
+  # to the size of the input if we just dropped them. We require that the user
+  # drop them entirely or replace them up front. The `[<-` method for list-of
+  # ensures that the type and size is maintained for whatever they replace with.
   expect_snapshot(error = TRUE, {
     list_of_transpose(list_of2(1:4, NULL, 5:8))
   })
@@ -102,85 +104,14 @@ test_that("doesn't allow `NULL` elements", {
 
 test_that("`x` being a list subclass can't affect the transposition", {
   x <- new_list_of(
-    list(1, NULL, 2),
+    list(1, 2),
     ptype = double(),
     size = 1L,
     class = "my_list"
   )
 
-  null <- 0
-
-  # Note how this is an error. We perform a cast like this internally.
-  expect_snapshot(error = TRUE, {
-    vec_cast(list(null), to = x)
-  })
-
-  # But we unclass `x` first, so it won't matter
   expect_identical(
-    list_of_transpose(x, null = null),
-    list_of2(c(1, 0, 2))
+    list_of_transpose(x),
+    list_of2(c(1, 2))
   )
-})
-
-test_that("`null` replaces `NULL` elements", {
-  x <- list_of2(1:2, NULL, 3:4, NULL)
-
-  expect_identical(
-    list_of_transpose(x, null = 0L),
-    list_of2(
-      int(1, 0, 3, 0),
-      int(2, 0, 4, 0)
-    )
-  )
-})
-
-test_that("`null` must be a vector", {
-  x <- list_of2(1, NULL)
-  expect_snapshot(error = TRUE, {
-    list_of_transpose(x, null = lm(1 ~ 1))
-  })
-
-  # Even when not used
-  x <- list_of2(1, 2)
-  expect_snapshot(error = TRUE, {
-    list_of_transpose(x, null = lm(1 ~ 1))
-  })
-})
-
-test_that("`null` is cast to the element type", {
-  x <- list_of2(1L, NULL)
-  expect_identical(
-    list_of_transpose(x, null = 0),
-    list_of2(c(1L, 0L))
-  )
-  expect_snapshot(error = TRUE, {
-    list_of_transpose(x, null = "x")
-  })
-
-  # Even when not used
-  x <- list_of2(1L, 2L)
-  expect_identical(
-    list_of_transpose(x, null = 0),
-    list_of2(c(1L, 2L))
-  )
-  expect_snapshot(error = TRUE, {
-    list_of_transpose(x, null = "x")
-  })
-})
-
-test_that("`null` is recycled to the element size", {
-  x <- list_of2(1:2, NULL, 5:6)
-  expect_identical(
-    list_of_transpose(x, null = NA),
-    list_of2(c(1L, NA, 5L), c(2L, NA, 6L))
-  )
-
-  x <- list_of2(1:2, NULL, 5:6)
-  expect_identical(
-    list_of_transpose(x, null = 3:4),
-    list_of2(c(1L, 3L, 5L), c(2L, 4L, 6L))
-  )
-  expect_snapshot(error = TRUE, {
-    list_of_transpose(x, null = 7:9)
-  })
 })
