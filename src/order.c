@@ -14,6 +14,8 @@
 #include "type-data-frame.h"
 #include "type-complex.h"
 
+#include "decl/order-decl.h"
+
 // -----------------------------------------------------------------------------
 
 /*
