@@ -1699,51 +1699,6 @@ test_that("`chr_proxy_collate` can result in keys being seen as identical", {
 })
 
 # ------------------------------------------------------------------------------
-# `vec_order_info(chr_ordered = FALSE)`
-
-test_that("can order character vectors in appearance order", {
-  x <- c("b", "a", "B", "B", "a")
-  info <- vec_order_info(x, chr_ordered = FALSE)
-
-  expect_identical(info[[1]], c(1L, 2L, 5L, 3L, 4L))
-  expect_identical(info[[2]], c(1L, 2L, 2L))
-  expect_identical(info[[3]], 2L)
-})
-
-test_that("using appearance order means `direction` has no effect", {
-  x <- c("b", "a", "B", "B", "a")
-
-  info1 <- vec_order_info(x, direction = "asc", chr_ordered = FALSE)
-  info2 <- vec_order_info(x, direction = "desc", chr_ordered = FALSE)
-
-  expect_identical(info1[[1]], info2[[1]])
-  expect_identical(info1[[2]], info2[[2]])
-  expect_identical(info1[[3]], info2[[3]])
-})
-
-test_that("appearance order works with NA - `na_value` has no effect", {
-  x <- c(NA, "foo", NA, "bar")
-  info <- vec_order_info(x, chr_ordered = FALSE)
-
-  expect_identical(info[[1]], c(1L, 3L, 2L, 4L))
-  expect_identical(info[[2]], c(2L, 1L, 1L))
-  expect_identical(info[[3]], 2L)
-})
-
-test_that("appearance order can be mixed with regular ordering", {
-  x <- c("b", "a", "B", "B", "a", "a")
-  y <- c(1, 2, 3, 4, 1, 2)
-  df <- data_frame(x = x, y = y)
-
-  # `y` breaks ties
-  info <- vec_order_info(df, chr_ordered = FALSE)
-
-  expect_identical(info[[1]], c(1L, 5L, 2L, 6L, 3L, 4L))
-  expect_identical(info[[2]], c(1L, 1L, 2L, 1L, 1L))
-  expect_identical(info[[3]], 2L)
-})
-
-# ------------------------------------------------------------------------------
 # `vec_order_info(nan_distinct = FALSE)`
 
 test_that("Indistinct NA and NaN are reported in the same group", {

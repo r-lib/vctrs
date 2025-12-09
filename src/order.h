@@ -27,8 +27,7 @@ SEXP vec_order_info(SEXP x,
                     SEXP direction,
                     SEXP na_value,
                     bool nan_distinct,
-                    SEXP chr_proxy_collate,
-                    bool chr_ordered);
+                    SEXP chr_proxy_collate);
 
 // -----------------------------------------------------------------------------
 
