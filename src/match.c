@@ -2262,8 +2262,7 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
     chrs_asc,
     chrs_smallest,
     true,
-    r_null,
-    true
+    r_null
   ), &n_prot);
 
   r_obj* o_haystack = r_list_get(info, 0);
@@ -2324,8 +2323,7 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
       chrs_asc,
       chrs_smallest,
       true,
-      r_null,
-      true
+      r_null
     );
     r_obj* outer_group_sizes = KEEP_N(r_list_get(info, 1), &n_prot);
     v_outer_group_sizes = r_int_cbegin(outer_group_sizes);

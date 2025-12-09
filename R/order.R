@@ -250,8 +250,7 @@ vec_order_info <- function(
   direction = "asc",
   na_value = "largest",
   nan_distinct = FALSE,
-  chr_proxy_collate = NULL,
-  chr_ordered = TRUE
+  chr_proxy_collate = NULL
 ) {
   check_dots_empty0(...)
   .Call(
@@ -260,8 +259,7 @@ vec_order_info <- function(
     direction,
     na_value,
     nan_distinct,
-    chr_proxy_collate,
-    chr_ordered
+    chr_proxy_collate
   )
 }
 
