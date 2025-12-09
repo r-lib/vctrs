@@ -180,21 +180,25 @@
 // -----------------------------------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_order(SEXP x,
-                 SEXP direction,
-                 SEXP na_value,
-                 SEXP nan_distinct,
-                 SEXP chr_proxy_collate) {
+SEXP vctrs_order(
+  SEXP x,
+  SEXP direction,
+  SEXP na_value,
+  SEXP nan_distinct,
+  SEXP chr_proxy_collate
+) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
   return vec_order(x, direction, na_value, c_nan_distinct, chr_proxy_collate);
 }
 
 // [[ include("order.h") ]]
-SEXP vec_order(SEXP x,
-               SEXP direction,
-               SEXP na_value,
-               bool nan_distinct,
-               SEXP chr_proxy_collate) {
+SEXP vec_order(
+  SEXP x,
+  SEXP direction,
+  SEXP na_value,
+  bool nan_distinct,
+  SEXP chr_proxy_collate
+) {
   const bool group_sizes = false;
   SEXP info = vec_order_info_impl(x, direction, na_value, nan_distinct, chr_proxy_collate, group_sizes);
   return r_list_get(info, 0);
@@ -203,11 +207,13 @@ SEXP vec_order(SEXP x,
 // -----------------------------------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_locate_sorted_groups(SEXP x,
-                                SEXP direction,
-                                SEXP na_value,
-                                SEXP nan_distinct,
-                                SEXP chr_proxy_collate) {
+SEXP vctrs_locate_sorted_groups(
+  SEXP x,
+  SEXP direction,
+  SEXP na_value,
+  SEXP nan_distinct,
+  SEXP chr_proxy_collate
+) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
 
   return vec_locate_sorted_groups(
@@ -220,11 +226,13 @@ SEXP vctrs_locate_sorted_groups(SEXP x,
 }
 
 static
-SEXP vec_locate_sorted_groups(SEXP x,
-                              SEXP direction,
-                              SEXP na_value,
-                              bool nan_distinct,
-                              SEXP chr_proxy_collate) {
+SEXP vec_locate_sorted_groups(
+  SEXP x,
+  SEXP direction,
+  SEXP na_value,
+  bool nan_distinct,
+  SEXP chr_proxy_collate
+) {
   SEXP info = KEEP(vec_order_info(
     x,
     direction,
@@ -295,32 +303,38 @@ SEXP vec_locate_sorted_groups(SEXP x,
  * - The third element of the list contains the max group size as an integer.
  */
 // [[ include("order.h") ]]
-SEXP vec_order_info(SEXP x,
-                    SEXP direction,
-                    SEXP na_value,
-                    bool nan_distinct,
-                    SEXP chr_proxy_collate) {
+SEXP vec_order_info(
+  SEXP x,
+  SEXP direction,
+  SEXP na_value,
+  bool nan_distinct,
+  SEXP chr_proxy_collate
+) {
   const bool group_sizes = true;
   return vec_order_info_impl(x, direction, na_value, nan_distinct, chr_proxy_collate, group_sizes);
 }
 
 // [[ register() ]]
-SEXP vctrs_order_info(SEXP x,
-                      SEXP direction,
-                      SEXP na_value,
-                      SEXP nan_distinct,
-                      SEXP chr_proxy_collate) {
+SEXP vctrs_order_info(
+  SEXP x,
+  SEXP direction,
+  SEXP na_value,
+  SEXP nan_distinct,
+  SEXP chr_proxy_collate
+) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
   return vec_order_info(x, direction, na_value, c_nan_distinct, chr_proxy_collate);
 }
 
 static
-SEXP vec_order_info_impl(SEXP x,
-                         SEXP direction,
-                         SEXP na_value,
-                         bool nan_distinct,
-                         SEXP chr_proxy_collate,
-                         bool group_sizes) {
+SEXP vec_order_info_impl(
+  SEXP x,
+  SEXP direction,
+  SEXP na_value,
+  bool nan_distinct,
+  SEXP chr_proxy_collate,
+  bool group_sizes
+) {
   // TODO call
   struct r_lazy call = r_lazy_null;
 
@@ -439,20 +453,22 @@ SEXP vec_order_info_impl(SEXP x,
 // -----------------------------------------------------------------------------
 
 static
-void vec_order_switch(SEXP x,
-                      SEXP decreasing,
-                      SEXP na_last,
-                      bool nan_distinct,
-                      r_ssize size,
-                      const enum vctrs_type type,
-                      struct order* p_order,
-                      struct lazy_raw* p_lazy_x_chunk,
-                      struct lazy_raw* p_lazy_x_aux,
-                      struct lazy_raw* p_lazy_o_aux,
-                      struct lazy_raw* p_lazy_bytes,
-                      struct lazy_raw* p_lazy_counts,
-                      struct group_infos* p_group_infos,
-                      struct truelength_info* p_truelength_info) {
+void vec_order_switch(
+  SEXP x,
+  SEXP decreasing,
+  SEXP na_last,
+  bool nan_distinct,
+  r_ssize size,
+  const enum vctrs_type type,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos,
+  struct truelength_info* p_truelength_info
+) {
   if (type == VCTRS_TYPE_dataframe) {
     df_order(
       x,
@@ -514,20 +530,22 @@ void vec_order_switch(SEXP x,
 
 // Used on bare vectors and the first column of data frame `x`s
 static
-void vec_order_base_switch(SEXP x,
-                           bool decreasing,
-                           bool na_last,
-                           bool nan_distinct,
-                           r_ssize size,
-                           const enum vctrs_type type,
-                           struct order* p_order,
-                           struct lazy_raw* p_lazy_x_chunk,
-                           struct lazy_raw* p_lazy_x_aux,
-                           struct lazy_raw* p_lazy_o_aux,
-                           struct lazy_raw* p_lazy_bytes,
-                           struct lazy_raw* p_lazy_counts,
-                           struct group_infos* p_group_infos,
-                           struct truelength_info* p_truelength_info) {
+void vec_order_base_switch(
+  SEXP x,
+  bool decreasing,
+  bool na_last,
+  bool nan_distinct,
+  r_ssize size,
+  const enum vctrs_type type,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos,
+  struct truelength_info* p_truelength_info
+) {
   switch (type) {
   case VCTRS_TYPE_integer: {
     int_order(
@@ -643,16 +661,18 @@ void vec_order_base_switch(SEXP x,
  * counting sort is going to be used, in which case `p_x` can be used directly.
  */
 static
-void int_order_chunk(bool decreasing,
-                     bool na_last,
-                     r_ssize size,
-                     int* p_o,
-                     struct lazy_raw* p_lazy_x_chunk,
-                     struct lazy_raw* p_lazy_x_aux,
-                     struct lazy_raw* p_lazy_o_aux,
-                     struct lazy_raw* p_lazy_bytes,
-                     struct lazy_raw* p_lazy_counts,
-                     struct group_infos* p_group_infos) {
+void int_order_chunk(
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  int* p_o,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   void* p_x_chunk = p_lazy_x_chunk->p_data;
 
   const enum vctrs_sortedness sortedness = int_sortedness(
@@ -683,17 +703,19 @@ void int_order_chunk(bool decreasing,
 }
 
 static
-void int_order(SEXP x,
-               bool decreasing,
-               bool na_last,
-               r_ssize size,
-               struct order* p_order,
-               struct lazy_raw* p_lazy_x_chunk,
-               struct lazy_raw* p_lazy_x_aux,
-               struct lazy_raw* p_lazy_o_aux,
-               struct lazy_raw* p_lazy_bytes,
-               struct lazy_raw* p_lazy_counts,
-               struct group_infos* p_group_infos) {
+void int_order(
+  SEXP x,
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   const int* p_x = INTEGER_RO(x);
 
   const enum vctrs_sortedness sortedness = int_sortedness(
@@ -733,16 +755,18 @@ void int_order(SEXP x,
  * `chr_order_chunk()`
  */
 static
-void int_order_chunk_impl(bool decreasing,
-                          bool na_last,
-                          r_ssize size,
-                          void* p_x,
-                          int* p_o,
-                          struct lazy_raw* p_lazy_x_aux,
-                          struct lazy_raw* p_lazy_o_aux,
-                          struct lazy_raw* p_lazy_bytes,
-                          struct lazy_raw* p_lazy_counts,
-                          struct group_infos* p_group_infos) {
+void int_order_chunk_impl(
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  void* p_x,
+  int* p_o,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   if (size <= ORDER_INSERTION_BOUNDARY) {
     int_adjust(decreasing, na_last, size, p_x);
     int_order_insertion(size, p_x, p_o, p_group_infos);
@@ -811,18 +835,20 @@ void int_order_chunk_impl(bool decreasing,
  * over to `p_x_chunk`.
  */
 static
-void int_order_impl(const int* p_x,
-                    bool decreasing,
-                    bool na_last,
-                    r_ssize size,
-                    bool copy,
-                    struct order* p_order,
-                    struct lazy_raw* p_lazy_x_chunk,
-                    struct lazy_raw* p_lazy_x_aux,
-                    struct lazy_raw* p_lazy_o_aux,
-                    struct lazy_raw* p_lazy_bytes,
-                    struct lazy_raw* p_lazy_counts,
-                    struct group_infos* p_group_infos) {
+void int_order_impl(
+  const int* p_x,
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  bool copy,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   if (size <= ORDER_INSERTION_BOUNDARY) {
     int* p_o = init_order(p_order);
 
@@ -932,10 +958,12 @@ void int_order_impl(const int* p_x,
  *   orders inputs based on whether we are in a decreasing order or not.
  */
 static
-void int_adjust(const bool decreasing,
-                const bool na_last,
-                const r_ssize size,
-                void* p_x) {
+void int_adjust(
+  const bool decreasing,
+  const bool na_last,
+  const r_ssize size,
+  void* p_x
+) {
   const int direction = decreasing ? -1 : 1;
   const uint32_t na_u32 = na_last ? UINT32_MAX : 0;
   const int na_shift = na_last ? -1 : 0;
@@ -982,10 +1010,12 @@ static inline uint32_t int_map_to_uint32(int x) {
  *   INT_ORDER_COUNTING_RANGE_BOUNDARY).
  */
 static
-void int_compute_range(const int* p_x,
-                       r_ssize size,
-                       int* p_x_min,
-                       uint32_t* p_range) {
+void int_compute_range(
+  const int* p_x,
+  r_ssize size,
+  int* p_x_min,
+  uint32_t* p_range
+) {
   uint32_t range = UINT32_MAX;
 
   int x_min = NA_INTEGER;
@@ -1061,16 +1091,18 @@ void int_compute_range(const int* p_x,
  * Counting sort does not modify `p_x` in any way.
  */
 static
-void int_order_counting(const int* p_x,
-                        r_ssize size,
-                        int x_min,
-                        uint32_t range,
-                        bool initialized,
-                        bool decreasing,
-                        bool na_last,
-                        int* p_o,
-                        int* p_o_aux,
-                        struct group_infos* p_group_infos) {
+void int_order_counting(
+  const int* p_x,
+  r_ssize size,
+  int x_min,
+  uint32_t range,
+  bool initialized,
+  bool decreasing,
+  bool na_last,
+  int* p_o,
+  int* p_o_aux,
+  struct group_infos* p_group_infos
+) {
   // - Only allocate this once (counts are reset to 0 at end)
   // - Allocating as static allows us to allocate an array this large
   // - `+ 1` to ensure there is room for the extra `NA` bucket
@@ -1182,10 +1214,12 @@ void int_order_counting(const int* p_x,
  * `uint32_t` ahead of time.
  */
 static
-void int_order_insertion(const r_ssize size,
-                         uint32_t* p_x,
-                         int* p_o,
-                         struct group_infos* p_group_infos) {
+void int_order_insertion(
+  const r_ssize size,
+  uint32_t* p_x,
+  int* p_o,
+  struct group_infos* p_group_infos
+) {
   // Don't think this can occur, but safer this way
   if (size == 0) {
     return;
@@ -1258,14 +1292,16 @@ void int_order_insertion(const r_ssize size,
  * Sorts `p_x` and `p_o` in place
  */
 static
-void int_order_radix(const r_ssize size,
-                     uint32_t* p_x,
-                     int* p_o,
-                     uint32_t* p_x_aux,
-                     int* p_o_aux,
-                     uint8_t* p_bytes,
-                     r_ssize* p_counts,
-                     struct group_infos* p_group_infos) {
+void int_order_radix(
+  const r_ssize size,
+  uint32_t* p_x,
+  int* p_o,
+  uint32_t* p_x_aux,
+  int* p_o_aux,
+  uint8_t* p_bytes,
+  r_ssize* p_counts,
+  struct group_infos* p_group_infos
+) {
   bool p_skips[INT_MAX_RADIX_PASS];
 
   uint8_t pass = int_compute_skips(p_x, size, p_skips);
@@ -1298,16 +1334,18 @@ void int_order_radix(const r_ssize size,
  * the next byte.
  */
 static
-void int_order_radix_recurse(const r_ssize size,
-                             const uint8_t pass,
-                             uint32_t* p_x,
-                             int* p_o,
-                             uint32_t* p_x_aux,
-                             int* p_o_aux,
-                             uint8_t* p_bytes,
-                             r_ssize* p_counts,
-                             bool* p_skips,
-                             struct group_infos* p_group_infos) {
+void int_order_radix_recurse(
+  const r_ssize size,
+  const uint8_t pass,
+  uint32_t* p_x,
+  int* p_o,
+  uint32_t* p_x_aux,
+  int* p_o_aux,
+  uint8_t* p_bytes,
+  r_ssize* p_counts,
+  bool* p_skips,
+  struct group_infos* p_group_infos
+) {
   // Exit as fast as possible if we are below the insertion order boundary
   if (size <= ORDER_INSERTION_BOUNDARY) {
     int_order_insertion(size, p_x, p_o, p_group_infos);
@@ -1524,16 +1562,18 @@ uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift) {
  * Entry points for logical ordering. These just use integer infrastructure.
  */
 static
-void lgl_order_chunk(bool decreasing,
-                     bool na_last,
-                     r_ssize size,
-                     int* p_o,
-                     struct lazy_raw* p_lazy_x_chunk,
-                     struct lazy_raw* p_lazy_x_aux,
-                     struct lazy_raw* p_lazy_o_aux,
-                     struct lazy_raw* p_lazy_bytes,
-                     struct lazy_raw* p_lazy_counts,
-                     struct group_infos* p_group_infos) {
+void lgl_order_chunk(
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  int* p_o,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   int_order_chunk(
     decreasing,
     na_last,
@@ -1549,17 +1589,19 @@ void lgl_order_chunk(bool decreasing,
 }
 
 static
-void lgl_order(SEXP x,
-               bool decreasing,
-               bool na_last,
-               r_ssize size,
-               struct order* p_order,
-               struct lazy_raw* p_lazy_x_chunk,
-               struct lazy_raw* p_lazy_x_aux,
-               struct lazy_raw* p_lazy_o_aux,
-               struct lazy_raw* p_lazy_bytes,
-               struct lazy_raw* p_lazy_counts,
-               struct group_infos* p_group_infos) {
+void lgl_order(
+  SEXP x,
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   int_order(
     x,
     decreasing,
@@ -1596,17 +1638,19 @@ void lgl_order(SEXP x,
  * have a very small range of values.
  */
 static
-void dbl_order_chunk(bool decreasing,
-                     bool na_last,
-                     bool nan_distinct,
-                     r_ssize size,
-                     int* p_o,
-                     struct lazy_raw* p_lazy_x_chunk,
-                     struct lazy_raw* p_lazy_x_aux,
-                     struct lazy_raw* p_lazy_o_aux,
-                     struct lazy_raw* p_lazy_bytes,
-                     struct lazy_raw* p_lazy_counts,
-                     struct group_infos* p_group_infos) {
+void dbl_order_chunk(
+  bool decreasing,
+  bool na_last,
+  bool nan_distinct,
+  r_ssize size,
+  int* p_o,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   void* p_x_chunk = p_lazy_x_chunk->p_data;
 
   dbl_order_chunk_impl(
@@ -1625,18 +1669,20 @@ void dbl_order_chunk(bool decreasing,
 }
 
 static
-void dbl_order(SEXP x,
-               bool decreasing,
-               bool na_last,
-               bool nan_distinct,
-               r_ssize size,
-               struct order* p_order,
-               struct lazy_raw* p_lazy_x_chunk,
-               struct lazy_raw* p_lazy_x_aux,
-               struct lazy_raw* p_lazy_o_aux,
-               struct lazy_raw* p_lazy_bytes,
-               struct lazy_raw* p_lazy_counts,
-               struct group_infos* p_group_infos) {
+void dbl_order(
+  SEXP x,
+  bool decreasing,
+  bool na_last,
+  bool nan_distinct,
+  r_ssize size,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   const double* p_x = REAL_RO(x);
 
   dbl_order_impl(
@@ -1668,17 +1714,19 @@ void dbl_order(SEXP x,
  * vectors.
  */
 static
-void dbl_order_chunk_impl(bool decreasing,
-                          bool na_last,
-                          bool nan_distinct,
-                          r_ssize size,
-                          void* p_x,
-                          int* p_o,
-                          struct lazy_raw* p_lazy_x_aux,
-                          struct lazy_raw* p_lazy_o_aux,
-                          struct lazy_raw* p_lazy_bytes,
-                          struct lazy_raw* p_lazy_counts,
-                          struct group_infos* p_group_infos) {
+void dbl_order_chunk_impl(
+  bool decreasing,
+  bool na_last,
+  bool nan_distinct,
+  r_ssize size,
+  void* p_x,
+  int* p_o,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   const enum vctrs_sortedness sortedness = dbl_sortedness(
     p_x,
     size,
@@ -1733,19 +1781,21 @@ void dbl_order_chunk_impl(bool decreasing,
  * `dbl_order_impl()` to just use `p_lazy_x_chunk` directly.
  */
 static
-void dbl_order_impl(const double* p_x,
-                    bool decreasing,
-                    bool na_last,
-                    bool nan_distinct,
-                    r_ssize size,
-                    bool copy,
-                    struct order* p_order,
-                    struct lazy_raw* p_lazy_x_chunk,
-                    struct lazy_raw* p_lazy_x_aux,
-                    struct lazy_raw* p_lazy_o_aux,
-                    struct lazy_raw* p_lazy_bytes,
-                    struct lazy_raw* p_lazy_counts,
-                    struct group_infos* p_group_infos) {
+void dbl_order_impl(
+  const double* p_x,
+  bool decreasing,
+  bool na_last,
+  bool nan_distinct,
+  r_ssize size,
+  bool copy,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   const enum vctrs_sortedness sortedness = dbl_sortedness(
     p_x,
     size,
@@ -1829,11 +1879,13 @@ void dbl_order_impl(const double* p_x,
  * non-missing numbers, regardless of `decreasing`.
  */
 static
-void dbl_adjust(const bool decreasing,
-                const bool na_last,
-                const bool nan_distinct,
-                const r_ssize size,
-                void* p_x) {
+void dbl_adjust(
+  const bool decreasing,
+  const bool na_last,
+  const bool nan_distinct,
+  const r_ssize size,
+  void* p_x
+) {
   double* p_x_dbl = (double*) p_x;
   uint64_t* p_x_u64 = (uint64_t*) p_x;
 
@@ -1845,11 +1897,13 @@ void dbl_adjust(const bool decreasing,
 }
 
 static inline
-void dbl_adjust_nan_identical(const bool decreasing,
-                              const bool na_last,
-                              const r_ssize size,
-                              double* p_x_dbl,
-                              uint64_t* p_x_u64) {
+void dbl_adjust_nan_identical(
+  const bool decreasing,
+  const bool na_last,
+  const r_ssize size,
+  double* p_x_dbl,
+  uint64_t* p_x_u64
+) {
   const int direction = decreasing ? -1 : 1;
   const uint64_t na_u64 = na_last ? UINT64_MAX : 0;
 
@@ -1867,11 +1921,13 @@ void dbl_adjust_nan_identical(const bool decreasing,
 }
 
 static inline
-void dbl_adjust_nan_distinct(const bool decreasing,
-                             const bool na_last,
-                             const r_ssize size,
-                             double* p_x_dbl,
-                             uint64_t* p_x_u64) {
+void dbl_adjust_nan_distinct(
+  const bool decreasing,
+  const bool na_last,
+  const r_ssize size,
+  double* p_x_dbl,
+  uint64_t* p_x_u64
+) {
   const int direction = decreasing ? -1 : 1;
   const uint64_t na_u64 = na_last ? UINT64_MAX : 0;
   const uint64_t nan_u64 = na_last ? UINT64_MAX - 1 : 1;
@@ -1957,10 +2013,12 @@ uint64_t dbl_flip_uint64(uint64_t x) {
  * It is essentially the same as `int_order_insertion()` with different types.
  */
 static
-void dbl_order_insertion(const r_ssize size,
-                         uint64_t* p_x,
-                         int* p_o,
-                         struct group_infos* p_group_infos) {
+void dbl_order_insertion(
+  const r_ssize size,
+  uint64_t* p_x,
+  int* p_o,
+  struct group_infos* p_group_infos
+) {
   // Don't think this can occur, but safer this way
   if (size == 0) {
     return;
@@ -2033,14 +2091,16 @@ void dbl_order_insertion(const r_ssize size,
  * Sorts `p_x` and `p_o` in place
  */
 static
-void dbl_order_radix(const r_ssize size,
-                     uint64_t* p_x,
-                     int* p_o,
-                     uint64_t* p_x_aux,
-                     int* p_o_aux,
-                     uint8_t* p_bytes,
-                     r_ssize* p_counts,
-                     struct group_infos* p_group_infos) {
+void dbl_order_radix(
+  const r_ssize size,
+  uint64_t* p_x,
+  int* p_o,
+  uint64_t* p_x_aux,
+  int* p_o_aux,
+  uint8_t* p_bytes,
+  r_ssize* p_counts,
+  struct group_infos* p_group_infos
+) {
   bool p_skips[DBL_MAX_RADIX_PASS];
 
   uint8_t pass = dbl_compute_skips(p_x, size, p_skips);
@@ -2075,16 +2135,18 @@ void dbl_order_radix(const r_ssize size,
  * This needs 8 passes, unlike the 4 required by `int_order_radix()`.
  */
 static
-void dbl_order_radix_recurse(const r_ssize size,
-                             const uint8_t pass,
-                             uint64_t* p_x,
-                             int* p_o,
-                             uint64_t* p_x_aux,
-                             int* p_o_aux,
-                             uint8_t* p_bytes,
-                             r_ssize* p_counts,
-                             bool* p_skips,
-                             struct group_infos* p_group_infos) {
+void dbl_order_radix_recurse(
+  const r_ssize size,
+  const uint8_t pass,
+  uint64_t* p_x,
+  int* p_o,
+  uint64_t* p_x_aux,
+  int* p_o_aux,
+  uint8_t* p_bytes,
+  r_ssize* p_counts,
+  bool* p_skips,
+  struct group_infos* p_group_infos
+) {
   // Exit as fast as possible if we are below the insertion order boundary
   if (size <= ORDER_INSERTION_BOUNDARY) {
     dbl_order_insertion(size, p_x, p_o, p_group_infos);
@@ -2317,18 +2379,20 @@ uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
  * `dbl_order_chunk()`.
  */
 static
-void cpl_order(SEXP x,
-               bool decreasing,
-               bool na_last,
-               bool nan_distinct,
-               r_ssize size,
-               struct order* p_order,
-               struct lazy_raw* p_lazy_x_chunk,
-               struct lazy_raw* p_lazy_x_aux,
-               struct lazy_raw* p_lazy_o_aux,
-               struct lazy_raw* p_lazy_bytes,
-               struct lazy_raw* p_lazy_counts,
-               struct group_infos* p_group_infos) {
+void cpl_order(
+  SEXP x,
+  bool decreasing,
+  bool na_last,
+  bool nan_distinct,
+  r_ssize size,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   // We treat complex as a two column data frame, so we have to use group
   // information for at least the first column.
   // - If a complex atomic vector is used, `ignore_groups` will be true unless
@@ -2463,16 +2527,18 @@ void cpl_order(SEXP x,
  * be reset if we do.
  */
 static
-void chr_order_chunk(bool decreasing,
-                     bool na_last,
-                     r_ssize size,
-                     int* p_o,
-                     struct lazy_raw* p_lazy_x_chunk,
-                     struct lazy_raw* p_lazy_x_aux,
-                     struct lazy_raw* p_lazy_o_aux,
-                     struct lazy_raw* p_lazy_bytes,
-                     struct lazy_raw* p_lazy_counts,
-                     struct group_infos* p_group_infos) {
+void chr_order_chunk(
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  int* p_o,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos
+) {
   void* p_x_chunk = p_lazy_x_chunk->p_data;
 
   const enum vctrs_sortedness sortedness = chr_sortedness(
@@ -2540,18 +2606,20 @@ struct chr_order_cleanup_info {
  * `R_ExecWithCleanup()` is used.
  */
 static
-void chr_order(SEXP x,
-               bool decreasing,
-               bool na_last,
-               r_ssize size,
-               struct order* p_order,
-               struct lazy_raw* p_lazy_x_chunk,
-               struct lazy_raw* p_lazy_x_aux,
-               struct lazy_raw* p_lazy_o_aux,
-               struct lazy_raw* p_lazy_bytes,
-               struct lazy_raw* p_lazy_counts,
-               struct group_infos* p_group_infos,
-               struct truelength_info* p_truelength_info) {
+void chr_order(
+  SEXP x,
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos,
+  struct truelength_info* p_truelength_info
+) {
   struct chr_order_info info = {
     .x = x,
     .decreasing = decreasing,
@@ -2608,18 +2676,20 @@ void chr_order_cleanup(void* p_data) {
 }
 
 static
-void chr_order_internal(SEXP x,
-                        bool decreasing,
-                        bool na_last,
-                        r_ssize size,
-                        struct order* p_order,
-                        struct lazy_raw* p_lazy_x_chunk,
-                        struct lazy_raw* p_lazy_x_aux,
-                        struct lazy_raw* p_lazy_o_aux,
-                        struct lazy_raw* p_lazy_bytes,
-                        struct lazy_raw* p_lazy_counts,
-                        struct group_infos* p_group_infos,
-                        struct truelength_info* p_truelength_info) {
+void chr_order_internal(
+  SEXP x,
+  bool decreasing,
+  bool na_last,
+  r_ssize size,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos,
+  struct truelength_info* p_truelength_info
+) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
   const enum vctrs_sortedness sortedness = chr_sortedness(
@@ -2723,11 +2793,13 @@ void chr_extract_ordering(const SEXP* p_x, r_ssize size, int* p_x_aux) {
  * `truelength_reset()`.
  */
 static
-void chr_mark_sorted_uniques(const SEXP* p_x,
-                             r_ssize size,
-                             struct lazy_raw* p_lazy_x_aux,
-                             struct lazy_raw* p_lazy_bytes,
-                             struct truelength_info* p_truelength_info) {
+void chr_mark_sorted_uniques(
+  const SEXP* p_x,
+  r_ssize size,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct truelength_info* p_truelength_info
+) {
   chr_mark_uniques(p_x, size, p_truelength_info);
 
   r_ssize n_uniques = p_truelength_info->n_uniques_used;
@@ -2757,9 +2829,11 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
 }
 
 static
-void chr_mark_uniques(const SEXP* p_x,
-                      r_ssize size,
-                      struct truelength_info* p_truelength_info) {
+void chr_mark_uniques(
+  const SEXP* p_x,
+  r_ssize size,
+  struct truelength_info* p_truelength_info
+) {
   for (r_ssize i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
@@ -2810,10 +2884,12 @@ void chr_mark_uniques(const SEXP* p_x,
  * and don't need to be checked by `strcmp()`.
  */
 static
-void chr_order_insertion(const r_ssize size,
-                         const R_len_t pass,
-                         SEXP* p_x,
-                         int* p_sizes) {
+void chr_order_insertion(
+  const r_ssize size,
+  const R_len_t pass,
+  SEXP* p_x,
+  int* p_sizes
+) {
   // Don't think this can occur, but safer this way
   if (size == 0) {
     return;
@@ -2865,13 +2941,15 @@ void chr_order_insertion(const r_ssize size,
  *   can get expensive over just indexing into the array.
  */
 static
-void chr_order_radix(const r_ssize size,
-                     const R_len_t max_size,
-                     SEXP* p_x,
-                     SEXP* p_x_aux,
-                     int* p_sizes,
-                     int* p_sizes_aux,
-                     uint8_t* p_bytes) {
+void chr_order_radix(
+  const r_ssize size,
+  const R_len_t max_size,
+  SEXP* p_x,
+  SEXP* p_x_aux,
+  int* p_sizes,
+  int* p_sizes_aux,
+  uint8_t* p_bytes
+) {
   R_len_t pass = 0;
 
   chr_order_radix_recurse(
@@ -2910,14 +2988,16 @@ void chr_order_radix(const r_ssize size,
  * there will be no missing values in the unique set.
  */
 static
-void chr_order_radix_recurse(const r_ssize size,
-                             const R_len_t pass,
-                             const R_len_t max_size,
-                             SEXP* p_x,
-                             SEXP* p_x_aux,
-                             int* p_sizes,
-                             int* p_sizes_aux,
-                             uint8_t* p_bytes) {
+void chr_order_radix_recurse(
+  const r_ssize size,
+  const R_len_t pass,
+  const R_len_t max_size,
+  SEXP* p_x,
+  SEXP* p_x_aux,
+  int* p_sizes,
+  int* p_sizes_aux,
+  uint8_t* p_bytes
+) {
   // Exit as fast as possible if we are below the insertion order boundary
   if (size <= ORDER_INSERTION_BOUNDARY) {
     chr_order_insertion(size, pass, p_x, p_sizes);
@@ -3061,7 +3141,12 @@ void chr_order_radix_recurse(const r_ssize size,
  *   characters that are actually different.
  */
 static
-bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass) {
+bool chr_str_ge(
+  SEXP x,
+  SEXP y,
+  int x_size,
+  const R_len_t pass
+) {
   // Pure insertion sort - we know nothing yet
   if (pass == 0) {
     const char* c_x = CHAR(x);
@@ -3133,19 +3218,21 @@ struct df_order_cleanup_info {
  * nothing.
  */
 static
-void df_order(SEXP x,
-              SEXP decreasing,
-              SEXP na_last,
-              bool nan_distinct,
-              r_ssize size,
-              struct order* p_order,
-              struct lazy_raw* p_lazy_x_chunk,
-              struct lazy_raw* p_lazy_x_aux,
-              struct lazy_raw* p_lazy_o_aux,
-              struct lazy_raw* p_lazy_bytes,
-              struct lazy_raw* p_lazy_counts,
-              struct group_infos* p_group_infos,
-              struct truelength_info* p_truelength_info) {
+void df_order(
+  SEXP x,
+  SEXP decreasing,
+  SEXP na_last,
+  bool nan_distinct,
+  r_ssize size,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos,
+  struct truelength_info* p_truelength_info
+) {
   struct df_order_info info = {
     .x = x,
     .decreasing = decreasing,
@@ -3235,19 +3322,21 @@ void df_order_cleanup(void* p_data) {
 } while (0)
 
 static
-void df_order_internal(SEXP x,
-                       SEXP decreasing,
-                       SEXP na_last,
-                       bool nan_distinct,
-                       r_ssize size,
-                       struct order* p_order,
-                       struct lazy_raw* p_lazy_x_chunk,
-                       struct lazy_raw* p_lazy_x_aux,
-                       struct lazy_raw* p_lazy_o_aux,
-                       struct lazy_raw* p_lazy_bytes,
-                       struct lazy_raw* p_lazy_counts,
-                       struct group_infos* p_group_infos,
-                       struct truelength_info* p_truelength_info) {
+void df_order_internal(
+  SEXP x,
+  SEXP decreasing,
+  SEXP na_last,
+  bool nan_distinct,
+  r_ssize size,
+  struct order* p_order,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos,
+  struct truelength_info* p_truelength_info
+) {
   r_ssize n_cols = r_length(x);
 
   bool recycle_decreasing;
@@ -3445,19 +3534,21 @@ void df_order_internal(SEXP x,
  * processing a data frame
  */
 static
-void vec_order_chunk_switch(bool decreasing,
-                            bool na_last,
-                            bool nan_distinct,
-                            r_ssize size,
-                            const enum vctrs_type type,
-                            int* p_o,
-                            struct lazy_raw* p_lazy_x_chunk,
-                            struct lazy_raw* p_lazy_x_aux,
-                            struct lazy_raw* p_lazy_o_aux,
-                            struct lazy_raw* p_lazy_bytes,
-                            struct lazy_raw* p_lazy_counts,
-                            struct group_infos* p_group_infos,
-                            struct truelength_info* p_truelength_info) {
+void vec_order_chunk_switch(
+  bool decreasing,
+  bool na_last,
+  bool nan_distinct,
+  r_ssize size,
+  const enum vctrs_type type,
+  int* p_o,
+  struct lazy_raw* p_lazy_x_chunk,
+  struct lazy_raw* p_lazy_x_aux,
+  struct lazy_raw* p_lazy_o_aux,
+  struct lazy_raw* p_lazy_bytes,
+  struct lazy_raw* p_lazy_counts,
+  struct group_infos* p_group_infos,
+  struct truelength_info* p_truelength_info
+) {
   switch (type) {
   case VCTRS_TYPE_integer: {
     int_order_chunk(
@@ -3562,7 +3653,10 @@ void vec_order_chunk_switch(bool decreasing,
  * and imaginary parts.
  */
 static inline
-size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type) {
+size_t vec_compute_n_bytes_lazy_raw(
+  SEXP x,
+  const enum vctrs_type type
+) {
   switch (type) {
   case VCTRS_TYPE_integer:
   case VCTRS_TYPE_logical:
@@ -3615,7 +3709,10 @@ size_t df_compute_n_bytes_lazy_raw(SEXP x) {
  * - Complex uses double radix sorting.
  */
 static inline
-size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type) {
+size_t vec_compute_n_bytes_lazy_counts(
+  SEXP x,
+  const enum vctrs_type type
+) {
   switch (type) {
   case VCTRS_TYPE_integer:
   case VCTRS_TYPE_logical:
@@ -3677,7 +3774,11 @@ size_t df_compute_n_bytes_lazy_counts(SEXP x) {
  * of the code here is for tracking this expansion.
  */
 static
-SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_largest) {
+SEXP vec_order_expand_args(
+  SEXP x,
+  SEXP decreasing,
+  SEXP na_largest
+) {
   SEXP args = PROTECT(r_new_list(2));
   SET_VECTOR_ELT(args, 0, decreasing);
   SET_VECTOR_ELT(args, 1, na_largest);
@@ -3781,7 +3882,12 @@ SEXP df_expand_args(SEXP x, SEXP args) {
 }
 
 static
-SEXP expand_arg(SEXP arg, const int* p_expansions, r_ssize n_arg, r_ssize size) {
+SEXP expand_arg(
+  SEXP arg,
+  const int* p_expansions,
+  r_ssize n_arg,
+  r_ssize size
+) {
   if (n_arg == 1) {
     return arg;
   }
@@ -3866,7 +3972,10 @@ int df_decreasing_expansion(SEXP x) {
  * in which case `na_last = !na_largest`.
  */
 static
-SEXP vec_order_compute_na_last(SEXP na_largest, SEXP decreasing) {
+SEXP vec_order_compute_na_last(
+  SEXP na_largest,
+  SEXP decreasing
+) {
   const r_ssize size = r_length(na_largest);
   if (size != r_length(decreasing)) {
     r_stop_internal(
