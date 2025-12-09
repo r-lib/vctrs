@@ -25,9 +25,11 @@
 <url><loc>https://vctrs.r-lib.org/dev/reference/int64.html</loc></url>
 <url><loc>https://vctrs.r-lib.org/dev/reference/internal-faq-matches-algorithm.html</loc></url>
 <url><loc>https://vctrs.r-lib.org/dev/reference/internal-faq-ptype2-identity.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/dev/reference/list-of-attributes.html</loc></url>
 <url><loc>https://vctrs.r-lib.org/dev/reference/list_combine.html</loc></url>
 <url><loc>https://vctrs.r-lib.org/dev/reference/list_drop_empty.html</loc></url>
 <url><loc>https://vctrs.r-lib.org/dev/reference/list_of.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/dev/reference/list_of_transpose.html</loc></url>
 <url><loc>https://vctrs.r-lib.org/dev/reference/list_unchop.html</loc></url>
 <url><loc>https://vctrs.r-lib.org/dev/reference/maybe_lossy_cast.html</loc></url>
 <url><loc>https://vctrs.r-lib.org/dev/reference/missing.html</loc></url>

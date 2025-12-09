@@ -40,7 +40,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p>Assigning <code>NULL</code> into a <code>&lt;list_of&gt;</code> via <code>x[[i]] &lt;- NULL</code> now shortens the list to better align with base R and the existing <code>$&lt;-</code> and <code>[&lt;-</code> methods (<a href="https://github.com/r-lib/vctrs/issues/2112" class="external-link">#2112</a>).</p></li>
+<ul><li><p>New <code><a href="../reference/list_of_transpose.html">list_of_transpose()</a></code> for transposing a <code>&lt;list_of&gt;</code> (<a href="https://github.com/r-lib/vctrs/issues/2059" class="external-link">#2059</a>).</p></li>
+<li><p>New <code><a href="../reference/list-of-attributes.html">list_of_ptype()</a></code> and <code><a href="../reference/list-of-attributes.html">list_of_size()</a></code> accessors.</p></li>
+<li><p>Assigning <code>NULL</code> into a <code>&lt;list_of&gt;</code> via <code>x[[i]] &lt;- NULL</code> now shortens the list to better align with base R and the existing <code>$&lt;-</code> and <code>[&lt;-</code> methods (<a href="https://github.com/r-lib/vctrs/issues/2112" class="external-link">#2112</a>).</p></li>
 <li><p><code><a href="../reference/list_of.html">as_list_of()</a></code> on an existing <code>&lt;list_of&gt;</code> no longer has a <code>.ptype</code> argument for changing the type on the fly, as this feels incompatible with the new system that allows restricting both the type and size. If you really need this, coerce to a bare list with <code><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list()</a></code> first, then coerce back to a <code>&lt;list_of&gt;</code> using the <code>&lt;list&gt;</code> method of <code><a href="../reference/list_of.html">as_list_of()</a></code>.</p></li>
 <li>
 <p><code><a href="../reference/list_of.html">list_of()</a></code> can now restrict the element size in addition to the element type. For example:</p>

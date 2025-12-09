@@ -330,6 +330,15 @@ matrices.
   [`vec_cast(`*`<vctrs_list_of>`*`)`](https://vctrs.r-lib.org/dev/reference/list_of.md)
   : Construct a list of homogenous vectors
 
+- [`list_of_ptype()`](https://vctrs.r-lib.org/dev/reference/list-of-attributes.md)
+  [`list_of_size()`](https://vctrs.r-lib.org/dev/reference/list-of-attributes.md)
+  :
+
+  `list_of` attributes
+
+- [`list_of_transpose()`](https://vctrs.r-lib.org/dev/reference/list_of_transpose.md)
+  : Transpose a list of homogenous vectors
+
 ## Data frame
 
 - [`df_list()`](https://vctrs.r-lib.org/dev/reference/df_list.md) :

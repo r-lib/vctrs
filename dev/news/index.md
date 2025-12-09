@@ -2,6 +2,17 @@
 
 ## vctrs (development version)
 
+- New
+  [`list_of_transpose()`](https://vctrs.r-lib.org/dev/reference/list_of_transpose.md)
+  for transposing a `<list_of>`
+  ([\#2059](https://github.com/r-lib/vctrs/issues/2059)).
+
+- New
+  [`list_of_ptype()`](https://vctrs.r-lib.org/dev/reference/list-of-attributes.md)
+  and
+  [`list_of_size()`](https://vctrs.r-lib.org/dev/reference/list-of-attributes.md)
+  accessors.
+
 - Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens
   the list to better align with base R and the existing `$<-` and `[<-`
   methods ([\#2112](https://github.com/r-lib/vctrs/issues/2112)).

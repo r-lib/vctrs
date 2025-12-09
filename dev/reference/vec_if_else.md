@@ -94,9 +94,9 @@ vec_if_else(x < 0, "negative", "positive", missing = "missing")
 # Unlike `ifelse()`, `vec_if_else()` preserves types
 x <- factor(sample(letters[1:5], 10, replace = TRUE))
 ifelse(x %in% c("a", "b", "c"), x, NA)
-#>  [1]  2  1 NA  3  2 NA  2 NA NA  3
+#>  [1]  2 NA  2 NA NA  3 NA  1  1 NA
 vec_if_else(x %in% c("a", "b", "c"), x, NA)
-#>  [1] b    a    <NA> c    b    <NA> b    <NA> <NA> c   
+#>  [1] b    <NA> b    <NA> <NA> c    <NA> a    a    <NA>
 #> Levels: a b c d e
 
 # `vec_if_else()` also works with data frames
