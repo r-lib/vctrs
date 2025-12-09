@@ -32,7 +32,7 @@
 #include "order-collate.h"
 #include "order-groups.h"
 #include "order-sortedness.h"
-#include "order-truelength.h"
+#include "order-string.h"
 #include "order.h"
 #include "ownership.h"
 #include "poly-op.h"
