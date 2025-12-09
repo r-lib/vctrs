@@ -306,6 +306,8 @@ static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
 
 static void chr_order_radix(
   const r_ssize size,
+  const bool decreasing,
+  const bool na_last,
   const int max_string_size,
   struct str_info* p_x,
   int* p_o,
@@ -318,6 +320,8 @@ static void chr_order_radix(
 static
 void chr_order_radix_recurse(
   const r_ssize size,
+  const bool decreasing,
+  const bool na_last,
   const int pass,
   const int max_string_size,
   struct str_info* p_x,
@@ -331,6 +335,8 @@ void chr_order_radix_recurse(
 static
 void chr_order_insertion(
   const r_ssize size,
+  const bool decreasing,
+  const bool na_last,
   const int pass,
   struct str_info* p_x,
   int* p_o,
@@ -342,9 +348,11 @@ static inline bool chr_all_same(
   const r_ssize size
 );
 
-static inline bool chr_str_ge(
+static inline bool str_ge_with_pass(
   const struct str_info* p_x,
   const struct str_info* p_y,
+  const int direction,
+  const int na_order,
   const int pass
 );
 

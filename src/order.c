@@ -2421,8 +2421,7 @@ void chr_order_chunk(
 
   if (size <= ORDER_INSERTION_BOUNDARY) {
     const int pass = 0;
-    // TODO!: Handle `decreasing`, `na_last`, and `NA` values, see `chr_cmp()`
-    chr_order_insertion(size, pass, p_x_chunk, p_o, p_group_infos);
+    chr_order_insertion(size, decreasing, na_last, pass, p_x_chunk, p_o, p_group_infos);
     return;
   }
 
@@ -2443,6 +2442,8 @@ void chr_order_chunk(
 
   chr_order_radix(
     size,
+    decreasing,
+    na_last,
     max_string_size,
     p_x_chunk,
     p_o,
@@ -2511,8 +2512,7 @@ void chr_order(
 
   if (size <= ORDER_INSERTION_BOUNDARY) {
     const int pass = 0;
-    // TODO!: Handle `decreasing`, `na_last`, and `NA` values, see `chr_cmp()`
-    chr_order_insertion(size, pass, p_x_chunk, p_o, p_group_infos);
+    chr_order_insertion(size, decreasing, na_last, pass, p_x_chunk, p_o, p_group_infos);
     return;
   }
 
@@ -2524,6 +2524,8 @@ void chr_order(
 
   chr_order_radix(
     size,
+    decreasing,
+    na_last,
     max_string_size,
     p_x_chunk,
     p_o,
@@ -2537,6 +2539,8 @@ void chr_order(
 static
 void chr_order_radix(
   const r_ssize size,
+  const bool decreasing,
+  const bool na_last,
   const int max_string_size,
   struct str_info* p_x,
   int* p_o,
@@ -2549,6 +2553,8 @@ void chr_order_radix(
 
   chr_order_radix_recurse(
     size,
+    decreasing,
+    na_last,
     pass,
     max_string_size,
     p_x,
@@ -2581,6 +2587,8 @@ void chr_order_radix(
 static
 void chr_order_radix_recurse(
   const r_ssize size,
+  const bool decreasing,
+  const bool na_last,
   const int pass,
   const int max_string_size,
   struct str_info* p_x,
@@ -2594,8 +2602,7 @@ void chr_order_radix_recurse(
 
   // Exit as fast as possible if we are below the insertion order boundary
   if (size <= ORDER_INSERTION_BOUNDARY) {
-    // TODO!: Handle `decreasing`, `na_last`, and `NA` values, see `chr_cmp()`
-    chr_order_insertion(size, pass, p_x, p_o, p_group_infos);
+    chr_order_insertion(size, decreasing, na_last, pass, p_x, p_o, p_group_infos);
     return;
   }
 
@@ -2641,6 +2648,8 @@ void chr_order_radix_recurse(
       // size hasn't changed
       chr_order_radix_recurse(
         size,
+        decreasing,
+        na_last,
         next_pass,
         max_string_size,
         p_x,
@@ -2727,6 +2736,8 @@ void chr_order_radix_recurse(
     // Order next byte of this subgroup
     chr_order_radix_recurse(
       group_size,
+      decreasing,
+      na_last,
       next_pass,
       max_string_size,
       p_x,
@@ -2753,6 +2764,8 @@ void chr_order_radix_recurse(
 static
 void chr_order_insertion(
   const r_ssize size,
+  const bool decreasing,
+  const bool na_last,
   const int pass,
   struct str_info* p_x,
   int* p_o,
@@ -2763,6 +2776,9 @@ void chr_order_insertion(
     return;
   }
 
+  const int direction = decreasing ? -1 : 1;
+  const int na_order = na_last ? 1 : -1;
+
   for (r_ssize i = 1; i < size; ++i) {
     const struct str_info x_elt = p_x[i];
     const int o_elt = p_o[i];
@@ -2772,7 +2788,7 @@ void chr_order_insertion(
     while (j >= 0) {
       const struct str_info x_cmp_elt = p_x[j];
 
-      if (chr_str_ge(&x_elt, &x_cmp_elt, pass)) {
+      if (str_ge_with_pass(&x_elt, &x_cmp_elt, direction, na_order, pass)) {
         break;
       }
 
@@ -2818,43 +2834,24 @@ void chr_order_insertion(
   groups_size_maybe_push(group_size, p_group_infos);
 }
 
-/*
- * Check if `x` is greater than `y` lexicographically in a C-locale.
- *
- * - TODO!: NA can come through here: `x` and `y` are guaranteed to be different and not `NA`, so we don't gain
- *   anything from pointer comparisons.
- *
- * - This is called from `chr_order_insertion()` from inside the radix ordering,
- *   so we can use information about the current `pass` to only compare
- *   characters that are actually different.
- */
 static inline
-bool chr_str_ge(
+bool str_ge_with_pass(
   const struct str_info* p_x,
   const struct str_info* p_y,
+  const int direction,
+  const int na_order,
   const int pass
 ) {
-  // Pure insertion sort - we know nothing yet
-  if (pass == 0) {
-    int cmp = strcmp(p_x->p_x, p_y->p_x);
-    return cmp >= 0;
-  }
-
-  // Otherwise we know they are equal up to the position before `pass`, but
-  // it might have been equality with implicit "" so we need to check the
-  // length of one of them
-  const int last_pass = pass - 1;
-
-  // We are comparing length with C 0-based indexing so we have to do +1.
-  if (p_x->size < last_pass + 1) {
-    return true;
-  }
-
-  // Now start the comparison at `last_pass`, which we know exists
-  const char* p_x_from_last_pass = p_x->p_x + last_pass;
-  const char* p_y_from_last_pass = p_y->p_x + last_pass;
-
-  int cmp = strcmp(p_x_from_last_pass, p_y_from_last_pass);
+  const int cmp = str_cmp_with_pass(
+    p_x->x,
+    p_y->x,
+    p_x->p_x,
+    p_y->p_x,
+    p_x->size,
+    direction,
+    na_order,
+    pass
+  );
   return cmp >= 0;
 }
 

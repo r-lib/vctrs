@@ -315,13 +315,6 @@ int int_cmp(int x, int y, const int direction, const int na_order) {
 
 // -----------------------------------------------------------------------------
 
-static inline int chr_cmp(SEXP x,
-                          SEXP y,
-                          const char* c_x,
-                          const char* c_y,
-                          const int direction,
-                          const int na_order);
-
 /*
  * Check if the data is already in the "expected" ordering as defined by
  * `decreasing` and `na_last`. If the data is in the expected ordering, or if it
@@ -364,7 +357,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     SEXP current = has_p_x ? p_x[i] : p_x_info[i].x;
     const char* c_current = has_p_x ? CHAR(current) : p_x_info[i].p_x;
 
-    int cmp = chr_cmp(
+    int cmp = str_cmp(
       current,
       previous,
       c_current,
@@ -408,7 +401,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     SEXP current = has_p_x ? p_x[i] : p_x_info[i].x;
     const char* c_current = has_p_x ? CHAR(current) : p_x_info[i].p_x;
 
-    int cmp = chr_cmp(
+    int cmp = str_cmp(
       current,
       previous,
       c_current,
@@ -442,33 +435,6 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
 
   // Expected ordering
   return VCTRS_SORTEDNESS_sorted;
-}
-
-/*
- * `direction` is `1` for ascending and `-1` for descending.
- * `na_order` is `1` if `na_last = true` and `-1` if `na_last = false`.
- */
-static inline
-int chr_cmp(SEXP x,
-            SEXP y,
-            const char* c_x,
-            const char* c_y,
-            const int direction,
-            const int na_order) {
-  // Same pointer - including `NA`s
-  if (x == y) {
-    return 0;
-  }
-
-  if (x == NA_STRING) {
-    return na_order;
-  }
-
-  if (y == NA_STRING) {
-    return -na_order;
-  }
-
-  return direction * strcmp(c_x, c_y);
 }
 
 // -----------------------------------------------------------------------------
