@@ -123,6 +123,7 @@
 // -----------------------------------------------------------------------------
 
 #define UINT8_MAX_SIZE (UINT8_MAX + 1)
+#define UINT8_MAX_SIZE_HALVED (UINT8_MAX + 1) / 2
 
 /*
  * Maximum number of passes required to completely sort ints and doubles
@@ -2598,8 +2599,6 @@ void chr_order_radix_recurse(
   uint8_t* p_bytes,
   struct group_infos* p_group_infos
 ) {
-  // TODO!: Handle `decreasing`, `na_last`, and `NA` values
-
   // Exit as fast as possible if we are below the insertion order boundary
   if (size <= ORDER_INSERTION_BOUNDARY) {
     chr_order_insertion(size, decreasing, na_last, pass, p_x, p_o, p_group_infos);
@@ -2612,30 +2611,57 @@ void chr_order_radix_recurse(
 
   const int next_pass = pass + 1;
 
-  // NA values won't be in `p_x` so we can reserve the 0th bucket for ""
-  const uint8_t missing_bucket = 0;
+  r_ssize na_count = 0;
+  r_ssize na_loc = 0;
+
+  // Reserve the `0`th bucket for strings that are too short. We have one free
+  // `uint8_t` value that is never used by R strings, `0`, which would be ASCII
+  // null, but those aren't allowed in R strings.
+  const uint8_t too_short_bucket = 0;
+
   uint8_t byte = 0;
 
   // Histogram
-  for (r_ssize i = 0; i < size; ++i) {
-    const struct str_info x_elt = p_x[i];
+  // When extracting the byte, check if there are characters left in the string
+  // and extract the next one if so, otherwise the string is too short, and we
+  // assign into `too_short_bucket`.
+  if (pass == 0) {
+    // `NA` are fully handled after the first pass
+    for (r_ssize i = 0; i < size; ++i) {
+      const struct str_info x_elt = p_x[i];
 
-    // Check if there are characters left in the string and extract the next
-    // one if so, otherwise assume implicit "".
-    if (pass < x_elt.size) {
-      byte = (uint8_t) x_elt.p_x[pass];
-    } else {
-      byte = missing_bucket;
+      if (x_elt.x == NA_STRING) {
+        ++na_count;
+      } else {
+        if (pass < x_elt.size) {
+          byte = (uint8_t) x_elt.p_x[pass];
+        } else {
+          byte = too_short_bucket;
+        }
+
+        p_bytes[i] = byte;
+        ++p_counts[byte];
+      }
     }
+  } else {
+    for (r_ssize i = 0; i < size; ++i) {
+      const struct str_info x_elt = p_x[i];
 
-    p_bytes[i] = byte;
-    ++p_counts[byte];
+      if (pass < x_elt.size) {
+        byte = (uint8_t) x_elt.p_x[pass];
+      } else {
+        byte = too_short_bucket;
+      }
+
+      p_bytes[i] = byte;
+      ++p_counts[byte];
+    }
   }
 
-  // Fast check to see if all bytes were the same.
-  // If so, skip this `pass` since we learned nothing.
-  // No need to accumulate counts and iterate over chunks,
-  // we know all others are zero.
+  // Fast check to see if all bytes were the same. If so, skip this `pass` since
+  // we learned nothing. No need to accumulate counts and iterate over chunks,
+  // we know all others are zero. Can never happen if we also have any `NA`s to
+  // worry about, as the count won't match the `size`.
   if (p_counts[byte] == size) {
     // Reset count for other group chunks
     p_counts[byte] = 0;
@@ -2666,32 +2692,99 @@ void chr_order_radix_recurse(
 
   r_ssize cumulative = 0;
 
+  // `na_last = false` pushes NA counts to the front.
+  if (pass == 0 && !na_last && na_count != 0) {
+    na_loc = cumulative;
+    cumulative += na_count;
+  }
+
+  // Handle decreasing/increasing by altering the order in which
+  // counts are accumulated
+  const int direction = decreasing ? -1 : 1;
+  r_ssize j = decreasing ? UINT8_MAX_SIZE - 1 : 0;
+
   // Accumulate counts, skip zeros
   for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
-    r_ssize count = p_counts[i];
+    r_ssize count = p_counts[j];
 
     if (count == 0) {
+      j += direction;
       continue;
     }
 
     // Insert current cumulative value, then increment
-    p_counts[i] = cumulative;
+    p_counts[j] = cumulative;
     cumulative += count;
+
+    j += direction;
+  }
+
+  // `na_last = true` pushes NA counts to the back.
+  if (pass == 0 && na_last && na_count != 0) {
+    na_loc = cumulative;
   }
 
   // Place into auxiliary arrays in the correct order, then copy back over
-  for (r_ssize i = 0; i < size; ++i) {
-    const uint8_t byte = p_bytes[i];
-    const r_ssize loc = p_counts[byte]++;
-    p_o_aux[loc] = p_o[i];
-    p_x_aux[loc] = p_x[i];
+  if (pass == 0 && na_count != 0) {
+    // `NA` are fully handled after the first pass
+    for (r_ssize i = 0; i < size; ++i) {
+      const int o_elt = p_o[i];
+      const struct str_info x_elt = p_x[i];
+
+      r_ssize loc;
+      if (x_elt.x == NA_STRING) {
+        loc = na_loc++;
+      } else {
+        const uint8_t byte = p_bytes[i];
+        loc = p_counts[byte]++;
+      }
+
+      p_o_aux[loc] = o_elt;
+      p_x_aux[loc] = x_elt;
+    }
+  } else {
+    for (r_ssize i = 0; i < size; ++i) {
+      const int o_elt = p_o[i];
+      const struct str_info x_elt = p_x[i];
+
+      const uint8_t byte = p_bytes[i];
+      const r_ssize loc = p_counts[byte]++;
+
+      p_o_aux[loc] = o_elt;
+      p_x_aux[loc] = x_elt;
+    }
   }
 
   // Copy back over
   r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
   r_memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
 
+  // Cumulative counts will be in reverse order if we were decreasing. We
+  // reverse them to put them in the correct order for cumulative count diffing.
+  // This works nicely because `UINT8_MAX_SIZE` is even.
+  if (decreasing) {
+    for (uint16_t i = 0; i < UINT8_MAX_SIZE_HALVED; ++i) {
+      const r_ssize front = p_counts[i];
+      const r_ssize back = p_counts[UINT8_MAX_SIZE - 1 - i];
+      p_counts[i] = back;
+      p_counts[UINT8_MAX_SIZE - 1 - i] = front;
+    }
+  }
+
   r_ssize last_cumulative_count = 0;
+
+  // `na_last = false` pushes NA counts to the front.
+  // Mimic the code within the loop related to how `last_cumulative_count` is adjusted.
+  if (pass == 0 && !na_last && na_count != 0) {
+    const r_ssize cumulative_count = na_count;
+
+    const r_ssize group_size = cumulative_count - last_cumulative_count;
+    last_cumulative_count = cumulative_count;
+
+    groups_size_maybe_push(group_size, p_group_infos);
+    p_x += group_size;
+    p_o += group_size;
+  }
 
   // Recurse on subgroups as required
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
@@ -2750,6 +2843,11 @@ void chr_order_radix_recurse(
 
     p_x += group_size;
     p_o += group_size;
+  }
+
+  // `na_last = true` pushes NA counts to the back.
+  if (pass == 0 && na_last && na_count != 0) {
+    groups_size_maybe_push(na_count, p_group_infos);
   }
 }
 
