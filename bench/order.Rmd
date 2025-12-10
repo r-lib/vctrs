@@ -1,7 +1,7 @@
 ---
 title: "Order performance"
 output: github_document
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(fig.width = 10)
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 ```
 
-Investigation of `vec_order()` performance compared with `base::order()` using various data types and distributions of data (total size, number of groups, etc).
+Investigation of `vec_order_radix()` performance compared with `base::order()` using various data types and distributions of data (total size, number of groups, etc).
 
 ## Setup
 
@@ -63,14 +63,14 @@ new_dictionary <- function(size, min_length, max_length) {
 filter_bench <- function(.data, ...) {
   out <- dplyr::mutate(.data, rn = row_number()) %>%
     dplyr::filter(...)
-  
+
   # patch up bench_expr
   which <- out$rn
   desc <- attr(.data$expression, "description")
   attr(out$expression, "description") <- desc[which]
-  
+
   out$rn <- NULL
-  
+
   out
 }
 ```
@@ -80,9 +80,9 @@ plot_bench <- function(df, title = waiver()) {
   df %>%
     ggplot(aes(x = n_groups, y = as.numeric(median))) +
     geom_point(aes(color = as.character(expression))) +
-    facet_wrap(~ size, labeller = label_both, nrow = 1) +
+    facet_wrap(~size, labeller = label_both, nrow = 1) +
     scale_x_log10() +
-    scale_y_log10() + 
+    scale_y_log10() +
     labs(
       x = "Number of groups (log10)",
       y = "Time (log10 seconds)",
@@ -104,15 +104,15 @@ The performance of integer sorting is generally the same as `order()`. The one e
 ```{r}
 set.seed(123)
 
-size <- 10 ^ (1:4)
-n_groups <- 10 ^ (1:6)
+size <- 10^(1:4)
+n_groups <- 10^(1:6)
 
 df <- bench::press(
   size = size,
   n_groups = n_groups,
   {
     x <- sample(n_groups, size, replace = TRUE)
-    bench::mark(vec_order(x), base_order(x), iterations = 50)
+    bench::mark(vec_order_radix(x), base_order(x), iterations = 50)
   }
 )
 ```
@@ -131,15 +131,15 @@ plot_bench(df, title = "Integers (small)")
 ```{r}
 set.seed(123)
 
-size <- 10 ^ (5:7)
-n_groups <- 10 ^ (1:6)
+size <- 10^(5:7)
+n_groups <- 10^(1:6)
 
 df <- bench::press(
   size = size,
   n_groups = n_groups,
   {
     x <- sample(n_groups, size, replace = TRUE)
-    bench::mark(vec_order(x), base_order(x), iterations = 10)
+    bench::mark(vec_order_radix(x), base_order(x), iterations = 10)
   }
 )
 ```
@@ -164,7 +164,7 @@ df <- bench::press(
   n_groups = n_groups,
   {
     x <- sample(n_groups, size, replace = TRUE)
-    bench::mark(vec_order(x), base_order(x), iterations = 20)
+    bench::mark(vec_order_radix(x), base_order(x), iterations = 20)
   }
 )
 ```
@@ -179,11 +179,11 @@ df
 df %>%
   ggplot(aes(x = n_groups, y = as.numeric(median))) +
   geom_point(aes(
-    color = as.character(expression), 
+    color = as.character(expression),
     shape = fct_reorder(as.factor(n_groups), n_groups)
   )) +
   scale_x_log10() +
-  scale_y_log10() + 
+  scale_y_log10() +
   labs(
     x = "Number of groups (log10)",
     y = "Time (log10 seconds)",
@@ -205,15 +205,15 @@ Double performance is overall similar to integers when compared with `order()`. 
 ```{r}
 set.seed(123)
 
-size <- 10 ^ (1:4)
-n_groups <- 10 ^ (1:6)
+size <- 10^(1:4)
+n_groups <- 10^(1:6)
 
 df <- bench::press(
   size = size,
   n_groups = n_groups,
   {
     x <- sample(n_groups, size, replace = TRUE) + 0
-    bench::mark(vec_order(x), base_order(x), iterations = 50)
+    bench::mark(vec_order_radix(x), base_order(x), iterations = 50)
   }
 )
 ```
@@ -232,17 +232,17 @@ plot_bench(df, title = "Doubles (small)")
 ```{r}
 set.seed(123)
 
-size <- 10 ^ (5:7)
-n_groups <- 10 ^ (1:6)
+size <- 10^(5:7)
+n_groups <- 10^(1:6)
 
 df <- bench::press(
   size = size,
   n_groups = n_groups,
   {
     x <- sample(n_groups, size, replace = TRUE) + 0
-    
+
     bench::mark(
-      vec_order(x),
+      vec_order_radix(x),
       base_order(x),
       iterations = 10
     )
@@ -250,10 +250,10 @@ df <- bench::press(
 )
 ```
 
-I imagine the increase in gc's for large sizes comes from the fact that `vec_order()` uses `Rf_allocVector()` to generate its working memory, and `base_order()` uses `malloc()`, which won't trigger a gc.
+I imagine the increase in gc's for large sizes comes from the fact that `vec_order_radix()` uses `Rf_allocVector()` to generate its working memory, and `base_order()` uses `malloc()`, which won't trigger a gc.
 
 ```{r, echo=FALSE}
-autoplot(df) + 
+autoplot(df) +
   guides(x = guide_axis(n.dodge = 2)) +
   ggtitle("Doubles (large size)")
 ```
@@ -277,8 +277,8 @@ There is also an additional component here, the maximum string length. The longe
 ```{r}
 set.seed(123)
 
-size <- 10 ^ (1:4)
-n_groups <- 10 ^ (1:6)
+size <- 10^(1:4)
+n_groups <- 10^(1:6)
 
 df <- bench::press(
   size = size,
@@ -286,7 +286,7 @@ df <- bench::press(
   {
     dict <- new_dictionary(n_groups, min_length = 5, max_length = 20)
     x <- sample(dict, size, replace = TRUE)
-    bench::mark(vec_order(x), base_order(x), iterations = 50)
+    bench::mark(vec_order_radix(x), base_order(x), iterations = 50)
   }
 )
 ```
@@ -312,8 +312,8 @@ df %>%
 ```{r}
 set.seed(123)
 
-size <- 10 ^ (5:7)
-n_groups <- 10 ^ (1:6)
+size <- 10^(5:7)
+n_groups <- 10^(1:6)
 
 df <- bench::press(
   size = size,
@@ -321,7 +321,7 @@ df <- bench::press(
   {
     dict <- new_dictionary(n_groups, min_length = 5, max_length = 20)
     x <- sample(dict, size, replace = TRUE)
-    bench::mark(vec_order(x), base_order(x), iterations = 10)
+    bench::mark(vec_order_radix(x), base_order(x), iterations = 10)
   }
 )
 ```
@@ -362,12 +362,12 @@ n_groups <- 1e7
 
 x <- new_dictionary(n_groups, min_length = 5, max_length = 20)
 
-bench::mark(vec_order(x), base_order(x), iterations = 10)
+bench::mark(vec_order_radix(x), base_order(x), iterations = 10)
 ```
 
 ### Test 4
 
-What is the effect of string size on total time? 
+What is the effect of string size on total time?
 
 - Longer strings generally means more passes are required (one pass per character)
 - It is related to number of groups (i.e. number of unique strings) in two ways:
@@ -379,7 +379,7 @@ set.seed(123)
 
 size <- 1e6
 
-n_groups <- 10 ^ (1:6)
+n_groups <- 10^(1:6)
 string_size <- c(10, 20, 40, 60, 80, 100)
 
 df <- bench::press(
@@ -388,7 +388,7 @@ df <- bench::press(
   {
     dict <- new_dictionary(n_groups, string_size, string_size)
     x <- sample(dict, size, replace = TRUE)
-    bench::mark(vec_order(x), base_order(x), iterations = 10)
+    bench::mark(vec_order_radix(x), base_order(x), iterations = 10)
   }
 )
 ```
@@ -399,9 +399,9 @@ The string size doesn't seem to add too much more time.
 df %>%
   ggplot(aes(x = n_groups, y = as.numeric(median))) +
   geom_point(aes(color = as.character(expression))) +
-  facet_wrap(~ string_size, labeller = label_both, nrow = 1) +
+  facet_wrap(~string_size, labeller = label_both, nrow = 1) +
   scale_x_log10() +
-  scale_y_log10() + 
+  scale_y_log10() +
   labs(
     x = "Number of groups (log10)",
     y = "Time (log10 seconds)",
@@ -417,11 +417,11 @@ We also seem to consistently do better than `order()` when most of the strings a
 
 ```{r, echo=FALSE}
 df %>%
-  filter_bench(n_groups == 1e6) %>% 
+  filter_bench(n_groups == 1e6) %>%
   select(-n_groups) %>%
   ggplot(aes(x = string_size, y = as.numeric(median))) +
   geom_point(aes(color = as.character(expression))) +
-  scale_y_log10() + 
+  scale_y_log10() +
   labs(
     x = "String size",
     y = "Time (seconds)",
@@ -439,14 +439,14 @@ x <- 1:1e7 + 0L
 
 # Base is faster (simpler check + ALTREP result)
 bench::mark(
-  vec_order(x), 
+  vec_order_radix(x),
   base_order(x),
   iterations = 50
 )
 
 # But tweak some options and it becomes closer
 bench::mark(
-  vec_order(x, direction = "desc", na_value = "smallest"), 
+  vec_order_radix(x, direction = "desc", na_value = "smallest"),
   base_order(x, decreasing = TRUE, na.last = FALSE),
   iterations = 50
 )
@@ -460,7 +460,7 @@ Nearly sorted integer vectors is one case where base does a little better than w
 x <- c(1:1e7, 1:20) + 0L
 
 bench::mark(
-  vec_order(x), 
+  vec_order_radix(x),
   base_order(x),
   iterations = 20
 )
@@ -472,7 +472,7 @@ The performance difference goes away (for the most part) with doubles
 x <- c(1:1e7, 1:20) + 0
 
 bench::mark(
-  vec_order(x), 
+  vec_order_radix(x),
   base_order(x),
   iterations = 20
 )
@@ -505,7 +505,7 @@ df <- data.frame(
   y = sample(n_groups2, size, replace = TRUE)
 )
 
-bench::mark(vec_order(df), base_order(df), iterations = 10)
+bench::mark(vec_order_radix(df), base_order(df), iterations = 10)
 ```
 
 ### Test 2a
@@ -531,7 +531,7 @@ df <- data.frame(
   y = sample(n_groups2, size, replace = TRUE) + 0
 )
 
-bench::mark(vec_order(df), base_order(df), iterations = 10)
+bench::mark(vec_order_radix(df), base_order(df), iterations = 10)
 ```
 
 ### Test 2b
@@ -556,7 +556,7 @@ df <- data.frame(
   y = sample(dict2, size, replace = TRUE) + 0
 )
 
-bench::mark(vec_order(df), base_order(df), iterations = 10)
+bench::mark(vec_order_radix(df), base_order(df), iterations = 10)
 ```
 
 ### Test 3a
@@ -578,7 +578,7 @@ cols <- replicate(n_cols, sample(n_groups, size, TRUE), simplify = FALSE)
 names(cols) <- seq_along(cols)
 df <- vctrs::new_data_frame(cols, size)
 
-bench::mark(vec_order(df), base_order(df), iterations = 10)
+bench::mark(vec_order_radix(df), base_order(df), iterations = 10)
 ```
 
 ### Test 3b
@@ -593,16 +593,16 @@ n_groups <- 2
 n_cols <- 20
 
 cols <- replicate(
-  n_cols, 
+  n_cols,
   {
     dict <- new_dictionary(n_groups, 5, 10)
     sample(dict, size, TRUE)
-  }, 
+  },
   simplify = FALSE
 )
 
 names(cols) <- seq_along(cols)
 df <- vctrs::new_data_frame(cols, size)
 
-bench::mark(vec_order(df), base_order(df), iterations = 10)
+bench::mark(vec_order_radix(df), base_order(df), iterations = 10)
 ```
