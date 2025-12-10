@@ -88,7 +88,6 @@ extern r_obj* ffi_outer_names(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_df_size(SEXP);
 extern r_obj* ffi_as_df_col(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_apply_name_spec(r_obj*, r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_as_not_s4(r_obj*);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
 extern r_obj* ffi_vec_as_names(r_obj*, r_obj*, r_obj*, r_obj*);
@@ -108,7 +107,8 @@ extern r_obj* ffi_vec_rep(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_rep_each(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_maybe_shared_col(SEXP, SEXP);
 extern SEXP vctrs_new_df_unshared_col(void);
-extern r_obj* ffi_vec_shaped_ptype(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_shaped_ptype(r_obj*, r_obj*);
+extern r_obj* ffi_vec_shaped_ptype2(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_shape2(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
@@ -173,6 +173,7 @@ extern r_obj* ffi_vec_replace_values(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_o
 extern r_obj* ffi_vec_if_else(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_pany(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_pall(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_proxy_data(r_obj*);
 
 
 // Maturing
@@ -294,7 +295,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_size",                             (DL_FUNC) &vctrs_df_size, 1},
   {"ffi_as_df_col",                             (DL_FUNC) &ffi_as_df_col, 3},
   {"ffi_apply_name_spec",                       (DL_FUNC) &ffi_apply_name_spec, 4},
-  {"ffi_as_not_s4",                             (DL_FUNC) &ffi_as_not_s4, 1},
   {"vctrs_altrep_rle_Make",                     (DL_FUNC) &altrep_rle_Make, 1},
   {"vctrs_altrep_rle_is_materialized",          (DL_FUNC) &altrep_rle_is_materialized, 1},
   {"ffi_altrep_new_lazy_character",             (DL_FUNC) &ffi_altrep_new_lazy_character, 1},
@@ -318,7 +318,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_rep_each",                          (DL_FUNC) &ffi_vec_rep_each, 3},
   {"vctrs_maybe_shared_col",                    (DL_FUNC) &vctrs_maybe_shared_col, 2},
   {"vctrs_new_df_unshared_col",                 (DL_FUNC) &vctrs_new_df_unshared_col, 0},
-  {"ffi_vec_shaped_ptype",                      (DL_FUNC) &ffi_vec_shaped_ptype, 4},
+  {"ffi_vec_shaped_ptype",                      (DL_FUNC) &ffi_vec_shaped_ptype, 2},
+  {"ffi_vec_shaped_ptype2",                     (DL_FUNC) &ffi_vec_shaped_ptype2, 4},
   {"ffi_vec_shape2",                            (DL_FUNC) &ffi_vec_shape2, 3},
   {"vctrs_new_date",                            (DL_FUNC) &vctrs_new_date, 1},
   {"vctrs_date_validate",                       (DL_FUNC) &vctrs_date_validate, 1},
@@ -383,6 +384,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_if_else",                           (DL_FUNC) &ffi_vec_if_else, 6},
   {"ffi_vec_pany",                              (DL_FUNC) &ffi_vec_pany, 4},
   {"ffi_vec_pall",                              (DL_FUNC) &ffi_vec_pall, 4},
+  {"ffi_proxy_data",                            (DL_FUNC) &ffi_proxy_data, 1},
   {"ffi_exp_vec_cast",                          (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };

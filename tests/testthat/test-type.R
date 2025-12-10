@@ -269,12 +269,22 @@ test_that("vec_ptype_finalise() requires vector types", {
   expect_error(vec_ptype_finalise(foobar()), class = "vctrs_error_scalar_type")
 })
 
-# This might change in the future if we decide that prototypes don't
-# have names
-test_that("vec_ptype() preserves type of names and row names", {
-  expect_identical(vec_ptype(c(foo = 1)), named(dbl()))
-  expect_identical(vec_ptype(mtcars), mtcars[0, ])
-  expect_identical(vec_ptype(foobar(mtcars)), foobar(mtcars[0, ]))
+test_that("vec_ptype() does not preserve names, dim names, or row names (#2025)", {
+  expect_identical(vec_ptype(c(foo = 1)), dbl())
+
+  expect_identical(
+    vec_ptype(array(1, dim = c(1, 1, 1), dimnames = list("a", "b", "c"))),
+    array(dbl(), dim = c(0, 1, 1))
+  )
+
+  expect_identical(
+    vec_ptype(mtcars),
+    set_rownames_dispatch(mtcars[0, ], NULL)
+  )
+  expect_identical(
+    vec_ptype(foobar(mtcars)),
+    foobar(set_rownames_dispatch(mtcars[0, ], NULL))
+  )
 })
 
 test_that("vec_ptype_common() handles spliced names consistently (#1570)", {

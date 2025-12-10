@@ -103,6 +103,10 @@ r_obj* vec_ptype_finalise(r_obj* x) {
 
   obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, call);
 
+  // TODO!: Should act more like `df_ptype()` for the bare cases, and
+  // `s3_ptype()` for the classed df case (proxy/vec_ptype_finalise/restore).
+  // Then remove `bare_df_map()` and `df_map()` and unexpose
+  // `vec_bare_df_restore()` and `vec_df_restore()`.
   switch (class_type(x)) {
   case VCTRS_CLASS_bare_tibble:
   case VCTRS_CLASS_bare_data_frame:
