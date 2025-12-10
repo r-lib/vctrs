@@ -309,9 +309,9 @@ static void chr_order_radix(
   const bool decreasing,
   const bool na_last,
   const int max_string_size,
-  struct str_info* p_x,
+  SEXP* p_x,
   int* p_o,
-  struct str_info* p_x_aux,
+  SEXP* p_x_aux,
   int* p_o_aux,
   uint8_t* p_bytes,
   struct group_infos* p_group_infos
@@ -324,9 +324,9 @@ void chr_order_radix_recurse(
   const bool na_last,
   const int pass,
   const int max_string_size,
-  struct str_info* p_x,
+  SEXP* p_x,
   int* p_o,
-  struct str_info* p_x_aux,
+  SEXP* p_x_aux,
   int* p_o_aux,
   uint8_t* p_bytes,
   struct group_infos* p_group_infos
@@ -338,27 +338,32 @@ void chr_order_insertion(
   const bool decreasing,
   const bool na_last,
   const int pass,
-  struct str_info* p_x,
+  SEXP* p_x,
   int* p_o,
   struct group_infos* p_group_infos
 );
 
-static inline bool chr_all_same(
-  const struct str_info* p_x,
+static inline
+bool chr_all_same(
+  const SEXP* p_x,
   const r_ssize size
 );
 
 static inline
 bool chr_all_same_byte(
-  const struct str_info* p_x,
+  const SEXP* p_x,
   const r_ssize size,
   const int pass,
   const uint8_t too_short_bucket
 );
 
-static inline bool str_ge_with_pass(
-  const struct str_info* p_x,
-  const struct str_info* p_y,
+static inline
+bool str_ge_with_pass(
+  const SEXP x,
+  const SEXP y,
+  const char* p_x,
+  const char* p_y,
+  const int x_size,
   const int direction,
   const int na_order,
   const int pass

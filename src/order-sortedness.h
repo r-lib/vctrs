@@ -15,7 +15,6 @@
 
 #include "vctrs-core.h"
 #include "order-groups.h"
-#include "order-string.h"
 
 // -----------------------------------------------------------------------------
 
@@ -41,7 +40,6 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
                                      struct group_infos* p_group_infos);
 
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     const struct str_info* p_x_info,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,

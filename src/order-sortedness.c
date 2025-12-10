@@ -321,13 +321,8 @@ int int_cmp(int x, int y, const int direction, const int na_order) {
  * is in the strictly opposite of the expected ordering (with no ties), then
  * groups are pushed, and a `vctrs_sortedness` value is returned indicating how
  * to finalize the order.
- *
- * Note that only one of `p_x` or `p_x_info` are provided, with the other being
- * a `NULL` pointer. When doing `chr_order()`, the original `p_x` is provided,
- * when doing `chr_order_chunk()`, the `p_x_info` chunk is provided.
  */
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     const struct str_info* p_x_info,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
@@ -344,18 +339,16 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   const int direction = decreasing ? -1 : 1;
   const int na_order = na_last ? 1 : -1;
 
-  const bool has_p_x = p_x != NULL;
-
-  SEXP previous = has_p_x ? p_x[0] : p_x_info[0].x;
-  const char* c_previous = has_p_x ? CHAR(previous) : p_x_info[0].p_x;
+  SEXP previous = p_x[0];
+  const char* c_previous = CHAR(previous);
 
   r_ssize count = 0;
 
   // Check for strictly opposite of expected order
   // (ties are not allowed so we can reverse the vector stably)
   for (r_ssize i = 1; i < size; ++i, ++count) {
-    SEXP current = has_p_x ? p_x[i] : p_x_info[i].x;
-    const char* c_current = has_p_x ? CHAR(current) : p_x_info[i].p_x;
+    SEXP current = p_x[i];
+    const char* c_current = CHAR(current);
 
     int cmp = str_cmp(
       current,
@@ -398,8 +391,8 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // Check for expected ordering - allowing ties since we don't have to
   // reverse the ordering.
   for (r_ssize i = 1; i < size; ++i) {
-    SEXP current = has_p_x ? p_x[i] : p_x_info[i].x;
-    const char* c_current = has_p_x ? CHAR(current) : p_x_info[i].p_x;
+    SEXP current = p_x[i];
+    const char* c_current = CHAR(current);
 
     int cmp = str_cmp(
       current,
