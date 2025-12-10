@@ -348,6 +348,14 @@ static inline bool chr_all_same(
   const r_ssize size
 );
 
+static inline
+bool chr_all_same_byte(
+  const struct str_info* p_x,
+  const r_ssize size,
+  const int pass,
+  const uint8_t too_short_bucket
+);
+
 static inline bool str_ge_with_pass(
   const struct str_info* p_x,
   const struct str_info* p_y,

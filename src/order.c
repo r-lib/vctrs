@@ -2605,19 +2605,49 @@ void chr_order_radix_recurse(
     return;
   }
 
-  // We don't carry along `p_counts` from an up front allocation since
-  // the strings have variable length
-  r_ssize p_counts[UINT8_MAX_SIZE] = { 0 };
-
   const int next_pass = pass + 1;
-
-  r_ssize na_count = 0;
-  r_ssize na_loc = 0;
 
   // Reserve the `0`th bucket for strings that are too short. We have one free
   // `uint8_t` value that is never used by R strings, `0`, which would be ASCII
   // null, but those aren't allowed in R strings.
   const uint8_t too_short_bucket = 0;
+
+  // Fast check to see if all bytes within this group are the same. If so, skip
+  // this `pass` since we learned nothing. Unlike with other methods, it is useful
+  // to do this check before the histogram because with strings there is often a
+  // long common prefix, and it is faster to skip past that as quickly as possible,
+  // avoiding the jumpiness of histogramming.
+  if (chr_all_same_byte(p_x, size, pass, too_short_bucket)) {
+    if (next_pass == max_string_size) {
+      // If we are already at the last pass, we are done
+      groups_size_maybe_push(size, p_group_infos);
+    } else {
+      // Otherwise, recurse on next byte using the same `size` since the group
+      // size hasn't changed
+      chr_order_radix_recurse(
+        size,
+        decreasing,
+        na_last,
+        next_pass,
+        max_string_size,
+        p_x,
+        p_o,
+        p_x_aux,
+        p_o_aux,
+        p_bytes,
+        p_group_infos
+      );
+    }
+
+    return;
+  }
+
+  // We don't carry along `p_counts` from an up front allocation since
+  // the strings have variable length
+  r_ssize p_counts[UINT8_MAX_SIZE] = { 0 };
+
+  r_ssize na_count = 0;
+  r_ssize na_loc = 0;
 
   uint8_t byte = 0;
 
@@ -2656,38 +2686,6 @@ void chr_order_radix_recurse(
       p_bytes[i] = byte;
       ++p_counts[byte];
     }
-  }
-
-  // Fast check to see if all bytes were the same. If so, skip this `pass` since
-  // we learned nothing. No need to accumulate counts and iterate over chunks,
-  // we know all others are zero. Can never happen if we also have any `NA`s to
-  // worry about, as the count won't match the `size`.
-  if (p_counts[byte] == size) {
-    // Reset count for other group chunks
-    p_counts[byte] = 0;
-
-    if (next_pass == max_string_size) {
-      // If we are already at the last pass, we are done
-      groups_size_maybe_push(size, p_group_infos);
-    } else {
-      // Otherwise, recurse on next byte using the same `size` since the group
-      // size hasn't changed
-      chr_order_radix_recurse(
-        size,
-        decreasing,
-        na_last,
-        next_pass,
-        max_string_size,
-        p_x,
-        p_o,
-        p_x_aux,
-        p_o_aux,
-        p_bytes,
-        p_group_infos
-      );
-    }
-
-    return;
   }
 
   r_ssize cumulative = 0;
@@ -2967,6 +2965,72 @@ bool chr_all_same(
   for (r_ssize i = 1; i < size; ++i) {
     if (first != p_x[i].x) {
       return false;
+    }
+  }
+
+  return true;
+}
+
+// Returns `true` if the `pass` byte is the same for every element of `p_x`
+static inline
+bool chr_all_same_byte(
+  const struct str_info* p_x,
+  const r_ssize size,
+  const int pass,
+  const uint8_t too_short_bucket
+) {
+  if (size == 0) {
+    return true;
+  }
+
+  if (pass == 0) {
+    // In the first pass we have to check for `NA`
+    if (p_x[0].x == NA_STRING) {
+      return false;
+    }
+
+    uint8_t first;
+    if (pass < p_x[0].size) {
+      first = (uint8_t) p_x[0].p_x[pass];
+    } else {
+      first = too_short_bucket;
+    }
+
+    for (r_ssize i = 0; i < size; ++i) {
+      if (p_x[i].x == NA_STRING) {
+        return false;
+      }
+
+      uint8_t this;
+      if (pass < p_x[i].size) {
+        this = (uint8_t) p_x[i].p_x[pass];
+      } else {
+        this = too_short_bucket;
+      }
+
+      if (this != first) {
+        return false;
+      }
+    }
+  } else {
+    uint8_t first;
+    if (pass < p_x[0].size) {
+      first = p_x[0].p_x[pass];
+    } else {
+      first = too_short_bucket;
+    }
+
+    for (r_ssize i = 0; i < size; ++i) {
+      uint8_t this;
+      if (pass < p_x[i].size) {
+        this = p_x[i].p_x[pass];
+      } else {
+        this = too_short_bucket;
+      }
+
+      if (this != first) {
+        return false;
+      }
     }
   }
 
