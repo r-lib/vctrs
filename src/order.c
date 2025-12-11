@@ -2996,7 +2996,7 @@ bool chr_all_same_byte(
       first = too_short_bucket;
     }
 
-    for (r_ssize i = 0; i < size; ++i) {
+    for (r_ssize i = 1; i < size; ++i) {
       if (p_x[i].x == NA_STRING) {
         return false;
       }
@@ -3015,15 +3015,15 @@ bool chr_all_same_byte(
   } else {
     uint8_t first;
     if (pass < p_x[0].size) {
-      first = p_x[0].p_x[pass];
+      first = (uint8_t) p_x[0].p_x[pass];
     } else {
       first = too_short_bucket;
     }
 
-    for (r_ssize i = 0; i < size; ++i) {
+    for (r_ssize i = 1; i < size; ++i) {
       uint8_t this;
       if (pass < p_x[i].size) {
-        this = p_x[i].p_x[pass];
+        this = (uint8_t) p_x[i].p_x[pass];
       } else {
         this = too_short_bucket;
       }
