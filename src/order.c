@@ -3017,8 +3017,6 @@ void chr_order_insertion(
     while (j >= 0) {
       const char* cmp_elt = p_x[j];
       const bool cmp_elt_string_na = p_x_string_nas[j];
-      const int cmp_elt_string_size = p_x_string_sizes[j];
-      const int cmp_elt_o = p_o[j];
 
       if (str_ge_with_pass(
         elt,
@@ -3032,6 +3030,11 @@ void chr_order_insertion(
       )) {
         break;
       }
+
+      // It seems to help performance to avoid loading these
+      // before the if statement, since they often aren't needed
+      const int cmp_elt_string_size = p_x_string_sizes[j];
+      const int cmp_elt_o = p_o[j];
 
       // Swap
       p_x[j + 1] = cmp_elt;
