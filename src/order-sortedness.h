@@ -15,7 +15,6 @@
 
 #include "vctrs-core.h"
 #include "order-groups.h"
-#include "order-string.h"
 
 // -----------------------------------------------------------------------------
 
@@ -41,7 +40,6 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
                                      struct group_infos* p_group_infos);
 
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     const struct str_info* p_x_info,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
@@ -67,10 +65,10 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
  */
  static inline
  int str_cmp(
-  SEXP x,
-  SEXP y,
-  const char* p_x,
-  const char* p_y,
+  const SEXP x,
+  const SEXP y,
+  const char* x_string,
+  const char* y_string,
   const int direction,
   const int na_order
 ) {
@@ -87,7 +85,7 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
     return -na_order;
   }
 
-  return direction * strcmp(p_x, p_y);
+  return direction * strcmp(x_string, y_string);
 }
 
 /*
@@ -98,11 +96,11 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
  */
 static inline
 int str_cmp_with_pass(
-  SEXP x,
-  SEXP y,
-  const char* p_x,
-  const char* p_y,
-  const int x_size,
+  const SEXP x,
+  const SEXP y,
+  const char* x_string,
+  const char* y_string,
+  const int x_string_size,
   const int direction,
   const int na_order,
   const int pass
@@ -122,7 +120,7 @@ int str_cmp_with_pass(
 
   if (pass == 0) {
     // We don't know anything yet
-    return direction * strcmp(p_x, p_y);
+    return direction * strcmp(x_string, y_string);
   }
 
   // Otherwise we know they are equal up to the position before `pass`, but
@@ -131,16 +129,16 @@ int str_cmp_with_pass(
   const int last_pass = pass - 1;
 
   // We are comparing length with C 0-based indexing so we have to do +1.
-  if (x_size < last_pass + 1) {
+  if (x_string_size < last_pass + 1) {
     // `y` is longer, so `x` must come first
     return 1;
   }
 
   // Now start the comparison at `last_pass`, which we know exists
-  const char* p_x_starting_from_last_pass = p_x + last_pass;
-  const char* p_y_starting_from_last_pass = p_y + last_pass;
+  const char* x_string_starting_from_last_pass = x_string + last_pass;
+  const char* y_string_starting_from_last_pass = y_string + last_pass;
 
-  return direction * strcmp(p_x_starting_from_last_pass, p_y_starting_from_last_pass);
+  return direction * strcmp(x_string_starting_from_last_pass, y_string_starting_from_last_pass);
 }
 
 // -----------------------------------------------------------------------------
