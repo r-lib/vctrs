@@ -2722,7 +2722,7 @@ void chr_order_radix_recurse(
     na_loc = cumulative;
   }
 
-  // Place into auxiliary arrays in the correct order, then copy back over
+  // Place into auxiliary arrays in the correct order
   if (pass == 0 && na_count != 0) {
     // `NA` are fully handled after the first pass
     for (r_ssize i = 0; i < size; ++i) {
@@ -2753,9 +2753,10 @@ void chr_order_radix_recurse(
     }
   }
 
-  // Copy back over
+  // Copy back into `p_o` because our output is `p_o`, but recognize that we can
+  // just swap the auxiliary data related to `x` to achieve the same idea there
   r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
-  r_memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
+  SWAP(struct str_info*, p_x, p_x_aux);
 
   // Cumulative counts will be in reverse order if we were decreasing. We
   // reverse them to put them in the correct order for cumulative count diffing.
