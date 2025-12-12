@@ -2884,16 +2884,11 @@ void chr_order_radix_recurse(
 
   // Place into auxiliary arrays in the correct order
   for (r_ssize i = 0; i < size; ++i) {
-    const int o_elt = p_o[i];
-    const char* x_elt = p_x[i];
-    const int x_elt_string_size = p_x_string_sizes[i];
-
     const uint8_t byte = p_bytes[i];
     const r_ssize loc = p_counts[byte]++;
-
-    p_o_aux[loc] = o_elt;
-    p_x_aux[loc] = x_elt;
-    p_x_string_sizes_aux[loc] = x_elt_string_size;
+    p_o_aux[loc] = p_o[i];
+    p_x_aux[loc] = p_x[i];
+    p_x_string_sizes_aux[loc] = p_x_string_sizes[i];
   }
 
   // Copy back into `p_o` because our output is `p_o`, but recognize that we can
