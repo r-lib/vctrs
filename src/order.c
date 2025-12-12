@@ -355,7 +355,8 @@ SEXP vec_order_info_impl(
   PROTECT_LAZY_VEC(p_lazy_bytes, &n_prot);
 
   // Compute the maximum size of the `counts` vector needed during radix
-  // ordering. 4 * 256 for integers, 8 * 256 for doubles, not used for charactes.
+  // ordering. 4 * 256 for integers, 8 * 256 for doubles, not used for characters
+  // since the number of iterations depends on string length.
   size_t n_bytes_lazy_counts = vec_compute_n_bytes_lazy_counts(proxy, type);
   r_ssize size_lazy_counts = UINT8_MAX_SIZE * n_bytes_lazy_counts;
 
