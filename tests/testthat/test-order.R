@@ -993,6 +993,11 @@ test_that("all `NA` values works", {
   expect_identical(vec_order_radix(x), order(x))
 })
 
+test_that("all `''` values works", {
+  x <- c("", "")
+  expect_identical(vec_order_radix(x), order(x))
+})
+
 test_that("can order empty string vs ASCII value 1 'Start of Header'", {
   x <- c("\001", "")
   expect_identical(vec_order_radix(x), c(2L, 1L))
@@ -1126,6 +1131,68 @@ test_that("character, large: `direction` can be set to `desc`", {
     vec_order_radix(x, direction = "desc"),
     base_order(x, decreasing = TRUE)
   )
+})
+
+test_that("after `NA` removal, all `''` works", {
+  # `NA` prevents it from looking sorted to start with
+  x <- rep("", ORDER_INSERTION_BOUNDARY + 1L)
+  x <- c(NA, x, NA)
+
+  expect_identical(
+    vec_order_radix(x, direction = "asc", na_value = "largest"),
+    base_order(x, na.last = TRUE, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "desc", na_value = "largest"),
+    base_order(x, na.last = FALSE, decreasing = TRUE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "asc", na_value = "smallest"),
+    base_order(x, na.last = FALSE, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "desc", na_value = "smallest"),
+    base_order(x, na.last = TRUE, decreasing = TRUE)
+  )
+
+  # `""` coming through as a "chunk"
+  y <- vec_rep_each(c("a", "b", "c", "d", "e"), length(x))
+  x <- vec_rep(x, 5)
+  df <- data_frame(y = y, x = x)
+
+  expect_identical(
+    vec_order_radix(df, direction = "asc", na_value = "largest"),
+    base_order(df, na.last = TRUE, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(df, direction = "desc", na_value = "largest"),
+    base_order(df, na.last = FALSE, decreasing = TRUE)
+  )
+  expect_identical(
+    vec_order_radix(df, direction = "asc", na_value = "smallest"),
+    base_order(df, na.last = FALSE, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(df, direction = "desc", na_value = "smallest"),
+    base_order(df, na.last = TRUE, decreasing = TRUE)
+  )
+})
+
+test_that("we aren't indexing past an individual string", {
+  # This is why `chr_all_same()` is practically important, and is not just for
+  # performance
+  #
+  # `max_string_size = 3`, so after `pass = 0` we want to detect that all
+  # strings in the `"a"` group are the same and refuse to continue recursing.
+  # Otherwise we'd then do `pass = 1`, which would index the `\0` nul terminator
+  # of the `"a"` strings, which is fine, but then we'd also do a `pass = 2`,
+  # which would index past the strings, which would be very bad!
+  x <- c(
+    "abc",
+    rep("a", ORDER_INSERTION_BOUNDARY + 1)
+  )
+
+  expect_identical(vec_order_radix(x), base_order(x))
 })
 
 test_that("all combinations of `direction` and `na_value` work", {

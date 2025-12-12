@@ -5,13 +5,6 @@
 #include "arg-counter.h"
 #include "rlang-dev.h"
 
-
-#define SWAP(T, x, y) do {                      \
-    T tmp = x;                                  \
-    x = y;                                      \
-    y = tmp;                                    \
-  } while (0)
-
 #define PROTECT_N(x, n) (++*n, PROTECT(x))
 #define PROTECT2(x, y) (PROTECT(x), PROTECT(y))
 
