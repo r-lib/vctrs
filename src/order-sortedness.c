@@ -350,7 +350,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     SEXP current = p_x[i];
     const char* current_string = CHAR(current);
 
-    int cmp = str_cmp(
+    int cmp = str_cmp_maybe_na(
       current,
       previous,
       current_string,
@@ -394,7 +394,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     SEXP current = p_x[i];
     const char* current_string = CHAR(current);
 
-    int cmp = str_cmp(
+    int cmp = str_cmp_maybe_na(
       current,
       previous,
       current_string,

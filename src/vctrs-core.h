@@ -27,6 +27,11 @@ extern bool vctrs_debug_verbose;
   y = tmp;                 \
 } while (0)
 
+struct r_ssize_int_pair {
+  r_ssize x;
+  int y;
+};
+
 /**
  * Ownership modeling
  *
