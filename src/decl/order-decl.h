@@ -304,14 +304,31 @@ static void dbl_order_radix_recurse(
 
 static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
 
-static void chr_order_radix(
+static
+struct r_ssize_int_pair chr_extract_without_missings(
+  r_ssize size,
+  const SEXP* p_x,
+  const char** p_x_strings
+);
+
+static
+void chr_handle_missings(
+  r_ssize size,
+  r_ssize n_missing,
+  const bool na_last,
+  const SEXP* p_x,
+  int* p_o,
+  int* p_o_aux
+);
+
+static
+void chr_order_radix(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
   const int max_string_size,
-  struct str_info* p_x,
+  const char** p_x,
   int* p_o,
-  struct str_info* p_x_aux,
+  const char** p_x_aux,
   int* p_o_aux,
   uint8_t* p_bytes,
   struct group_infos* p_group_infos
@@ -321,12 +338,11 @@ static
 void chr_order_radix_recurse(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
   const int pass,
   const int max_string_size,
-  struct str_info* p_x,
+  const char** p_x,
   int* p_o,
-  struct str_info* p_x_aux,
+  const char** p_x_aux,
   int* p_o_aux,
   uint8_t* p_bytes,
   struct group_infos* p_group_infos
@@ -336,32 +352,28 @@ static
 void chr_order_insertion(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
-  const int pass,
-  struct str_info* p_x,
+  const char** p_x,
   int* p_o,
   struct group_infos* p_group_infos
 );
 
-static inline bool chr_all_same(
-  const struct str_info* p_x,
+static inline
+bool chr_all_same(
+  const char** p_x,
   const r_ssize size
 );
 
 static inline
 bool chr_all_same_byte(
-  const struct str_info* p_x,
-  const r_ssize size,
-  const int pass,
-  const uint8_t too_short_bucket
+  const char** p_x,
+  const r_ssize size
 );
 
-static inline bool str_ge_with_pass(
-  const struct str_info* p_x,
-  const struct str_info* p_y,
-  const int direction,
-  const int na_order,
-  const int pass
+static inline
+bool str_ge(
+  const char* x,
+  const char* y,
+  const int direction
 );
 
 static void vec_order_chunk_switch(

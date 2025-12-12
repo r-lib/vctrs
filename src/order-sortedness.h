@@ -15,7 +15,6 @@
 
 #include "vctrs-core.h"
 #include "order-groups.h"
-#include "order-string.h"
 
 // -----------------------------------------------------------------------------
 
@@ -41,7 +40,6 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
                                      struct group_infos* p_group_infos);
 
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     const struct str_info* p_x_info,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
@@ -66,11 +64,11 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
  * - `na_order` is `1` if `na_last = true` and `-1` if `na_last = false`
  */
  static inline
- int str_cmp(
+ int str_cmp_maybe_na(
   SEXP x,
   SEXP y,
-  const char* p_x,
-  const char* p_y,
+  const char* x_string,
+  const char* y_string,
   const int direction,
   const int na_order
 ) {
@@ -87,60 +85,38 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
     return -na_order;
   }
 
-  return direction * strcmp(p_x, p_y);
+  return direction * strcmp(x_string, y_string);
 }
 
 /*
  * Compare `x` to `y` lexicographically in a C-locale with `pass` information
  *
- * The `pass` tells us that we know everything up to `pass` is already the same,
- * so we can avoid checking those in `strcmp()` if we get that far.
+ * Guaranteed to never be `NA`
  */
 static inline
-int str_cmp_with_pass(
-  SEXP x,
-  SEXP y,
-  const char* p_x,
-  const char* p_y,
-  const int x_size,
-  const int direction,
-  const int na_order,
-  const int pass
+int str_cmp(
+  const char* x,
+  const char* y,
+  const int direction
 ) {
-  // Same pointer - including `NA`s
+  // Same pointer
+  // In our research it seems like `strcmp()` doesn't optimize this check,
+  // since it would be rare for most `strcmp()` usage. But for R's interned
+  // strings it definitely matters for us.
   if (x == y) {
     return 0;
+  } else {
+    return direction * strcmp(x, y);
   }
+}
 
-  if (x == NA_STRING) {
-    return na_order;
-  }
-
-  if (y == NA_STRING) {
-    return -na_order;
-  }
-
-  if (pass == 0) {
-    // We don't know anything yet
-    return direction * strcmp(p_x, p_y);
-  }
-
-  // Otherwise we know they are equal up to the position before `pass`, but
-  // it might have been equality with implicit "" so we need to check the
-  // length of one of them
-  const int last_pass = pass - 1;
-
-  // We are comparing length with C 0-based indexing so we have to do +1.
-  if (x_size < last_pass + 1) {
-    // `y` is longer, so `x` must come first
-    return 1;
-  }
-
-  // Now start the comparison at `last_pass`, which we know exists
-  const char* p_x_starting_from_last_pass = p_x + last_pass;
-  const char* p_y_starting_from_last_pass = p_y + last_pass;
-
-  return direction * strcmp(p_x_starting_from_last_pass, p_y_starting_from_last_pass);
+static inline
+bool str_ge(
+  const char* x,
+  const char* y,
+  const int direction
+) {
+  return str_cmp(x, y, direction) >= 0;
 }
 
 // -----------------------------------------------------------------------------
