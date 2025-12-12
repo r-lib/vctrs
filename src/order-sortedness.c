@@ -321,12 +321,8 @@ int int_cmp(int x, int y, const int direction, const int na_order) {
  * is in the strictly opposite of the expected ordering (with no ties), then
  * groups are pushed, and a `vctrs_sortedness` value is returned indicating how
  * to finalize the order.
- *
- * Only one of either `p_x` or `p_x_strings` + `p_x_string_nas` will be provided.
  */
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     const char** p_x_strings,
-                                     const bool* p_x_string_nas,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
@@ -340,29 +336,25 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     return VCTRS_SORTEDNESS_sorted;
   }
 
-  // Either `p_x` will be provided, or both `p_x_strings` and `p_x_string_nas`
-  // will be provided
-  const bool has_x = p_x != NULL;
-
   const int direction = decreasing ? -1 : 1;
   const int na_order = na_last ? 1 : -1;
 
-  const char* previous = has_x ? r_str_c_string(p_x[0]) : p_x_strings[0];
-  bool previous_na = has_x ? p_x[0] == NA_STRING : p_x_string_nas[0];
+  SEXP previous = p_x[0];
+  const char* previous_string = CHAR(previous);
 
   r_ssize count = 0;
 
   // Check for strictly opposite of expected order
   // (ties are not allowed so we can reverse the vector stably)
   for (r_ssize i = 1; i < size; ++i, ++count) {
-    const char* current = has_x ? r_str_c_string(p_x[i]) : p_x_strings[i];
-    const bool current_na = has_x ? p_x[i] == NA_STRING : p_x_string_nas[i];
+    SEXP current = p_x[i];
+    const char* current_string = CHAR(current);
 
-    int cmp = str_cmp(
+    int cmp = str_cmp_maybe_na(
       current,
       previous,
-      current_na,
-      previous_na,
+      current_string,
+      previous_string,
       direction,
       na_order
     );
@@ -372,7 +364,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     }
 
     previous = current;
-    previous_na = current_na;
+    previous_string = current_string;
   }
 
   // Was in strictly opposite of expected order.
@@ -399,14 +391,14 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // Check for expected ordering - allowing ties since we don't have to
   // reverse the ordering.
   for (r_ssize i = 1; i < size; ++i) {
-    const char* current = has_x ? r_str_c_string(p_x[i]) : p_x_strings[i];
-    const bool current_na = has_x ? p_x[i] == NA_STRING : p_x_string_nas[i];
+    SEXP current = p_x[i];
+    const char* current_string = CHAR(current);
 
-    int cmp = str_cmp(
+    int cmp = str_cmp_maybe_na(
       current,
       previous,
-      current_na,
-      previous_na,
+      current_string,
+      previous_string,
       direction,
       na_order
     );
@@ -418,7 +410,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     }
 
     previous = current;
-    previous_na = current_na;
+    previous_string = current_string;
 
     // Continue group run
     if (cmp == 0) {
