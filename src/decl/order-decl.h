@@ -352,7 +352,6 @@ static
 void chr_order_insertion(
   const r_ssize size,
   const bool decreasing,
-  const int pass,
   const char** p_x,
   int* p_o,
   struct group_infos* p_group_infos
@@ -367,16 +366,14 @@ bool chr_all_same(
 static inline
 bool chr_all_same_byte(
   const char** p_x,
-  const r_ssize size,
-  const int pass
+  const r_ssize size
 );
 
 static inline
-bool str_ge_with_pass(
+bool str_ge(
   const char* x,
   const char* y,
-  const int direction,
-  const int pass
+  const int direction
 );
 
 static void vec_order_chunk_switch(

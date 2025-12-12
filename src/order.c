@@ -2462,11 +2462,9 @@ void chr_order_chunk(
   }
 
   if (size <= ORDER_INSERTION_BOUNDARY) {
-    const int pass = 0;
     chr_order_insertion(
       size,
       decreasing,
-      pass,
       p_x_chunk,
       p_o,
       p_group_infos
@@ -2564,11 +2562,9 @@ void chr_order(
   }
 
   if (size <= ORDER_INSERTION_BOUNDARY) {
-    const int pass = 0;
     chr_order_insertion(
       size,
       decreasing,
-      pass,
       p_x_chunk,
       p_o,
       p_group_infos
@@ -2761,7 +2757,6 @@ void chr_order_radix_recurse(
     chr_order_insertion(
       size,
       decreasing,
-      pass,
       p_x,
       p_o,
       p_group_infos
@@ -2776,13 +2771,17 @@ void chr_order_radix_recurse(
   // to do this check before the histogram because with strings there is often a
   // long common prefix, and it is faster to skip past that as quickly as possible,
   // avoiding the jumpiness of histogramming.
-  if (chr_all_same_byte(p_x, size, pass)) {
+  if (chr_all_same_byte(p_x, size)) {
     if (next_pass == max_string_size) {
       // If we are already at the last pass, we are done
       groups_size_maybe_push(size, p_group_infos);
     } else {
-      // Otherwise, recurse on next byte using the same `size` since the group
-      // size hasn't changed
+      // Otherwise, advance `p_x` to the next byte and immediately recurse using
+      // the same `size` since the group size hasn't changed
+      for (r_ssize i = 0; i < size; ++i) {
+        ++p_x[i];
+      }
+
       chr_order_radix_recurse(
         size,
         decreasing,
@@ -2804,8 +2803,6 @@ void chr_order_radix_recurse(
   // the strings have variable length
   r_ssize p_counts[UINT8_MAX_SIZE] = { 0 };
 
-  uint8_t byte = 0;
-
   // Histogram
   //
   // Histogramming strings is very special!
@@ -2823,8 +2820,16 @@ void chr_order_radix_recurse(
   // This trick avoids needing to track the string size alongside the string
   // pointer. We just need the `max_string_size` of the total number of times to
   // recurse, and the algorithm automatically stops early on shorter strings.
+  //
+  // We also advance the `char*` returned by `p_x[i]` to the next byte right
+  // after we access it, for use by the next `pass`. This actually makes
+  // `chr_order_insertion()` and `chr_all_same_byte()` a little simpler, because
+  // we've already taken care of advancing past all the bytes that we know are
+  // all the same. For strings like `"ab"` in the example above, this can advance
+  // us past the `\0` nul terminator, but we will never access that location.
   for (r_ssize i = 0; i < size; ++i) {
-    byte = (uint8_t) p_x[i][pass];
+    const uint8_t byte = (uint8_t) *p_x[i];
+    ++p_x[i];
     p_bytes[i] = byte;
     ++p_counts[byte];
   }
@@ -2944,17 +2949,12 @@ void chr_order_radix_recurse(
  * Insertion order for character vectors. This occurs in the radix ordering
  * once we drop below a certain chunk size.
  *
- * One optimization done here is to take advantage of the `pass` info, which
- * will indicate that all characters before this pass are identical already
- * and don't need to be checked by `strcmp()`.
- *
  * Guaranteed to never see `NA`s.
  */
 static
 void chr_order_insertion(
   const r_ssize size,
   const bool decreasing,
-  const int pass,
   const char** p_x,
   int* p_o,
   struct group_infos* p_group_infos
@@ -2975,12 +2975,7 @@ void chr_order_insertion(
     while (j >= 0) {
       const char* cmp_elt = p_x[j];
 
-      if (str_ge_with_pass(
-        elt,
-        cmp_elt,
-        direction,
-        pass
-      )) {
+      if (str_ge(elt, cmp_elt, direction)) {
         break;
       }
 
@@ -3029,22 +3024,6 @@ void chr_order_insertion(
 }
 
 static inline
-bool str_ge_with_pass(
-  const char* x,
-  const char* y,
-  const int direction,
-  const int pass
-) {
-  const int cmp = str_cmp_with_pass(
-    x,
-    y,
-    direction,
-    pass
-  );
-  return cmp >= 0;
-}
-
-static inline
 bool chr_all_same(
   const char** p_x,
   const r_ssize size
@@ -3064,23 +3043,22 @@ bool chr_all_same(
   return true;
 }
 
-// Returns `true` if the `pass` byte is the same for every element of `p_x`
+// Returns `true` if the upcoming byte is the same for every element of `p_x`
 //
 // Guaranteed to never see `NA`s
 static inline
 bool chr_all_same_byte(
   const char** p_x,
-  const r_ssize size,
-  const int pass
+  const r_ssize size
 ) {
   if (size == 0) {
     return true;
   }
 
-  const uint8_t first = (uint8_t) p_x[0][pass];
+  const uint8_t first = (uint8_t) *p_x[0];
 
   for (r_ssize i = 1; i < size; ++i) {
-    const uint8_t this = (uint8_t) p_x[i][pass];
+    const uint8_t this = (uint8_t) *p_x[i];
 
     if (this != first) {
       return false;
