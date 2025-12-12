@@ -340,7 +340,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   const int na_order = na_last ? 1 : -1;
 
   SEXP previous = p_x[0];
-  const char* previous_string = r_str_c_string(previous);
+  const char* previous_string = CHAR(previous);
 
   r_ssize count = 0;
 
@@ -348,9 +348,9 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // (ties are not allowed so we can reverse the vector stably)
   for (r_ssize i = 1; i < size; ++i, ++count) {
     SEXP current = p_x[i];
-    const char* current_string = r_str_c_string(current);
+    const char* current_string = CHAR(current);
 
-    int cmp = str_cmp(
+    int cmp = str_cmp_maybe_na(
       current,
       previous,
       current_string,
@@ -392,9 +392,9 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // reverse the ordering.
   for (r_ssize i = 1; i < size; ++i) {
     SEXP current = p_x[i];
-    const char* current_string = r_str_c_string(current);
+    const char* current_string = CHAR(current);
 
-    int cmp = str_cmp(
+    int cmp = str_cmp_maybe_na(
       current,
       previous,
       current_string,
