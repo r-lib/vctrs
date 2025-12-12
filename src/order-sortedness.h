@@ -94,40 +94,35 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
  * The `pass` tells us that we know everything up to `pass` is already the same,
  * so we can avoid checking those in `strcmp()` if we get that far.
  *
+ * `pass` will always advance `x` and `y` up to but never past the nul terminator
+ * of each respective string, i.e. `\0`. It is actually well-defined for us to
+ * compare against the nul terminator, it is identical to `0`, which means that
+ * the shorter string will compare as "less than" the longer string, which is
+ * correct! For example, for `"ab\0"` and `"abc\0" it is possible to have
+ * `pass == 2`, which means that we have already compared `a` and `b` and know
+ * they are equivalent. This advances us to `"\0"` and `"c\0"`, where `"\0"` then
+ * compares as less than `"c\0"`, which is correct!
+ *
  * Guaranteed to not be `NA`s
  */
 static inline
 int str_cmp_with_pass(
   const char* x,
   const char* y,
-  const int x_string_size,
   const int direction,
   const int pass
 ) {
   // Same pointer
+  // In our research it seems like `strcmp()` doesn't optimize this check,
+  // since it would be rare for most `strcmp()` usage. But for R's interned
+  // strings it definitely matters for us.
   if (x == y) {
     return 0;
   }
 
-  if (pass == 0) {
-    // We don't know anything yet
-    return direction * strcmp(x, y);
-  }
-
-  // Otherwise we know they are equal up to the position before `pass`, but
-  // it might have been equality with implicit "" so we need to check the
-  // length of one of them
-  const int last_pass = pass - 1;
-
-  // We are comparing length with C 0-based indexing so we have to do +1.
-  if (x_string_size < last_pass + 1) {
-    // `y` is longer, so `x` must come first
-    return 1;
-  }
-
-  // Now start the comparison at `last_pass`, which we know exists
-  const char* x_starting_from_last_pass = x + last_pass;
-  const char* y_starting_from_last_pass = y + last_pass;
+  // Start the comparison at `pass`, because we have checked everything before it
+  const char* x_starting_from_last_pass = x + pass;
+  const char* y_starting_from_last_pass = y + pass;
 
   return direction * strcmp(x_starting_from_last_pass, y_starting_from_last_pass);
 }
