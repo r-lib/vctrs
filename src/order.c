@@ -354,9 +354,6 @@ SEXP vec_order_info_impl(
   struct lazy_raw* p_lazy_bytes = new_lazy_raw(size, sizeof(uint8_t));
   PROTECT_LAZY_VEC(p_lazy_bytes, &n_prot);
 
-  struct lazy_raw* p_lazy_x_string_nas = new_lazy_raw(size, sizeof(bool));
-  PROTECT_LAZY_VEC(p_lazy_x_string_nas, &n_prot);
-
   struct lazy_raw* p_lazy_x_string_sizes = new_lazy_raw(size, sizeof(int));
   PROTECT_LAZY_VEC(p_lazy_x_string_sizes, &n_prot);
 
@@ -411,7 +408,6 @@ SEXP vec_order_info_impl(
     p_lazy_o_aux,
     p_lazy_bytes,
     p_lazy_counts,
-    p_lazy_x_string_nas,
     p_lazy_x_string_sizes,
     p_lazy_x_string_sizes_aux,
     p_group_infos
@@ -448,7 +444,6 @@ void vec_order_switch(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct lazy_raw* p_lazy_x_string_nas,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -466,7 +461,6 @@ void vec_order_switch(
       p_lazy_o_aux,
       p_lazy_bytes,
       p_lazy_counts,
-      p_lazy_x_string_nas,
       p_lazy_x_string_sizes,
       p_lazy_x_string_sizes_aux,
       p_group_infos
@@ -507,7 +501,6 @@ void vec_order_switch(
     p_lazy_o_aux,
     p_lazy_bytes,
     p_lazy_counts,
-    p_lazy_x_string_nas,
     p_lazy_x_string_sizes,
     p_lazy_x_string_sizes_aux,
     p_group_infos
@@ -531,7 +524,6 @@ void vec_order_base_switch(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct lazy_raw* p_lazy_x_string_nas,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -618,7 +610,6 @@ void vec_order_base_switch(
       p_lazy_x_aux,
       p_lazy_o_aux,
       p_lazy_bytes,
-      p_lazy_x_string_nas,
       p_lazy_x_string_sizes,
       p_lazy_x_string_sizes_aux,
       p_group_infos
@@ -2412,9 +2403,8 @@ void cpl_order(
 /*
  * These are the main entry points for character ordering.
  *
- * `chr_order_chunk()` assumes `p_lazy_x_chunk`, `p_lazy_x_string_nas`, and
- * `p_lazy_x_string_sizes` hold a chunk worth of data, and are modifiable by
- * reference.
+ * `chr_order_chunk()` assumes `p_lazy_x_chunk` holds a chunk worth of `SEXP`s
+ * and is modifiable by reference.
  *
  * `chr_order()` assumes `x` is user input which cannot be modified.
  * It copies `x` into memory that can be modified directly.
@@ -2430,19 +2420,14 @@ void chr_order_chunk(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct lazy_raw* p_lazy_x_string_nas,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
 ) {
-  const char** p_x_chunk = (const char**) p_lazy_x_chunk->p_data;
-  bool* p_x_string_nas = (bool*) p_lazy_x_string_nas->p_data;
-  int* p_x_string_sizes = (int*) p_lazy_x_string_sizes->p_data;
+  SEXP* p_x_chunk_sexp = (SEXP*) p_lazy_x_chunk->p_data;
 
   const enum vctrs_sortedness sortedness = chr_sortedness(
-    NULL,
-    p_x_chunk,
-    p_x_string_nas,
+    p_x_chunk_sexp,
     size,
     decreasing,
     na_last,
@@ -2454,18 +2439,44 @@ void chr_order_chunk(
     return;
   }
 
+  int max_string_size = 0;
+
+  const char** p_x_aux = (const char**) init_lazy_raw(p_lazy_x_aux);
+  int* p_x_string_sizes = (int*) init_lazy_raw(p_lazy_x_string_sizes);
+
+  // Fill with string info, track maximum string size
+  // Want a 0 size for `NA` so it doesn't inflate `max_string_size`
+  for (r_ssize i = 0; i < size; ++i) {
+    SEXP elt = p_x_chunk_sexp[i];
+    const char* elt_string = CHAR(elt);
+    const int elt_string_size = (int) Rf_length(elt) * (elt != NA_STRING);
+
+    if (max_string_size < elt_string_size) {
+      max_string_size = elt_string_size;
+    }
+
+    p_x_aux[i] = elt_string;
+    p_x_string_sizes[i] = elt_string_size;
+  }
+
   // Preemptively handle `NA`
   const r_ssize n_missings = chr_place_missings(
     size,
     na_last,
-    p_x_chunk,
+    p_x_chunk_sexp,
+    p_x_aux,
     p_o,
     p_lazy_o_aux,
-    p_x_string_nas,
     p_x_string_sizes
   );
   size -= n_missings;
   p_o = na_last ? p_o : (p_o + n_missings);
+
+  // Now forget about `p_x_chunk_sexp` and swap `p_x_aux` with `p_x_chunk`
+  // to get back to the "standard" definition of these pointers
+  p_x_chunk_sexp = NULL;
+  const char** p_x_chunk = (const char**) p_lazy_x_chunk->p_data;
+  SWAP(const char**, p_x_chunk, p_x_aux);
 
   if (!na_last && n_missings != 0) {
     // Push `!na_last` group before sorting
@@ -2484,19 +2495,8 @@ void chr_order_chunk(
       p_group_infos
     );
   } else {
-    int max_string_size = 0;
-
-    // Track maximum string size
-    for (r_ssize i = 0; i < size; ++i) {
-      const int elt_string_size = p_x_string_sizes[i];
-      if (max_string_size < elt_string_size) {
-        max_string_size = elt_string_size;
-      }
-    }
-
     int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
 
-    const char** p_x_aux = (const char**) init_lazy_raw(p_lazy_x_aux);
     int* p_x_string_sizes_aux = (int*) init_lazy_raw(p_lazy_x_string_sizes_aux);
 
     uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
@@ -2533,7 +2533,6 @@ void chr_order(
   struct lazy_raw* p_lazy_x_aux,
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
-  struct lazy_raw* p_lazy_x_string_nas,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -2542,8 +2541,6 @@ void chr_order(
 
   const enum vctrs_sortedness sortedness = chr_sortedness(
     p_x,
-    NULL,
-    NULL,
     size,
     decreasing,
     na_last,
@@ -2561,22 +2558,20 @@ void chr_order(
   int max_string_size = 0;
 
   const char** p_x_chunk = (const char**) init_lazy_raw(p_lazy_x_chunk);
-  bool* p_x_string_nas = (bool*) init_lazy_raw(p_lazy_x_string_nas);
   int* p_x_string_sizes = (int*) init_lazy_raw(p_lazy_x_string_sizes);
 
   // Fill with string info, track maximum string size
+  // Want a 0 size for `NA` so it doesn't inflate `max_string_size`
   for (r_ssize i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
     const char* elt_string = CHAR(elt);
-    const bool elt_string_na = elt == NA_STRING;
-    const int elt_string_size = (int) Rf_length(elt) * !elt_string_na;
+    const int elt_string_size = (int) Rf_length(elt) * (elt != NA_STRING);
 
     if (max_string_size < elt_string_size) {
       max_string_size = elt_string_size;
     }
 
     p_x_chunk[i] = elt_string;
-    p_x_string_nas[i] = elt_string_na;
     p_x_string_sizes[i] = elt_string_size;
   }
 
@@ -2586,10 +2581,10 @@ void chr_order(
   const r_ssize n_missings = chr_place_missings(
     size,
     na_last,
+    p_x,
     p_x_chunk,
     p_o,
     p_lazy_o_aux,
-    p_x_string_nas,
     p_x_string_sizes
   );
   size -= n_missings;
@@ -2645,8 +2640,9 @@ void chr_order(
 // This allows the radix code to be as simple as possible, because `NA` handling
 // in the hot radix path is detremental to performance, and complex to handle!
 //
-// - Removes `NA`s from `p_x`, filling gaps by pushing values after an `NA` leftward
-// - Removes corresponding location from `p_x_string_sizes`, filling gaps the same way
+// - Can't touch `p_x`, might be user input
+// - Removes locations corresponding to `NA` from `p_x_strings` and
+//   `p_x_string_sizes`, filling gaps by pushing values after an `NA` leftward
 // - Reorders `p_o` by placing all `NA` locations up front or at the back (stably)
 //   depending on the value of `na_last`.
 //
@@ -2656,10 +2652,10 @@ static
 r_ssize chr_place_missings(
   r_ssize size,
   const bool na_last,
-  const char** p_x,
+  const SEXP* p_x,
+  const char** p_x_strings,
   int* p_o,
   struct lazy_raw* p_lazy_o_aux,
-  bool* p_x_string_nas,
   int* p_x_string_sizes
 ) {
   r_ssize n_missing = 0;
@@ -2668,9 +2664,7 @@ r_ssize chr_place_missings(
   bool any_missing = false;
 
   for (r_ssize i = 0; i < size; ++i) {
-    const bool x_string_na = p_x_string_nas[i];
-
-    if (x_string_na) {
+    if (p_x[i] == NA_STRING) {
       any_missing = true;
       break;
     }
@@ -2683,19 +2677,16 @@ r_ssize chr_place_missings(
 
   r_ssize loc = 0;
 
-  // Squash `p_x` and `p_x_string_sizes` by removing all `NA`s,
+  // Squash `p_x_strings` and `p_x_string_sizes` by removing all `NA`s,
   // shifting elements after an `NA` left to fill the gap
   for (r_ssize i = 0; i < size; ++i) {
-    const bool x_string_na = p_x_string_nas[i];
-
-    if (x_string_na) {
+    if (p_x[i] == NA_STRING) {
       ++n_missing;
-      continue;
+    } else {
+      p_x_strings[loc] = p_x_strings[i];
+      p_x_string_sizes[loc] = p_x_string_sizes[i];
+      ++loc;
     }
-
-    p_x[loc] = p_x[i];
-    p_x_string_sizes[loc] = p_x_string_sizes[i];
-    ++loc;
   }
 
   int* p_o_aux = init_lazy_raw(p_lazy_o_aux);
@@ -2707,9 +2698,7 @@ r_ssize chr_place_missings(
   // (or at the end, depending on `na_last`)
   // Impossible to do this without a secondary vector
   for (r_ssize i = 0; i < size; ++i) {
-    const bool x_string_na = p_x_string_nas[i];
-
-    if (x_string_na) {
+    if (p_x[i] == NA_STRING) {
       p_o_aux[loc_missing] = p_o[i];
       ++loc_missing;
     } else {
@@ -3169,28 +3158,6 @@ bool chr_all_same_byte(
   }                                                              \
 } while (0)
 
-#define DF_ORDER_EXTRACT_CHUNK_CHR() do {                                 \
-  const SEXP* p_col = STRING_PTR_RO(col);                                 \
-  const char** p_x_chunk = (const char**) init_lazy_raw(p_lazy_x_chunk);  \
-  bool* p_x_string_nas = (bool*) init_lazy_raw(p_lazy_x_string_nas);      \
-  int* p_x_string_sizes = (int*) init_lazy_raw(p_lazy_x_string_sizes);    \
-                                                                          \
-  /* Extract the next group chunk and place in */                         \
-  /* sequential order for cache friendliness */                           \
-  for (r_ssize j = 0; j < group_size; ++j) {                              \
-    const int loc = p_o_col[j] - 1;                                       \
-                                                                          \
-    SEXP elt = p_col[loc];                                                \
-    const char* elt_string = CHAR(elt);                                   \
-    const bool elt_string_na = elt == NA_STRING;                          \
-    const int elt_string_size = (int) Rf_length(elt) * !elt_string_na;    \
-                                                                          \
-    p_x_chunk[j] = elt_string;                                            \
-    p_x_string_nas[j] = elt_string_na;                                    \
-    p_x_string_sizes[j] = elt_string_size;                                \
-  }                                                                       \
-} while (0)
-
 #define DF_ORDER_EXTRACT_CHUNK_CPL() do {                          \
   const Rcomplex* p_col = COMPLEX_RO(col);                         \
   double* p_x_chunk = (double*) init_lazy_raw(p_lazy_x_chunk);     \
@@ -3229,7 +3196,6 @@ void df_order(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct lazy_raw* p_lazy_x_string_nas,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -3299,7 +3265,6 @@ void df_order(
     p_lazy_o_aux,
     p_lazy_bytes,
     p_lazy_counts,
-    p_lazy_x_string_nas,
     p_lazy_x_string_sizes,
     p_lazy_x_string_sizes_aux,
     p_group_infos
@@ -3364,7 +3329,7 @@ void df_order(
       case VCTRS_TYPE_integer: DF_ORDER_EXTRACT_CHUNK(INTEGER_RO, int); break;
       case VCTRS_TYPE_logical: DF_ORDER_EXTRACT_CHUNK(LOGICAL_RO, int); break;
       case VCTRS_TYPE_double: DF_ORDER_EXTRACT_CHUNK(REAL_RO, double); break;
-      case VCTRS_TYPE_character: DF_ORDER_EXTRACT_CHUNK_CHR(); break;
+      case VCTRS_TYPE_character: DF_ORDER_EXTRACT_CHUNK(STRING_PTR_RO, SEXP); break;
       case VCTRS_TYPE_complex: DF_ORDER_EXTRACT_CHUNK_CPL(); break;
       default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
@@ -3381,7 +3346,6 @@ void df_order(
         p_lazy_o_aux,
         p_lazy_bytes,
         p_lazy_counts,
-        p_lazy_x_string_nas,
         p_lazy_x_string_sizes,
         p_lazy_x_string_sizes_aux,
         p_group_infos
@@ -3405,7 +3369,6 @@ void df_order(
 }
 
 #undef DF_ORDER_EXTRACT_CHUNK
-#undef DF_ORDER_EXTRACT_CHUNK_CHR
 #undef DF_ORDER_EXTRACT_CHUNK_CPL
 
 // -----------------------------------------------------------------------------
@@ -3427,7 +3390,6 @@ void vec_order_chunk_switch(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct lazy_raw* p_lazy_x_string_nas,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -3511,7 +3473,6 @@ void vec_order_chunk_switch(
       p_lazy_o_aux,
       p_lazy_bytes,
       p_lazy_counts,
-      p_lazy_x_string_nas,
       p_lazy_x_string_sizes,
       p_lazy_x_string_sizes_aux,
       p_group_infos
@@ -3553,7 +3514,9 @@ size_t vec_compute_n_bytes_lazy_raw(
     // Complex types will be split into two double vectors
     return sizeof(double);
   case VCTRS_TYPE_character:
-    return sizeof(const char*);
+    // Both `SEXP` and `const char*` are written to the working memory.
+    // Should be the same size (8 bytes), both are pointers, but be defensive.
+    return sizeof(SEXP) > sizeof(const char*) ? sizeof(SEXP) : sizeof(const char*);
   case VCTRS_TYPE_dataframe:
     return df_compute_n_bytes_lazy_raw(x);
   default:

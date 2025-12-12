@@ -40,8 +40,6 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
                                      struct group_infos* p_group_infos);
 
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     const char** p_x_strings,
-                                     const bool* p_x_string_nas,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
@@ -67,10 +65,10 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
  */
  static inline
  int str_cmp(
-  const char* x,
-  const char* y,
-  const bool x_string_na,
-  const bool y_string_na,
+  SEXP x,
+  SEXP y,
+  const char* x_string,
+  const char* y_string,
   const int direction,
   const int na_order
 ) {
@@ -79,15 +77,15 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
     return 0;
   }
 
-  if (x_string_na) {
+  if (x == NA_STRING) {
     return na_order;
   }
 
-  if (y_string_na) {
+  if (y == NA_STRING) {
     return -na_order;
   }
 
-  return direction * strcmp(x, y);
+  return direction * strcmp(x_string, y_string);
 }
 
 /*
