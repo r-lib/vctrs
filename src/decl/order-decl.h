@@ -313,14 +313,21 @@ static void dbl_order_radix_recurse(
 static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
 
 static
-r_ssize chr_place_missings(
+r_ssize chr_extract_without_missings(
   r_ssize size,
-  const bool na_last,
   const SEXP* p_x,
   const char** p_x_strings,
-  int* p_o,
-  struct lazy_raw* p_lazy_o_aux,
   int* p_x_string_sizes
+);
+
+static
+void chr_handle_missings(
+  r_ssize size,
+  r_ssize n_missing,
+  const bool na_last,
+  const SEXP* p_x,
+  int* p_o,
+  int* p_o_aux
 );
 
 static

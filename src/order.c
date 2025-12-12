@@ -2439,38 +2439,35 @@ void chr_order_chunk(
     return;
   }
 
-  int max_string_size = 0;
-
   const char** p_x_aux = (const char**) init_lazy_raw(p_lazy_x_aux);
   int* p_x_string_sizes = (int*) init_lazy_raw(p_lazy_x_string_sizes);
 
-  // Fill with string info, track maximum string size
-  // Want a 0 size for `NA` so it doesn't inflate `max_string_size`
-  for (r_ssize i = 0; i < size; ++i) {
-    SEXP elt = p_x_chunk_sexp[i];
-    const char* elt_string = CHAR(elt);
-    const int elt_string_size = (int) Rf_length(elt) * (elt != NA_STRING);
-
-    if (max_string_size < elt_string_size) {
-      max_string_size = elt_string_size;
-    }
-
-    p_x_aux[i] = elt_string;
-    p_x_string_sizes[i] = elt_string_size;
-  }
-
-  // Preemptively handle `NA`
-  const r_ssize n_missings = chr_place_missings(
+  // Extract out `CHAR()` string pointers and `Rf_length()` string sizes,
+  // skipping missings along the way, but returning the count of them
+  const r_ssize n_missings = chr_extract_without_missings(
     size,
-    na_last,
     p_x_chunk_sexp,
     p_x_aux,
-    p_o,
-    p_lazy_o_aux,
     p_x_string_sizes
   );
-  size -= n_missings;
-  p_o = na_last ? p_o : (p_o + n_missings);
+
+  if (n_missings != 0) {
+    // If there are missings, handle them by pushing their ordering to the front
+    // (or back, depending on `na_last`) of `p_o`
+    int* p_o_aux = init_lazy_raw(p_lazy_o_aux);
+
+    chr_handle_missings(
+      size,
+      n_missings,
+      na_last,
+      p_x_chunk_sexp,
+      p_o,
+      p_o_aux
+    );
+
+    size -= n_missings;
+    p_o = na_last ? p_o : (p_o + n_missings);
+  }
 
   // Now forget about `p_x_chunk_sexp` and swap `p_x_aux` with `p_x_chunk`
   // to get back to the "standard" definition of these pointers
@@ -2495,6 +2492,15 @@ void chr_order_chunk(
       p_group_infos
     );
   } else {
+    // Compute maximum string size
+    int max_string_size = 0;
+    for (r_ssize i = 0; i < size; ++i) {
+      const int elt_string_size = p_x_string_sizes[i];
+      if (max_string_size < elt_string_size) {
+        max_string_size = elt_string_size;
+      }
+    }
+
     int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
 
     int* p_x_string_sizes_aux = (int*) init_lazy_raw(p_lazy_x_string_sizes_aux);
@@ -2555,40 +2561,37 @@ void chr_order(
     return;
   }
 
-  int max_string_size = 0;
+  int* p_o = init_order(p_order);
 
   const char** p_x_chunk = (const char**) init_lazy_raw(p_lazy_x_chunk);
   int* p_x_string_sizes = (int*) init_lazy_raw(p_lazy_x_string_sizes);
 
-  // Fill with string info, track maximum string size
-  // Want a 0 size for `NA` so it doesn't inflate `max_string_size`
-  for (r_ssize i = 0; i < size; ++i) {
-    SEXP elt = p_x[i];
-    const char* elt_string = CHAR(elt);
-    const int elt_string_size = (int) Rf_length(elt) * (elt != NA_STRING);
-
-    if (max_string_size < elt_string_size) {
-      max_string_size = elt_string_size;
-    }
-
-    p_x_chunk[i] = elt_string;
-    p_x_string_sizes[i] = elt_string_size;
-  }
-
-  int* p_o = init_order(p_order);
-
-  // Preemptively handle `NA`
-  const r_ssize n_missings = chr_place_missings(
+  // Extract out `CHAR()` string pointers and `Rf_length()` string sizes,
+  // skipping missings along the way, but returning the count of them
+  const r_ssize n_missings = chr_extract_without_missings(
     size,
-    na_last,
     p_x,
     p_x_chunk,
-    p_o,
-    p_lazy_o_aux,
     p_x_string_sizes
   );
-  size -= n_missings;
-  p_o = na_last ? p_o : (p_o + n_missings);
+
+  if (n_missings != 0) {
+    // If there are missings, handle them by pushing their ordering to the front
+    // (or back, depending on `na_last`) of `p_o`
+    int* p_o_aux = init_lazy_raw(p_lazy_o_aux);
+
+    chr_handle_missings(
+      size,
+      n_missings,
+      na_last,
+      p_x,
+      p_o,
+      p_o_aux
+    );
+
+    size -= n_missings;
+    p_o = na_last ? p_o : (p_o + n_missings);
+  }
 
   if (!na_last && n_missings != 0) {
     // Push `na_last` group before sorting
@@ -2607,6 +2610,15 @@ void chr_order(
       p_group_infos
     );
   } else {
+    // Compute maximum string size
+    int max_string_size = 0;
+    for (r_ssize i = 0; i < size; ++i) {
+      const int elt_string_size = p_x_string_sizes[i];
+      if (max_string_size < elt_string_size) {
+        max_string_size = elt_string_size;
+      }
+    }
+
     int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
 
     const char** p_x_aux = (const char**) init_lazy_raw(p_lazy_x_aux);
@@ -2635,82 +2647,76 @@ void chr_order(
   }
 }
 
-// Preemptively handle `NA`s during character ordering
+// Extract info from `p_x` into `p_x_strings` and `p_x_string_sizes`
 //
-// This allows the radix code to be as simple as possible, because `NA` handling
-// in the hot radix path is detremental to performance, and complex to handle!
+// Skips `NA`s, which are instead handled immediately by
+// `chr_handle_missings()`. This allows the radix code to be as simple as
+// possible, because `NA` handling in the hot radix path is detremental to
+// performance, and complex to handle!
 //
-// - Can't touch `p_x`, might be user input
-// - Removes locations corresponding to `NA` from `p_x_strings` and
-//   `p_x_string_sizes`, filling gaps by pushing values after an `NA` leftward
-// - Reorders `p_o` by placing all `NA` locations up front or at the back (stably)
-//   depending on the value of `na_last`.
-//
-// Returns `n_missings`, which is then used by the caller to offset `p_o` past the `NA`s
-// in the `!na_last` case, and reduce the total `size` to account for the removal of `NA`s.
+// Returns `n_missings`, which is used by the caller as:
+// - An input to `chr_handle_missings()`
+// - An offset to `p_o` in the `!na_last` case
+// - An adjustment to the total `size` to account for `NA` removal
 static
-r_ssize chr_place_missings(
+r_ssize chr_extract_without_missings(
   r_ssize size,
-  const bool na_last,
   const SEXP* p_x,
   const char** p_x_strings,
-  int* p_o,
-  struct lazy_raw* p_lazy_o_aux,
   int* p_x_string_sizes
 ) {
   r_ssize n_missing = 0;
-
-  // First see if there are any missings at all
-  bool any_missing = false;
-
-  for (r_ssize i = 0; i < size; ++i) {
-    if (p_x[i] == NA_STRING) {
-      any_missing = true;
-      break;
-    }
-  }
-
-  if (!any_missing) {
-    // Nothing to adjust
-    return n_missing;
-  }
-
   r_ssize loc = 0;
 
-  // Squash `p_x_strings` and `p_x_string_sizes` by removing all `NA`s,
-  // shifting elements after an `NA` left to fill the gap
   for (r_ssize i = 0; i < size; ++i) {
-    if (p_x[i] == NA_STRING) {
+    SEXP elt = p_x[i];
+
+    if (elt == NA_STRING) {
       ++n_missing;
     } else {
-      p_x_strings[loc] = p_x_strings[i];
-      p_x_string_sizes[loc] = p_x_string_sizes[i];
+      p_x_strings[loc] = CHAR(elt);
+      p_x_string_sizes[loc] = (int) Rf_length(elt);
       ++loc;
     }
   }
 
-  int* p_o_aux = init_lazy_raw(p_lazy_o_aux);
+  return n_missing;
+}
 
-  loc = na_last ? 0 : n_missing;
+// Preemptively handle missing values in character ordering
+//
+// Rearranges `p_o` by placing all `NA`s up front or at the back depending on
+// `na_last`. This is done stably.
+//
+// After calling this:
+// - With `na_last`, `p_o` matches `p_x_strings` and `p_x_string_sizes`
+// - With `!na_last`, `p_o + n_missing` matches `p_x_strings` and `p_x_string_sizes`
+static
+void chr_handle_missings(
+  r_ssize size,
+  r_ssize n_missing,
+  const bool na_last,
+  const SEXP* p_x,
+  int* p_o,
+  int* p_o_aux
+) {
   r_ssize loc_missing = na_last ? (size - n_missing) : 0;
+  r_ssize loc_not_missing = na_last ? 0 : n_missing;
 
-  // Rearrange `p_o` by placing all `NA`s up front
-  // (or at the end, depending on `na_last`)
-  // Impossible to do this without a secondary vector
   for (r_ssize i = 0; i < size; ++i) {
-    if (p_x[i] == NA_STRING) {
+    SEXP elt = p_x[i];
+
+    if (elt == NA_STRING) {
       p_o_aux[loc_missing] = p_o[i];
       ++loc_missing;
     } else {
-      p_o_aux[loc] = p_o[i];
-      ++loc;
+      p_o_aux[loc_not_missing] = p_o[i];
+      ++loc_not_missing;
     }
   }
 
   // Copy back
   r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
-
-  return n_missing;
 }
 
 static
