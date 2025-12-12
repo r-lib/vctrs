@@ -43,7 +43,6 @@ static void vec_order_switch(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -62,7 +61,6 @@ static void df_order(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -82,7 +80,6 @@ static void vec_order_base_switch(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -157,7 +154,6 @@ static void chr_order(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -321,18 +317,26 @@ static void dbl_order_radix_recurse(
 static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
 
 static
+r_ssize chr_place_missings(
+  r_ssize size,
+  const bool na_last,
+  const char** p_x,
+  int* p_o,
+  struct lazy_raw* p_lazy_o_aux,
+  bool* p_x_string_nas,
+  int* p_x_string_sizes
+);
+
+static
 void chr_order_radix(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
   const int max_string_size,
   const char** p_x,
   int* p_o,
   const char** p_x_aux,
   int* p_o_aux,
   uint8_t* p_bytes,
-  bool* p_x_string_nas,
-  bool* p_x_string_nas_aux,
   int* p_x_string_sizes,
   int* p_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -342,7 +346,6 @@ static
 void chr_order_radix_recurse(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
   const int pass,
   const int max_string_size,
   const char** p_x,
@@ -350,8 +353,6 @@ void chr_order_radix_recurse(
   const char** p_x_aux,
   int* p_o_aux,
   uint8_t* p_bytes,
-  bool* p_x_string_nas,
-  bool* p_x_string_nas_aux,
   int* p_x_string_sizes,
   int* p_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -361,10 +362,8 @@ static
 void chr_order_insertion(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
   const int pass,
   const char** p_x,
-  bool* p_x_string_nas,
   int* p_x_string_sizes,
   int* p_o,
   struct group_infos* p_group_infos
@@ -379,7 +378,6 @@ bool chr_all_same(
 static inline
 bool chr_all_same_byte(
   const char** p_x,
-  const bool* p_x_string_nas,
   const int* p_x_string_sizes,
   const r_ssize size,
   const int pass,
@@ -390,11 +388,8 @@ static inline
 bool str_ge_with_pass(
   const char* x,
   const char* y,
-  const bool x_string_na,
-  const bool y_string_na,
   const int x_string_size,
   const int direction,
-  const int na_order,
   const int pass
 );
 
@@ -411,7 +406,6 @@ static void vec_order_chunk_switch(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos

@@ -357,9 +357,6 @@ SEXP vec_order_info_impl(
   struct lazy_raw* p_lazy_x_string_nas = new_lazy_raw(size, sizeof(bool));
   PROTECT_LAZY_VEC(p_lazy_x_string_nas, &n_prot);
 
-  struct lazy_raw* p_lazy_x_string_nas_aux = new_lazy_raw(size, sizeof(bool));
-  PROTECT_LAZY_VEC(p_lazy_x_string_nas_aux, &n_prot);
-
   struct lazy_raw* p_lazy_x_string_sizes = new_lazy_raw(size, sizeof(int));
   PROTECT_LAZY_VEC(p_lazy_x_string_sizes, &n_prot);
 
@@ -415,7 +412,6 @@ SEXP vec_order_info_impl(
     p_lazy_bytes,
     p_lazy_counts,
     p_lazy_x_string_nas,
-    p_lazy_x_string_nas_aux,
     p_lazy_x_string_sizes,
     p_lazy_x_string_sizes_aux,
     p_group_infos
@@ -453,7 +449,6 @@ void vec_order_switch(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -472,7 +467,6 @@ void vec_order_switch(
       p_lazy_bytes,
       p_lazy_counts,
       p_lazy_x_string_nas,
-      p_lazy_x_string_nas_aux,
       p_lazy_x_string_sizes,
       p_lazy_x_string_sizes_aux,
       p_group_infos
@@ -514,7 +508,6 @@ void vec_order_switch(
     p_lazy_bytes,
     p_lazy_counts,
     p_lazy_x_string_nas,
-    p_lazy_x_string_nas_aux,
     p_lazy_x_string_sizes,
     p_lazy_x_string_sizes_aux,
     p_group_infos
@@ -539,7 +532,6 @@ void vec_order_base_switch(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -627,7 +619,6 @@ void vec_order_base_switch(
       p_lazy_o_aux,
       p_lazy_bytes,
       p_lazy_x_string_nas,
-      p_lazy_x_string_nas_aux,
       p_lazy_x_string_sizes,
       p_lazy_x_string_sizes_aux,
       p_group_infos
@@ -2440,7 +2431,6 @@ void chr_order_chunk(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -2464,56 +2454,72 @@ void chr_order_chunk(
     return;
   }
 
+  // Preemptively handle `NA`
+  const r_ssize n_missings = chr_place_missings(
+    size,
+    na_last,
+    p_x_chunk,
+    p_o,
+    p_lazy_o_aux,
+    p_x_string_nas,
+    p_x_string_sizes
+  );
+  size -= n_missings;
+  p_o = na_last ? p_o : (p_o + n_missings);
+
+  if (!na_last && n_missings != 0) {
+    // Push `!na_last` group before sorting
+    groups_size_maybe_push(n_missings, p_group_infos);
+  }
+
   if (size <= ORDER_INSERTION_BOUNDARY) {
     const int pass = 0;
     chr_order_insertion(
       size,
       decreasing,
-      na_last,
       pass,
       p_x_chunk,
-      p_x_string_nas,
       p_x_string_sizes,
       p_o,
       p_group_infos
     );
-    return;
-  }
+  } else {
+    int max_string_size = 0;
 
-  int max_string_size = 0;
-
-  // Track maximum string size
-  for (r_ssize i = 0; i < size; ++i) {
-    const int elt_string_size = p_x_string_sizes[i];
-    if (max_string_size < elt_string_size) {
-      max_string_size = elt_string_size;
+    // Track maximum string size
+    for (r_ssize i = 0; i < size; ++i) {
+      const int elt_string_size = p_x_string_sizes[i];
+      if (max_string_size < elt_string_size) {
+        max_string_size = elt_string_size;
+      }
     }
+
+    int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
+
+    const char** p_x_aux = (const char**) init_lazy_raw(p_lazy_x_aux);
+    int* p_x_string_sizes_aux = (int*) init_lazy_raw(p_lazy_x_string_sizes_aux);
+
+    uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
+
+    chr_order_radix(
+      size,
+      decreasing,
+      max_string_size,
+      p_x_chunk,
+      p_o,
+      p_x_aux,
+      p_o_aux,
+      p_bytes,
+      p_x_string_sizes,
+      p_x_string_sizes_aux,
+      p_group_infos
+    );
   }
 
-  int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
-
-  const char** p_x_aux = (const char**) init_lazy_raw(p_lazy_x_aux);
-  bool* p_x_string_nas_aux = (bool*) init_lazy_raw(p_lazy_x_string_nas_aux);
-  int* p_x_string_sizes_aux = (int*) init_lazy_raw(p_lazy_x_string_sizes_aux);
-
-  uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
-
-  chr_order_radix(
-    size,
-    decreasing,
-    na_last,
-    max_string_size,
-    p_x_chunk,
-    p_o,
-    p_x_aux,
-    p_o_aux,
-    p_bytes,
-    p_x_string_nas,
-    p_x_string_nas_aux,
-    p_x_string_sizes,
-    p_x_string_sizes_aux,
-    p_group_infos
-  );
+  if (na_last && n_missings != 0) {
+    // Push `na_last` group after sorting
+    groups_size_maybe_push(n_missings, p_group_infos);
+  }
 }
 
 static
@@ -2528,7 +2534,6 @@ void chr_order(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -2564,7 +2569,7 @@ void chr_order(
     SEXP elt = p_x[i];
     const char* elt_string = CHAR(elt);
     const bool elt_string_na = elt == NA_STRING;
-    const int elt_string_size = (int) Rf_length(elt);
+    const int elt_string_size = (int) Rf_length(elt) * !elt_string_na;
 
     if (max_string_size < elt_string_size) {
       max_string_size = elt_string_size;
@@ -2577,61 +2582,158 @@ void chr_order(
 
   int* p_o = init_order(p_order);
 
+  // Preemptively handle `NA`
+  const r_ssize n_missings = chr_place_missings(
+    size,
+    na_last,
+    p_x_chunk,
+    p_o,
+    p_lazy_o_aux,
+    p_x_string_nas,
+    p_x_string_sizes
+  );
+  size -= n_missings;
+  p_o = na_last ? p_o : (p_o + n_missings);
+
+  if (!na_last && n_missings != 0) {
+    // Push `na_last` group before sorting
+    groups_size_maybe_push(n_missings, p_group_infos);
+  }
+
   if (size <= ORDER_INSERTION_BOUNDARY) {
     const int pass = 0;
     chr_order_insertion(
       size,
       decreasing,
-      na_last,
       pass,
       p_x_chunk,
-      p_x_string_nas,
       p_x_string_sizes,
       p_o,
       p_group_infos
     );
-    return;
+  } else {
+    int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
+
+    const char** p_x_aux = (const char**) init_lazy_raw(p_lazy_x_aux);
+    int* p_x_string_sizes_aux = (int*) init_lazy_raw(p_lazy_x_string_sizes_aux);
+
+    uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
+
+    chr_order_radix(
+      size,
+      decreasing,
+      max_string_size,
+      p_x_chunk,
+      p_o,
+      p_x_aux,
+      p_o_aux,
+      p_bytes,
+      p_x_string_sizes,
+      p_x_string_sizes_aux,
+      p_group_infos
+    );
   }
 
-  int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
+  if (na_last && n_missings != 0) {
+    // Push `na_last` group after sorting
+    groups_size_maybe_push(n_missings, p_group_infos);
+  }
+}
 
-  const char** p_x_aux = (const char**) init_lazy_raw(p_lazy_x_aux);
-  bool* p_x_string_nas_aux = (bool*) init_lazy_raw(p_lazy_x_string_nas_aux);
-  int* p_x_string_sizes_aux = (int*) init_lazy_raw(p_lazy_x_string_sizes_aux);
+// Preemptively handle `NA`s during character ordering
+//
+// This allows the radix code to be as simple as possible, because `NA` handling
+// in the hot radix path is detremental to performance, and complex to handle!
+//
+// - Removes `NA`s from `p_x`, filling gaps by pushing values after an `NA` leftward
+// - Removes corresponding location from `p_x_string_sizes`, filling gaps the same way
+// - Reorders `p_o` by placing all `NA` locations up front or at the back (stably)
+//   depending on the value of `na_last`.
+//
+// Returns `n_missings`, which is then used by the caller to offset `p_o` past the `NA`s
+// in the `!na_last` case, and reduce the total `size` to account for the removal of `NA`s.
+static
+r_ssize chr_place_missings(
+  r_ssize size,
+  const bool na_last,
+  const char** p_x,
+  int* p_o,
+  struct lazy_raw* p_lazy_o_aux,
+  bool* p_x_string_nas,
+  int* p_x_string_sizes
+) {
+  r_ssize n_missing = 0;
 
-  uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
+  // First see if there are any missings at all
+  bool any_missing = false;
 
-  chr_order_radix(
-    size,
-    decreasing,
-    na_last,
-    max_string_size,
-    p_x_chunk,
-    p_o,
-    p_x_aux,
-    p_o_aux,
-    p_bytes,
-    p_x_string_nas,
-    p_x_string_nas_aux,
-    p_x_string_sizes,
-    p_x_string_sizes_aux,
-    p_group_infos
-  );
+  for (r_ssize i = 0; i < size; ++i) {
+    const bool x_string_na = p_x_string_nas[i];
+
+    if (x_string_na) {
+      any_missing = true;
+      break;
+    }
+  }
+
+  if (!any_missing) {
+    // Nothing to adjust
+    return n_missing;
+  }
+
+  r_ssize loc = 0;
+
+  // Squash `p_x` and `p_x_string_sizes` by removing all `NA`s,
+  // shifting elements after an `NA` left to fill the gap
+  for (r_ssize i = 0; i < size; ++i) {
+    const bool x_string_na = p_x_string_nas[i];
+
+    if (x_string_na) {
+      ++n_missing;
+      continue;
+    }
+
+    p_x[loc] = p_x[i];
+    p_x_string_sizes[loc] = p_x_string_sizes[i];
+    ++loc;
+  }
+
+  int* p_o_aux = init_lazy_raw(p_lazy_o_aux);
+
+  loc = na_last ? 0 : n_missing;
+  r_ssize loc_missing = na_last ? (size - n_missing) : 0;
+
+  // Rearrange `p_o` by placing all `NA`s up front
+  // (or at the end, depending on `na_last`)
+  // Impossible to do this without a secondary vector
+  for (r_ssize i = 0; i < size; ++i) {
+    const bool x_string_na = p_x_string_nas[i];
+
+    if (x_string_na) {
+      p_o_aux[loc_missing] = p_o[i];
+      ++loc_missing;
+    } else {
+      p_o_aux[loc] = p_o[i];
+      ++loc;
+    }
+  }
+
+  // Copy back
+  r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
+
+  return n_missing;
 }
 
 static
 void chr_order_radix(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
   const int max_string_size,
   const char** p_x,
   int* p_o,
   const char** p_x_aux,
   int* p_o_aux,
   uint8_t* p_bytes,
-  bool* p_x_string_nas,
-  bool* p_x_string_nas_aux,
   int* p_x_string_sizes,
   int* p_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -2641,7 +2743,6 @@ void chr_order_radix(
   chr_order_radix_recurse(
     size,
     decreasing,
-    na_last,
     pass,
     max_string_size,
     p_x,
@@ -2649,8 +2750,6 @@ void chr_order_radix(
     p_x_aux,
     p_o_aux,
     p_bytes,
-    p_x_string_nas,
-    p_x_string_nas_aux,
     p_x_string_sizes,
     p_x_string_sizes_aux,
     p_group_infos
@@ -2674,12 +2773,13 @@ void chr_order_radix(
  * implicit empty strings. Normally this would be an issue because this is
  * the bucket for ASCII value 0, but this is the null value, which is not
  * allowed in R strings!
+ *
+ * Guaranteed to never see `NA`s.
  */
 static
 void chr_order_radix_recurse(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
   const int pass,
   const int max_string_size,
   const char** p_x,
@@ -2687,8 +2787,6 @@ void chr_order_radix_recurse(
   const char** p_x_aux,
   int* p_o_aux,
   uint8_t* p_bytes,
-  bool* p_x_string_nas,
-  bool* p_x_string_nas_aux,
   int* p_x_string_sizes,
   int* p_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -2698,10 +2796,8 @@ void chr_order_radix_recurse(
     chr_order_insertion(
       size,
       decreasing,
-      na_last,
       pass,
       p_x,
-      p_x_string_nas,
       p_x_string_sizes,
       p_o,
       p_group_infos
@@ -2721,7 +2817,7 @@ void chr_order_radix_recurse(
   // to do this check before the histogram because with strings there is often a
   // long common prefix, and it is faster to skip past that as quickly as possible,
   // avoiding the jumpiness of histogramming.
-  if (chr_all_same_byte(p_x, p_x_string_nas, p_x_string_sizes, size, pass, too_short_bucket)) {
+  if (chr_all_same_byte(p_x, p_x_string_sizes, size, pass, too_short_bucket)) {
     if (next_pass == max_string_size) {
       // If we are already at the last pass, we are done
       groups_size_maybe_push(size, p_group_infos);
@@ -2731,7 +2827,6 @@ void chr_order_radix_recurse(
       chr_order_radix_recurse(
         size,
         decreasing,
-        na_last,
         next_pass,
         max_string_size,
         p_x,
@@ -2739,8 +2834,6 @@ void chr_order_radix_recurse(
         p_x_aux,
         p_o_aux,
         p_bytes,
-        p_x_string_nas,
-        p_x_string_nas_aux,
         p_x_string_sizes,
         p_x_string_sizes_aux,
         p_group_infos
@@ -2754,51 +2847,24 @@ void chr_order_radix_recurse(
   // the strings have variable length
   r_ssize p_counts[UINT8_MAX_SIZE] = { 0 };
 
-  r_ssize na_count = 0;
-  r_ssize na_loc = 0;
-
   uint8_t byte = 0;
 
   // Histogram
   // When extracting the byte, check if there are characters left in the string
   // and extract the next one if so, otherwise the string is too short, and we
   // assign into `too_short_bucket`.
-  if (pass == 0) {
-    // `NA` are fully handled after the first pass
-    for (r_ssize i = 0; i < size; ++i) {
-      if (p_x_string_nas[i]) {
-        ++na_count;
-      } else {
-        if (pass < p_x_string_sizes[i]) {
-          byte = (uint8_t) p_x[i][pass];
-        } else {
-          byte = too_short_bucket;
-        }
-
-        p_bytes[i] = byte;
-        ++p_counts[byte];
-      }
+  for (r_ssize i = 0; i < size; ++i) {
+    if (pass < p_x_string_sizes[i]) {
+      byte = (uint8_t) p_x[i][pass];
+    } else {
+      byte = too_short_bucket;
     }
-  } else {
-    for (r_ssize i = 0; i < size; ++i) {
-      if (pass < p_x_string_sizes[i]) {
-        byte = (uint8_t) p_x[i][pass];
-      } else {
-        byte = too_short_bucket;
-      }
 
-      p_bytes[i] = byte;
-      ++p_counts[byte];
-    }
+    p_bytes[i] = byte;
+    ++p_counts[byte];
   }
 
   r_ssize cumulative = 0;
-
-  // `na_last = false` pushes NA counts to the front.
-  if (pass == 0 && !na_last && na_count != 0) {
-    na_loc = cumulative;
-    cumulative += na_count;
-  }
 
   // Handle decreasing/increasing by altering the order in which
   // counts are accumulated
@@ -2821,55 +2887,24 @@ void chr_order_radix_recurse(
     j += direction;
   }
 
-  // `na_last = true` pushes NA counts to the back.
-  if (pass == 0 && na_last && na_count != 0) {
-    na_loc = cumulative;
-  }
-
   // Place into auxiliary arrays in the correct order
-  if (pass == 0 && na_count != 0) {
-    // `NA` are fully handled after the first pass
-    for (r_ssize i = 0; i < size; ++i) {
-      const int o_elt = p_o[i];
-      const char* x_elt = p_x[i];
-      const bool x_elt_string_na = p_x_string_nas[i];
-      const int x_elt_string_size = p_x_string_sizes[i];
+  for (r_ssize i = 0; i < size; ++i) {
+    const int o_elt = p_o[i];
+    const char* x_elt = p_x[i];
+    const int x_elt_string_size = p_x_string_sizes[i];
 
-      r_ssize loc;
-      if (x_elt_string_na) {
-        loc = na_loc++;
-      } else {
-        const uint8_t byte = p_bytes[i];
-        loc = p_counts[byte]++;
-      }
+    const uint8_t byte = p_bytes[i];
+    const r_ssize loc = p_counts[byte]++;
 
-      p_o_aux[loc] = o_elt;
-      p_x_aux[loc] = x_elt;
-      p_x_string_nas_aux[loc] = x_elt_string_na;
-      p_x_string_sizes_aux[loc] = x_elt_string_size;
-    }
-  } else {
-    for (r_ssize i = 0; i < size; ++i) {
-      const int o_elt = p_o[i];
-      const char* x_elt = p_x[i];
-      const bool x_elt_string_na = p_x_string_nas[i];
-      const int x_elt_string_size = p_x_string_sizes[i];
-
-      const uint8_t byte = p_bytes[i];
-      const r_ssize loc = p_counts[byte]++;
-
-      p_o_aux[loc] = o_elt;
-      p_x_aux[loc] = x_elt;
-      p_x_string_nas_aux[loc] = x_elt_string_na;
-      p_x_string_sizes_aux[loc] = x_elt_string_size;
-    }
+    p_o_aux[loc] = o_elt;
+    p_x_aux[loc] = x_elt;
+    p_x_string_sizes_aux[loc] = x_elt_string_size;
   }
 
   // Copy back into `p_o` because our output is `p_o`, but recognize that we can
   // just swap the auxiliary data related to `x` to achieve the same idea there
   r_memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
   SWAP(const char**, p_x, p_x_aux);
-  SWAP(bool*, p_x_string_nas, p_x_string_nas_aux);
   SWAP(int*, p_x_string_sizes, p_x_string_sizes_aux);
 
   // Cumulative counts will be in reverse order if we were decreasing. We
@@ -2885,21 +2920,6 @@ void chr_order_radix_recurse(
   }
 
   r_ssize last_cumulative_count = 0;
-
-  // `na_last = false` pushes NA counts to the front.
-  // Mimic the code within the loop related to how `last_cumulative_count` is adjusted.
-  if (pass == 0 && !na_last && na_count != 0) {
-    const r_ssize cumulative_count = na_count;
-
-    const r_ssize group_size = cumulative_count - last_cumulative_count;
-    last_cumulative_count = cumulative_count;
-
-    groups_size_maybe_push(group_size, p_group_infos);
-    p_x += group_size;
-    p_x_string_nas += group_size;
-    p_x_string_sizes += group_size;
-    p_o += group_size;
-  }
 
   // Recurse on subgroups as required
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
@@ -2919,7 +2939,6 @@ void chr_order_radix_recurse(
     if (group_size == 1) {
       groups_size_maybe_push(1, p_group_infos);
       ++p_x;
-      ++p_x_string_nas;
       ++p_x_string_sizes;
       ++p_o;
       continue;
@@ -2931,7 +2950,6 @@ void chr_order_radix_recurse(
     if (next_pass == max_string_size) {
       groups_size_maybe_push(group_size, p_group_infos);
       p_x += group_size;
-      p_x_string_nas += group_size;
       p_x_string_sizes += group_size;
       p_o += group_size;
       continue;
@@ -2941,7 +2959,6 @@ void chr_order_radix_recurse(
     if (chr_all_same(p_x, group_size)) {
       groups_size_maybe_push(group_size, p_group_infos);
       p_x += group_size;
-      p_x_string_nas += group_size;
       p_x_string_sizes += group_size;
       p_o += group_size;
       continue;
@@ -2951,7 +2968,6 @@ void chr_order_radix_recurse(
     chr_order_radix_recurse(
       group_size,
       decreasing,
-      na_last,
       next_pass,
       max_string_size,
       p_x,
@@ -2959,22 +2975,14 @@ void chr_order_radix_recurse(
       p_x_aux,
       p_o_aux,
       p_bytes,
-      p_x_string_nas,
-      p_x_string_nas_aux,
       p_x_string_sizes,
       p_x_string_sizes_aux,
       p_group_infos
     );
 
     p_x += group_size;
-    p_x_string_nas += group_size;
     p_x_string_sizes += group_size;
     p_o += group_size;
-  }
-
-  // `na_last = true` pushes NA counts to the back.
-  if (pass == 0 && na_last && na_count != 0) {
-    groups_size_maybe_push(na_count, p_group_infos);
   }
 }
 
@@ -2985,15 +2993,15 @@ void chr_order_radix_recurse(
  * One optimization done here is to take advantage of the `pass` info, which
  * will indicate that all characters before this pass are identical already
  * and don't need to be checked by `strcmp()`.
+ *
+ * Guaranteed to never see `NA`s.
  */
 static
 void chr_order_insertion(
   const r_ssize size,
   const bool decreasing,
-  const bool na_last,
   const int pass,
   const char** p_x,
-  bool* p_x_string_nas,
   int* p_x_string_sizes,
   int* p_o,
   struct group_infos* p_group_infos
@@ -3004,11 +3012,9 @@ void chr_order_insertion(
   }
 
   const int direction = decreasing ? -1 : 1;
-  const int na_order = na_last ? 1 : -1;
 
   for (r_ssize i = 1; i < size; ++i) {
     const char* elt = p_x[i];
-    const bool elt_string_na = p_x_string_nas[i];
     const int elt_string_size = p_x_string_sizes[i];
     const int elt_o = p_o[i];
 
@@ -3016,16 +3022,12 @@ void chr_order_insertion(
 
     while (j >= 0) {
       const char* cmp_elt = p_x[j];
-      const bool cmp_elt_string_na = p_x_string_nas[j];
 
       if (str_ge_with_pass(
         elt,
         cmp_elt,
-        elt_string_na,
-        cmp_elt_string_na,
         elt_string_size,
         direction,
-        na_order,
         pass
       )) {
         break;
@@ -3038,7 +3040,6 @@ void chr_order_insertion(
 
       // Swap
       p_x[j + 1] = cmp_elt;
-      p_x_string_nas[j + 1] = cmp_elt_string_na;
       p_x_string_sizes[j + 1] = cmp_elt_string_size;
       p_o[j + 1] = cmp_elt_o;
 
@@ -3049,7 +3050,6 @@ void chr_order_insertion(
     // Place original elements in new location
     // closer to start of the vector
     p_x[j + 1] = elt;
-    p_x_string_nas[j + 1] = elt_string_na;
     p_x_string_sizes[j + 1] = elt_string_size;
     p_o[j + 1] = elt_o;
   }
@@ -3084,21 +3084,15 @@ static inline
 bool str_ge_with_pass(
   const char* x,
   const char* y,
-  const bool x_string_na,
-  const bool y_string_na,
   const int x_string_size,
   const int direction,
-  const int na_order,
   const int pass
 ) {
   const int cmp = str_cmp_with_pass(
     x,
     y,
-    x_string_na,
-    y_string_na,
     x_string_size,
     direction,
-    na_order,
     pass
   );
   return cmp >= 0;
@@ -3124,11 +3118,11 @@ bool chr_all_same(
   return true;
 }
 
-// Returns `true` if the `pass` byte is the same for every element of `p_x`
+// Returns `true` if the `pass` byte is the same for every element of `p_x`.
+// Guaranteed to never see `NA`s.
 static inline
 bool chr_all_same_byte(
   const char** p_x,
-  const bool* p_x_string_nas,
   const int* p_x_string_sizes,
   const r_ssize size,
   const int pass,
@@ -3138,54 +3132,23 @@ bool chr_all_same_byte(
     return true;
   }
 
-  if (pass == 0) {
-    // In the first pass we have to check for `NA`
-    if (p_x_string_nas[0]) {
-      return false;
-    }
-
-    uint8_t first;
-    if (pass < p_x_string_sizes[0]) {
-      first = (uint8_t) p_x[0][pass];
-    } else {
-      first = too_short_bucket;
-    }
-
-    for (r_ssize i = 1; i < size; ++i) {
-      if (p_x_string_nas[i]) {
-        return false;
-      }
-
-      uint8_t this;
-      if (pass < p_x_string_sizes[i]) {
-        this = (uint8_t) p_x[i][pass];
-      } else {
-        this = too_short_bucket;
-      }
-
-      if (this != first) {
-        return false;
-      }
-    }
+  uint8_t first;
+  if (pass < p_x_string_sizes[0]) {
+    first = (uint8_t) p_x[0][pass];
   } else {
-    uint8_t first;
-    if (pass < p_x_string_sizes[0]) {
-      first = (uint8_t) p_x[0][pass];
+    first = too_short_bucket;
+  }
+
+  for (r_ssize i = 1; i < size; ++i) {
+    uint8_t this;
+    if (pass < p_x_string_sizes[i]) {
+      this = (uint8_t) p_x[i][pass];
     } else {
-      first = too_short_bucket;
+      this = too_short_bucket;
     }
 
-    for (r_ssize i = 1; i < size; ++i) {
-      uint8_t this;
-      if (pass < p_x_string_sizes[i]) {
-        this = (uint8_t) p_x[i][pass];
-      } else {
-        this = too_short_bucket;
-      }
-
-      if (this != first) {
-        return false;
-      }
+    if (this != first) {
+      return false;
     }
   }
 
@@ -3216,10 +3179,15 @@ bool chr_all_same_byte(
   /* sequential order for cache friendliness */                           \
   for (r_ssize j = 0; j < group_size; ++j) {                              \
     const int loc = p_o_col[j] - 1;                                       \
+                                                                          \
     SEXP elt = p_col[loc];                                                \
-    p_x_chunk[j] = CHAR(elt);                                             \
-    p_x_string_nas[j] = elt == NA_STRING;                                 \
-    p_x_string_sizes[j] = (int) Rf_length(elt);                           \
+    const char* elt_string = CHAR(elt);                                   \
+    const bool elt_string_na = elt == NA_STRING;                          \
+    const int elt_string_size = (int) Rf_length(elt) * !elt_string_na;    \
+                                                                          \
+    p_x_chunk[j] = elt_string;                                            \
+    p_x_string_nas[j] = elt_string_na;                                    \
+    p_x_string_sizes[j] = elt_string_size;                                \
   }                                                                       \
 } while (0)
 
@@ -3262,7 +3230,6 @@ void df_order(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -3333,7 +3300,6 @@ void df_order(
     p_lazy_bytes,
     p_lazy_counts,
     p_lazy_x_string_nas,
-    p_lazy_x_string_nas_aux,
     p_lazy_x_string_sizes,
     p_lazy_x_string_sizes_aux,
     p_group_infos
@@ -3416,7 +3382,6 @@ void df_order(
         p_lazy_bytes,
         p_lazy_counts,
         p_lazy_x_string_nas,
-        p_lazy_x_string_nas_aux,
         p_lazy_x_string_sizes,
         p_lazy_x_string_sizes_aux,
         p_group_infos
@@ -3463,7 +3428,6 @@ void vec_order_chunk_switch(
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
   struct lazy_raw* p_lazy_x_string_nas,
-  struct lazy_raw* p_lazy_x_string_nas_aux,
   struct lazy_raw* p_lazy_x_string_sizes,
   struct lazy_raw* p_lazy_x_string_sizes_aux,
   struct group_infos* p_group_infos
@@ -3548,7 +3512,6 @@ void vec_order_chunk_switch(
       p_lazy_bytes,
       p_lazy_counts,
       p_lazy_x_string_nas,
-      p_lazy_x_string_nas_aux,
       p_lazy_x_string_sizes,
       p_lazy_x_string_sizes_aux,
       p_group_infos

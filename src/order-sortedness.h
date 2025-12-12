@@ -95,29 +95,20 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
  *
  * The `pass` tells us that we know everything up to `pass` is already the same,
  * so we can avoid checking those in `strcmp()` if we get that far.
+ *
+ * Guaranteed to not be `NA`s
  */
 static inline
 int str_cmp_with_pass(
   const char* x,
   const char* y,
-  const bool x_string_na,
-  const bool y_string_na,
   const int x_string_size,
   const int direction,
-  const int na_order,
   const int pass
 ) {
-  // Same pointer - including `NA`s
+  // Same pointer
   if (x == y) {
     return 0;
-  }
-
-  if (x_string_na) {
-    return na_order;
-  }
-
-  if (y_string_na) {
-    return -na_order;
   }
 
   if (pass == 0) {
