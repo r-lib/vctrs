@@ -993,6 +993,11 @@ test_that("all `NA` values works", {
   expect_identical(vec_order_radix(x), order(x))
 })
 
+test_that("all `''` values works", {
+  x <- c("", "")
+  expect_identical(vec_order_radix(x), order(x))
+})
+
 test_that("can order empty string vs ASCII value 1 'Start of Header'", {
   x <- c("\001", "")
   expect_identical(vec_order_radix(x), c(2L, 1L))
@@ -1126,6 +1131,95 @@ test_that("character, large: `direction` can be set to `desc`", {
     vec_order_radix(x, direction = "desc"),
     base_order(x, decreasing = TRUE)
   )
+})
+
+test_that("after `NA` removal, all `''` works", {
+  # `NA` prevents it from looking sorted to start with
+  x <- rep("", ORDER_INSERTION_BOUNDARY + 1L)
+  x <- c(NA, x, NA)
+
+  expect_identical(
+    vec_order_radix(x, direction = "asc", na_value = "largest"),
+    base_order(x, na.last = TRUE, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "desc", na_value = "largest"),
+    base_order(x, na.last = FALSE, decreasing = TRUE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "asc", na_value = "smallest"),
+    base_order(x, na.last = FALSE, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "desc", na_value = "smallest"),
+    base_order(x, na.last = TRUE, decreasing = TRUE)
+  )
+
+  # `""` coming through as a "chunk"
+  y <- vec_rep_each(c("a", "b", "c", "d", "e"), length(x))
+  x <- vec_rep(x, 5)
+  df <- data_frame(y = y, x = x)
+
+  expect_identical(
+    vec_order_radix(df, direction = "asc", na_value = "largest"),
+    base_order(df, na.last = TRUE, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(df, direction = "desc", na_value = "largest"),
+    base_order(df, na.last = FALSE, decreasing = TRUE)
+  )
+  expect_identical(
+    vec_order_radix(df, direction = "asc", na_value = "smallest"),
+    base_order(df, na.last = FALSE, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(df, direction = "desc", na_value = "smallest"),
+    base_order(df, na.last = TRUE, decreasing = TRUE)
+  )
+})
+
+test_that("mixing `''` with other strings works", {
+  x <- rep("", ORDER_INSERTION_BOUNDARY + 1L)
+  x <- c("xyz", x, "abc", "xyz", "a")
+
+  expect_identical(
+    vec_order_radix(x, direction = "asc"),
+    base_order(x, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "desc"),
+    base_order(x, decreasing = TRUE)
+  )
+
+  x <- rep(c("xyz", "abc", "xyz"), ORDER_INSERTION_BOUNDARY + 1L)
+  x <- c("", x, "")
+
+  expect_identical(
+    vec_order_radix(x, direction = "asc"),
+    base_order(x, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "desc"),
+    base_order(x, decreasing = TRUE)
+  )
+})
+
+test_that("we aren't indexing past an individual string", {
+  # This is why the `\0` check is practically important
+  # - `max_string_size = 3`
+  # - After `pass = 0` we learn nothing
+  # - After `pass = 1` we have two groups:
+  #   - byte b: `"abc\0"`, `"abd\0"`
+  #   - byte \0: `"a\0"`
+  # - We refuse to recurse further into the `\0` byte group, otherwise we'd
+  #   index OOB
+  x <- c(
+    "abc",
+    "abd",
+    rep("a", ORDER_INSERTION_BOUNDARY + 1)
+  )
+
+  expect_identical(vec_order_radix(x), base_order(x))
 })
 
 test_that("all combinations of `direction` and `na_value` work", {

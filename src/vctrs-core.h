@@ -20,6 +20,17 @@ extern bool vctrs_debug_verbose;
 // condition object otherwise
 #define ERR SEXP
 
+// Generic swap macro
+#define SWAP(T, x, y) do { \
+  T tmp = x;               \
+  x = y;                   \
+  y = tmp;                 \
+} while (0)
+
+struct r_ssize_int_pair {
+  r_ssize x;
+  int y;
+};
 
 /**
  * Ownership modeling

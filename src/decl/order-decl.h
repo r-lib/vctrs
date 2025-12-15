@@ -42,8 +42,7 @@ static void vec_order_switch(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct group_infos* p_group_infos,
-  struct truelength_info* p_truelength_info
+  struct group_infos* p_group_infos
 );
 
 static void df_order(
@@ -58,8 +57,7 @@ static void df_order(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct group_infos* p_group_infos,
-  struct truelength_info* p_truelength_info
+  struct group_infos* p_group_infos
 );
 
 static void vec_order_base_switch(
@@ -75,8 +73,7 @@ static void vec_order_base_switch(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct group_infos* p_group_infos,
-  struct truelength_info* p_truelength_info
+  struct group_infos* p_group_infos
 );
 
 static void int_order(
@@ -147,36 +144,6 @@ static void chr_order(
   struct lazy_raw* p_lazy_x_aux,
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
-  struct lazy_raw* p_lazy_counts,
-  struct group_infos* p_group_infos,
-  struct truelength_info* p_truelength_info
-);
-
-static void int_order_chunk_impl(
-  bool decreasing,
-  bool na_last,
-  r_ssize size,
-  void* p_x,
-  int* p_o,
-  struct lazy_raw* p_lazy_x_aux,
-  struct lazy_raw* p_lazy_o_aux,
-  struct lazy_raw* p_lazy_bytes,
-  struct lazy_raw* p_lazy_counts,
-  struct group_infos* p_group_infos
-);
-
-static void int_order_impl(
-  const int* p_x,
-  bool decreasing,
-  bool na_last,
-  r_ssize size,
-  bool copy,
-  struct order* p_order,
-  struct lazy_raw* p_lazy_x_chunk,
-  struct lazy_raw* p_lazy_x_aux,
-  struct lazy_raw* p_lazy_o_aux,
-  struct lazy_raw* p_lazy_bytes,
-  struct lazy_raw* p_lazy_counts,
   struct group_infos* p_group_infos
 );
 
@@ -337,82 +304,76 @@ static void dbl_order_radix_recurse(
 
 static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
 
-static void chr_mark_sorted_uniques(
+static
+struct r_ssize_int_pair chr_extract_without_missings(
+  r_ssize size,
   const SEXP* p_x,
+  const char** p_x_strings
+);
+
+static
+void chr_handle_missings(
   r_ssize size,
-  struct lazy_raw* p_lazy_x_aux,
-  struct lazy_raw* p_lazy_bytes,
-  struct truelength_info* p_truelength_info
-);
-
-static inline void chr_extract_ordering(const SEXP* p_x, r_ssize size, int* p_x_aux);
-
-static void chr_order_radix(
-  const r_ssize size,
-  const R_len_t max_size,
-  SEXP* p_x,
-  SEXP* p_x_aux,
-  int* p_sizes,
-  int* p_sizes_aux,
-  uint8_t* p_bytes
-);
-
-static SEXP chr_order_exec(void* p_data);
-
-static void chr_order_cleanup(void* p_data);
-
-static void chr_order_internal(
-  SEXP x,
-  bool decreasing,
-  bool na_last,
-  r_ssize size,
-  struct order* p_order,
-  struct lazy_raw* p_lazy_x_chunk,
-  struct lazy_raw* p_lazy_x_aux,
-  struct lazy_raw* p_lazy_o_aux,
-  struct lazy_raw* p_lazy_bytes,
-  struct lazy_raw* p_lazy_counts,
-  struct group_infos* p_group_infos,
-  struct truelength_info* p_truelength_info
-);
-
-static void chr_mark_uniques(
+  r_ssize n_missing,
+  const bool na_last,
   const SEXP* p_x,
-  r_ssize size,
-  struct truelength_info* p_truelength_info
+  int* p_o,
+  int* p_o_aux
 );
 
-static bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass);
-
-static void chr_order_radix_recurse(
+static
+void chr_order_radix(
   const r_ssize size,
-  const R_len_t pass,
-  const R_len_t max_size,
-  SEXP* p_x,
-  SEXP* p_x_aux,
-  int* p_sizes,
-  int* p_sizes_aux,
-  uint8_t* p_bytes
+  const bool decreasing,
+  const int max_string_size,
+  const char** p_x,
+  int* p_o,
+  const char** p_x_aux,
+  int* p_o_aux,
+  uint8_t* p_bytes,
+  struct group_infos* p_group_infos
 );
 
-static SEXP df_order_exec(void* p_data);
+static
+void chr_order_radix_recurse(
+  const r_ssize size,
+  const bool decreasing,
+  const int pass,
+  const int max_string_size,
+  const char** p_x,
+  int* p_o,
+  const char** p_x_aux,
+  int* p_o_aux,
+  uint8_t* p_bytes,
+  struct group_infos* p_group_infos
+);
 
-static void df_order_cleanup(void* p_data);
+static
+void chr_order_insertion(
+  const r_ssize size,
+  const bool decreasing,
+  const char** p_x,
+  int* p_o,
+  struct group_infos* p_group_infos
+);
 
-static void df_order_internal(
-  SEXP x,
-  SEXP decreasing,
-  SEXP na_last,
-  bool nan_distinct,
-  r_ssize size,
-  struct order* p_order,
-  struct lazy_raw* p_lazy_x_chunk,
-  struct lazy_raw* p_lazy_x_aux,
-  struct lazy_raw* p_lazy_o_aux,
-  struct lazy_raw* p_lazy_bytes,
-  struct lazy_raw* p_lazy_counts,
-  struct group_infos* p_group_infos,
-  struct truelength_info* p_truelength_info
+static inline
+bool chr_all_same(
+  const char** p_x,
+  const r_ssize size
+);
+
+static inline
+bool chr_all_same_byte(
+  const char** p_x,
+  const r_ssize size
+);
+
+static inline
+bool str_ge(
+  const char* x,
+  const char* y,
+  const int direction
 );
 
 static void vec_order_chunk_switch(
@@ -427,8 +388,7 @@ static void vec_order_chunk_switch(
   struct lazy_raw* p_lazy_o_aux,
   struct lazy_raw* p_lazy_bytes,
   struct lazy_raw* p_lazy_counts,
-  struct group_infos* p_group_infos,
-  struct truelength_info* p_truelength_info
+  struct group_infos* p_group_infos
 );
 
 static inline size_t df_compute_n_bytes_lazy_raw(SEXP x);
