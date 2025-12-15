@@ -323,7 +323,8 @@ ERR r_try_catch(void (*fn)(void*),
                 void (*hnd)(void*),
                 void* hnd_data);
 
-extern SEXP result_attrib;
+extern SEXP rlang_result_names;
+extern SEXP rlang_result_class;
 
 static inline SEXP r_result(SEXP x, ERR err) {
   if (!err) {
@@ -334,8 +335,8 @@ static inline SEXP r_result(SEXP x, ERR err) {
   SET_VECTOR_ELT(result, 0, x);
   SET_VECTOR_ELT(result, 1, err);
 
-  SET_ATTRIB(result, result_attrib);
-  SET_OBJECT(result, 1);
+  r_attrib_poke_names(result, rlang_result_names);
+  r_attrib_poke_class(result, rlang_result_class);
 
   UNPROTECT(1);
   return result;

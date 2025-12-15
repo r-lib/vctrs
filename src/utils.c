@@ -1692,7 +1692,8 @@ SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
 SEXP fns_names = NULL;
 
-SEXP result_attrib = NULL;
+SEXP rlang_result_names = NULL;
+SEXP rlang_result_class = NULL;
 
 
 SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n) {
@@ -2020,24 +2021,14 @@ void vctrs_init_utils(SEXP ns) {
   R_PreserveObject(compact_condition_attrib);
   SET_TAG(compact_condition_attrib, Rf_install("vctrs_compact_condition"));
 
-  {
-    SEXP result_names = PROTECT(Rf_allocVector(STRSXP, 2));
-    SET_STRING_ELT(result_names, 0, Rf_mkChar("ok"));
-    SET_STRING_ELT(result_names, 1, Rf_mkChar("err"));
+  rlang_result_names = Rf_allocVector(STRSXP, 2);
+  R_PreserveObject(rlang_result_names);
+  SET_STRING_ELT(rlang_result_names, 0, Rf_mkChar("ok"));
+  SET_STRING_ELT(rlang_result_names, 1, Rf_mkChar("err"));
 
-    result_attrib = PROTECT(Rf_cons(result_names, R_NilValue));
-    SET_TAG(result_attrib, R_NamesSymbol);
-
-    SEXP result_class = PROTECT(Rf_allocVector(STRSXP, 1));
-    SET_STRING_ELT(result_class, 0, Rf_mkChar("rlang_result"));
-
-    result_attrib = PROTECT(Rf_cons(result_class, result_attrib));
-    SET_TAG(result_attrib, R_ClassSymbol);
-
-    R_PreserveObject(result_attrib);
-    MARK_NOT_MUTABLE(result_attrib);
-    UNPROTECT(4);
-  }
+  rlang_result_class = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(rlang_result_class);
+  SET_STRING_ELT(rlang_result_class, 0, Rf_mkChar("rlang_result"));
 
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
