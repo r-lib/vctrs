@@ -1178,6 +1178,32 @@ test_that("after `NA` removal, all `''` works", {
   )
 })
 
+test_that("mixing `''` with other strings works", {
+  x <- rep("", ORDER_INSERTION_BOUNDARY + 1L)
+  x <- c("xyz", x, "abc", "xyz", "a")
+
+  expect_identical(
+    vec_order_radix(x, direction = "asc"),
+    base_order(x, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "desc"),
+    base_order(x, decreasing = TRUE)
+  )
+
+  x <- rep(c("xyz", "abc", "xyz"), ORDER_INSERTION_BOUNDARY + 1L)
+  x <- c("", x, "")
+
+  expect_identical(
+    vec_order_radix(x, direction = "asc"),
+    base_order(x, decreasing = FALSE)
+  )
+  expect_identical(
+    vec_order_radix(x, direction = "desc"),
+    base_order(x, decreasing = TRUE)
+  )
+})
+
 test_that("we aren't indexing past an individual string", {
   # This is why `chr_all_same()` is practically important, and is not just for
   # performance
