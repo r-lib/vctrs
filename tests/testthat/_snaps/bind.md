@@ -93,6 +93,17 @@
       ! Can't merge the outer name `foo` with a vector of length > 1.
       Please supply a `.name_spec` specification.
 
+# vec_rbind() requires a data frame proxy for data frame ptypes
+
+    Code
+      vec_rbind(df, df)
+    Condition
+      Error in `vec_rbind()`:
+      ! Attempt to restore data frame from a double.
+      i In file 'proxy-restore.c' at line <scrubbed>.
+      i This is an internal error that was detected in the vctrs package.
+        Please report it at <https://github.com/r-lib/vctrs/issues> with a reprex (<https://tidyverse.org/help/>) and the full backtrace.
+
 # names of `...` are used for type and cast errors even when zapped
 
     Code

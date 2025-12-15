@@ -384,6 +384,8 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   }
 }
 
+SEXP vec_set_attributes(SEXP x, SEXP attrib);
+
 void c_print_backtrace(void);
 
 SEXP chr_c(SEXP x, SEXP y);
@@ -529,6 +531,7 @@ extern SEXP syms_which;
 extern SEXP syms_slice_value;
 extern SEXP syms_index_style;
 extern SEXP syms_loc;
+extern SEXP syms_attrib;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 

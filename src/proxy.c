@@ -247,11 +247,6 @@ r_obj* vec_proxy_unwrap(r_obj* x) {
 }
 
 
-r_obj* ffi_as_not_s4(r_obj* x) {
-  return r_as_not_s4(x);
-}
-
-
 void vctrs_init_data(r_obj* ns) {
   syms_vec_proxy = r_sym("vec_proxy");
 

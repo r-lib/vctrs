@@ -31,6 +31,8 @@ SEXP classes_vctrs_group_rle = NULL;
 static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
 
+static SEXP syms_vec_set_attributes = NULL;
+static SEXP fns_vec_set_attributes = NULL;
 
 static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP env);
 
@@ -1424,6 +1426,28 @@ SEXP r_as_data_frame(SEXP x) {
   }
 }
 
+/// Set attributes on `x`
+///
+/// ```
+/// attributes(x) <- attrib
+/// x
+/// ```
+///
+/// It can be useful to call this from C when you don't own `x` and just need to
+/// tweak some attributes on it because it creates a cheap ALTREP shallow
+/// duplicate of `x` with `R_shallow_duplicate_attr()`, which we don't have
+/// access to.
+SEXP vec_set_attributes(SEXP x, SEXP attrib) {
+  return vctrs_dispatch2(
+    syms_vec_set_attributes,
+    fns_vec_set_attributes,
+    syms_x,
+    x,
+    syms_attrib,
+    attrib
+  );
+}
+
 static SEXP syms_try_catch_hnd = NULL;
 static inline SEXP try_catch_hnd(SEXP ptr) {
   SEXP call = PROTECT(Rf_lang2(syms_try_catch_hnd, ptr));
@@ -1687,6 +1711,7 @@ SEXP syms_which = NULL;
 SEXP syms_slice_value = NULL;
 SEXP syms_index_style = NULL;
 SEXP syms_loc = NULL;
+SEXP syms_attrib = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1990,6 +2015,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_slice_value = Rf_install("slice_value");
   syms_index_style = Rf_install("index_style");
   syms_loc = Rf_install("loc");
+  syms_attrib = Rf_install("attrib");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -2004,9 +2030,11 @@ void vctrs_init_utils(SEXP ns) {
   rlang_sym_as_character = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_sym_as_character");
 
   syms_as_data_frame2 = Rf_install("as.data.frame2");
+  syms_vec_set_attributes = Rf_install("vec_set_attributes");
   syms_colnames = Rf_install("colnames");
 
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
+  fns_vec_set_attributes = r_env_get(ns, syms_vec_set_attributes);
   fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 
   compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);

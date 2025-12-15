@@ -368,8 +368,8 @@ test_that("vec_ptype2() methods get prototypes", {
   expect_identical(y, foobar(chr()))
 
   vec_ptype2(foobar(mtcars), foobar(iris))
-  expect_identical(x, foobar(mtcars[0, , drop = FALSE]))
-  expect_identical(y, foobar(iris[0, , drop = FALSE]))
+  expect_identical(x, vec_ptype(foobar(mtcars)))
+  expect_identical(y, vec_ptype(foobar(iris)))
 })
 
 test_that("vec_ptype2() allows vec_ptype() to return another type", {

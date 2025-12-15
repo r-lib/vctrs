@@ -225,13 +225,20 @@ test_that("assertion is not applied on proxy", {
   expect_error(vec_assert(x, x), regexp = NA)
 })
 
-test_that("attributes of unclassed vectors are asserted", {
+test_that("attributes of unclassed vectors are not considered part of the type (#2025)", {
   x <- structure(FALSE, foo = "bar")
-  y <- structure(TRUE, foo = "bar")
-  expect_false(vec_is(x, FALSE))
-  expect_false(vec_is(FALSE, x))
-  expect_true(vec_is(y, x))
+  y <- structure(TRUE, bar = "foo")
+
+  expect_true(vec_is(x, x))
+
+  expect_true(vec_is(x, logical()))
+  expect_true(vec_is(logical(), x))
+
   expect_true(vec_is(x, y))
+  expect_true(vec_is(y, x))
+
+  # This is consistent with `vec_ptype2()`!
+  expect_identical(vec_ptype2(x, y), logical())
 })
 
 test_that("unspecified is finalised before assertion", {
