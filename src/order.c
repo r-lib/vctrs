@@ -2814,9 +2814,9 @@ void chr_order_radix_recurse(
   //
   // We utilize this fact when histogramming. If we hit a string of "ab" on
   // `pass = 2` then it will extract the nul terminator `\0` as byte `0` and
-  // will therefore bucket all `"ab"` strings together. Then `chr_all_same()`
-  // will detect this, keeping us from over recursing on `"ab"` and indexing past
-  // the nul terminator!
+  // will therefore bucket all `"ab"` strings together. Then the check for
+  // `nul_terminator_i` will detect this, keeping us from over recursing on
+  // `"ab"` and indexing past the nul terminator!
   //
   // This trick avoids needing to track the string size alongside the string
   // pointer. We just need the `max_string_size` of the total number of times to
@@ -2883,6 +2883,8 @@ void chr_order_radix_recurse(
     }
   }
 
+  const uint16_t nul_terminator_i = decreasing ? UINT8_MAX_SIZE - 1 : 0;
+
   r_ssize last_cumulative_count = 0;
 
   // Recurse on subgroups as required
@@ -2907,6 +2909,22 @@ void chr_order_radix_recurse(
       continue;
     }
 
+    // If `i` is pointing to the `\0` byte bucket, we are done with this group.
+    // `\0` is the end of string marker, so all strings in this bucket are the
+    // same and we can't recurse further into them, otherwise we'd index OOB
+    // (see the test that mentions `\0`). Happens with `c("abc", "abd", "a",
+    // "a")` where after the first pass we haven't learned anything, and after
+    // the second pass two of the strings are on `\0`. We avoid indexing OOB on
+    // a third pass by exiting early when we see the `\0` group.
+    // `chr_all_same()` would also catch this, but this check is faster and
+    // clearer.
+    if (i == nul_terminator_i) {
+      groups_size_maybe_push(group_size, p_group_infos);
+      p_x += group_size;
+      p_o += group_size;
+      continue;
+    }
+
     // If we've made it to the end of the string, finalize the group.
     // We can get here with `c("xyz", "xyz", "xyx")` where we need the
     // last byte to break the tie, but we end up with a group size of 2.
@@ -2917,9 +2935,11 @@ void chr_order_radix_recurse(
       continue;
     }
 
-    // If the upcoming subgroup is all the same string, we are done.
-    // This is also practically important to ensure we don't index past the nul
-    // terminator of short strings (see the test that mentions `chr_all_same()`).
+    // If the upcoming subgroup is all the same string, we are done. This is a
+    // very useful performance optimization for cases like `c("abcd", "def",
+    // "abcd")` where after the first pass we have two groups, but every string
+    // within each group is already the same so we don't need to continue
+    // recursing.
     if (chr_all_same(p_x, group_size)) {
       groups_size_maybe_push(group_size, p_group_infos);
       p_x += group_size;

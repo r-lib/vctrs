@@ -1205,16 +1205,17 @@ test_that("mixing `''` with other strings works", {
 })
 
 test_that("we aren't indexing past an individual string", {
-  # This is why `chr_all_same()` is practically important, and is not just for
-  # performance
-  #
-  # `max_string_size = 3`, so after `pass = 0` we want to detect that all
-  # strings in the `"a"` group are the same and refuse to continue recursing.
-  # Otherwise we'd then do `pass = 1`, which would index the `\0` nul terminator
-  # of the `"a"` strings, which is fine, but then we'd also do a `pass = 2`,
-  # which would index past the strings, which would be very bad!
+  # This is why the `\0` check is practically important
+  # - `max_string_size = 3`
+  # - After `pass = 0` we learn nothing
+  # - After `pass = 1` we have two groups:
+  #   - byte b: `"abc\0"`, `"abd\0"`
+  #   - byte \0: `"a\0"`
+  # - We refuse to recurse further into the `\0` byte group, otherwise we'd
+  #   index OOB
   x <- c(
     "abc",
+    "abd",
     rep("a", ORDER_INSERTION_BOUNDARY + 1)
   )
 
