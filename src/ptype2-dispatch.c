@@ -4,12 +4,17 @@
 #include "type-tibble.h"
 #include "decl/ptype2-dispatch-decl.h"
 
-r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
-                                  enum vctrs_type x_type,
-                                  enum vctrs_type y_type,
-                                  int* left) {
-  r_obj* x = opts->x;
-  r_obj* y = opts->y;
+r_obj* vec_ptype2_dispatch_native(
+  r_obj* x,
+  r_obj* y,
+  enum vctrs_type x_type,
+  enum vctrs_type y_type,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback,
+  int* left
+) {
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, y, x_type, y_type, left);
 
   switch (type2_s3) {
@@ -21,18 +26,18 @@ r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
     return fct_ptype2(
       x,
       y,
-      opts->p_x_arg,
-      opts->p_y_arg
+      p_x_arg,
+      p_y_arg
     );
 
   case VCTRS_TYPE2_S3_bare_ordered_bare_ordered:
     return ord_ptype2(
       x,
       y,
-      opts->p_x_arg,
-      opts->p_y_arg,
-      opts->call,
-      opts->s3_fallback
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
     );
 
   case VCTRS_TYPE2_S3_bare_date_bare_date:
@@ -52,10 +57,10 @@ r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
     return tib_ptype2(
       x,
       y,
-      opts->p_x_arg,
-      opts->p_y_arg,
-      opts->call,
-      opts->s3_fallback
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
     );
 
   default:
@@ -212,27 +217,31 @@ r_obj* ffi_ptype2_dispatch_native(r_obj* x,
 
   struct r_lazy call = { .x = syms_call, .env = frame };
 
-  const struct ptype2_opts ptype2_opts = new_ptype2_opts(
+  const enum s3_fallback s3_fallback = s3_fallback_from_opts(opts);
+
+  int _;
+  r_obj* out = vec_ptype2_dispatch_native(
     x,
     y,
+    vec_typeof(x),
+    vec_typeof(y),
     &x_arg,
     &y_arg,
     call,
-    opts
+    s3_fallback,
+    &_
   );
 
-  int _left;
-
-  r_obj* out = vec_ptype2_dispatch_native(&ptype2_opts, vec_typeof(x), vec_typeof(y), &_left);
-
   if (out == r_null) {
-    out = vec_ptype2_default_full(x,
-                                  y,
-                                  &x_arg,
-                                  &y_arg,
-                                  ptype2_opts.call,
-                                  ptype2_opts.s3_fallback,
-                                  true);
+    out = vec_ptype2_default_full(
+      x,
+      y,
+      &x_arg,
+      &y_arg,
+      call,
+      s3_fallback,
+      true
+    );
     return out;
   } else {
     return out;
