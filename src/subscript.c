@@ -98,31 +98,54 @@ static
 r_obj* obj_cast_subscript(r_obj* subscript,
                           const struct subscript_opts* opts,
                           ERR* err) {
-  int dir = 0;
+  int _;
 
-  struct ptype2_opts ptype2_opts = {
-    .x = subscript,
-    .y = r_null,
-    .p_x_arg = opts->subscript_arg
-  };
+  struct vctrs_arg* p_subscript_arg = opts->subscript_arg;
+  struct r_lazy call = opts->call;
+  const enum s3_fallback s3_fallback = S3_FALLBACK_false;
+
   struct cast_opts cast_opts = {
     .x = subscript,
     .to = r_null,
-    .p_x_arg = opts->subscript_arg
+    .p_x_arg = p_subscript_arg
   };
 
-  ptype2_opts.y = cast_opts.to = r_globals.empty_lgl;
-  if (vec_is_coercible(&ptype2_opts, &dir)) {
+  cast_opts.to = r_globals.empty_lgl;
+  if (vec_is_coercible(
+    subscript,
+    cast_opts.to,
+    p_subscript_arg,
+    vec_args.empty,
+    call,
+    s3_fallback,
+    &_
+  )) {
     return vec_cast_opts(&cast_opts);
   }
 
-  ptype2_opts.y = cast_opts.to = r_globals.empty_int;
-  if (vec_is_coercible(&ptype2_opts, &dir)) {
+  cast_opts.to = r_globals.empty_int;
+  if (vec_is_coercible(
+    subscript,
+    cast_opts.to,
+    p_subscript_arg,
+    vec_args.empty,
+    call,
+    s3_fallback,
+    &_
+  )) {
     return vec_cast_opts(&cast_opts);
   }
 
-  ptype2_opts.y = cast_opts.to = r_globals.empty_chr;
-  if (vec_is_coercible(&ptype2_opts, &dir)) {
+  cast_opts.to = r_globals.empty_chr;
+  if (vec_is_coercible(
+    subscript,
+    cast_opts.to,
+    p_subscript_arg,
+    vec_args.empty,
+    call,
+    s3_fallback,
+    &_
+  )) {
     return vec_cast_opts(&cast_opts);
   }
 

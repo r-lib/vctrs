@@ -262,7 +262,12 @@ r_obj* vec_ptype2_from_unspecified(
 
 
 struct is_coercible_data {
-  const struct ptype2_opts* opts;
+  r_obj* x;
+  r_obj* y;
+  struct vctrs_arg* p_x_arg;
+  struct vctrs_arg* p_y_arg;
+  struct r_lazy call;
+  enum s3_fallback s3_fallback;
   int* dir;
   r_obj* out;
 };
@@ -272,22 +277,34 @@ void vec_is_coercible_cb(void* data_) {
   struct is_coercible_data* data = (struct is_coercible_data*) data_;
   int _;
   data->out = vec_ptype2(
-    data->opts->x,
-    data->opts->y,
-    data->opts->p_x_arg,
-    data->opts->p_y_arg,
-    data->opts->call,
-    data->opts->s3_fallback,
+    data->x,
+    data->y,
+    data->p_x_arg,
+    data->p_y_arg,
+    data->call,
+    data->s3_fallback,
     &_
   );
 }
 
 static
-void vec_is_coercible_e(const struct ptype2_opts* opts,
-                        int* dir,
-                        ERR* err) {
+void vec_is_coercible_e(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback,
+  int* dir,
+  ERR* err
+) {
   struct is_coercible_data data = {
-    .opts = opts,
+    .x = x,
+    .y = y,
+    .p_x_arg = p_x_arg,
+    .p_y_arg = p_y_arg,
+    .call = call,
+    .s3_fallback = s3_fallback,
     .dir = dir,
     .out = r_null
   };
@@ -299,29 +316,27 @@ void vec_is_coercible_e(const struct ptype2_opts* opts,
                      NULL);
 }
 
-bool vec_is_coercible(const struct ptype2_opts* opts,
-                      int* dir) {
+bool vec_is_coercible(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback,
+  int* dir
+) {
   ERR err = NULL;
-  vec_is_coercible_e(opts, dir, &err);
+  vec_is_coercible_e(
+    x,
+    y,
+    p_x_arg,
+    p_y_arg,
+    call,
+    s3_fallback,
+    dir,
+    &err
+  );
   return !err;
-}
-
-r_obj* vec_ptype2_e(const struct ptype2_opts* opts,
-                    int* dir,
-                    ERR* err) {
-  struct is_coercible_data data = {
-    .opts = opts,
-    .dir = dir,
-    .out = r_null
-  };
-
-  *err = r_try_catch(&vec_is_coercible_cb,
-                     &data,
-                     syms_vctrs_error_incompatible_type,
-                     NULL,
-                     NULL);
-
-  return data.out;
 }
 
 // [[ register() ]]
@@ -337,15 +352,18 @@ r_obj* ffi_is_coercible(r_obj* x,
 
   struct r_lazy call = { .x = syms_call, .env = frame };
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x,
-                                                    y,
-                                                    &x_arg,
-                                                    &y_arg,
-                                                    call,
-                                                    opts);
+  const enum s3_fallback s3_fallback = s3_fallback_from_opts(opts);
 
-  int dir = 0;
-  return r_lgl(vec_is_coercible(&c_opts, &dir));
+  int _;
+  return r_lgl(vec_is_coercible(
+    x,
+    y,
+    &x_arg,
+    &y_arg,
+    call,
+    s3_fallback,
+    &_
+  ));
 }
 
 
@@ -371,22 +389,6 @@ r_obj* ffi_ptype2(r_obj* x,
     S3_FALLBACK_false,
     &_
   );
-}
-
-struct ptype2_opts new_ptype2_opts(r_obj* x,
-                                   r_obj* y,
-                                   struct vctrs_arg* p_x_arg,
-                                   struct vctrs_arg* p_y_arg,
-                                   struct r_lazy call,
-                                   r_obj* opts) {
-  return (struct ptype2_opts) {
-    .x = x,
-    .y = y,
-    .p_x_arg = p_x_arg,
-    .p_y_arg = p_y_arg,
-    .call = call,
-    .s3_fallback = s3_fallback_from_opts(opts)
-  };
 }
 
 // Order on R side is important

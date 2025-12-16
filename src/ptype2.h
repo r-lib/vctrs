@@ -3,20 +3,10 @@
 
 #include "vctrs-core.h"
 
-
 // Sync with R constants in ptype2.R
 enum s3_fallback {
   S3_FALLBACK_false = 0,
   S3_FALLBACK_true = 1
-};
-
-struct ptype2_opts {
-  r_obj* x;
-  r_obj* y;
-  struct vctrs_arg* p_x_arg;
-  struct vctrs_arg* p_y_arg;
-  struct r_lazy call;
-  enum s3_fallback s3_fallback;
 };
 
 r_obj* vec_ptype2(
@@ -29,18 +19,15 @@ r_obj* vec_ptype2(
   int* left
 );
 
-bool vec_is_coercible(const struct ptype2_opts* opts, int* dir);
-
-r_obj* vec_ptype2_e(const struct ptype2_opts* opts,
-                    int* dir,
-                    ERR* err);
-
-struct ptype2_opts new_ptype2_opts(r_obj* x,
-                                   r_obj* y,
-                                   struct vctrs_arg* p_x_arg,
-                                   struct vctrs_arg* p_y_arg,
-                                   struct r_lazy call,
-                                   r_obj* opts);
+bool vec_is_coercible(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback,
+  int* dir
+);
 
 enum s3_fallback s3_fallback_from_opts(r_obj* opts);
 
