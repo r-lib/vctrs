@@ -122,7 +122,7 @@ r_obj* ptype2_common(r_obj* current,
 
   struct ptype_common_reduce_opts* p_reduce_opts = (struct ptype_common_reduce_opts*) p_data;
 
-  current = vec_ptype2_params(
+  current = vec_ptype2(
     current,
     next,
     counters->curr_arg,

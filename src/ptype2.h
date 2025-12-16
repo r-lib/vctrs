@@ -19,10 +19,7 @@ struct ptype2_opts {
   enum s3_fallback s3_fallback;
 };
 
-r_obj* vec_ptype2_opts(const struct ptype2_opts* opts, int* left);
-
-static inline
-r_obj* vec_ptype2_params(
+r_obj* vec_ptype2(
   r_obj* x,
   r_obj* y,
   struct vctrs_arg* p_x_arg,
@@ -30,17 +27,7 @@ r_obj* vec_ptype2_params(
   struct r_lazy call,
   enum s3_fallback s3_fallback,
   int* left
-) {
-  const struct ptype2_opts opts = {
-    .x = x,
-    .y = y,
-    .p_x_arg = p_x_arg,
-    .p_y_arg = p_y_arg,
-    .call = call,
-    .s3_fallback = s3_fallback
-  };
-  return vec_ptype2_opts(&opts, left);
-}
+);
 
 bool vec_is_coercible(const struct ptype2_opts* opts, int* dir);
 

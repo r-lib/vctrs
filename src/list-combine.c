@@ -1817,7 +1817,7 @@ r_obj* ptype_common_with_default(
   // Now incorporate `default` and `p_default_arg` if required
   if (has_default) {
     int _;
-    ptype = vec_ptype2_params(
+    ptype = vec_ptype2(
       ptype,
       default_,
       vec_args.empty,

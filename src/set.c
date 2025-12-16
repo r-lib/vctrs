@@ -35,7 +35,7 @@ r_obj* vec_set_intersect(r_obj* x,
   if (ptype == r_null) {
     int _;
 
-    ptype = vec_ptype2_params(
+    ptype = vec_ptype2(
       x,
       y,
       x_arg,
@@ -189,7 +189,7 @@ r_obj* vec_set_difference(r_obj* x,
   if (ptype == r_null) {
     int _;
 
-    ptype = vec_ptype2_params(
+    ptype = vec_ptype2(
       x,
       y,
       x_arg,
@@ -346,7 +346,7 @@ r_obj* vec_set_union(r_obj* x,
   if (ptype == r_null) {
     int _;
 
-    ptype = vec_ptype2_params(
+    ptype = vec_ptype2(
       x,
       y,
       x_arg,
@@ -596,7 +596,7 @@ r_obj* vec_set_symmetric_difference(r_obj* x,
   if (ptype == r_null) {
     int _;
 
-    ptype = vec_ptype2_params(
+    ptype = vec_ptype2(
       x,
       y,
       x_arg,

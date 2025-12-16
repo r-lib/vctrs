@@ -789,7 +789,7 @@ r_obj* ptype_finalize(
 
     // Now incorporate `default` and `p_default_arg`
     int _;
-    ptype = vec_ptype2_params(
+    ptype = vec_ptype2(
       default_,
       ptype,
       p_default_arg,
@@ -801,7 +801,7 @@ r_obj* ptype_finalize(
     KEEP_AT(ptype, ptype_pi);
   } else {
     int _;
-    ptype = vec_ptype2_params(
+    ptype = vec_ptype2(
       to,
       default_,
       p_to_arg,

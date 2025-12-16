@@ -601,7 +601,7 @@ r_obj* df_ptype2_match(
       r_obj* y_col = r_list_get(y, dup);
 
       int _;
-      type = vec_ptype2_params(
+      type = vec_ptype2(
         x_col,
         y_col,
         p_x_col_arg,
@@ -672,7 +672,7 @@ r_obj* df_ptype2_loop(
     r_obj* y_col = r_list_get(y, i);
 
     int _;
-    r_obj* type = vec_ptype2_params(
+    r_obj* type = vec_ptype2(
       x_col,
       y_col,
       p_x_col_arg,

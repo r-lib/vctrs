@@ -15,54 +15,81 @@ r_obj* ffi_ptype2_opts(r_obj* x,
 
   struct r_lazy call = { .x = r_syms.call, .env = frame, };
 
-  struct ptype2_opts opts = new_ptype2_opts(x,
-                                            y,
-                                            &x_arg,
-                                            &y_arg,
-                                            call,
-                                            ffi_opts);
+  enum s3_fallback s3_fallback = s3_fallback_from_opts(ffi_opts);
 
-  int _left;
-  return vec_ptype2_opts(&opts, &_left);
+  int _;
+  return vec_ptype2(
+    x,
+    y,
+    &x_arg,
+    &y_arg,
+    call,
+    s3_fallback,
+    &_
+  );
 }
 
-r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
-                            int* left,
-                            bool first_pass) {
-  r_obj* x = opts->x;
-  r_obj* y = opts->y;
-  struct vctrs_arg* x_arg = opts->p_x_arg;
-  struct vctrs_arg* y_arg = opts->p_y_arg;
+r_obj* vec_ptype2(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback,
+  int* left
+) {
+  return vec_ptype2_impl(
+    x,
+    y,
+    p_x_arg,
+    p_y_arg,
+    call,
+    s3_fallback,
+    left,
+    true
+  );
+}
 
-  enum vctrs_type x_type = vec_typeof(x);
-  enum vctrs_type y_type = vec_typeof(y);
+static
+r_obj* vec_ptype2_impl(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback,
+  int* left,
+  bool first_pass
+) {
+  const enum vctrs_type x_type = vec_typeof(x);
+  const enum vctrs_type y_type = vec_typeof(y);
 
   if (x_type == VCTRS_TYPE_null) {
     // When `x` and `y` are `NULL`, keep using `x` name (1)
     // When `x` is `NULL` but `y` isn't, switch to `y` name (0)
     // TODO!: It is strange that this is `x_type`.
     *left = y_type == VCTRS_TYPE_null;
-    return vec_ptype2_from_unspecified(y, y_arg, x_type, opts->call, opts->s3_fallback);
+    return vec_ptype2_from_unspecified(y, p_y_arg, x_type, call, s3_fallback);
   }
   if (y_type == VCTRS_TYPE_null) {
     // When `x` and `y` are `NULL`, keep using `x` name (1)
     // When `y` is `NULL` but `x` isn't, keep using `x` name (1)
     *left = 1;
-    return vec_ptype2_from_unspecified(x, x_arg, x_type, opts->call, opts->s3_fallback);
+    return vec_ptype2_from_unspecified(x, p_x_arg, x_type, call, s3_fallback);
   }
 
   if (x_type == VCTRS_TYPE_unspecified) {
-    return vec_ptype2_from_unspecified(y, y_arg, y_type, opts->call, opts->s3_fallback);
+    return vec_ptype2_from_unspecified(y, p_y_arg, y_type, call, s3_fallback);
   }
   if (y_type == VCTRS_TYPE_unspecified) {
-    return vec_ptype2_from_unspecified(x, x_arg, x_type, opts->call, opts->s3_fallback);
+    return vec_ptype2_from_unspecified(x, p_x_arg, x_type, call, s3_fallback);
   }
 
   if (x_type == VCTRS_TYPE_scalar) {
-    stop_scalar_type(x, x_arg, opts->call);
+    stop_scalar_type(x, p_x_arg, call);
   }
   if (y_type == VCTRS_TYPE_scalar) {
-    stop_scalar_type(y, y_arg, opts->call);
+    stop_scalar_type(y, p_y_arg, call);
   }
 
   if (x_type != VCTRS_TYPE_s3 && y_type != VCTRS_TYPE_s3) {
@@ -71,10 +98,10 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
       y,
       x_type,
       y_type,
-      x_arg,
-      y_arg,
-      opts->call,
-      opts->s3_fallback,
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback,
       left
     );
   }
@@ -85,15 +112,15 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
       y,
       x_type,
       y_type,
-      x_arg,
-      y_arg,
-      opts->call,
-      opts->s3_fallback,
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback,
       left
     ));
 
     if (out != r_null) {
-      out = vec_shaped_ptype(out, x, y, x_arg, y_arg);
+      out = vec_shaped_ptype(out, x, y, p_x_arg, p_y_arg);
       FREE(1);
       return out;
     }
@@ -104,11 +131,19 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   // Try native dispatch again with prototypes, in case the prototype
   // is another type. FIXME: Use R-level callback instead.
   if (first_pass) {
-    struct ptype2_opts mut_opts = *opts;
-    mut_opts.x = KEEP(vec_ptype(x, x_arg, opts->call));
-    mut_opts.y = KEEP(vec_ptype(y, y_arg, opts->call));
+    x = KEEP(vec_ptype(x, p_x_arg, call));
+    y = KEEP(vec_ptype(y, p_y_arg, call));
 
-    r_obj* out = vec_ptype2_opts_impl(&mut_opts, left, false);
+    r_obj* out = vec_ptype2_impl(
+      x,
+      y,
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback,
+      left,
+      false
+    );
 
     FREE(2);
     return out;
@@ -117,15 +152,11 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   return vec_ptype2_dispatch_s3(
     x,
     y,
-    x_arg,
-    y_arg,
-    opts->call,
-    opts->s3_fallback
+    p_x_arg,
+    p_y_arg,
+    call,
+    s3_fallback
   );
-}
-
-r_obj* vec_ptype2_opts(const struct ptype2_opts* opts, int* left) {
-  return vec_ptype2_opts_impl(opts, left, true);
 }
 
 static
@@ -215,7 +246,7 @@ r_obj* vec_ptype2_from_unspecified(
 
   if (s3_fallback) {
     int _;
-    return vec_ptype2_params(
+    return vec_ptype2(
       x,
       x,
       p_x_arg,
@@ -239,7 +270,16 @@ struct is_coercible_data {
 static
 void vec_is_coercible_cb(void* data_) {
   struct is_coercible_data* data = (struct is_coercible_data*) data_;
-  data->out = vec_ptype2_opts(data->opts, data->dir);
+  int _;
+  data->out = vec_ptype2(
+    data->opts->x,
+    data->opts->y,
+    data->opts->p_x_arg,
+    data->opts->p_y_arg,
+    data->opts->call,
+    data->opts->s3_fallback,
+    &_
+  );
 }
 
 static
@@ -322,7 +362,7 @@ r_obj* ffi_ptype2(r_obj* x,
   struct r_lazy call = { .x = syms_call, .env = frame };
 
   int _;
-  return vec_ptype2_params(
+  return vec_ptype2(
     x,
     y,
     &x_arg,
