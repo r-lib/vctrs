@@ -40,21 +40,22 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   if (x_type == VCTRS_TYPE_null) {
     // When `x` and `y` are `NULL`, keep using `x` name (1)
     // When `x` is `NULL` but `y` isn't, switch to `y` name (0)
+    // TODO!: It is strange that this is `x_type`.
     *left = y_type == VCTRS_TYPE_null;
-    return vec_ptype2_from_unspecified(opts, x_type, y, y_arg);
+    return vec_ptype2_from_unspecified(y, y_arg, x_type, opts->call, opts->s3_fallback);
   }
   if (y_type == VCTRS_TYPE_null) {
     // When `x` and `y` are `NULL`, keep using `x` name (1)
     // When `y` is `NULL` but `x` isn't, keep using `x` name (1)
     *left = 1;
-    return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
+    return vec_ptype2_from_unspecified(x, x_arg, x_type, opts->call, opts->s3_fallback);
   }
 
   if (x_type == VCTRS_TYPE_unspecified) {
-    return vec_ptype2_from_unspecified(opts, y_type, y, y_arg);
+    return vec_ptype2_from_unspecified(y, y_arg, y_type, opts->call, opts->s3_fallback);
   }
   if (y_type == VCTRS_TYPE_unspecified) {
-    return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
+    return vec_ptype2_from_unspecified(x, x_arg, x_type, opts->call, opts->s3_fallback);
   }
 
   if (x_type == VCTRS_TYPE_scalar) {
@@ -158,27 +159,31 @@ r_obj* vec_ptype2_switch_native(const struct ptype2_opts* opts,
  * this input with itself. This way we may return a fallback sentinel which can be
  * treated specially, for instance in `vec_c(NA, x, NA)`.
  */
-r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
-                                   enum vctrs_type other_type,
-                                   r_obj* other,
-                                   struct vctrs_arg* other_arg) {
-  if (other_type == VCTRS_TYPE_unspecified || other_type == VCTRS_TYPE_null) {
-    return vec_ptype(other, other_arg, opts->call);
+r_obj* vec_ptype2_from_unspecified(
+  r_obj* x,
+  struct vctrs_arg* p_x_arg,
+  enum vctrs_type x_type,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+) {
+  if (x_type == VCTRS_TYPE_unspecified || x_type == VCTRS_TYPE_null) {
+    return vec_ptype(x, p_x_arg, call);
   }
 
-  if (opts->s3_fallback) {
-    const struct ptype2_opts self_self_opts = (const struct ptype2_opts) {
-      .x = other,
-      .y = other,
-      .p_x_arg = other_arg,
-      .p_y_arg = other_arg,
-      .s3_fallback = opts->s3_fallback
-    };
-    int _left = 0;
-    return vec_ptype2_opts(&self_self_opts, &_left);
+  if (s3_fallback) {
+    int _;
+    return vec_ptype2_params(
+      x,
+      x,
+      p_x_arg,
+      p_x_arg,
+      r_lazy_null,
+      s3_fallback,
+      &_
+    );
   }
 
-  return vec_ptype(other, other_arg, opts->call);
+  return vec_ptype(x, p_x_arg, call);
 }
 
 

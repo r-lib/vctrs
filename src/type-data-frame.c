@@ -560,10 +560,13 @@ r_obj* df_ptype2_match(const struct ptype2_opts* opts,
     if (dup == r_globals.na_int) {
       col_opts.y = vctrs_shared_empty_uns;
       col_opts.p_y_arg = NULL;
-      type = vec_ptype2_from_unspecified(&col_opts,
-                                         vec_typeof(col),
-                                         col,
-                                         named_x_arg);
+      type = vec_ptype2_from_unspecified(
+        col,
+        named_x_arg,
+        vec_typeof(col),
+        col_opts.call,
+        col_opts.s3_fallback
+      );
     } else {
       // 1-based index
       --dup;
@@ -593,10 +596,13 @@ r_obj* df_ptype2_match(const struct ptype2_opts* opts,
       col_opts.p_y_arg = named_y_arg;
       col_opts.x = vctrs_shared_empty_uns;
       col_opts.p_x_arg = NULL;
-      r_obj* type = vec_ptype2_from_unspecified(&col_opts,
-                                              vec_typeof(col),
-                                              col,
-                                              named_y_arg);
+      r_obj* type = vec_ptype2_from_unspecified(
+        col,
+        named_y_arg,
+        vec_typeof(col),
+        col_opts.call,
+        col_opts.s3_fallback
+      );
 
       r_list_poke(out, i, type);
       r_chr_poke(nms, i, r_chr_get(y_names, j));

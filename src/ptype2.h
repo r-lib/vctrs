@@ -57,10 +57,12 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
 
 enum s3_fallback s3_fallback_from_opts(r_obj* opts);
 
-r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
-                                   enum vctrs_type other_type,
-                                   r_obj* other,
-                                   struct vctrs_arg* other_arg);
-
+r_obj* vec_ptype2_from_unspecified(
+  r_obj* x,
+  struct vctrs_arg* p_x_arg,
+  enum vctrs_type x_type,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+);
 
 #endif
