@@ -37,7 +37,14 @@ r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
 
   case VCTRS_TYPE2_S3_dataframe_bare_tibble:
   case VCTRS_TYPE2_S3_bare_tibble_bare_tibble:
-    return tib_ptype2(opts);
+    return tib_ptype2(
+      x,
+      y,
+      opts->p_x_arg,
+      opts->p_y_arg,
+      opts->call,
+      opts->s3_fallback
+    );
 
   default:
     return r_null;

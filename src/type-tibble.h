@@ -5,7 +5,15 @@
 #include "ptype2.h"
 
 
-SEXP tib_ptype2(const struct ptype2_opts* opts);
+r_obj* tib_ptype2(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+);
+
 SEXP tib_cast(const struct cast_opts* opts);
 
 
