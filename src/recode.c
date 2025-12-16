@@ -771,28 +771,35 @@ r_obj* ptype_finalize(
   }
 
   // Otherwise `ptype` is `NULL`, and we determine it from `to` and `default`
+  r_keep_loc ptype_pi;
+  KEEP_HERE(ptype, &ptype_pi);
 
   if (to_as_list_of_vectors) {
     // Use only `to` and `p_to_arg` first for best errors
-    ptype = KEEP(vec_ptype_common(
+    // Not finalising `ptype` yet in case we need to incorporate `default`!
+    ptype = vec_ptype_common(
       to,
       r_null,
-      PTYPE_FINALISE_DEFAULT,
+      PTYPE_FINALISE_false,
       S3_FALLBACK_DEFAULT,
       p_to_arg,
       error_call
-    ));
+    );
+    KEEP_AT(ptype, ptype_pi);
 
     // Now incorporate `default` and `p_default_arg`
     int _;
-    ptype = KEEP(vec_ptype2_params(default_, ptype, p_default_arg, vec_args.empty, error_call, &_));
-
-    FREE(2);
+    ptype = vec_ptype2_params(default_, ptype, p_default_arg, vec_args.empty, error_call, &_);
+    KEEP_AT(ptype, ptype_pi);
   } else {
     int _;
-    ptype = KEEP(vec_ptype2_params(to, default_, p_to_arg, p_default_arg, error_call, &_));
-    FREE(1);
+    ptype = vec_ptype2_params(to, default_, p_to_arg, p_default_arg, error_call, &_);
+    KEEP_AT(ptype, ptype_pi);
   }
 
+  // Finalize on the way out
+  ptype = vec_ptype_finalise(ptype);
+
+  FREE(1);
   return ptype;
 }
