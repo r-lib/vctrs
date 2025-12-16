@@ -107,9 +107,16 @@ r_obj* vec_ptype2_default(r_obj* x,
   return vec_ptype2_default_full(x, y, x_arg, y_arg, call, s3_fallback, false);
 }
 
-r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
-  r_obj* x = KEEP(vec_ptype(opts->x, opts->p_x_arg, opts->call));
-  r_obj* y = KEEP(vec_ptype(opts->y, opts->p_y_arg, opts->call));
+r_obj* vec_ptype2_dispatch_s3(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+) {
+  x = KEEP(vec_ptype(x, p_x_arg, call));
+  y = KEEP(vec_ptype(y, p_y_arg, call));
 
   r_obj* method_sym = r_null;
   r_obj* method = s3_find_method_xy("vec_ptype2", x, y, vctrs_method_table, &method_sym);
@@ -117,10 +124,12 @@ r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   // Compatibility with legacy double dispatch mechanism
   if (method == r_null) {
     r_obj* x_method_sym = r_null;
-    r_obj* x_method = KEEP(s3_find_method2("vec_ptype2",
-                                           x,
-                                           vctrs_method_table,
-                                           &x_method_sym));
+    r_obj* x_method = KEEP(s3_find_method2(
+      "vec_ptype2",
+      x,
+      vctrs_method_table,
+      &x_method_sym
+    ));
 
     if (x_method != r_null) {
       // Only `x_method`s contained within a package will
@@ -145,27 +154,36 @@ r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   KEEP(method);
 
   if (method == r_null) {
-    r_obj* out = vec_ptype2_default_full(x,
-                                         y,
-                                         opts->p_x_arg,
-                                         opts->p_y_arg,
-                                         opts->call,
-                                         opts->s3_fallback,
-                                         true);
+    r_obj* out = vec_ptype2_default_full(
+      x,
+      y,
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback,
+      true
+    );
     FREE(3);
     return out;
   }
 
-  r_obj* ffi_x_arg = KEEP(vctrs_arg(opts->p_x_arg));
-  r_obj* ffi_y_arg = KEEP(vctrs_arg(opts->p_y_arg));
+  r_obj* ffi_x_arg = KEEP(vctrs_arg(p_x_arg));
+  r_obj* ffi_y_arg = KEEP(vctrs_arg(p_y_arg));
 
-  r_obj* out = vec_invoke_coerce_method(method_sym, method,
-                                        syms_x, x,
-                                        syms_y, y,
-                                        syms_x_arg, ffi_x_arg,
-                                        syms_y_arg, ffi_y_arg,
-                                        opts->call,
-                                        opts->s3_fallback);
+  r_obj* out = vec_invoke_coerce_method(
+    method_sym,
+    method,
+    syms_x,
+    x,
+    syms_y,
+    y,
+    syms_x_arg,
+    ffi_x_arg,
+    syms_y_arg,
+    ffi_y_arg,
+    call,
+    s3_fallback
+  );
 
   FREE(5);
   return out;

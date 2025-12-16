@@ -104,7 +104,14 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
     return out;
   }
 
-  return vec_ptype2_dispatch_s3(opts);
+  return vec_ptype2_dispatch_s3(
+    x,
+    y,
+    x_arg,
+    y_arg,
+    opts->call,
+    opts->s3_fallback
+  );
 }
 
 r_obj* vec_ptype2_opts(const struct ptype2_opts* opts, int* left) {
@@ -164,7 +171,14 @@ r_obj* vec_ptype2_switch_native(const struct ptype2_opts* opts,
     );
 
   default:
-    return vec_ptype2_dispatch_s3(opts);
+    return vec_ptype2_dispatch_s3(
+      x,
+      y,
+      x_arg,
+      y_arg,
+      opts->call,
+      opts->s3_fallback
+    );
   }
 }
 
