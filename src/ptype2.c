@@ -96,8 +96,7 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   return vec_ptype2_dispatch_s3(opts);
 }
 
-r_obj* vec_ptype2_opts(const struct ptype2_opts* opts,
-                     int* left) {
+r_obj* vec_ptype2_opts(const struct ptype2_opts* opts, int* left) {
   return vec_ptype2_opts_impl(opts, left, true);
 }
 

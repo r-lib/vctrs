@@ -122,16 +122,15 @@ r_obj* ptype2_common(r_obj* current,
 
   struct ptype_common_reduce_opts* p_reduce_opts = (struct ptype_common_reduce_opts*) p_data;
 
-  const struct ptype2_opts opts = {
-    .x = current,
-    .y = next,
-    .p_x_arg = counters->curr_arg,
-    .p_y_arg = counters->next_arg,
-    .call = p_reduce_opts->call,
-    .s3_fallback = p_reduce_opts->s3_fallback
-  };
-
-  current = vec_ptype2_opts(&opts, &left);
+  current = vec_ptype2_params(
+    current,
+    next,
+    counters->curr_arg,
+    counters->next_arg,
+    p_reduce_opts->call,
+    p_reduce_opts->s3_fallback,
+    &left
+  );
 
   // Update current if RHS is the common type. Otherwise the previous
   // counter stays in effect.

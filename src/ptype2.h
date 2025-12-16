@@ -19,8 +19,7 @@ struct ptype2_opts {
   enum s3_fallback s3_fallback;
 };
 
-r_obj* vec_ptype2_opts(const struct ptype2_opts* opts,
-                       int* left);
+r_obj* vec_ptype2_opts(const struct ptype2_opts* opts, int* left);
 
 static inline
 r_obj* vec_ptype2_params(
