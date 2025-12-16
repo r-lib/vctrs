@@ -34,33 +34,47 @@ SEXP fct_ptype2(
 }
 
 static
-bool ord_ptype2_validate(r_obj* x_levels,
-                         r_obj* y_levels,
-                         const struct ptype2_opts* p_opts) {
+bool ord_ptype2_validate(
+  r_obj* x_levels,
+  r_obj* y_levels,
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg
+) {
   if (TYPEOF(x_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(p_opts->x, p_opts->p_x_arg);
+    stop_corrupt_ordered_levels(x, p_x_arg);
   }
   if (TYPEOF(y_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(p_opts->y, p_opts->p_y_arg);
+    stop_corrupt_ordered_levels(y, p_y_arg);
   }
 
   return equal_object(x_levels, y_levels);
 }
 
 // [[ include("type-factor.h") ]]
-r_obj* ord_ptype2(const struct ptype2_opts* p_opts) {
-  r_obj* x_levels = r_attrib_get(p_opts->x, R_LevelsSymbol);
-  r_obj* y_levels = r_attrib_get(p_opts->y, R_LevelsSymbol);
+r_obj* ord_ptype2(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+) {
+  r_obj* x_levels = r_attrib_get(x, R_LevelsSymbol);
+  r_obj* y_levels = r_attrib_get(y, R_LevelsSymbol);
 
-  if (ord_ptype2_validate(x_levels, y_levels, p_opts)) {
+  if (ord_ptype2_validate(x_levels, y_levels, x, y, p_x_arg, p_y_arg)) {
     return new_empty_ordered(x_levels);
   } else {
-    return vec_ptype2_default(p_opts->x,
-                              p_opts->y,
-                              p_opts->p_x_arg,
-                              p_opts->p_y_arg,
-                              r_lazy_null,
-                              p_opts->s3_fallback);
+    return vec_ptype2_default(
+      x,
+      y,
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
+    );
   }
 }
 
@@ -260,11 +274,16 @@ SEXP fct_as_factor(SEXP x,
 // [[ include("factor.h") ]]
 SEXP ord_as_ordered(const struct cast_opts* p_opts) {
   r_obj* x_levels = r_attrib_get(p_opts->x, R_LevelsSymbol);
-  r_obj* y_levels = r_attrib_get(p_opts->to, R_LevelsSymbol);
+  r_obj* to_levels = r_attrib_get(p_opts->to, R_LevelsSymbol);
 
-  struct ptype2_opts ptype2_opts = cast_opts_as_ptype2_opts(p_opts);
-
-  if (ord_ptype2_validate(x_levels, y_levels, &ptype2_opts)) {
+  if (ord_ptype2_validate(
+    x_levels,
+    to_levels,
+    p_opts->x,
+    p_opts->to,
+    p_opts->p_x_arg,
+    p_opts->p_to_arg
+  )) {
     return p_opts->x;
   } else {
     return vec_cast_default(p_opts->x,
