@@ -82,6 +82,7 @@ r_obj* vec_interval_group_info(r_obj* start,
     &_
   );
   KEEP_N(ptype, &n_prot);
+  ptype = KEEP_N(vec_ptype_finalise(ptype), &n_prot);
 
   start = vec_cast_params(
     start,
@@ -324,6 +325,7 @@ r_obj* vec_interval_complement(r_obj* start,
     &_
   );
   KEEP_N(ptype, &n_prot);
+  ptype = KEEP_N(vec_ptype_finalise(ptype), &n_prot);
 
   start = vec_cast_params(
     start,
@@ -733,6 +735,7 @@ r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
     &_
   );
   KEEP_N(ptype, &n_prot);
+  ptype = KEEP_N(vec_ptype_finalise(ptype), &n_prot);
 
   start = vec_cast_params(
     start,

@@ -588,6 +588,9 @@ r_obj* ptype_finalize(
     );
   }
 
+  // Finalize on the way out
+  ptype = vec_ptype_finalise(ptype);
+
   FREE(n_prot);
   return ptype;
 }

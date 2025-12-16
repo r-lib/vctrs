@@ -396,23 +396,37 @@ SEXP vec_match_params(SEXP needles,
                       struct vctrs_arg* haystack_arg,
                       struct r_lazy call) {
   int nprot = 0;
-  int _;
-  SEXP type = vec_ptype2_params(needles, haystack,
-                                needles_arg, haystack_arg,
-                                call,
-                                &_);
-  PROTECT_N(type, &nprot);
 
-  needles = vec_cast_params(needles, type,
-                            needles_arg, vec_args.empty,
-                            call,
-                            S3_FALLBACK_false);
+  int _;
+  SEXP type = vec_ptype2_params(
+    needles,
+    haystack,
+    needles_arg,
+    haystack_arg,
+    call,
+    &_
+  );
+  PROTECT_N(type, &nprot);
+  type = PROTECT_N(vec_ptype_finalise(type), &nprot);
+
+  needles = vec_cast_params(
+    needles,
+    type,
+    needles_arg,
+    vec_args.empty,
+    call,
+    S3_FALLBACK_false
+  );
   PROTECT_N(needles, &nprot);
 
-  haystack = vec_cast_params(haystack, type,
-                             haystack_arg, vec_args.empty,
-                             call,
-                             S3_FALLBACK_false);
+  haystack = vec_cast_params(
+    haystack,
+    type,
+    haystack_arg,
+    vec_args.empty,
+    call,
+    S3_FALLBACK_false
+  );
   PROTECT_N(haystack, &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
@@ -559,7 +573,6 @@ SEXP vec_in(
   int nprot = 0;
 
   int _;
-
   SEXP type = vec_ptype2_params(
     needles,
     haystack,
@@ -569,6 +582,7 @@ SEXP vec_in(
     &_
   );
   PROTECT_N(type, &nprot);
+  type = PROTECT_N(vec_ptype_finalise(type), &nprot);
 
   needles = vec_cast_params(
     needles,

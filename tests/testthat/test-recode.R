@@ -460,9 +460,7 @@ test_that("proof that `ptype` finalization is important", {
   to <- FALSE
 
   # If no `ptype` finalization happened, then `ptype = x` would result in
-  # `unspecified` being the output type and these would error. `list_combine()`
-  # now does `ptype` finalization when an explicit `ptype` is provided, so this
-  # works.
+  # `unspecified` being the output type and these would error
   expect_identical(
     vec_recode_values(x, from = from, to = to, default = x, ptype = x),
     c(FALSE, FALSE)
@@ -470,6 +468,31 @@ test_that("proof that `ptype` finalization is important", {
   expect_identical(
     vec_replace_values(x, from = from, to = to),
     c(FALSE, FALSE)
+  )
+})
+
+test_that("common `ptype` of `to` isn't finalized until `default` has been included", {
+  # If the common type of `to` is finalized early, we get `logical`, which can't
+  # combine with `default`'s `character` type
+  expect_identical(
+    vec_recode_values(
+      x = "a",
+      from = "a",
+      to = list(NA),
+      default = "x",
+      to_as_list_of_vectors = TRUE
+    ),
+    NA_character_
+  )
+  expect_identical(
+    vec_recode_values(
+      x = "a",
+      from = "b",
+      to = list(NA),
+      default = "x",
+      to_as_list_of_vectors = TRUE
+    ),
+    "x"
   )
 })
 
