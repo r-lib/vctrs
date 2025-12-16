@@ -25,8 +25,7 @@ bool vec_is_coercible(
   struct vctrs_arg* p_x_arg,
   struct vctrs_arg* p_y_arg,
   struct r_lazy call,
-  enum s3_fallback s3_fallback,
-  int* dir
+  enum s3_fallback s3_fallback
 );
 
 enum s3_fallback s3_fallback_from_opts(r_obj* opts);

@@ -98,8 +98,6 @@ static
 r_obj* obj_cast_subscript(r_obj* subscript,
                           const struct subscript_opts* opts,
                           ERR* err) {
-  int _;
-
   struct vctrs_arg* p_subscript_arg = opts->subscript_arg;
   struct r_lazy call = opts->call;
   const enum s3_fallback s3_fallback = S3_FALLBACK_false;
@@ -117,8 +115,7 @@ r_obj* obj_cast_subscript(r_obj* subscript,
     p_subscript_arg,
     vec_args.empty,
     call,
-    s3_fallback,
-    &_
+    s3_fallback
   )) {
     return vec_cast_opts(&cast_opts);
   }
@@ -130,8 +127,7 @@ r_obj* obj_cast_subscript(r_obj* subscript,
     p_subscript_arg,
     vec_args.empty,
     call,
-    s3_fallback,
-    &_
+    s3_fallback
   )) {
     return vec_cast_opts(&cast_opts);
   }
@@ -143,8 +139,7 @@ r_obj* obj_cast_subscript(r_obj* subscript,
     p_subscript_arg,
     vec_args.empty,
     call,
-    s3_fallback,
-    &_
+    s3_fallback
   )) {
     return vec_cast_opts(&cast_opts);
   }

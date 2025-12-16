@@ -268,7 +268,6 @@ struct is_coercible_data {
   struct vctrs_arg* p_y_arg;
   struct r_lazy call;
   enum s3_fallback s3_fallback;
-  int* dir;
   r_obj* out;
 };
 
@@ -295,7 +294,6 @@ void vec_is_coercible_e(
   struct vctrs_arg* p_y_arg,
   struct r_lazy call,
   enum s3_fallback s3_fallback,
-  int* dir,
   ERR* err
 ) {
   struct is_coercible_data data = {
@@ -305,7 +303,6 @@ void vec_is_coercible_e(
     .p_y_arg = p_y_arg,
     .call = call,
     .s3_fallback = s3_fallback,
-    .dir = dir,
     .out = r_null
   };
 
@@ -322,8 +319,7 @@ bool vec_is_coercible(
   struct vctrs_arg* p_x_arg,
   struct vctrs_arg* p_y_arg,
   struct r_lazy call,
-  enum s3_fallback s3_fallback,
-  int* dir
+  enum s3_fallback s3_fallback
 ) {
   ERR err = NULL;
   vec_is_coercible_e(
@@ -333,7 +329,6 @@ bool vec_is_coercible(
     p_y_arg,
     call,
     s3_fallback,
-    dir,
     &err
   );
   return !err;
@@ -354,15 +349,13 @@ r_obj* ffi_is_coercible(r_obj* x,
 
   const enum s3_fallback s3_fallback = s3_fallback_from_opts(opts);
 
-  int _;
   return r_lgl(vec_is_coercible(
     x,
     y,
     &x_arg,
     &y_arg,
     call,
-    s3_fallback,
-    &_
+    s3_fallback
   ));
 }
 
