@@ -3,19 +3,21 @@
 static SEXP levels_union(SEXP x, SEXP y);
 
 // [[ include("type-factor.h") ]]
-SEXP fct_ptype2(const struct ptype2_opts* opts) {
-  SEXP x = opts->x;
-  SEXP y = opts->y;
-
+SEXP fct_ptype2(
+  SEXP x,
+  SEXP y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg
+) {
   SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
   SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
 
   if (TYPEOF(x_levels) != STRSXP) {
-    stop_corrupt_factor_levels(x, opts->p_x_arg);
+    stop_corrupt_factor_levels(x, p_x_arg);
   }
 
   if (TYPEOF(y_levels) != STRSXP) {
-    stop_corrupt_factor_levels(y, opts->p_y_arg);
+    stop_corrupt_factor_levels(y, p_y_arg);
   }
 
   // Quick early exit for identical levels pointing to the same SEXP

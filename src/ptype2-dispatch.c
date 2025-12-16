@@ -18,7 +18,7 @@ r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
     return r_globals.empty_chr;
 
   case VCTRS_TYPE2_S3_bare_factor_bare_factor:
-    return fct_ptype2(opts);
+    return fct_ptype2(x, y, opts->p_x_arg, opts->p_y_arg);
 
   case VCTRS_TYPE2_S3_bare_ordered_bare_ordered:
     return ord_ptype2(opts);
