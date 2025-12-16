@@ -155,8 +155,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     error_call,
     &_
   ), &n_prot);
-
-  ptype = vec_ptype_finalise(ptype);
+  ptype = KEEP_N(vec_ptype_finalise(ptype), &n_prot);
 
   needles = KEEP_N(vec_cast_params(
     needles,
