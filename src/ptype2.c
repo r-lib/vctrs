@@ -275,7 +275,7 @@ r_obj* ffi_ptype2(r_obj* x,
   struct r_lazy call = { .x = syms_call, .env = frame };
 
   int _left;
-  return vec_ptype2(x, y, &x_arg, &y_arg, &_left, call);
+  return vec_ptype2_params(x, y, &x_arg, &y_arg, call, &_left);
 }
 
 struct ptype2_opts new_ptype2_opts(r_obj* x,
