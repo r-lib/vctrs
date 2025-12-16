@@ -66,7 +66,17 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   }
 
   if (x_type != VCTRS_TYPE_s3 && y_type != VCTRS_TYPE_s3) {
-    return vec_ptype2_switch_native(opts, x_type, y_type, left);
+    return vec_ptype2_switch_native(
+      x,
+      y,
+      x_type,
+      y_type,
+      x_arg,
+      y_arg,
+      opts->call,
+      opts->s3_fallback,
+      left
+    );
   }
 
   if (x_type == VCTRS_TYPE_s3 || y_type == VCTRS_TYPE_s3) {
@@ -119,15 +129,17 @@ r_obj* vec_ptype2_opts(const struct ptype2_opts* opts, int* left) {
 }
 
 static
-r_obj* vec_ptype2_switch_native(const struct ptype2_opts* opts,
-                                enum vctrs_type x_type,
-                                enum vctrs_type y_type,
-                                int* left) {
-  r_obj* x = opts->x;
-  r_obj* y = opts->y;
-  struct vctrs_arg* x_arg = opts->p_x_arg;
-  struct vctrs_arg* y_arg = opts->p_y_arg;
-
+r_obj* vec_ptype2_switch_native(
+  r_obj* x,
+  r_obj* y,
+  enum vctrs_type x_type,
+  enum vctrs_type y_type,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback,
+  int* left
+) {
   enum vctrs_type2 type2 = vec_typeof2_impl(x_type, y_type, left);
 
   switch (type2) {
@@ -135,49 +147,49 @@ r_obj* vec_ptype2_switch_native(const struct ptype2_opts* opts,
     return r_null;
 
   case VCTRS_TYPE2_logical_logical:
-    return vec_shaped_ptype(r_globals.empty_lgl, x, y, x_arg, y_arg);
+    return vec_shaped_ptype(r_globals.empty_lgl, x, y, p_x_arg, p_y_arg);
 
   case VCTRS_TYPE2_logical_integer:
   case VCTRS_TYPE2_integer_integer:
-    return vec_shaped_ptype(r_globals.empty_int, x, y, x_arg, y_arg);
+    return vec_shaped_ptype(r_globals.empty_int, x, y, p_x_arg, p_y_arg);
 
   case VCTRS_TYPE2_logical_double:
   case VCTRS_TYPE2_integer_double:
   case VCTRS_TYPE2_double_double:
-    return vec_shaped_ptype(r_globals.empty_dbl, x, y, x_arg, y_arg);
+    return vec_shaped_ptype(r_globals.empty_dbl, x, y, p_x_arg, p_y_arg);
 
   case VCTRS_TYPE2_integer_complex:
   case VCTRS_TYPE2_double_complex:
   case VCTRS_TYPE2_complex_complex:
-    return vec_shaped_ptype(r_globals.empty_cpl, x, y, x_arg, y_arg);
+    return vec_shaped_ptype(r_globals.empty_cpl, x, y, p_x_arg, p_y_arg);
 
   case VCTRS_TYPE2_character_character:
-    return vec_shaped_ptype(r_globals.empty_chr, x, y, x_arg, y_arg);
+    return vec_shaped_ptype(r_globals.empty_chr, x, y, p_x_arg, p_y_arg);
 
   case VCTRS_TYPE2_raw_raw:
-    return vec_shaped_ptype(r_globals.empty_raw, x, y, x_arg, y_arg);
+    return vec_shaped_ptype(r_globals.empty_raw, x, y, p_x_arg, p_y_arg);
 
   case VCTRS_TYPE2_list_list:
-    return vec_shaped_ptype(r_globals.empty_list, x, y, x_arg, y_arg);
+    return vec_shaped_ptype(r_globals.empty_list, x, y, p_x_arg, p_y_arg);
 
   case VCTRS_TYPE2_dataframe_dataframe:
     return df_ptype2(
       x,
       y,
-      x_arg,
-      y_arg,
-      opts->call,
-      opts->s3_fallback
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
     );
 
   default:
     return vec_ptype2_dispatch_s3(
       x,
       y,
-      x_arg,
-      y_arg,
-      opts->call,
-      opts->s3_fallback
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
     );
   }
 }
