@@ -404,6 +404,7 @@ SEXP vec_match_params(SEXP needles,
     needles_arg,
     haystack_arg,
     call,
+    S3_FALLBACK_false,
     &_
   );
   PROTECT_N(type, &nprot);
@@ -579,6 +580,7 @@ SEXP vec_in(
     p_needles_arg,
     p_haystack_arg,
     call,
+    S3_FALLBACK_false,
     &_
   );
   PROTECT_N(type, &nprot);

@@ -156,7 +156,7 @@ r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
                                 enum s3_fallback s3_fallback) {
   r_obj* call = KEEP(r_lazy_eval(lazy_call));
 
-  if (s3_fallback != S3_FALLBACK_DEFAULT) {
+  if (s3_fallback != S3_FALLBACK_false) {
     r_obj* ffi_s3_fallback = KEEP(r_int(s3_fallback));
 
     r_obj* out = vctrs_dispatch6(method_sym, method,

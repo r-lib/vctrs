@@ -781,7 +781,7 @@ r_obj* ptype_finalize(
       to,
       r_null,
       PTYPE_FINALISE_false,
-      S3_FALLBACK_DEFAULT,
+      S3_FALLBACK_false,
       p_to_arg,
       error_call
     );
@@ -789,11 +789,27 @@ r_obj* ptype_finalize(
 
     // Now incorporate `default` and `p_default_arg`
     int _;
-    ptype = vec_ptype2_params(default_, ptype, p_default_arg, vec_args.empty, error_call, &_);
+    ptype = vec_ptype2_params(
+      default_,
+      ptype,
+      p_default_arg,
+      vec_args.empty,
+      error_call,
+      S3_FALLBACK_false,
+      &_
+    );
     KEEP_AT(ptype, ptype_pi);
   } else {
     int _;
-    ptype = vec_ptype2_params(to, default_, p_to_arg, p_default_arg, error_call, &_);
+    ptype = vec_ptype2_params(
+      to,
+      default_,
+      p_to_arg,
+      p_default_arg,
+      error_call,
+      S3_FALLBACK_false,
+      &_
+    );
     KEEP_AT(ptype, ptype_pi);
   }
 

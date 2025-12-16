@@ -152,6 +152,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     needles_arg,
     haystack_arg,
     error_call,
+    S3_FALLBACK_false,
     &_
   ), &n_prot);
   ptype = KEEP_N(vec_ptype_finalise(ptype), &n_prot);

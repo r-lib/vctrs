@@ -41,6 +41,7 @@ r_obj* vec_set_intersect(r_obj* x,
       x_arg,
       y_arg,
       call,
+      S3_FALLBACK_false,
       &_
     );
     KEEP_N(ptype, &n_prot);
@@ -194,6 +195,7 @@ r_obj* vec_set_difference(r_obj* x,
       x_arg,
       y_arg,
       call,
+      S3_FALLBACK_false,
       &_
     );
     KEEP_N(ptype, &n_prot);
@@ -350,6 +352,7 @@ r_obj* vec_set_union(r_obj* x,
       x_arg,
       y_arg,
       call,
+      S3_FALLBACK_false,
       &_
     );
     KEEP_N(ptype, &n_prot);
@@ -599,6 +602,7 @@ r_obj* vec_set_symmetric_difference(r_obj* x,
       x_arg,
       y_arg,
       call,
+      S3_FALLBACK_false,
       &_
     );
     KEEP_N(ptype, &n_prot);

@@ -297,7 +297,7 @@ match_from_dispatch <- function(..., `vctrs:::from_dispatch` = FALSE) {
 fallback_opts <- function(s3_fallback = NULL) {
   # Order is important for the C side
   list(
-    s3_fallback = s3_fallback %||% s3_fallback_default()
+    s3_fallback = s3_fallback %||% S3_FALLBACK_false
   )
 }
 
@@ -363,7 +363,6 @@ vec_ptype2_no_fallback <- function(
   )
 }
 
-s3_fallback_default <- function() 0L
 S3_FALLBACK_false <- 0L
 S3_FALLBACK_true <- 1L
 

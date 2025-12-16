@@ -5,12 +5,9 @@
 
 
 // Sync with R constants in ptype2.R
-
-#define S3_FALLBACK_DEFAULT 0
-
 enum s3_fallback {
   S3_FALLBACK_false = 0,
-  S3_FALLBACK_true
+  S3_FALLBACK_true = 1
 };
 
 struct ptype2_opts {
@@ -26,18 +23,22 @@ r_obj* vec_ptype2_opts(const struct ptype2_opts* opts,
                        int* left);
 
 static inline
-r_obj* vec_ptype2_params(r_obj* x,
-                         r_obj* y,
-                         struct vctrs_arg* p_x_arg,
-                         struct vctrs_arg* p_y_arg,
-                         struct r_lazy call,
-                         int* left) {
+r_obj* vec_ptype2_params(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback,
+  int* left
+) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
     .p_x_arg = p_x_arg,
     .p_y_arg = p_y_arg,
-    .call = call
+    .call = call,
+    .s3_fallback = s3_fallback
   };
   return vec_ptype2_opts(&opts, left);
 }

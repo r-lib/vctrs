@@ -556,6 +556,7 @@ r_obj* ptype_finalize(
       p_true_arg,
       p_false_arg,
       error_call,
+      S3_FALLBACK_false,
       &left
     ),
     &n_prot
@@ -582,6 +583,7 @@ r_obj* ptype_finalize(
         p_ptype_arg,
         p_missing_arg,
         error_call,
+        S3_FALLBACK_false,
         &left
       ),
       &n_prot

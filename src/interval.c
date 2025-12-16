@@ -79,6 +79,7 @@ r_obj* vec_interval_group_info(r_obj* start,
     args_start,
     args_end,
     r_lazy_null,
+    S3_FALLBACK_false,
     &_
   );
   KEEP_N(ptype, &n_prot);
@@ -322,6 +323,7 @@ r_obj* vec_interval_complement(r_obj* start,
     args_start,
     args_end,
     r_lazy_null,
+    S3_FALLBACK_false,
     &_
   );
   KEEP_N(ptype, &n_prot);
@@ -732,6 +734,7 @@ r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
     args_start,
     args_end,
     r_lazy_null,
+    S3_FALLBACK_false,
     &_
   );
   KEEP_N(ptype, &n_prot);
