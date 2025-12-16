@@ -144,7 +144,14 @@ r_obj* vec_ptype2_switch_native(const struct ptype2_opts* opts,
     return vec_shaped_ptype(r_globals.empty_list, x, y, x_arg, y_arg);
 
   case VCTRS_TYPE2_dataframe_dataframe:
-    return df_ptype2(opts);
+    return df_ptype2(
+      x,
+      y,
+      x_arg,
+      y_arg,
+      opts->call,
+      opts->s3_fallback
+    );
 
   default:
     return vec_ptype2_dispatch_s3(opts);

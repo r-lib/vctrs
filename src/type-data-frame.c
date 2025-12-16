@@ -485,42 +485,51 @@ r_obj* ffi_df_ptype2_opts(r_obj* x, r_obj* y, r_obj* opts, r_obj* frame) {
 
   struct r_lazy call = { .x = r_syms.call, .env = frame };
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x,
-                                                    y,
-                                                    &x_arg,
-                                                    &y_arg,
-                                                    call,
-                                                    opts);
+  const enum s3_fallback s3_fallback = s3_fallback_from_opts(opts);
 
-  return df_ptype2(&c_opts);
+  return df_ptype2(
+    x,
+    y,
+    &x_arg,
+    &y_arg,
+    call,
+    s3_fallback
+  );
 }
 
-r_obj* df_ptype2(const struct ptype2_opts* opts) {
-  r_obj* x_names = KEEP(r_names(opts->x));
-  r_obj* y_names = KEEP(r_names(opts->y));
+r_obj* df_ptype2(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+) {
+  r_obj* x_names = KEEP(r_names(x));
+  r_obj* y_names = KEEP(r_names(y));
 
   r_obj* out = r_null;
 
   if (equal_object(x_names, y_names)) {
     out = df_ptype2_loop(
-      opts->x,
-      opts->y,
+      x,
+      y,
       x_names,
-      opts->p_x_arg,
-      opts->p_y_arg,
-      opts->call,
-      opts->s3_fallback
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
     );
   } else {
     out = df_ptype2_match(
-      opts->x,
-      opts->y,
+      x,
+      y,
       x_names,
       y_names,
-      opts->p_x_arg,
-      opts->p_y_arg,
-      opts->call,
-      opts->s3_fallback
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
     );
   }
 

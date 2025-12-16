@@ -3,7 +3,14 @@
 
 // [[ include("vctrs.h") ]]
 SEXP tib_ptype2(const struct ptype2_opts* opts) {
-  SEXP out = PROTECT(df_ptype2(opts));
+  SEXP out = PROTECT(df_ptype2(
+    opts->x,
+    opts->y,
+    opts->p_x_arg,
+    opts->p_y_arg,
+    opts->call,
+    opts->s3_fallback
+  ));
 
   Rf_setAttrib(out, R_ClassSymbol, classes_tibble);
 
