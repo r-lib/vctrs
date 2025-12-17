@@ -68,20 +68,20 @@ r_obj* vec_ptype2_impl(
     // When `x` and `y` are `NULL`, keep using `x` name (1)
     // When `x` is `NULL` but `y` isn't, switch to `y` name (0)
     *left = y_type == VCTRS_TYPE_null;
-    return vec_ptype2_from_unspecified(y, p_y_arg, x_type, call, s3_fallback);
+    return vec_ptype_or_s3_fallback(y, p_y_arg, x_type, call, s3_fallback);
   }
   if (y_type == VCTRS_TYPE_null) {
     // When `x` and `y` are `NULL`, keep using `x` name (1)
     // When `y` is `NULL` but `x` isn't, keep using `x` name (1)
     *left = 1;
-    return vec_ptype2_from_unspecified(x, p_x_arg, x_type, call, s3_fallback);
+    return vec_ptype_or_s3_fallback(x, p_x_arg, x_type, call, s3_fallback);
   }
 
   if (x_type == VCTRS_TYPE_unspecified) {
-    return vec_ptype2_from_unspecified(y, p_y_arg, y_type, call, s3_fallback);
+    return vec_ptype_or_s3_fallback(y, p_y_arg, y_type, call, s3_fallback);
   }
   if (y_type == VCTRS_TYPE_unspecified) {
-    return vec_ptype2_from_unspecified(x, p_x_arg, x_type, call, s3_fallback);
+    return vec_ptype_or_s3_fallback(x, p_x_arg, x_type, call, s3_fallback);
   }
 
   if (x_type == VCTRS_TYPE_scalar) {
@@ -225,25 +225,21 @@ r_obj* vec_ptype2_switch_native(
 }
 
 /**
- * Return non-unspecified type.
+ * Return `vec_ptype()`, allowing for common class fallback
  *
- * This is normally the `vec_ptype()` of the other input, but if the
- * common class fallback is enabled we return the `vec_ptype2()` of
- * this input with itself. This way we may return a fallback sentinel which can be
- * treated specially, for instance in `vec_c(NA, x, NA)`.
+ * This is normally the `vec_ptype()` of the input, but if the common class
+ * fallback is enabled we return the `vec_ptype2()` of this input with itself.
+ * This way we may return a fallback sentinel which can be treated specially,
+ * for instance in `vec_c(NA, x, NA)`.
  */
-r_obj* vec_ptype2_from_unspecified(
+r_obj* vec_ptype_or_s3_fallback(
   r_obj* x,
   struct vctrs_arg* p_x_arg,
   enum vctrs_type x_type,
   struct r_lazy call,
   enum s3_fallback s3_fallback
 ) {
-  if (x_type == VCTRS_TYPE_unspecified || x_type == VCTRS_TYPE_null) {
-    return vec_ptype(x, p_x_arg, call);
-  }
-
-  if (s3_fallback) {
+  if (s3_fallback == S3_FALLBACK_true && x_type == VCTRS_TYPE_s3) {
     int _;
     return vec_ptype2(
       x,

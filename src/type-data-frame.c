@@ -587,7 +587,7 @@ r_obj* df_ptype2_match(
 
     r_obj* type;
     if (dup == r_globals.na_int) {
-      type = vec_ptype2_from_unspecified(
+      type = vec_ptype_or_s3_fallback(
         x_col,
         p_x_col_arg,
         vec_typeof(x_col),
@@ -624,7 +624,7 @@ r_obj* df_ptype2_match(
       y_col_arg_loc = j;
       r_obj* y_col = r_list_get(y, j);
 
-      r_obj* type = vec_ptype2_from_unspecified(
+      r_obj* type = vec_ptype_or_s3_fallback(
         y_col,
         p_y_col_arg,
         vec_typeof(y_col),
