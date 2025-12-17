@@ -1816,16 +1816,16 @@ r_obj* ptype_common_with_default(
 
   // Now incorporate `default` and `p_default_arg` if required
   if (has_default) {
-    const struct ptype2_opts ptype2_opts = {
-      .x = ptype,
-      .y = default_,
-      .p_x_arg = vec_args.empty,
-      .p_y_arg = p_default_arg,
-      .call = error_call,
-      .s3_fallback = s3_fallback
-    };
     int _;
-    ptype = vec_ptype2_opts(&ptype2_opts, &_);
+    ptype = vec_ptype2(
+      ptype,
+      default_,
+      vec_args.empty,
+      p_default_arg,
+      error_call,
+      s3_fallback,
+      &_
+    );
   }
   KEEP(ptype);
 

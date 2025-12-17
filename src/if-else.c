@@ -550,12 +550,13 @@ r_obj* ptype_finalize(
   // Common type of `true` and `false`
   int left;
   ptype = KEEP_N(
-    vec_ptype2_params(
+    vec_ptype2(
       true_,
       false_,
       p_true_arg,
       p_false_arg,
       error_call,
+      S3_FALLBACK_false,
       &left
     ),
     &n_prot
@@ -576,12 +577,13 @@ r_obj* ptype_finalize(
     }
 
     ptype = KEEP_N(
-      vec_ptype2_params(
+      vec_ptype2(
         ptype,
         missing,
         p_ptype_arg,
         p_missing_arg,
         error_call,
+        S3_FALLBACK_false,
         &left
       ),
       &n_prot

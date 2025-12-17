@@ -33,13 +33,27 @@ static
 void init_bare_data_frame(r_obj* x, r_ssize n);
 
 static
-r_obj* df_ptype2_match(const struct ptype2_opts* opts,
-                     r_obj* x_names,
-                     r_obj* y_names);
+r_obj* df_ptype2_match(
+  r_obj* x,
+  r_obj* y,
+  r_obj* x_names,
+  r_obj* y_names,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+);
 
 static
-r_obj* df_ptype2_loop(const struct ptype2_opts* opts,
-                    r_obj* y_names);
+r_obj* df_ptype2_loop(
+  r_obj* x,
+  r_obj* y,
+  r_obj* names,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+);
 
 static
 r_obj* df_cast_match(const struct cast_opts* opts,

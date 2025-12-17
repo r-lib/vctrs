@@ -485,38 +485,69 @@ r_obj* ffi_df_ptype2_opts(r_obj* x, r_obj* y, r_obj* opts, r_obj* frame) {
 
   struct r_lazy call = { .x = r_syms.call, .env = frame };
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x,
-                                                    y,
-                                                    &x_arg,
-                                                    &y_arg,
-                                                    call,
-                                                    opts);
+  const enum s3_fallback s3_fallback = s3_fallback_from_opts(opts);
 
-  return df_ptype2(&c_opts);
+  return df_ptype2(
+    x,
+    y,
+    &x_arg,
+    &y_arg,
+    call,
+    s3_fallback
+  );
 }
 
-r_obj* df_ptype2(const struct ptype2_opts* opts) {
-  r_obj* x_names = KEEP(r_names(opts->x));
-  r_obj* y_names = KEEP(r_names(opts->y));
+r_obj* df_ptype2(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+) {
+  r_obj* x_names = KEEP(r_names(x));
+  r_obj* y_names = KEEP(r_names(y));
 
   r_obj* out = r_null;
 
   if (equal_object(x_names, y_names)) {
-    out = df_ptype2_loop(opts, x_names);
+    out = df_ptype2_loop(
+      x,
+      y,
+      x_names,
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
+    );
   } else {
-    out = df_ptype2_match(opts, x_names, y_names);
+    out = df_ptype2_match(
+      x,
+      y,
+      x_names,
+      y_names,
+      p_x_arg,
+      p_y_arg,
+      call,
+      s3_fallback
+    );
   }
 
   FREE(2);
   return out;
 }
 
-r_obj* df_ptype2_match(const struct ptype2_opts* opts,
-                     r_obj* x_names,
-                     r_obj* y_names) {
-  r_obj* x = opts->x;
-  r_obj* y = opts->y;
-
+static
+r_obj* df_ptype2_match(
+  r_obj* x,
+  r_obj* y,
+  r_obj* x_names,
+  r_obj* y_names,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+) {
   r_obj* x_dups_pos = KEEP(vec_match(x_names, y_names));
   r_obj* y_dups_pos = KEEP(vec_match(y_names, x_names));
 
@@ -540,40 +571,45 @@ r_obj* df_ptype2_match(const struct ptype2_opts* opts,
   r_attrib_poke(out, r_syms.names, nms);
 
   r_ssize i = 0;
-  r_ssize y_arg_loc = 0;
-  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->p_x_arg, x_names, x_len, &i);
-  KEEP(named_x_arg->shelter);
+  r_ssize y_col_arg_loc = 0;
 
-  struct vctrs_arg* named_y_arg = new_subscript_arg(opts->p_y_arg, y_names, y_len, &y_arg_loc);
-  KEEP(named_y_arg->shelter);
+  struct vctrs_arg* p_x_col_arg = new_subscript_arg(p_x_arg, x_names, x_len, &i);
+  KEEP(p_x_col_arg->shelter);
+
+  struct vctrs_arg* p_y_col_arg = new_subscript_arg(p_y_arg, y_names, y_len, &y_col_arg_loc);
+  KEEP(p_y_col_arg->shelter);
 
   // Fill in prototypes of all the columns that are in `x`, in order
   for (; i < x_len; ++i) {
     r_ssize dup = x_dups_pos_data[i];
 
-    r_obj* col = r_list_get(x, i);
-    struct ptype2_opts col_opts = *opts;
-    col_opts.x = col;
-    col_opts.p_x_arg = named_x_arg;
+    r_obj* x_col = r_list_get(x, i);
 
     r_obj* type;
     if (dup == r_globals.na_int) {
-      col_opts.y = vctrs_shared_empty_uns;
-      col_opts.p_y_arg = NULL;
-      type = vec_ptype2_from_unspecified(&col_opts,
-                                         vec_typeof(col),
-                                         col,
-                                         named_x_arg);
+      type = vec_ptype2_from_unspecified(
+        x_col,
+        p_x_col_arg,
+        vec_typeof(x_col),
+        call,
+        s3_fallback
+      );
     } else {
       // 1-based index
       --dup;
-      y_arg_loc = dup;
+      y_col_arg_loc = dup;
+      r_obj* y_col = r_list_get(y, dup);
 
-      col_opts.y = r_list_get(y, dup);
-      col_opts.p_y_arg = named_y_arg;
-
-      int _left;
-      type = vec_ptype2_opts(&col_opts, &_left);
+      int _;
+      type = vec_ptype2(
+        x_col,
+        y_col,
+        p_x_col_arg,
+        p_y_col_arg,
+        call,
+        s3_fallback,
+        &_
+      );
     }
 
     r_list_poke(out, i, type);
@@ -585,18 +621,16 @@ r_obj* df_ptype2_match(const struct ptype2_opts* opts,
     r_ssize dup = y_dups_pos_data[j];
 
     if (dup == r_globals.na_int) {
-      r_obj* col = r_list_get(y, j);
-      y_arg_loc = j;
+      y_col_arg_loc = j;
+      r_obj* y_col = r_list_get(y, j);
 
-      struct ptype2_opts col_opts = *opts;
-      col_opts.y = col;
-      col_opts.p_y_arg = named_y_arg;
-      col_opts.x = vctrs_shared_empty_uns;
-      col_opts.p_x_arg = NULL;
-      r_obj* type = vec_ptype2_from_unspecified(&col_opts,
-                                              vec_typeof(col),
-                                              col,
-                                              named_y_arg);
+      r_obj* type = vec_ptype2_from_unspecified(
+        y_col,
+        p_y_col_arg,
+        vec_typeof(y_col),
+        call,
+        s3_fallback
+      );
 
       r_list_poke(out, i, type);
       r_chr_poke(nms, i, r_chr_get(y_names, j));
@@ -611,33 +645,42 @@ r_obj* df_ptype2_match(const struct ptype2_opts* opts,
 }
 
 static
-r_obj* df_ptype2_loop(const struct ptype2_opts* opts,
-                      r_obj* names) {
-  r_obj* x = opts->x;
-  r_obj* y = opts->y;
+r_obj* df_ptype2_loop(
+  r_obj* x,
+  r_obj* y,
+  r_obj* names,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+) {
+  const r_ssize n_cols = r_length(names);
 
-  r_ssize len = r_length(names);
-
-  r_obj* out = KEEP(r_alloc_list(len));
+  r_obj* out = KEEP(r_alloc_list(n_cols));
   r_attrib_poke(out, r_syms.names, names);
 
   r_ssize i = 0;
 
-  struct vctrs_arg* named_x_arg = new_subscript_arg_vec(opts->p_x_arg, out, &i);
-  KEEP(named_x_arg->shelter);
+  struct vctrs_arg* p_x_col_arg = new_subscript_arg_vec(p_x_arg, out, &i);
+  KEEP(p_x_col_arg->shelter);
 
-  struct vctrs_arg* named_y_arg = new_subscript_arg_vec(opts->p_y_arg, out, &i);
-  KEEP(named_y_arg->shelter);
+  struct vctrs_arg* p_y_col_arg = new_subscript_arg_vec(p_y_arg, out, &i);
+  KEEP(p_y_col_arg->shelter);
 
-  for (; i < len; ++i) {
-    struct ptype2_opts col_opts = *opts;
-    col_opts.x = r_list_get(x, i);
-    col_opts.y = r_list_get(y, i);
-    col_opts.p_x_arg = named_x_arg;
-    col_opts.p_y_arg = named_y_arg;
-    int _left;
+  for (; i < n_cols; ++i) {
+    r_obj* x_col = r_list_get(x, i);
+    r_obj* y_col = r_list_get(y, i);
 
-    r_obj* type = vec_ptype2_opts(&col_opts, &_left);
+    int _;
+    r_obj* type = vec_ptype2(
+      x_col,
+      y_col,
+      p_x_col_arg,
+      p_y_col_arg,
+      call,
+      s3_fallback,
+      &_
+    );
 
     r_list_poke(out, i, type);
   }

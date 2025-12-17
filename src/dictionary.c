@@ -398,12 +398,13 @@ SEXP vec_match_params(SEXP needles,
   int nprot = 0;
 
   int _;
-  SEXP type = vec_ptype2_params(
+  SEXP type = vec_ptype2(
     needles,
     haystack,
     needles_arg,
     haystack_arg,
     call,
+    S3_FALLBACK_false,
     &_
   );
   PROTECT_N(type, &nprot);
@@ -573,12 +574,13 @@ SEXP vec_in(
   int nprot = 0;
 
   int _;
-  SEXP type = vec_ptype2_params(
+  SEXP type = vec_ptype2(
     needles,
     haystack,
     p_needles_arg,
     p_haystack_arg,
     call,
+    S3_FALLBACK_false,
     &_
   );
   PROTECT_N(type, &nprot);

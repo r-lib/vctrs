@@ -73,12 +73,13 @@ r_obj* vec_interval_group_info(r_obj* start,
   int n_prot = 0;
 
   int _;
-  r_obj* ptype = vec_ptype2_params(
+  r_obj* ptype = vec_ptype2(
     start,
     end,
     args_start,
     args_end,
     r_lazy_null,
+    S3_FALLBACK_false,
     &_
   );
   KEEP_N(ptype, &n_prot);
@@ -316,12 +317,13 @@ r_obj* vec_interval_complement(r_obj* start,
   int n_prot = 0;
 
   int _;
-  r_obj* ptype = vec_ptype2_params(
+  r_obj* ptype = vec_ptype2(
     start,
     end,
     args_start,
     args_end,
     r_lazy_null,
+    S3_FALLBACK_false,
     &_
   );
   KEEP_N(ptype, &n_prot);
@@ -726,12 +728,13 @@ r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
   int n_prot = 0;
 
   int _;
-  r_obj* ptype = vec_ptype2_params(
+  r_obj* ptype = vec_ptype2(
     start,
     end,
     args_start,
     args_end,
     r_lazy_null,
+    S3_FALLBACK_false,
     &_
   );
   KEEP_N(ptype, &n_prot);

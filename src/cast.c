@@ -331,7 +331,7 @@ r_obj* vec_cast_common(r_obj* xs,
                        struct r_lazy call) {
   return vec_cast_common_params(xs,
                                 to,
-                                S3_FALLBACK_DEFAULT,
+                                S3_FALLBACK_false,
                                 p_arg,
                                 call);
 }

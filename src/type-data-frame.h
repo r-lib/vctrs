@@ -48,22 +48,13 @@ enum rownames_type {
 enum rownames_type rownames_type(r_obj* rn);
 r_ssize rownames_size(r_obj* rn);
 
-
-r_obj* df_ptype2(const struct ptype2_opts* opts);
-
-static inline
-r_obj* df_ptype2_params(r_obj* x,
-                        r_obj* y,
-                        struct vctrs_arg* p_x_arg,
-                        struct vctrs_arg* p_y_arg) {
-  const struct ptype2_opts opts = {
-    .x = x,
-    .y = y,
-    .p_x_arg = p_x_arg,
-    .p_y_arg = p_y_arg
-  };
-  return df_ptype2(&opts);
-}
-
+r_obj* df_ptype2(
+  r_obj* x,
+  r_obj* y,
+  struct vctrs_arg* p_x_arg,
+  struct vctrs_arg* p_y_arg,
+  struct r_lazy call,
+  enum s3_fallback s3_fallback
+);
 
 #endif
