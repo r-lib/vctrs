@@ -126,7 +126,7 @@ r_obj* df_unstructure(r_obj* x) {
 
   r_attrib_poke_names(out, names);
   r_attrib_poke(out, r_syms.row_names, row_names);
-  r_attrib_poke(out, r_syms.class_, r_classes.data_frame);
+  r_attrib_poke_class(out, r_classes.data_frame);
 
   FREE(3);
   return out;
