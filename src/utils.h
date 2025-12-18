@@ -384,6 +384,8 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   }
 }
 
+r_obj* r_set_attributes(r_obj* x, r_obj* attrib);
+
 void c_print_backtrace(void);
 
 SEXP chr_c(SEXP x, SEXP y);
