@@ -7,7 +7,7 @@
 #' the following attributes are retained:
 #'
 #' - For atomic vectors, `names`
-#' - For arrays, `dim` and `dimnames`
+#' - For arrays, `dim` and `dimnames[[1]]`, i.e. the row names
 #' - For data frames, `names`, `row.names`, and a `class` of `"data.frame"`
 #'
 #' @details
@@ -42,9 +42,10 @@
 #' x
 #' vec_unstructure(x)
 #'
-#' # Arrays retain `dim` and `dimnames` but all other attributes are lost
+#' # Arrays retain `dim` and `dimnames[[1]]` but all other attributes are lost
 #' x <- array(1:4, c(2, 2))
 #' rownames(x) <- c("a", "b")
+#' colnames(x) <- c("c", "d")
 #' attr(x, "foo") <- "bar"
 #' x
 #' vec_unstructure(x)

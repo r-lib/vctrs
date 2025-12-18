@@ -53,17 +53,17 @@ test_that("no copies are made when not required", {
 # ------------------------------------------------------------------------------
 # Unstructure - array
 
-test_that("retains `dim` and `dimnames`", {
+test_that("retains `dim` and `dimnames[[1]]`", {
   x <- array(
     1:6,
     dim = c(2L, 3L),
-    dimnames = list(c("a", "b"), c("c", "d", "e"))
+    dimnames = list(c("a", "b"), NULL)
   )
 
   out <- vec_unstructure(x)
   expect_identical(dim(out), c(2L, 3L))
   expect_identical(rownames(out), c("a", "b"))
-  expect_identical(colnames(out), c("c", "d", "e"))
+  expect_identical(colnames(out), NULL)
 })
 
 test_that("removes extraneous attributes", {
@@ -77,19 +77,73 @@ test_that("removes extraneous attributes", {
   expect <- array(
     1:6,
     dim = c(2, 3),
-    dimnames = list(c("a", "b"), c("c", "d", "e"))
+    dimnames = list(c("a", "b"), NULL)
   )
   expect_identical(vec_unstructure(x), expect)
 })
 
+test_that("`dimnames` are correctly unstructured", {
+  # Drop column names
+  x <- array(1:4, c(2, 2))
+  dimnames(x) <- list(c("a", "b"), c("c", "d"))
+  expect_identical(
+    dimnames(vec_unstructure(x)),
+    list(c("a", "b"), NULL)
+  )
+
+  # Drop `dimnames` entirely
+  x <- array(1:4, c(2, 2))
+  dimnames(x) <- list(NULL, NULL)
+  expect_identical(
+    dimnames(vec_unstructure(x)),
+    NULL
+  )
+
+  # Drop `dimnames` entirely
+  x <- array(1:4, c(2, 2))
+  dimnames(x) <- list(NULL, c("c", "d"))
+  expect_identical(
+    dimnames(vec_unstructure(x)),
+    NULL
+  )
+
+  # Drop meta names
+  x <- array(1:4, c(2, 2))
+  dimnames(x) <- list(meta = c("a", "b"), meta2 = NULL)
+  expect_identical(
+    dimnames(vec_unstructure(x)),
+    list(c("a", "b"), NULL)
+  )
+
+  # Drop `dimnames` entirely
+  x <- array(1:4, c(2, 2))
+  dimnames(x) <- list(meta = NULL, NULL)
+  expect_identical(
+    dimnames(vec_unstructure(x)),
+    NULL
+  )
+})
+
 test_that("no copies are made when not required", {
+  x <- array(1:6)
+  expect_identical(
+    obj_address(x),
+    obj_address(vec_unstructure(x))
+  )
+
+  x <- array(1:6, dimnames = list(letters[1:6]))
+  expect_identical(
+    obj_address(x),
+    obj_address(vec_unstructure(x))
+  )
+
   x <- array(1:6, dim = c(2, 3))
   expect_identical(
     obj_address(x),
     obj_address(vec_unstructure(x))
   )
 
-  x <- array(1:6, dim = c(2, 3), dimnames = list(c("a", "b"), c("c", "d", "e")))
+  x <- array(1:6, dim = c(2, 3), dimnames = list(c("a", "b"), NULL))
   expect_identical(
     obj_address(x),
     obj_address(vec_unstructure(x))

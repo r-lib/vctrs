@@ -19,7 +19,7 @@ Supported native storage types:
 In addition to the required attributes mentioned above, the only other attribute that is natively supported by vctrs on these storage types is their names:
 
 - For atomics, the `names` attribute
-- For arrays, the `dimnames` attribute
+- For arrays, the `dimnames` attribute, but only row names are natively supported
 - For data frames, the `row.names` attribute
 
 ## `vec_unstructure()`

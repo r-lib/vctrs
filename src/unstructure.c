@@ -1,6 +1,5 @@
 #include "unstructure.h"
 #include "dim.h"
-#include "type-data-frame.h"
 #include "utils.h"
 
 #include "decl/unstructure-decl.h"
@@ -69,7 +68,8 @@ r_obj* array_unstructure(r_obj* x) {
   if (
     !r_is_object(x) &&
     !r_is_s4(x) &&
-    has_unstructured_array_attributes(x)
+    has_unstructured_array_attributes(x) &&
+    has_unstructured_array_dim_names(x)
   ) {
     // Already has the right attributes
     return x;
@@ -78,6 +78,7 @@ r_obj* array_unstructure(r_obj* x) {
   // Protect these as we are about to clear `x`
   r_obj* dim = KEEP(r_dim(x));
   r_obj* dim_names = KEEP(r_dim_names(x));
+  dim_names = KEEP(dim_names_unstructure(dim_names));
 
   // - ALTREP shallow clone `x`
   // - Clears OBJECT
@@ -92,7 +93,7 @@ r_obj* array_unstructure(r_obj* x) {
     r_attrib_poke_dim_names(out, dim_names);
   }
 
-  FREE(3);
+  FREE(4);
   return out;
 }
 
@@ -158,6 +159,88 @@ bool has_unstructured_array_attributes(r_obj* x) {
       return false;
     }
     node = r_node_cdr(node);
+  }
+
+  return true;
+}
+
+static inline
+bool has_unstructured_array_dim_names(r_obj* x) {
+  r_obj* dim_names = r_dim_names(x);
+  return dim_names_are_unstructured(dim_names);
+}
+
+static inline
+r_obj* dim_names_unstructure(r_obj* dim_names) {
+  if (dim_names_are_unstructured(dim_names)) {
+    return dim_names;
+  }
+
+  r_obj* const* v_dim_names = r_list_cbegin(dim_names);
+  const r_ssize dimensionality = r_length(dim_names);
+
+  if (dimensionality == 0) {
+    r_stop_internal("Dimensionality of an array should be at least 1.");
+  }
+
+  r_obj* row_names = v_dim_names[0];
+
+  if (row_names == r_null) {
+    // Clear `dimnames`, there are no row names
+    return r_null;
+  }
+
+  // Elements are initialized to `NULL`, only pull over row names
+  r_obj* out = KEEP(r_alloc_list(dimensionality));
+  r_list_poke(out, 0, row_names);
+
+  FREE(1);
+  return out;
+}
+
+// Unstructured `dimnames` are:
+// - `NULL`
+// - `list(<rownames>, <zero or more NULL>)`
+//
+// Notably not unstructured:
+// - `list(<rownames>, <colnames>)` // remove column names
+// - `list(NULL, <colnames>)` // no row names, remove entirely
+// - `list(NULL, NULL)` // no row names, remove entirely
+// - `list()` // not possible
+// - `list(x = <rownames>)` // "meta" names on dimnames need to be removed
+static inline
+bool dim_names_are_unstructured(r_obj* dim_names) {
+  if (dim_names == r_null) {
+    return true;
+  }
+
+  if (r_names(dim_names) != r_null) {
+    // We have to clear the meta names at the very least
+    return false;
+  }
+
+  if (r_typeof(dim_names) != R_TYPE_list) {
+    r_stop_internal("`dimnames` must be a list.");
+  }
+
+  r_obj* const* v_dim_names = r_list_cbegin(dim_names);
+  const r_ssize dimensionality = r_length(dim_names);
+
+  if (dimensionality == 0) {
+    r_stop_internal("Dimensionality of an array should be at least 1.");
+  }
+
+  if (v_dim_names[0] == r_null) {
+    // i.e. `list(NULL, <colnames>)` or somehow `list(NULL, NULL)`.
+    // In this case `dimnames` should be totally removed as there are no row names.
+    return false;
+  }
+
+  // Skipping `v_dim_names[0]`
+  for (r_ssize i = 1; i < dimensionality; ++i) {
+    if (v_dim_names[i] != r_null) {
+      return false;
+    }
   }
 
   return true;

@@ -31,7 +31,8 @@ attribute that is natively supported by vctrs on these storage types is
 their names:
 \itemize{
 \item For atomics, the \code{names} attribute
-\item For arrays, the \code{dimnames} attribute
+\item For arrays, the \code{dimnames} attribute, but only row names are natively
+supported
 \item For data frames, the \code{row.names} attribute
 }
 \subsection{\code{vec_unstructure()}}{

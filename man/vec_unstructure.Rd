@@ -15,7 +15,7 @@ attributes, retaining only those that are natively supported by vctrs. Only
 the following attributes are retained:
 \itemize{
 \item For atomic vectors, \code{names}
-\item For arrays, \code{dim} and \code{dimnames}
+\item For arrays, \code{dim} and \code{dimnames[[1]]}, i.e. the row names
 \item For data frames, \code{names}, \code{row.names}, and a \code{class} of \code{"data.frame"}
 }
 }
@@ -47,9 +47,10 @@ x <- structure(1, names = "a", foo = "bar", class = "myclass")
 x
 vec_unstructure(x)
 
-# Arrays retain `dim` and `dimnames` but all other attributes are lost
+# Arrays retain `dim` and `dimnames[[1]]` but all other attributes are lost
 x <- array(1:4, c(2, 2))
 rownames(x) <- c("a", "b")
+colnames(x) <- c("c", "d")
 attr(x, "foo") <- "bar"
 x
 vec_unstructure(x)

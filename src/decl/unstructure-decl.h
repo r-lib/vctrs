@@ -14,6 +14,15 @@ static inline
 bool has_unstructured_array_attributes(r_obj* x);
 
 static inline
+bool has_unstructured_array_dim_names(r_obj* x);
+
+static inline
+r_obj* dim_names_unstructure(r_obj* dim_names);
+
+static inline
+bool dim_names_are_unstructured(r_obj* dim_names);
+
+static inline
 bool has_unstructured_data_frame_attributes(r_obj* x);
 
 static inline
