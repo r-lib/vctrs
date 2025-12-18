@@ -1697,6 +1697,7 @@ SEXP syms_stop_matches_relationship_one_to_many = NULL;
 SEXP syms_stop_matches_relationship_many_to_one = NULL;
 SEXP syms_warn_matches_relationship_many_to_many = NULL;
 SEXP syms_stop_combine_unmatched = NULL;
+SEXP syms_stop_unsupported_storage_type = NULL;
 SEXP syms_action = NULL;
 SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
@@ -2000,6 +2001,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_stop_matches_relationship_many_to_one = Rf_install("stop_matches_relationship_many_to_one");
   syms_warn_matches_relationship_many_to_many = Rf_install("warn_matches_relationship_many_to_many");
   syms_stop_combine_unmatched = Rf_install("stop_combine_unmatched");
+  syms_stop_unsupported_storage_type = Rf_install("stop_unsupported_storage_type");
   syms_action = Rf_install("action");
   syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
   syms_fallback_class = Rf_install("fallback_class");

@@ -517,6 +517,7 @@ extern SEXP syms_stop_matches_relationship_one_to_many;
 extern SEXP syms_stop_matches_relationship_many_to_one;
 extern SEXP syms_warn_matches_relationship_many_to_many;
 extern SEXP syms_stop_combine_unmatched;
+extern SEXP syms_stop_unsupported_storage_type;
 extern SEXP syms_action;
 extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;
