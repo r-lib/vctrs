@@ -20,18 +20,21 @@ r_obj* vec_unstructure(r_obj* x) {
   case R_TYPE_complex:
   case R_TYPE_raw:
   case R_TYPE_character:
+    if (has_dim(x)) {
+      return array_unstructure(x);
+    } else {
+      return atomic_unstructure(x);
+    }
   case R_TYPE_list:
-    break;
+    if (is_data_frame(x)) {
+      return df_unstructure(x);
+    } else if (has_dim(x)) {
+      return array_unstructure(x);
+    } else {
+      return atomic_unstructure(x);
+    }
   default:
     stop_unsupported_storage_type(x);
-  }
-
-  if (is_data_frame(x)) {
-    return df_unstructure(x);
-  } else if (has_dim(x)) {
-    return array_unstructure(x);
-  } else {
-    return atomic_unstructure(x);
   }
 }
 
