@@ -36,13 +36,6 @@ local(envir = sf_env, {
   sf_ptype2 = function(x, y, ...) {
     data = vctrs::df_ptype2(x, y, ...)
 
-    # Workaround for `c()` fallback sentinels. Must be fixed before
-    # moving the methods downstream.
-    opts <- match_fallback_opts(...)
-    if (identical(opts$s3_fallback, S3_FALLBACK_true)) {
-      return(data)
-    }
-
     x_sf <- inherits(x, "sf")
     y_sf <- inherits(y, "sf")
 
@@ -77,6 +70,7 @@ local(envir = sf_env, {
   vec_ptype2_sf_sf = function(x, y, ...) {
     sf_ptype2(x, y, ...)
   }
+
   vec_ptype2_sf_data.frame = function(x, y, ...) {
     sf_ptype2(x, y, ...)
   }
@@ -84,24 +78,15 @@ local(envir = sf_env, {
     sf_ptype2(x, y, ...)
   }
 
-  # Maybe we should not have these methods, but they are currently
-  # required to avoid the base-df fallback
   vec_ptype2_sf_tbl_df = function(x, y, ...) {
-    new_data_frame(sf_ptype2(x, y, ...))
+    sf_ptype2(x, y, ...)
   }
   vec_ptype2_tbl_df_sf = function(x, y, ...) {
-    new_data_frame(sf_ptype2(x, y, ...))
+    sf_ptype2(x, y, ...)
   }
 
   sf_cast = function(x, to, ...) {
     data = vctrs::df_cast(x, to, ...)
-
-    # Workaround for `c()` fallback sentinels. Must be fixed before
-    # moving the methods downstream.
-    opts <- match_fallback_opts(...)
-    if (identical(opts$s3_fallback, S3_FALLBACK_true)) {
-      return(data)
-    }
 
     sfc_name = attr(to, "sf_column")
     crs = st_crs(to)
@@ -116,14 +101,16 @@ local(envir = sf_env, {
     )
   }
 
+  # `vec_ptype2()` methods always go towards sf or error,
+  # so we don't need cast methods going `to` data.frame/tbl_df
   vec_cast_sf_sf = function(x, to, ...) {
     sf_cast(x, to, ...)
   }
   vec_cast_sf_data.frame = function(x, to, ...) {
     sf_cast(x, to, ...)
   }
-  vec_cast_data.frame_sf = function(x, to, ...) {
-    df_cast(x, to, ...)
+  vec_cast_sf_tbl_df = function(x, to, ...) {
+    sf_cast(x, to, ...)
   }
 
   vec_proxy_order_sfc <- function(x, ...) {

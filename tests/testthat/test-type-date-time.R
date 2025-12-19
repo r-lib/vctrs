@@ -146,7 +146,15 @@ test_that("tz comes from first non-empty", {
   expect_identical(vec_ptype2(z, y), z[0])
 })
 
-test_that("POSIXlt always steered towards POSIXct", {
+test_that("POSIXlt always steered towards POSIXct in vec_ptype()", {
+  x <- as.POSIXlt("2020-01-01", tz = "UTC")
+  expect_identical(vec_ptype(x), new_datetime(tzone = "UTC"))
+
+  x <- as.POSIXlt("2020-01-01", tz = "America/New_York")
+  expect_identical(vec_ptype(x), new_datetime(tzone = "America/New_York"))
+})
+
+test_that("POSIXlt always steered towards POSIXct in vec_ptype2()", {
   dtc <- as.POSIXct("2020-01-01", tz = "UTC")
   dtl <- as.POSIXlt("2020-01-01", tz = "UTC")
 
@@ -190,6 +198,17 @@ test_that("vec_ptype2() standardizes duration storage type to double", {
   x <- structure(1L, units = "secs", class = "difftime")
   expect <- new_duration(double(), units = "secs")
   expect_identical(vec_ptype2(x, x), expect)
+})
+
+test_that("vec_ptype_common() is consistent with <POSIXlt>", {
+  x <- as.POSIXlt("2020-01-01", tz = "UTC")
+  exp <- new_datetime(tzone = "UTC")
+
+  # No matter whether `vec_ptype()` or `vec_ptype2()` are called,
+  # you are steered towards `<POSIXct>`
+  expect_identical(vec_ptype_common(x), exp)
+  expect_identical(vec_ptype_common(x, x), exp)
+  expect_identical(vec_ptype_common(.ptype = x), exp)
 })
 
 # cast: dates ---------------------------------------------------------------

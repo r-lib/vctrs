@@ -135,6 +135,12 @@ vec_ptype_abbr.difftime <- function(x, ...) {
 
 # Coerce ------------------------------------------------------------------
 
+#' @export
+vec_ptype.POSIXlt <- function(x, ...) {
+  # `vec_ptype()` pushes towards `POSIXct` for consistency with `vec_ptype2()`
+  new_datetime(tzone = tzone(x))
+}
+
 #' @rdname new_date
 #' @export vec_ptype2.Date
 #' @method vec_ptype2 Date

@@ -190,7 +190,7 @@
       s3_register("vctrs::vec_ptype2", "tbl_df.sf", vec_ptype2_tbl_df_sf)
       s3_register("vctrs::vec_cast", "sf.sf", vec_cast_sf_sf)
       s3_register("vctrs::vec_cast", "sf.data.frame", vec_cast_sf_data.frame)
-      s3_register("vctrs::vec_cast", "data.frame.sf", vec_cast_data.frame_sf)
+      s3_register("vctrs::vec_cast", "sf.tbl_df", vec_cast_sf_tbl_df)
     }
     if (!env_has(ns_env("sf"), "vec_proxy_order.sfc")) {
       s3_register("vctrs::vec_proxy_order", "sfc", vec_proxy_order_sfc)

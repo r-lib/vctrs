@@ -68,7 +68,7 @@ r_obj* vec_ptype2_impl(
     // When `x` and `y` are `NULL`, keep using `x` name (1)
     // When `x` is `NULL` but `y` isn't, switch to `y` name (0)
     *left = y_type == VCTRS_TYPE_null;
-    return vec_ptype_or_s3_fallback(y, p_y_arg, x_type, call, s3_fallback);
+    return vec_ptype_or_s3_fallback(y, p_y_arg, y_type, call, s3_fallback);
   }
   if (y_type == VCTRS_TYPE_null) {
     // When `x` and `y` are `NULL`, keep using `x` name (1)

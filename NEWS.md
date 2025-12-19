@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_ptype.POSIXlt()` method to consistently push towards POSIXct in more cases.
+
 * New `list_of_transpose()` for transposing a `<list_of>` (#2059).
 
 * New `list_of_ptype()` and `list_of_size()` accessors.

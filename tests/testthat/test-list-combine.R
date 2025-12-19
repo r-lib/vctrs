@@ -1695,6 +1695,49 @@ test_that("can fallback when combining arrays of >2D", {
   expect_identical(list_combine(x, indices = indices, size = 3), expect)
 })
 
+test_that("common type failure after common class fallback reports the original class (#1981)", {
+  int <- foobar(int(1))
+  dbl <- foobar(dbl(1))
+
+  # Works
+  expect_identical(
+    list_combine(
+      list(int, int),
+      indices = list(1, 2),
+      size = 2
+    ),
+    foobar(int(1, 1))
+  )
+
+  # Failure with 1 and 2
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(int, dbl),
+      indices = list(1, 2),
+      size = 2
+    )
+  })
+
+  # Failure with 1 and 3
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(int, int, dbl),
+      indices = list(1, 2, 3),
+      size = 3
+    )
+  })
+
+  # Failure with 1 and `default`
+  expect_snapshot(error = TRUE, {
+    list_combine(
+      list(int, int),
+      indices = list(1, 2),
+      size = 2,
+      default = dbl
+    )
+  })
+})
+
 test_that("can combine with all size 0 elements and get the right ptype", {
   x <- list(integer(), integer())
   indices <- list(integer(), integer())

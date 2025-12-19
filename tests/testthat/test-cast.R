@@ -267,6 +267,12 @@ test_that("fallback sentinel is returned with unspecified inputs", {
   expect_identical(vec_ptype_common_fallback(foobar(1), NA), fallback)
 })
 
+test_that("fallback sentinel is returned with `NULL` inputs", {
+  fallback <- vec_ptype_common_fallback(foobar(1), foobar(1))
+  expect_identical(vec_ptype_common_fallback(NULL, foobar(1)), fallback)
+  expect_identical(vec_ptype_common_fallback(foobar(1), NULL), fallback)
+})
+
 test_that("vec_ptype_common() supports subclasses of list", {
   x <- structure(list(1), class = c("vctrs_foo", "list"))
   y <- structure(list(2), class = c("bar", "vctrs_foo", "list"))

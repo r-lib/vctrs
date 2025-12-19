@@ -1,30 +1,70 @@
+# sf has two classes of issues that make it hard to work with for us.
+#
+# Both stem from the fact that a `<sfc_POINT>` class drops back to an abstract
+# `<sfc_GEOMETRY>` when you remove all typed elements from it, i.e.:
+# - Emptying it with `sfc[0]`
+# - Initializing it with `sfc[rep(NA_integer, size)]`
+#
+# ```r
+# sfc = st_sfc(st_point(1:2), st_point(3:4))
+# sfc
+# #> Geometry set for 2 features
+# #> Geometry type: POINT
+# #> Dimension:     XY
+# #> Bounding box:  xmin: 1 ymin: 2 xmax: 3 ymax: 4
+# #> CRS:           NA
+# #> POINT (1 2)
+# #> POINT (3 4)
+#
+# sfc[0]
+# #> Geometry set for 0 features
+# #> Bounding box:  xmin: NA ymin: NA xmax: NA ymax: NA
+# #> CRS:           NA
+# class(sfc[0])
+# #> [1] "sfc_GEOMETRY" "sfc"
+#
+# sfc[NA_integer_]
+# #> Geometry set for 1 feature  (with 1 geometry empty)
+# #> Geometry type: GEOMETRY
+# #> Dimension:     XY
+# #> Bounding box:  xmin: NA ymin: NA xmax: NA ymax: NA
+# #> CRS:           NA
+# #> GEOMETRYCOLLECTION EMPTY
+# class(sfc[NA_integer_])
+# #> [1] "sfc_GEOMETRY" "sfc"
+# ```
+#
+# # The `NA` problem
+#
+# `vec_init(sfc, 3)` on an `<sfc_POINT>` produces an `<sfc_GEOMETRY>` with
+# `GEOMETRYCOLLECTION EMPTY` as the `NA` type, rather than `POINT EMPTY`.
+#
+# So if you `vec_c(NA, sfc)` with an `<sfc_POINT>` you get an `<sfc_GEOMETRY>`
+# back with an `GEOMETRYCOLLECTION EMPTY` at the front.
+#
+# # The `classes` problem
+#
+# When `vec_ptype()` empties an `sfc` of type `<sfc_POINT>` it calls
+# `sf:::vec_proxy.sfc()` which is a no-op, then we empty the object, then
+# `sf:::vec_restore.sfc()` is called on the empty object to restore back to an
+# sfc class. But since it is empty, we get the abstract `<sfc_GEOMETRY>`.
+#
+# This causes issues because `<sfc_GEOMETRY>` has an additional `classes`
+# attribute on it that the uniform `<sfc_POINT>` class doesn't have which
+# appears when it feels like it shouldn't.
+
 # Never run on CRAN, even if they have sf, because we don't regularly
 # check these on CI and we don't want a change in sf to force a CRAN
 # failure for vctrs.
 skip_on_cran()
-
-# Avoids adding `sf` to Suggests.
-# These tests are only run on the devs' machines.
-testthat_import_from(
-  "sf",
-  c(
-    "st_sf",
-    "st_sfc",
-    "st_point",
-    "st_bbox",
-    "st_precision",
-    "st_crs",
-    "st_linestring",
-    "st_as_sf",
-    "st_multipoint"
-  )
-)
 
 # Need recent version to work around restore bug for sfc lists and changes
 # to `c.sfc()`
 skip_if_not_installed("sf", "1.0-11")
 
 test_that("sf has a ptype2 method", {
+  testthat_import_from_sf()
+
   sfc1 = st_sfc(st_point(1:2), st_point(3:4))
   sfc2 = st_sfc(st_linestring(matrix(1:4, 2)))
 
@@ -57,6 +97,8 @@ test_that("sf has a ptype2 method", {
 })
 
 test_that("sf has a cast method", {
+  testthat_import_from_sf()
+
   sfc1 = st_sfc(st_point(1:2), st_point(3:4))
   sfc2 = st_sfc(st_linestring(matrix(1:4, 2)))
 
@@ -87,9 +129,6 @@ test_that("sf has a cast method", {
   out = vctrs::vec_cast(new_data_frame(sf1), common)
   expect_identical(out, exp)
 
-  out = vctrs::vec_cast(sf1, new_data_frame(common))
-  expect_identical(out, new_data_frame(exp))
-
   out = vctrs::vec_cast(sf2, common)
   exp = st_sf(
     x = 0,
@@ -101,9 +140,26 @@ test_that("sf has a cast method", {
   expect_identical(out, exp)
 })
 
+test_that("get data frame cast from `vec_default_cast()`", {
+  testthat_import_from_sf()
+
+  sfc = st_sfc(st_point(1:2), st_point(3:4))
+  sf = st_sf(x = c(TRUE, FALSE), geo = sfc)
+
+  print(vec_is(sfc))
+
+  expect_identical(
+    vec_cast(sf, new_data_frame(sf)),
+    data_frame(x = c(TRUE, FALSE), geo = sfc)
+  )
+})
+
 # https://github.com/r-lib/vctrs/issues/1136
 test_that("can combine sf data frames", {
+  testthat_import_from_sf()
   testthat_import_from("dplyr", "bind_rows")
+
+  na <- st_sfc(NA)
 
   sfc1 = st_sfc(st_point(1:2), st_point(3:4))
   sfc2 = st_sfc(st_linestring(matrix(1:4, 2)))
@@ -111,26 +167,30 @@ test_that("can combine sf data frames", {
   sf1 = st_sf(x = c(TRUE, FALSE), geo1 = sfc1)
   sf2 = st_sf(y = "", geo2 = sfc2, x = 0, stringsAsFactors = FALSE)
 
-  exp = data_frame(
+  exp = st_sf(
     x = c(1, 0, 0),
-    geo1 = sfc1[c(1:2, NA)],
+    geo1 = c(sfc1, na),
     y = c(NA, NA, ""),
-    geo2 = sfc2[c(NA, NA, 1)]
+    geo2 = c(na, na, sfc2)
   )
   expect_identical(vctrs::vec_rbind(sf1, sf2), exp)
-  expect_identical(bind_rows(sf1, sf2), st_as_sf(exp))
+  expect_identical(bind_rows(sf1, sf2), exp)
 
-  exp = data_frame(
+  exp = st_sf(
     y = c("", NA, NA, ""),
     x = c(0, 1, 0, 0),
-    geo2 = sfc2[c(1, NA, NA, 1)],
-    geo1 = sfc1[c(NA, 1:2, NA)]
+    geo2 = c(sfc2, na, na, sfc2),
+    geo1 = c(na, sfc1, na)
   )
   expect_identical(vctrs::vec_rbind(sf2, sf1, sf2), exp)
-  expect_identical(bind_rows(sf2, sf1, sf2), st_as_sf(exp))
+  expect_identical(bind_rows(sf2, sf1, sf2), exp)
 })
 
 test_that("can combine sf and tibble", {
+  testthat_import_from_sf()
+
+  na <- st_sfc(NA)
+
   sfc1 = st_sfc(st_point(1:2), st_point(3:4))
   sfc2 = st_sfc(st_linestring(matrix(1:4, 2)))
 
@@ -138,10 +198,10 @@ test_that("can combine sf and tibble", {
   sf2 = st_sf(y = "", geo2 = sfc2, x = 0, stringsAsFactors = FALSE)
 
   out = vctrs::vec_rbind(sf2, data.frame(x = 1))
-  exp = data_frame(
+  exp = st_sf(
     y = c("", NA),
     x = c(0, 1),
-    geo2 = sfc2[c(1L, NA)]
+    geo2 = c(sfc2, na)
   )
   expect_identical(out, exp)
 
@@ -149,33 +209,60 @@ test_that("can combine sf and tibble", {
   expect_identical(out, exp)
 
   out = vctrs::vec_rbind(tibble::tibble(x = 1), sf2)
-  exp = data_frame(
+  exp = st_sf(
     x = c(1, 0),
     y = c(NA, ""),
-    geo2 = sfc2[c(NA, 1L)]
+    geo2 = c(na, sfc2)
   )
   expect_identical(out, exp)
 })
 
 # https://github.com/r-spatial/sf/issues/1390
 test_that("can combine sfc lists", {
+  testthat_import_from_sf()
+
   ls <- st_linestring(matrix(1:3, ncol = 3))
 
   sfc <- st_sfc(ls)
-  expect_identical(vec_c(sfc, sfc), c(sfc, sfc))
+  expect_identical(
+    {
+      # Note: The `classes` problem
+      out <- vec_c(sfc, sfc)
+      attr(out, "classes") <- NULL
+      out
+    },
+    c(sfc, sfc)
+  )
 
   sf <- st_as_sf(data.frame(id = 1, geometry = sfc))
 
-  # Currently returns a bare data frame because of the workaround for
-  # the `c()` fallback sentinels
-  expect_identical(vec_rbind(sf, sf), new_data_frame(rbind(sf, sf)))
-  expect_identical(vec_rbind(sf, sf, sf), new_data_frame(rbind(sf, sf, sf)))
+  expect_identical(
+    {
+      # Note: The `classes` problem
+      out <- vec_rbind(sf, sf)
+      attr(out$geometry, "classes") <- NULL
+      out
+    },
+    rbind(sf, sf)
+  )
+  expect_identical(
+    {
+      out <- vec_rbind(sf, sf, sf)
+      attr(out$geometry, "classes") <- NULL
+      out
+    },
+    rbind(sf, sf, sf)
+  )
 })
 
 test_that("can combine sfc lists with unspecified chunks", {
+  testthat_import_from_sf()
+
+  na <- st_sfc(NA)
+
   point <- st_point(1:2)
   out <- vec_c(c(NA, NA), st_sfc(point), NA)
-  expect_identical(out, st_sfc(NA, NA, point, NA))
+  expect_identical(out, c(na, na, st_sfc(point), na))
 
   multipoint <- st_multipoint(matrix(1:4, 2))
   x <- st_sfc(point)
@@ -187,13 +274,15 @@ test_that("can combine sfc lists with unspecified chunks", {
   expect_identical(
     out,
     data_frame(
-      x = st_sfc(point, NA, NA),
-      y = st_sfc(NA, multipoint, multipoint)
+      x = c(st_sfc(point), na, na),
+      y = c(na, st_sfc(multipoint), st_sfc(multipoint))
     )
   )
 })
 
 test_that("`n_empty` attribute of `sfc` vectors is restored", {
+  testthat_import_from_sf()
+
   pt1 = st_sfc(st_point(c(NA_real_, NA_real_)))
   pt2 = st_sfc(st_point(0:1))
 
@@ -207,6 +296,8 @@ test_that("`n_empty` attribute of `sfc` vectors is restored", {
 })
 
 test_that("bbox attributes of `sfc` vectors are restored", {
+  testthat_import_from_sf()
+
   pt1 = st_sfc(st_point(c(1L, 2L)))
   pt2 = st_sfc(st_point(c(10L, 20L)))
 
@@ -219,33 +310,49 @@ test_that("bbox attributes of `sfc` vectors are restored", {
 })
 
 test_that("`precision` and `crs` attributes of `sfc` vectors are restored", {
+  testthat_import_from_sf()
   x = st_sfc(st_point(c(pi, pi)), precision = 1e-4, crs = 3857)
   out = vctrs::vec_slice(x, 1)
   expect_identical(st_precision(x), st_precision(out))
   expect_identical(st_crs(x), st_crs(out))
 })
 
-test_that("`precision` attributes of `sfc` vectors are combined", {
+test_that("`precision` attributes of `sfc` vectors must be the same", {
+  testthat_import_from_sf()
+
   x = st_sfc(st_point(c(pi, pi)), precision = 1e-4, crs = 3857)
   y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 3857)
 
   out = vctrs::vec_c(x, y)
   expect_identical(st_precision(x), st_precision(out))
 
-  # These used to be errors before we fell back to c()
+  # sf implements `vec_proxy.sfc()` but has incorrectly implemented
+  # `sf:::vec_ptype2.sfc.sfc` rather than
+  # `sf:::vec_ptype2.sfc_GEOMETRY.sfc_GEOMETRY` or
+  # `sf:::vec_ptype2.sfc_POINT.sfc_POINT`. If they implement those correctly,
+  # this will likely throw an sf specific error, because it looks like the
+  # intent of `sf:::vec_ptype2.sfc.sfc` is to error on different precisions.
   y = st_sfc(st_point(c(0, 0)), precision = 1e-2, crs = 3857)
-  expect_identical(vctrs::vec_c(x, y), c(x, y))
-  # expect_error(vctrs::vec_c(x, y), "precisions not equal")
+  expect_snapshot(error = TRUE, {
+    vctrs::vec_c(x, y)
+  })
 })
 
 test_that("`crs` attributes of `sfc` vectors must be the same", {
+  testthat_import_from_sf()
+
   x = st_sfc(st_point(c(pi, pi)), precision = 1e-4, crs = 3857)
   y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 3857)
 
   out = vctrs::vec_c(x, y)
   expect_identical(st_crs(x), st_crs(out))
 
-  # Error on different `crs` comes from sf as of 1.0-10
+  # sf implements `vec_proxy.sfc()` but has incorrectly implemented
+  # `sf:::vec_ptype2.sfc.sfc` rather than
+  # `sf:::vec_ptype2.sfc_GEOMETRY.sfc_GEOMETRY` or
+  # `sf:::vec_ptype2.sfc_POINT.sfc_POINT`. If they implement those correctly,
+  # this will likely throw an sf specific error, because it looks like the
+  # intent of `sf:::vec_ptype2.sfc.sfc` is to error on different crs.
   y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 4326)
   expect_snapshot(error = TRUE, {
     vctrs::vec_c(x, y)
@@ -253,6 +360,8 @@ test_that("`crs` attributes of `sfc` vectors must be the same", {
 })
 
 test_that("`vec_locate_matches()` works with `sfc` vectors", {
+  testthat_import_from_sf()
+
   x <- c(
     st_sfc(st_point(c(0, 0))),
     st_sfc(st_point(c(0, 1))),
@@ -274,15 +383,26 @@ test_that("`vec_locate_matches()` works with `sfc` vectors", {
 })
 
 test_that("`vec_rbind()` doesn't leak common type fallbacks (#1331)", {
+  testthat_import_from_sf()
+
   sf = st_sf(id = 1:2, geo = st_sfc(st_point(c(1, 1)), st_point(c(2, 2))))
 
-  expect_equal(
-    vec_rbind(sf, sf),
-    data_frame(id = rep(1:2, 2), geo = rep(sf$geo, 2))
+  expect_identical(
+    {
+      # Note: The `classes` problem
+      out <- vec_rbind(sf, sf)
+      attr(out$geo, "classes") <- NULL
+      out
+    },
+    st_sf(id = rep(1:2, 2), geo = rep(sf$geo, 2))
   )
-
-  expect_equal(
-    vec_rbind(sf, sf, .names_to = "id"),
-    data_frame(id = rep(1:2, each = 2), geo = rep(sf$geo, 2))
+  expect_identical(
+    {
+      # Note: The `classes` problem
+      out <- vec_rbind(sf, sf, .names_to = "id")
+      attr(out$geo, "classes") <- NULL
+      out
+    },
+    st_sf(id = rep(1:2, each = 2), geo = rep(sf$geo, 2))
   )
 })
