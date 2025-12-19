@@ -5,6 +5,14 @@
 #' @name reference-faq-compatibility
 NULL
 
+#' FAQ - Native storage types
+#'
+#' @includeRmd man/faq/developer/theory-native-storage.Rmd description
+#'
+#' @name theory-faq-native-storage
+#' @aliases theory_faq_native_storage
+NULL
+
 #' FAQ - How does coercion work in vctrs?
 #'
 #' @includeRmd man/faq/developer/theory-coercion.Rmd description
