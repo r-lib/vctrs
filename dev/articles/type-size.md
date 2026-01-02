@@ -598,7 +598,8 @@ error:
 
 ``` r
 data.frame(1:2, 1:3)
-#> Error in data.frame(1:2, 1:3): arguments imply differing number of rows: 2, 3
+#> Error in `data.frame()`:
+#> ! arguments imply differing number of rows: 2, 3
 ```
 
 The R language definition states that “any arithmetic operation
@@ -630,5 +631,6 @@ paste(1:2, integer())
 
 # Errors
 data.frame(1:2, integer())
-#> Error in data.frame(1:2, integer()): arguments imply differing number of rows: 2, 0
+#> Error in `data.frame()`:
+#> ! arguments imply differing number of rows: 2, 0
 ```

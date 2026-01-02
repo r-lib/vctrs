@@ -235,7 +235,7 @@ c(mean, globalenv())
 #> [[1]]
 #> function (x, ...) 
 #> UseMethod("mean")
-#> <bytecode: 0x561f2078beb0>
+#> <bytecode: 0x561da2c81eb0>
 #> <environment: namespace:base>
 #> 
 #> [[2]]
@@ -247,7 +247,8 @@ is an error, otherwise the input is wrapped in a list:
 
 ``` r
 c(getRversion(), "x")
-#> Error: invalid version specification 'x'
+#> Error:
+#> ! invalid version specification 'x'
 
 c("x", getRversion())
 #> [[1]]
@@ -563,7 +564,7 @@ if_else(x > 2, factor("small"), factor("big"))
 #> [1] <NA>  big   big   small small
 #> Levels: small big
 if_else(x > 2, Sys.Date(), Sys.Date() + 7)
-#> [1] NA           "2025-12-26" "2025-12-26" "2025-12-19" "2025-12-19"
+#> [1] NA           "2026-01-09" "2026-01-09" "2026-01-02" "2026-01-02"
 ```
 
 By using

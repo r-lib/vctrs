@@ -21,13 +21,13 @@
 Source:
 [`DESCRIPTION`](https://github.com/r-lib/vctrs/blob/main/DESCRIPTION)
 
-Wickham H, Henry L, Vaughan D (2025). *vctrs: Vector Helpers*. R package
+Wickham H, Henry L, Vaughan D (2026). *vctrs: Vector Helpers*. R package
 version 0.6.5.9000, <https://vctrs.r-lib.org/>.
 
     @Manual{,
       title = {vctrs: Vector Helpers},
       author = {Hadley Wickham and Lionel Henry and Davis Vaughan},
-      year = {2025},
+      year = {2026},
       note = {R package version 0.6.5.9000},
       url = {https://vctrs.r-lib.org/},
     }
