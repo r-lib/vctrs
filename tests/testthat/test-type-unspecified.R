@@ -85,6 +85,26 @@ test_that("S3 vectors and shaped vectors are never unspecified", {
   expect_false(is_unspecified(matrix(NA, 2)))
 })
 
+test_that("empty logical vector is not unspecified", {
+  expect_false(is_unspecified(logical()))
+})
+
+test_that("logical vectors of only `NA` are considered unspecified", {
+  expect_true(is_unspecified(NA))
+  expect_true(is_unspecified(c(NA, NA)))
+  expect_false(is_unspecified(c(NA, FALSE, NA)))
+})
+
+test_that("extraneous attributes don't affect unspecifiedness", {
+  # `names`
+  expect_true(is_unspecified(set_names(c(NA, NA), c("a", "b"))))
+  expect_true(is_unspecified(set_names(unspecified(2), c("a", "b"))))
+
+  # Extraneous attributes
+  expect_true(is_unspecified(structure(c(NA, NA), foo = "bar")))
+  expect_true(is_unspecified(structure(unspecified(2), foo = "bar")))
+})
+
 test_that("can finalise lengthy unspecified vectors", {
   expect_identical(vec_ptype_finalise(unspecified(3)), rep(NA, 3))
   expect_identical(ununspecify(unspecified(3)), rep(NA, 3))

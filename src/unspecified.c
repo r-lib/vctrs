@@ -40,29 +40,43 @@ SEXP vctrs_unspecified(SEXP n) {
 // [[ include("vctrs.h") ]]
 bool vec_is_unspecified(SEXP x) {
   if (r_typeof(x) != R_TYPE_logical) {
+    // Both `<vctrs_unspecified>` and `<vector-of-NA>` must be logical
     return false;
   }
 
-  if (r_attrib(x) == r_null) {
-    // Bare logical (no class, no dim)
-    const r_ssize size = r_length(x);
-
-    if (size == 0) {
-      return false;
-    }
-
-    const int* p_x = r_lgl_cbegin(x);
-
-    for (r_ssize i = 0; i < size; ++i) {
-      if (p_x[i] != r_globals.na_lgl) {
-        return false;
-      }
-    }
-
-    return true;
+  if (has_dim(x)) {
+    // Disallow arrays from being unspecified
+    return false;
   }
 
-  return Rf_inherits(x, "vctrs_unspecified");
+  // If it is classed, that class must be `<vctrs_unspecified>`, otherwise check
+  // for all `NA`s. Notably, core attributes like `names` and extraneous
+  // attributes are allowed on `x`, and it is still considered unspecified.
+  if (r_is_object(x)) {
+    return r_inherits(x, "vctrs_unspecified");
+  } else {
+    return lgl_is_unspecified(x);
+  }
+}
+
+static inline
+bool lgl_is_unspecified(SEXP x) {
+  const r_ssize size = r_length(x);
+
+  if (size == 0) {
+    // We declare `logical()` to be <logical>, not <unspecified>
+    return false;
+  }
+
+  const int* p_x = r_lgl_cbegin(x);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    if (p_x[i] != r_globals.na_lgl) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 // [[ register ]]
