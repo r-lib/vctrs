@@ -146,7 +146,18 @@ test_that("tz comes from first non-empty", {
   expect_identical(vec_ptype2(z, y), z[0])
 })
 
-test_that("POSIXlt always steered towards POSIXct", {
+test_that("POSIXlt remains POSIXlt in vec_ptype()", {
+  # See `vec_ptype.POSIXlt()` for details
+  x <- as.POSIXlt("2020-01-01", tz = "UTC")
+  exp <- x[0]
+  expect_identical(vec_ptype(x), exp)
+
+  x <- as.POSIXlt("2020-01-01", tz = "America/New_York")
+  exp <- x[0]
+  expect_identical(vec_ptype(x), exp)
+})
+
+test_that("POSIXlt always steered towards POSIXct in vec_ptype2()", {
   dtc <- as.POSIXct("2020-01-01", tz = "UTC")
   dtl <- as.POSIXlt("2020-01-01", tz = "UTC")
 
@@ -190,6 +201,27 @@ test_that("vec_ptype2() standardizes duration storage type to double", {
   x <- structure(1L, units = "secs", class = "difftime")
   expect <- new_duration(double(), units = "secs")
   expect_identical(vec_ptype2(x, x), expect)
+})
+
+test_that("vec_ptype_common() gives expected results with <POSIXlt>", {
+  # See `vec_ptype.POSIXlt()` for details
+  x <- as.POSIXlt("2020-01-01", tz = "UTC")
+
+  # `vec_ptype(x)` returns `<POSIXlt>`
+  exp <- x[0]
+  expect_identical(vec_ptype_common(x), exp)
+  expect_identical(vec_ptype_common(.ptype = x), exp)
+
+  # `vec_ptype2(x, x)` returns `<POSIXct>`
+  exp <- new_datetime(tzone = "UTC")
+  expect_identical(vec_ptype_common(x, x), exp)
+
+  # With <unspecified> input, still uses `vec_ptype(x)`, so returns `<POSIXlt>`
+  exp <- x[0]
+  expect_identical(vec_ptype_common(x, NA), exp)
+  expect_identical(vec_ptype_common(NA, x), exp)
+  expect_identical(vec_ptype_common(x, NULL), exp)
+  expect_identical(vec_ptype_common(NULL, x), exp)
 })
 
 # cast: dates ---------------------------------------------------------------
