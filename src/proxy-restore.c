@@ -174,6 +174,11 @@ r_obj* ffi_vec_restore_default(r_obj* x, r_obj* to) {
 r_obj* vec_df_restore(r_obj* x,
                       r_obj* to,
                       const struct vec_restore_opts* p_opts) {
+  // TODO: It feels wrong that this copies over all attributes from `to` onto
+  // `x` before dispatching. This causes problems for `vec_restore.sf()` where
+  // `x` is expected to be a bare data frame. The extra attributes / classes on
+  // `x` cause S3 dispatch to incorrectly kick in when `sf::st_as_sf(x)` is
+  // called.
   r_obj* out = KEEP(vec_bare_df_restore(x, to, p_opts));
   out = vec_restore_dispatch(out, to);
   FREE(1);

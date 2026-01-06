@@ -666,6 +666,39 @@
       Error in `list_combine()`:
       ! `indices` must have size 2, not size 1.
 
+# common type failure after common class fallback reports the original class (#1981)
+
+    Code
+      list_combine(list(int, dbl), indices = list(1, 2), size = 2)
+    Condition
+      Error in `list_combine()`:
+      ! Can't combine `x[[1]]` <vctrs_foobar> and `x[[2]]` <vctrs_foobar>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+
+---
+
+    Code
+      list_combine(list(int, int, dbl), indices = list(1, 2, 3), size = 3)
+    Condition
+      Error in `list_combine()`:
+      ! Can't combine `x[[1]]` <vctrs_foobar> and `x[[3]]` <vctrs_foobar>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+
+---
+
+    Code
+      list_combine(list(int, int), indices = list(1, 2), size = 2, default = dbl)
+    Condition
+      Error in `list_combine()`:
+      ! Can't combine <vctrs_foobar> and `default` <vctrs_foobar>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+
 # NULL is a valid index
 
     Code

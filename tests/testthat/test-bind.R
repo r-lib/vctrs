@@ -908,10 +908,36 @@ test_that("vec_rbind() fails with complex foreign S4 classes", {
     joe <- .Counts(1L, name = "Joe")
     jane <- .Counts(2L, name = "Jane")
     (expect_error(
-      vec_rbind(set_names(joe, "x"), set_names(jane, "y")),
+      vec_rbind(set_names(joe, "x"), set_names(jane, "x")),
       class = "vctrs_error_incompatible_type"
     ))
   })
+})
+
+test_that("vec_rbind() succeeds with complex foreign S3 classes in different columns", {
+  x <- structure(foobar(1), attr_foo = "foo")
+  y <- structure(foobar(2), attr_bar = "bar")
+
+  expect_identical(
+    vec_rbind(set_names(x, "x"), set_names(y, "y")),
+    data_frame(
+      x = vec_c(x, NA),
+      y = vec_c(NA, y)
+    )
+  )
+})
+
+test_that("vec_rbind() succeeds with complex foreign S4 classes in different columns", {
+  joe <- .Counts(1L, name = "Joe")
+  jane <- .Counts(2L, name = "Jane")
+
+  expect_identical(
+    vec_rbind(set_names(joe, "x"), set_names(jane, "y")),
+    data_frame(
+      x = vec_c(joe, NA),
+      y = vec_c(NA, jane)
+    )
+  )
 })
 
 test_that("vec_rbind() falls back to c() if S3 method is available", {
@@ -1041,24 +1067,28 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
   local_foobar_df_methods()
 
   ### Joint case
-  df1 <- foobar(data_frame(x = quux(1:3)))
-  df2 <- data_frame(x = quux(4:5))
+  df1 <- foobar(data_frame(x = quux(letters[1:3])))
+  df2 <- data_frame(x = quux(letters[4:5]))
 
   out <- vctrs::vec_rbind(df1, df2)
-  exp <- foobar(data_frame(x = quux(paste0(1:5, "-c"))))
+  exp <- foobar(data_frame(x = quux(paste0(letters[1:5], "-c"))))
   expect_identical(out, exp)
 
   out <- vctrs::vec_rbind(df2, df1)
-  exp <- foobar(data_frame(x = quux(paste0(c(4:5, 1:3), "-c"))))
+  exp <- foobar(data_frame(
+    x = quux(paste0(c(letters[4:5], letters[1:3]), "-c"))
+  ))
   expect_identical(out, exp)
 
   ### Disjoint case
-  df1 <- foobar(data_frame(x = quux(1:3)))
+  df1 <- foobar(data_frame(x = quux(letters[1:3])))
   df2 <- data.frame(y = 4:5)
 
+  # `[` called once during `vec_init()` of output container. Initializes with
+  # `NA-[` which are never overwritten.
   out <- vctrs::vec_rbind(df1, df2)
   exp <- foobar(data_frame(
-    x = quux(c(paste0(1:3, "-c-["), paste0(c(NA, NA), "-["))),
+    x = quux(c(letters[1:3], paste0(c(NA, NA), "-["))),
     y = c(rep(NA, 3), 4:5)
   ))
   expect_identical(out, exp)
@@ -1066,7 +1096,7 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
   out <- vctrs::vec_rbind(df2, df1)
   exp <- foobar(data_frame(
     y = c(4:5, rep(NA, 3)),
-    x = quux(c(paste0(c(NA, NA), "-["), paste0(1:3, "-c-[")))
+    x = quux(c(paste0(c(NA, NA), "-["), letters[1:3]))
   ))
   expect_identical(out, exp)
 })

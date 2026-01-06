@@ -295,11 +295,14 @@ vec_assign_fallback <- function(x, i, value, slice_value, index_style) {
   }
 
   # Work around issue in base `[<-` that errors on `NA_integer_` in subassign
-  # indices
-  existing <- !is.na(i)
-  i <- vec_slice(i, existing)
-  if (vec_size(value) != 1L) {
-    value <- vec_slice(value, existing)
+  # indices. Only do this as necessary, as `vec_slice()` will typically call
+  # back to `[` when slicing `value` here, which is somewhat slow.
+  if (vec_any_missing(i)) {
+    existing <- !is.na(i)
+    i <- vec_slice(i, existing)
+    if (vec_size(value) != 1L) {
+      value <- vec_slice(value, existing)
+    }
   }
 
   d <- vec_dim_n(x)

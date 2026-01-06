@@ -261,10 +261,50 @@ test_that("vec_ptype_common_fallback() collects common type", {
   )
 })
 
-test_that("fallback sentinel is returned with unspecified inputs", {
+test_that("fallback sentinel is consistent with unspecified inputs", {
+  ptype <- vec_ptype(foobar(1))
   fallback <- vec_ptype_common_fallback(foobar(1), foobar(1))
-  expect_identical(vec_ptype_common_fallback(NA, foobar(1)), fallback)
-  expect_identical(vec_ptype_common_fallback(foobar(1), NA), fallback)
+
+  # Should return `foobar(1)`'s `vec_ptype()`
+  expect_identical(vec_ptype_common_fallback(NA, foobar(1)), ptype)
+  expect_identical(vec_ptype_common_fallback(foobar(1), NA), ptype)
+
+  # Should return `foobar(1)`'s fallback
+  expect_identical(
+    vec_ptype_common_fallback(NA, foobar(1), foobar(1)),
+    fallback
+  )
+  expect_identical(
+    vec_ptype_common_fallback(foobar(1), NA, foobar(1)),
+    fallback
+  )
+  expect_identical(
+    vec_ptype_common_fallback(foobar(1), foobar(1), NA),
+    fallback
+  )
+})
+
+test_that("fallback sentinel is consistent with `NULL` inputs", {
+  ptype <- vec_ptype(foobar(1))
+  fallback <- vec_ptype_common_fallback(foobar(1), foobar(1))
+
+  # Should return `foobar(1)`'s `vec_ptype()`
+  expect_identical(vec_ptype_common_fallback(NULL, foobar(1)), ptype)
+  expect_identical(vec_ptype_common_fallback(foobar(1), NULL), ptype)
+
+  # Should return `foobar(1)`'s fallback
+  expect_identical(
+    vec_ptype_common_fallback(NULL, foobar(1), foobar(1)),
+    fallback
+  )
+  expect_identical(
+    vec_ptype_common_fallback(foobar(1), NULL, foobar(1)),
+    fallback
+  )
+  expect_identical(
+    vec_ptype_common_fallback(foobar(1), foobar(1), NULL),
+    fallback
+  )
 })
 
 test_that("vec_ptype_common() supports subclasses of list", {

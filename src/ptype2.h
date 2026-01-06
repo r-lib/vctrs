@@ -30,12 +30,4 @@ bool vec_is_coercible(
 
 enum s3_fallback s3_fallback_from_opts(r_obj* opts);
 
-r_obj* vec_ptype_or_s3_fallback(
-  r_obj* x,
-  struct vctrs_arg* p_x_arg,
-  enum vctrs_type x_type,
-  struct r_lazy call,
-  enum s3_fallback s3_fallback
-);
-
 #endif
