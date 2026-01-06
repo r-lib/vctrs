@@ -587,13 +587,7 @@ r_obj* df_ptype2_match(
 
     r_obj* type;
     if (dup == r_globals.na_int) {
-      type = vec_ptype_or_s3_fallback(
-        x_col,
-        p_x_col_arg,
-        vec_typeof(x_col),
-        call,
-        s3_fallback
-      );
+      type = vec_ptype(x_col, p_x_col_arg, call);
     } else {
       // 1-based index
       --dup;
@@ -623,15 +617,7 @@ r_obj* df_ptype2_match(
     if (dup == r_globals.na_int) {
       y_col_arg_loc = j;
       r_obj* y_col = r_list_get(y, j);
-
-      r_obj* type = vec_ptype_or_s3_fallback(
-        y_col,
-        p_y_col_arg,
-        vec_typeof(y_col),
-        call,
-        s3_fallback
-      );
-
+      r_obj* type = vec_ptype(y_col, p_y_col_arg, call);
       r_list_poke(out, i, type);
       r_chr_poke(nms, i, r_chr_get(y_names, j));
       ++i;

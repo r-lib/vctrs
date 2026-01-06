@@ -230,18 +230,16 @@ can_fall_back <- function(x) {
 }
 
 #' @export
-can_fall_back.vctrs_vctr <- function(x) {
-  # Work around bad interaction when `c()` method calls back into `vec_c()`
-  FALSE
-}
-#' @export
 can_fall_back.ts <- function(x) {
   # Work around bug with hard-coded `tsp` attribute in Rf_setAttrib()
   FALSE
 }
+
 #' @export
 can_fall_back.data.frame <- function(x) {
-  # The `c()` fallback is only for 1D vectors
+  # The `c()` fallback is only for 1D vectors.
+  # We don't register a `vec_proxy()` S3 method for data.frame, so the
+  # default method doesn't handle this case.
   FALSE
 }
 
@@ -252,14 +250,10 @@ can_fall_back.data.frame <- function(x) {
 
 #' @export
 can_fall_back.default <- function(x) {
-  # Don't fall back for classes that directly implement a proxy.
-  #
-  # NOTE: That's suboptimal. For instance this forces us to override
-  # `can_fall_back()` for `vctrs_vctr` to avoid recursing into
-  # `vec_c()` through `c()`. Maybe we want to avoid falling back for
-  # any vector that inherits a `vec_proxy()` method implemented
-  # _outside_ of vctrs, i.e. not for a base class?
-  is_null(s3_get_method(class(x)[[1]], "vec_proxy", ns = "vctrs"))
+  # Don't fall back for classes that implement a proxy. Since `vec_proxy()` is
+  # recursive, it doesn't just have to be the first class, for example, sf has
+  # `vec_proxy.sfc()` even though the concrete class is `c("sfc_POINT", "sfc")`.
+  is_null(s3_find_method(x, "vec_proxy", ns = "vctrs"))
 }
 
 new_common_class_fallback <- function(x, fallback_class) {

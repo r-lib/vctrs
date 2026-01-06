@@ -418,12 +418,15 @@
     Code
       joe <- .Counts(1L, name = "Joe")
       jane <- .Counts(2L, name = "Jane")
-      (expect_error(vec_rbind(set_names(joe, "x"), set_names(jane, "y")), class = "vctrs_error_incompatible_type")
+      (expect_error(vec_rbind(set_names(joe, "x"), set_names(jane, "x")), class = "vctrs_error_incompatible_type")
       )
     Output
       <error/vctrs_error_ptype2>
       Error in `vec_rbind()`:
-      ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
+      ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
 
 # row-binding performs expected allocations
 

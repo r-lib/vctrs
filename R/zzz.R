@@ -189,11 +189,46 @@
       s3_register("vctrs::vec_ptype2", "sf.tbl_df", vec_ptype2_sf_tbl_df)
       s3_register("vctrs::vec_ptype2", "tbl_df.sf", vec_ptype2_tbl_df_sf)
       s3_register("vctrs::vec_cast", "sf.sf", vec_cast_sf_sf)
-      s3_register("vctrs::vec_cast", "sf.data.frame", vec_cast_sf_data.frame)
       s3_register("vctrs::vec_cast", "data.frame.sf", vec_cast_data.frame_sf)
+      s3_register("vctrs::vec_cast", "sf.data.frame", vec_cast_sf_data.frame)
+      s3_register("vctrs::vec_cast", "tbl_df.sf", vec_cast_tbl_df_sf)
+      s3_register("vctrs::vec_cast", "sf.tbl_df", vec_cast_sf_tbl_df)
     }
+
     if (!env_has(ns_env("sf"), "vec_proxy_order.sfc")) {
       s3_register("vctrs::vec_proxy_order", "sfc", vec_proxy_order_sfc)
+    }
+
+    # `vec_proxy.sfc()` really needs to strip attributes so they can't be used
+    # by `st_sfc()` in `vec_restore.sfc()`. Old sf didn't do this in their
+    # S3 method, so we forcibly inject our own method to do it for them if we
+    # detect the old style.
+    needs_vec_proxy_sfc_override <- function() {
+      env <- ns_env("sf")
+
+      if (!env_has(env, "vec_proxy.sfc")) {
+        # It's missing it entirely somehow
+        return(TRUE)
+      }
+
+      method <- env_get(env, "vec_proxy.sfc")
+
+      if (!is.function(method)) {
+        return(TRUE)
+      }
+
+      body <- body(method)
+
+      if (length(body) < 2) {
+        return(TRUE)
+      }
+
+      # If body is just `x`, needs override because this is the old style
+      identical(body[[2]], quote(x))
+    }
+    if (needs_vec_proxy_sfc_override()) {
+      s3_register("vctrs::vec_proxy", "sfc", vec_proxy_sfc)
+      s3_register("vctrs::vec_restore", "sfc", vec_restore_sfc)
     }
   })
 

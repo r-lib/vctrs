@@ -220,20 +220,20 @@ test_that("vec_c() preserves row names and inner names", {
   expect_identical(names(nested_out$oo), c("a", "b", "c", "FOO"))
 })
 
-test_that("vec_c() outer names work with proxied objects", {
+test_that("vec_c() outer names work with POSIXlt", {
   x <- as.POSIXlt(new_datetime(0))
   exp <- set_names(x, "outer")
-  expect_equal(vec_c(outer = x), exp)
+  expect_identical(vec_c(outer = x), exp)
 
   named_x <- set_names(x, "inner")
   exp <- set_names(named_x, "outer_inner")
   expect_error(vec_c(outer = named_x), "Please supply")
-  expect_equal(vec_c(outer = named_x, .name_spec = "{outer}_{inner}"), exp)
+  expect_identical(vec_c(outer = named_x, .name_spec = "{outer}_{inner}"), exp)
 
   xs <- as.POSIXlt(new_datetime(c(0, 1)))
   exp <- set_names(xs, c("outer_1", "outer_2"))
   expect_error(vec_c(outer = xs), "Please supply")
-  expect_equal(vec_c(outer = xs, .name_spec = "{outer}_{inner}"), exp)
+  expect_identical(vec_c(outer = xs, .name_spec = "{outer}_{inner}"), exp)
 })
 
 test_that("vec_c() works with simple homogeneous foreign S3 classes", {
@@ -437,6 +437,7 @@ test_that("vec_c() doesn't fall back when ptype2 is implemented", {
 
   with_methods(
     vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) new_quux(int()),
+    vec_ptype2.vctrs_quux.vctrs_foobar = function(x, y, ...) new_quux(int()),
     vec_cast.vctrs_quux.vctrs_foobar = function(x, to, ...) new_quux(x),
     vec_restore.vctrs_quux = function(x, ...) new_quux(x),
     c.vctrs_foobar = function(...) foobar(NextMethod()),
@@ -465,27 +466,6 @@ test_that("vec_c() falls back even when ptype is supplied", {
 
 test_that("vec_implements_ptype2() is FALSE for scalars", {
   expect_false(vec_implements_ptype2(quote(foo)))
-})
-
-test_that("vec_implements_ptype2() and vec_c() fallback are compatible with old registration", {
-  foo <- structure(NA, class = "vctrs_implements_ptype2_false")
-  expect_false(vec_implements_ptype2(foo))
-
-  vec_ptype2.vctrs_implements_ptype2_true <- function(...) NULL
-  s3_register(
-    "vctrs::vec_ptype2",
-    "vctrs_implements_ptype2_true",
-    vec_ptype2.vctrs_implements_ptype2_true
-  )
-
-  bar <- structure(NA, class = "vctrs_implements_ptype2_true")
-  expect_true(vec_implements_ptype2(bar))
-
-  local_methods(
-    `c.vctrs_implements_ptype2_true` = function(...) stop("never called")
-  )
-
-  expect_identical(vec_c(bar), bar)
 })
 
 test_that("can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)", {
