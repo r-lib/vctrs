@@ -133,6 +133,22 @@ vec_ptype_abbr.difftime <- function(x, ...) {
   "drtn"
 }
 
+# Ptype -------------------------------------------------------------------
+
+#' @export
+vec_ptype.POSIXlt <- function(x, ...) {
+  # `vec_ptype2()` pushes towards `POSIXct`. In theory, maybe `vec_ptype()`
+  # should as well so that `vec_c(<POSIXlt>)` and `vec_c(<POSIXlt>, <POSIXlt>)`
+  # are consistent and both return `POSIXct`. In practice this broke a number of
+  # packages (datetimeoffset, slider, nanoarrow), and also generally means that
+  # you wouldn't be able to provide a `POSIXlt` as a `ptype` argument to
+  # anything and expect it to return a `POSIXlt` as output. So we've decided to
+  # just leave this inconsistency. Getting `POSIXlt` attributes exactly right
+  # is very tricky, and very R version dependent, so we just consistency align
+  # with `[` here and in tests.
+  x[0]
+}
+
 # Coerce ------------------------------------------------------------------
 
 #' @rdname new_date
