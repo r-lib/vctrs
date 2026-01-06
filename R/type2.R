@@ -161,6 +161,16 @@ vec_default_ptype2 <- function(
     return(vec_ptype(x, x_arg = x_arg))
   }
 
+  if (opts$s3_fallback) {
+    # Undo common class fallback class for error messages
+    if (is_common_class_fallback(x)) {
+      x <- fallback_class_remove(x)
+    }
+    if (is_common_class_fallback(y)) {
+      y <- fallback_class_remove(y)
+    }
+  }
+
   # The from-dispatch parameter is set only when called from our S3
   # dispatch mechanism, when no method is found to dispatch to. It
   # indicates whether the error message should provide advice about
@@ -276,6 +286,11 @@ fallback_class <- function(x) {
   } else {
     class(x)
   }
+}
+fallback_class_remove <- function(x) {
+  class(x) <- attr(x, "fallback_class", exact = TRUE)
+  attr(x, "fallback_class") <- NULL
+  x
 }
 
 check_ptype2_dots_empty <- function(
