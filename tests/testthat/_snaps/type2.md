@@ -120,3 +120,35 @@
       Error:
       ! Can't combine `foobar(1, bar = TRUE)` <vctrs_foobar> and `foobar(2, baz = TRUE)` <vctrs_foobar>.
 
+# error indexing is correct with unspecifieds
+
+    Code
+      vec_ptype_common(1, NA, "x")
+    Condition
+      Error:
+      ! Can't combine `..1` <double> and `..3` <character>.
+
+---
+
+    Code
+      vec_ptype_common(NA, 1, "x")
+    Condition
+      Error:
+      ! Can't combine `..2` <double> and `..3` <character>.
+
+---
+
+    Code
+      vec_ptype_common(NA, NA, 1, "x")
+    Condition
+      Error:
+      ! Can't combine `..3` <double> and `..4` <character>.
+
+---
+
+    Code
+      vec_ptype_common(1, NA, NA, 1, "x")
+    Condition
+      Error:
+      ! Can't combine `..1` <double> and `..5` <character>.
+

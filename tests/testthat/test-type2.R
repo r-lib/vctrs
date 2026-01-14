@@ -441,3 +441,18 @@ test_that("subclasses of tibble are compatible", {
   expect_equal(vec_ptype_common(tib), ptype)
   expect_equal(vec_ptype_common(tib, tib), ptype)
 })
+
+test_that("error indexing is correct with unspecifieds", {
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(1, NA, "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(NA, 1, "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(NA, NA, 1, "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(1, NA, NA, 1, "x")
+  })
+})

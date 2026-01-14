@@ -393,6 +393,19 @@ test_that("`ptype` is finalized before being used", {
   expect_identical(vec_if_else(TRUE, TRUE, FALSE, ptype = unspecified(1)), TRUE)
 })
 
+test_that("`vec_ptype2()`'s `left` is always set", {
+  # This used to result in `left` being unset, so we'd hit an unreachable state
+  expect_identical(
+    vec_if_else(
+      condition = FALSE,
+      true = TRUE,
+      false = NA,
+      missing = FALSE
+    ),
+    NA
+  )
+})
+
 # ------------------------------------------------------------------------------
 # `dplyr::if_else()` tests
 
