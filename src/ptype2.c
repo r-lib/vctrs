@@ -78,9 +78,15 @@ r_obj* vec_ptype2_impl(
   }
 
   if (x_type == VCTRS_TYPE_unspecified) {
+    // When `x` and `y` are unspecified, keep using `x` name (1)
+    // When `x` is unspecified by `y` isn't, switch to `y` name (0)
+    *left = y_type == VCTRS_TYPE_unspecified;
     return vec_ptype_or_s3_fallback(y, p_y_arg, y_type, call, s3_fallback);
   }
   if (y_type == VCTRS_TYPE_unspecified) {
+    // When `x` and `y` are unspecified, keep using `x` name (1)
+    // When `y` is unspecified but `x` isn't, keep using `x` name (1)
+    *left = 1;
     return vec_ptype_or_s3_fallback(x, p_x_arg, x_type, call, s3_fallback);
   }
 

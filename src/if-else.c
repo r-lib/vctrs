@@ -547,8 +547,13 @@ r_obj* ptype_finalize(
 
   int n_prot = 0;
 
+  // Initialize `left` to point to `true`.
+  // If we don't initialize it, there may be rare corner cases where it never
+  // gets set by `vec_ptype2()`, in which case we don't want to hit the
+  // unreachable error (bad user experience).
+  int left = 1;
+
   // Common type of `true` and `false`
-  int left;
   ptype = KEEP_N(
     vec_ptype2(
       true_,
