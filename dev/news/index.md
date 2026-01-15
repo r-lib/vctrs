@@ -2,119 +2,29 @@
 
 ## vctrs (development version)
 
-- New
-  [`list_of_transpose()`](https://vctrs.r-lib.org/dev/reference/list_of_transpose.md)
-  for transposing a `<list_of>`
-  ([\#2059](https://github.com/r-lib/vctrs/issues/2059)).
+### Features
 
 - New
-  [`list_of_ptype()`](https://vctrs.r-lib.org/dev/reference/list-of-attributes.md)
-  and
-  [`list_of_size()`](https://vctrs.r-lib.org/dev/reference/list-of-attributes.md)
-  accessors.
-
-- Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens
-  the list to better align with base R and the existing `$<-` and `[<-`
-  methods ([\#2112](https://github.com/r-lib/vctrs/issues/2112)).
-
-- [`as_list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md) on
-  an existing `<list_of>` no longer has a `.ptype` argument for changing
-  the type on the fly, as this feels incompatible with the new system
-  that allows restricting both the type and size. If you really need
-  this, coerce to a bare list with
-  [`as.list()`](https://rdrr.io/r/base/list.html) first, then coerce
-  back to a `<list_of>` using the `<list>` method of
-  [`as_list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md).
-
-- [`list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md) can
-  now restrict the element size in addition to the element type. For
-  example:
-
-  ``` r
-  # Restricts the element type, but not the size (default behavior)
-  list_of(1:2, 3:4, .ptype = integer(), .size = zap())
-
-  # Restricts the element size, but not the type
-  list_of(1:2, 3:4, .ptype = zap(), .size = 2)
-
-  # Restricts the element type and size
-  list_of(1:2, 3:4, .ptype = integer(), .size = 2)
-  ```
-
-- [`obj_is_list()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md)
-  now returns `FALSE` for list arrays. Functions such as
-  [`list_drop_empty()`](https://vctrs.r-lib.org/dev/reference/list_drop_empty.md)
-  and
-  [`list_combine()`](https://vctrs.r-lib.org/dev/reference/list_combine.md)
-  validate their input using
-  [`obj_is_list()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
-  but aren’t well defined on list arrays.
-
-- [`vec_cast()`](https://vctrs.r-lib.org/dev/reference/vec_cast.md) with
-  arrays no longer clones when no casting is required
-  ([\#2006](https://github.com/r-lib/vctrs/issues/2006)).
-
-- [`vec_rank()`](https://vctrs.r-lib.org/dev/reference/vec_rank.md) now
-  throws an improved error on non-vector types, like `NULL`
-  ([\#1967](https://github.com/r-lib/vctrs/issues/1967)).
-
-- [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
-  has gained a `.finalise` argument that defaults to `TRUE`. Setting
-  this to `FALSE` lets you opt out of prototype finalisation, which
-  allows
-  [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
-  to act like
-  [`vec_ptype()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
-  and
-  [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md),
-  which don’t finalise. This can be useful in some advanced common type
-  determination cases
-  ([\#2100](https://github.com/r-lib/vctrs/issues/2100)).
+  [`vec_if_else()`](https://vctrs.r-lib.org/dev/reference/vec_if_else.md)
+  for performing a vectorized if-else. It is exactly the same as
+  [`dplyr::if_else()`](https://dplyr.tidyverse.org/reference/if_else.html),
+  but much faster and more memory efficient
+  ([\#2030](https://github.com/r-lib/vctrs/issues/2030)).
 
 - New
-  [`vec_pany()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md)
+  [`vec_case_when()`](https://vctrs.r-lib.org/dev/reference/vec-case-and-replace.md)
   and
-  [`vec_pall()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md),
-  parallel variants of [`any()`](https://rdrr.io/r/base/any.html) and
-  [`all()`](https://rdrr.io/r/base/all.html) (in the same way that
-  [`pmin()`](https://rdrr.io/r/base/Extremes.html) and
-  [`pmax()`](https://rdrr.io/r/base/Extremes.html) are parallel variants
-  of [`min()`](https://rdrr.io/r/base/Extremes.html) and
-  [`max()`](https://rdrr.io/r/base/Extremes.html)).
+  [`vec_replace_when()`](https://vctrs.r-lib.org/dev/reference/vec-case-and-replace.md)
+  for recoding and replacing using logical conditions
+  ([\#2024](https://github.com/r-lib/vctrs/issues/2024)).
 
-- The deprecated C callable for `vec_is_vector()` has been removed.
-
-- Fixed the C level signature for the `exp_short_init_compact_seq()`
-  callable.
-
-- Experimental “partial” type support has been removed. This idea never
-  panned out and was not widely used. The following functions have been
-  removed ([\#2101](https://github.com/r-lib/vctrs/issues/2101)):
-
-  - `is_partial()`
-  - `new_partial()`
-  - `partial_factor()`
-  - `partial_frame()`
-
-- Methods for the deprecated testthat function `is_informative_error()`
-  have been removed
-  ([\#2089](https://github.com/r-lib/vctrs/issues/2089)).
-
-- [`obj_check_vector()`](https://vctrs.r-lib.org/dev/reference/vector-checks.md)
-  now throws a clearer error message. In particular, special info
-  bullets have been added that link out to FAQ pages and explain common
-  issues around incompatible S3 lists and data frames
-  ([\#2061](https://github.com/r-lib/vctrs/issues/2061)).
-
-- R \>=4.0.0 is now required. This is still more permissive than the
-  general tidyverse policy of supporting the [5 most recent versions of
-  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
-
-- [`vec_interleave()`](https://vctrs.r-lib.org/dev/reference/vec_interleave.md)
-  gains new `.size` and `.error_call` arguments.
-
-- [`vec_interleave()`](https://vctrs.r-lib.org/dev/reference/vec_interleave.md)
-  now reports the correct index in errors when `NULL`s are present.
+- New
+  [`vec_recode_values()`](https://vctrs.r-lib.org/dev/reference/vec-recode-and-replace.md)
+  and
+  [`vec_replace_values()`](https://vctrs.r-lib.org/dev/reference/vec-recode-and-replace.md)
+  for recoding and replacing values. In particular, this makes it easy
+  to recode a vector using a lookup table
+  ([\#2027](https://github.com/r-lib/vctrs/issues/2027)).
 
 - New
   [`list_combine()`](https://vctrs.r-lib.org/dev/reference/list_combine.md)
@@ -147,23 +57,167 @@
   [`vec_if_else()`](https://vctrs.r-lib.org/dev/reference/vec_if_else.md).
 
 - New
+  [`vec_pany()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md)
+  and
+  [`vec_pall()`](https://vctrs.r-lib.org/dev/reference/parallel-operators.md),
+  parallel variants of [`any()`](https://rdrr.io/r/base/any.html) and
+  [`all()`](https://rdrr.io/r/base/all.html) (in the same way that
+  [`pmin()`](https://rdrr.io/r/base/Extremes.html) and
+  [`pmax()`](https://rdrr.io/r/base/Extremes.html) are parallel variants
+  of [`min()`](https://rdrr.io/r/base/Extremes.html) and
+  [`max()`](https://rdrr.io/r/base/Extremes.html)).
+
+- New
+  [`list_of_transpose()`](https://vctrs.r-lib.org/dev/reference/list_of_transpose.md)
+  for transposing a `<list_of>`
+  ([\#2059](https://github.com/r-lib/vctrs/issues/2059)).
+
+- New
+  [`list_of_ptype()`](https://vctrs.r-lib.org/dev/reference/list-of-attributes.md)
+  and
+  [`list_of_size()`](https://vctrs.r-lib.org/dev/reference/list-of-attributes.md)
+  accessors.
+
+- New
   [`vec_check_recyclable()`](https://vctrs.r-lib.org/dev/reference/vector-checks.md),
   [`list_all_recyclable()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
   and
   [`list_check_all_recyclable()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md).
 
-- [`list_all_vectors()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
+- New `slice_value` argument for
+  [`vec_assign()`](https://vctrs.r-lib.org/dev/reference/vec_slice.md)
+  to optionally slice `value` by `i` before performing the assignment.
+  It is an optimized form of `vec_slice(x, i) <- vec_slice(value, i)`
+  that avoids materializing `vec_slice(value, i)`
+  ([\#2009](https://github.com/r-lib/vctrs/issues/2009)).
+
+- New `.size` argument for
+  [`list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md) that
+  can restrict the element size in addition to the element type. For
+  example:
+
+  ``` r
+  # Restricts the element type, but not the size (default behavior)
+  list_of(1:2, 3:4, .ptype = integer(), .size = zap())
+
+  # Restricts the element size, but not the type
+  list_of(1:2, 3:4, .ptype = zap(), .size = 2)
+
+  # Restricts the element type and size
+  list_of(1:2, 3:4, .ptype = integer(), .size = 2)
+  ```
+
+- New `.name_spec = "inner"` option for
+  [`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md),
+  [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md),
+  and
+  [`vec_rbind()`](https://vctrs.r-lib.org/dev/reference/vec_bind.md).
+  This efficiently ignores all outer names, while retaining any inner
+  names ([\#1988](https://github.com/r-lib/vctrs/issues/1988)).
+
+- New `allow_null` argument for
+  [`list_all_vectors()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
   [`list_all_size()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
   [`list_check_all_vectors()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
   and
-  [`list_check_all_size()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md)
-  have all gained an `allow_null` argument, which skips over `NULL` when
-  performing their respective check
+  [`list_check_all_size()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
+  which skips over `NULL` when performing their respective check
   ([\#1762](https://github.com/r-lib/vctrs/issues/1762)).
+
+- New `.size` and `.error_call` arguments for
+  [`vec_interleave()`](https://vctrs.r-lib.org/dev/reference/vec_interleave.md).
+
+- New `.finalise` argument for
+  [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
+  that defaults to `TRUE`. Setting this to `FALSE` lets you opt out of
+  prototype finalisation, which allows
+  [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
+  to act like
+  [`vec_ptype()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
+  and
+  [`vec_ptype2()`](https://vctrs.r-lib.org/dev/reference/vec_ptype2.md),
+  which don’t finalise. This can be useful in some advanced common type
+  determination cases
+  ([\#2100](https://github.com/r-lib/vctrs/issues/2100)).
+
+- The following functions are no longer experimental:
+
+  - [`vec_fill_missing()`](https://vctrs.r-lib.org/dev/reference/vec_fill_missing.md)
+  - [`vec_group_id()`](https://vctrs.r-lib.org/dev/reference/vec_group.md)
+  - [`vec_group_loc()`](https://vctrs.r-lib.org/dev/reference/vec_group.md)
+  - [`vec_group_rle()`](https://vctrs.r-lib.org/dev/reference/vec_group.md)
+  - [`vec_locate_matches()`](https://vctrs.r-lib.org/dev/reference/vec_locate_matches.md)
+
+### Bug fixes
+
+- data.table’s `IDate` class now has
+  [`vec_proxy()`](https://vctrs.r-lib.org/dev/reference/vec_proxy.md)
+  and
+  [`vec_restore()`](https://vctrs.r-lib.org/dev/reference/vec_proxy.md)
+  methods, fixing a number of issues with that class
+  ([\#1549](https://github.com/r-lib/vctrs/issues/1549),
+  [\#1961](https://github.com/r-lib/vctrs/issues/1961),
+  [\#1972](https://github.com/r-lib/vctrs/issues/1972),
+  [\#1781](https://github.com/r-lib/vctrs/issues/1781)).
+
+- `vec_detect_complete(NULL)` now returns
+  [`logical()`](https://rdrr.io/r/base/logical.html), consistent with
+  `vec_detect_missing(NULL)`
+  ([\#1916](https://github.com/r-lib/vctrs/issues/1916)).
+
+- [`vec_assign()`](https://vctrs.r-lib.org/dev/reference/vec_slice.md)
+  no longer modifies `POSIXlt` and `vctrs_rcrd` types in place
+  ([\#1951](https://github.com/r-lib/vctrs/issues/1951)).
+
+- [`vec_interleave()`](https://vctrs.r-lib.org/dev/reference/vec_interleave.md)
+  now reports the correct index in errors when `NULL`s are present.
+
+- [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
+  now assigns names correctly when overlapping `indices` are involved
+  ([\#2019](https://github.com/r-lib/vctrs/issues/2019)).
+
+- [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
+  now works in an edge case with a single `NA` recycled to size 0
+  ([\#1989](https://github.com/r-lib/vctrs/issues/1989)).
+
+- [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
+  now correctly respects `indices` when combining fallback data frame
+  columns ([\#1975](https://github.com/r-lib/vctrs/issues/1975)).
+
+- [`vec_locate_sorted_groups()`](https://vctrs.r-lib.org/dev/reference/vec_locate_sorted_groups.md)
+  and
+  [`vec_order_radix()`](https://vctrs.r-lib.org/dev/reference/order-radix.md)
+  no longer crash on columns of type complex (tidyverse/dplyr#7708).
+
+- Hashing is now supported for lists containing complex or raw vectors,
+  enabling functions like
+  [`vec_unique_loc()`](https://vctrs.r-lib.org/dev/reference/vec_unique.md)
+  to work on these objects
+  ([\#1992](https://github.com/r-lib/vctrs/issues/1992),
+  [\#2046](https://github.com/r-lib/vctrs/issues/2046)).
+
+- [`obj_check_vector()`](https://vctrs.r-lib.org/dev/reference/vector-checks.md)
+  now throws a clearer error message. In particular, special info
+  bullets have been added that link out to FAQ pages and explain common
+  issues around incompatible S3 lists and data frames
+  ([\#2061](https://github.com/r-lib/vctrs/issues/2061)).
+
+- [`vec_rank()`](https://vctrs.r-lib.org/dev/reference/vec_rank.md) now
+  throws an improved error on non-vector types, like `NULL`
+  ([\#1967](https://github.com/r-lib/vctrs/issues/1967)).
 
 - [`vec_ptype_common()`](https://vctrs.r-lib.org/dev/reference/vec_ptype.md)
   now reports more accurate error argument names
   ([\#2048](https://github.com/r-lib/vctrs/issues/2048)).
+
+- Fixed the C level signature for the `exp_short_init_compact_seq()`
+  callable.
+
+- Methods for the deprecated testthat function `is_informative_error()`
+  have been removed
+  ([\#2089](https://github.com/r-lib/vctrs/issues/2089)).
+
+### Performance
 
 - [`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md),
   [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md),
@@ -182,119 +236,73 @@
   [\#2044](https://github.com/r-lib/vctrs/issues/2044),
   [\#2070](https://github.com/r-lib/vctrs/issues/2070)).
 
-- New
-  [`vec_if_else()`](https://vctrs.r-lib.org/dev/reference/vec_if_else.md)
-  for performing a vectorized if-else. It is exactly the same as
-  [`dplyr::if_else()`](https://dplyr.tidyverse.org/reference/if_else.html),
-  but much faster and memory efficient
-  ([\#2030](https://github.com/r-lib/vctrs/issues/2030)).
-
-- New
-  [`vec_recode_values()`](https://vctrs.r-lib.org/dev/reference/vec-recode-and-replace.md)
-  and
-  [`vec_replace_values()`](https://vctrs.r-lib.org/dev/reference/vec-recode-and-replace.md)
-  for recoding and replacing values. In particular, this makes it easy
-  to recode a vector using a lookup table
-  ([\#2027](https://github.com/r-lib/vctrs/issues/2027)).
-
-- New
-  [`vec_case_when()`](https://vctrs.r-lib.org/dev/reference/vec-case-and-replace.md)
-  and
-  [`vec_replace_when()`](https://vctrs.r-lib.org/dev/reference/vec-case-and-replace.md)
-  for recoding and replacing using logical conditions
-  ([\#2024](https://github.com/r-lib/vctrs/issues/2024)).
+- [`vec_match()`](https://vctrs.r-lib.org/dev/reference/vec_match.md),
+  [`vec_in()`](https://vctrs.r-lib.org/dev/reference/vec_match.md),
+  [`vec_group_loc()`](https://vctrs.r-lib.org/dev/reference/vec_group.md),
+  [`vec_count()`](https://vctrs.r-lib.org/dev/reference/vec_count.md),
+  [`vec_unique()`](https://vctrs.r-lib.org/dev/reference/vec_unique.md)
+  and other functions backed by a dictionary based implementation are
+  often significantly faster, depending on the exact inputs used
+  ([\#1976](https://github.com/r-lib/vctrs/issues/1976)).
 
 - [`vec_equal()`](https://vctrs.r-lib.org/dev/reference/vec_equal.md)
   now efficiently internally recycles `x` and `y` elements of size 1
   ([\#2028](https://github.com/r-lib/vctrs/issues/2028)).
 
 - [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
-  now assigns names correctly when overlapping `indices` are involved
-  ([\#2019](https://github.com/r-lib/vctrs/issues/2019)).
-
-- New `.name_spec = "inner"` option for
-  [`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md),
-  [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md),
-  and
-  [`vec_rbind()`](https://vctrs.r-lib.org/dev/reference/vec_bind.md).
-  This efficiently ignores all outer names, while retaining any inner
-  names ([\#1988](https://github.com/r-lib/vctrs/issues/1988)).
-
-- [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
-  now works in an edge case with a single `NA` recycled to size 0
-  ([\#1989](https://github.com/r-lib/vctrs/issues/1989)).
-
-- [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
   now efficiently internally recycles `x` elements of size 1
   ([\#2013](https://github.com/r-lib/vctrs/issues/2013)).
 
-- [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
-  now correctly respects `indices` when combining fallback data frame
-  columns ([\#1975](https://github.com/r-lib/vctrs/issues/1975)).
-
 - [`vec_assign()`](https://vctrs.r-lib.org/dev/reference/vec_slice.md)
-  has gained a new `slice_value` argument to optionally slice `value` by
-  `i` before performing the assignment. It is an optimized form of
-  `vec_slice(x, i) <- vec_slice(value, i)` that avoids materializing
-  `vec_slice(value, i)`
-  ([\#2009](https://github.com/r-lib/vctrs/issues/2009)).
+  and `vec_slice<-()` now efficiently internally recycle `value` of size
+  1.
 
 - [`vec_assign()`](https://vctrs.r-lib.org/dev/reference/vec_slice.md)
   and `vec_slice<-()` are now more efficient with logical `i`
   ([\#2009](https://github.com/r-lib/vctrs/issues/2009)).
 
-- [`vec_assign()`](https://vctrs.r-lib.org/dev/reference/vec_slice.md)
-  and `vec_slice<-()` now efficiently internally recycle `value` of size
-  1 at the C level, resulting in less memory usage.
+- [`vec_cast()`](https://vctrs.r-lib.org/dev/reference/vec_cast.md) with
+  arrays no longer clones when no casting is required
+  ([\#2006](https://github.com/r-lib/vctrs/issues/2006)).
 
-- [`vec_assign()`](https://vctrs.r-lib.org/dev/reference/vec_slice.md)
-  no longer modifies `POSIXlt` and `vctrs_rcrd` types in place
-  ([\#1951](https://github.com/r-lib/vctrs/issues/1951)).
+### Breaking changes
 
-- data.table’s `IDate` class now has
-  [`vec_proxy()`](https://vctrs.r-lib.org/dev/reference/vec_proxy.md)
+- R \>=4.0.0 is now required. This is still more permissive than the
+  general tidyverse policy of supporting the [5 most recent versions of
+  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+
+- [`obj_is_list()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md)
+  now returns `FALSE` for list arrays. Functions such as
+  [`list_drop_empty()`](https://vctrs.r-lib.org/dev/reference/list_drop_empty.md)
   and
-  [`vec_restore()`](https://vctrs.r-lib.org/dev/reference/vec_proxy.md)
-  methods, fixing a number of issues with that class
-  ([\#1549](https://github.com/r-lib/vctrs/issues/1549),
-  [\#1961](https://github.com/r-lib/vctrs/issues/1961),
-  [\#1972](https://github.com/r-lib/vctrs/issues/1972),
-  [\#1781](https://github.com/r-lib/vctrs/issues/1781)).
+  [`list_combine()`](https://vctrs.r-lib.org/dev/reference/list_combine.md)
+  validate their input using
+  [`obj_is_list()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md),
+  but aren’t well defined on list arrays.
 
-- [`vec_locate_sorted_groups()`](https://vctrs.r-lib.org/dev/reference/vec_locate_sorted_groups.md)
-  and
-  [`vec_order_radix()`](https://vctrs.r-lib.org/dev/reference/order-radix.md)
-  no longer crash on columns of type complex (tidyverse/dplyr#7708).
+- Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens
+  the list to better align with base R and the existing `$<-` and `[<-`
+  methods ([\#2112](https://github.com/r-lib/vctrs/issues/2112)).
 
-- Functions backed by a dictionary based implementation are often
-  significantly faster, depending on the exact inputs used. This
-  includes:
-  [`vec_match()`](https://vctrs.r-lib.org/dev/reference/vec_match.md),
-  [`vec_in()`](https://vctrs.r-lib.org/dev/reference/vec_match.md),
-  [`vec_group_loc()`](https://vctrs.r-lib.org/dev/reference/vec_group.md),
-  [`vec_count()`](https://vctrs.r-lib.org/dev/reference/vec_count.md),
-  [`vec_unique()`](https://vctrs.r-lib.org/dev/reference/vec_unique.md),
-  and more ([\#1976](https://github.com/r-lib/vctrs/issues/1976)).
+- [`as_list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md) on
+  an existing `<list_of>` no longer has a `.ptype` argument for changing
+  the type on the fly, as this feels incompatible with the new system
+  that allows restricting both the type and size. If you really need
+  this, coerce to a bare list with
+  [`as.list()`](https://rdrr.io/r/base/list.html) first, then coerce
+  back to a `<list_of>` using the `<list>` method of
+  [`as_list_of()`](https://vctrs.r-lib.org/dev/reference/list_of.md).
 
-- The following functions are no longer experimental:
+- Experimental “partial” type support has been removed. This idea never
+  panned out and was not widely used. The following functions have been
+  removed ([\#2101](https://github.com/r-lib/vctrs/issues/2101)):
 
-  - [`vec_fill_missing()`](https://vctrs.r-lib.org/dev/reference/vec_fill_missing.md)
-  - [`vec_group_id()`](https://vctrs.r-lib.org/dev/reference/vec_group.md)
-  - [`vec_group_loc()`](https://vctrs.r-lib.org/dev/reference/vec_group.md)
-  - [`vec_group_rle()`](https://vctrs.r-lib.org/dev/reference/vec_group.md)
-  - [`vec_locate_matches()`](https://vctrs.r-lib.org/dev/reference/vec_locate_matches.md)
+  - `is_partial()`
+  - `new_partial()`
+  - `partial_factor()`
+  - `partial_frame()`
 
-- Hashing is now supported for lists containing complex or raw vectors,
-  enabling functions like
-  [`vec_unique_loc()`](https://vctrs.r-lib.org/dev/reference/vec_unique.md)
-  to work on these objects
-  ([\#1992](https://github.com/r-lib/vctrs/issues/1992),
-  [\#2046](https://github.com/r-lib/vctrs/issues/2046)).
-
-- `vec_detect_complete(NULL)` now returns
-  [`logical()`](https://rdrr.io/r/base/logical.html), consistent with
-  `vec_detect_missing(NULL)`
-  ([\#1916](https://github.com/r-lib/vctrs/issues/1916)).
+- The deprecated C callable for `vec_is_vector()` has been removed.
 
 ## vctrs 0.6.5
 
