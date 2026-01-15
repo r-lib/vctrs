@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.7.0
 
 ## Features
 
