@@ -31,6 +31,9 @@ SEXP classes_vctrs_group_rle = NULL;
 static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
 
+static SEXP syms_set_attributes = NULL;
+static SEXP fns_set_attributes = NULL;
+
 
 static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP env);
 
@@ -1424,6 +1427,27 @@ SEXP r_as_data_frame(SEXP x) {
   }
 }
 
+/// Set attributes on `x`
+///
+/// ```r
+/// `attributes<-`(x, attrib)
+/// ```
+///
+/// It can be useful to call this from C when you don't own `x` and just need to
+/// tweak some attributes on it because it creates a cheap ALTREP shallow
+/// duplicate of `x` with `R_shallow_duplicate_attr()`, which we don't have
+/// access to from C otherwise.
+r_obj* r_set_attributes(r_obj* x, r_obj* attrib) {
+  return vctrs_dispatch2(
+    syms_set_attributes,
+    fns_set_attributes,
+    syms_x,
+    x,
+    syms_value,
+    attrib
+  );
+}
+
 static SEXP syms_try_catch_hnd = NULL;
 static inline SEXP try_catch_hnd(SEXP ptr) {
   SEXP call = PROTECT(Rf_lang2(syms_try_catch_hnd, ptr));
@@ -1673,6 +1697,7 @@ SEXP syms_stop_matches_relationship_one_to_many = NULL;
 SEXP syms_stop_matches_relationship_many_to_one = NULL;
 SEXP syms_warn_matches_relationship_many_to_many = NULL;
 SEXP syms_stop_combine_unmatched = NULL;
+SEXP syms_stop_unsupported_storage_type = NULL;
 SEXP syms_action = NULL;
 SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
@@ -1976,6 +2001,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_stop_matches_relationship_many_to_one = Rf_install("stop_matches_relationship_many_to_one");
   syms_warn_matches_relationship_many_to_many = Rf_install("warn_matches_relationship_many_to_many");
   syms_stop_combine_unmatched = Rf_install("stop_combine_unmatched");
+  syms_stop_unsupported_storage_type = Rf_install("stop_unsupported_storage_type");
   syms_action = Rf_install("action");
   syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
   syms_fallback_class = Rf_install("fallback_class");
@@ -2004,9 +2030,11 @@ void vctrs_init_utils(SEXP ns) {
   rlang_sym_as_character = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_sym_as_character");
 
   syms_as_data_frame2 = Rf_install("as.data.frame2");
+  syms_set_attributes = Rf_install("attributes<-");
   syms_colnames = Rf_install("colnames");
 
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
+  fns_set_attributes = r_env_get(R_BaseEnv, syms_set_attributes);
   fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 
   compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);

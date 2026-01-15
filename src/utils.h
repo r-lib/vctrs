@@ -384,6 +384,8 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   }
 }
 
+r_obj* r_set_attributes(r_obj* x, r_obj* attrib);
+
 void c_print_backtrace(void);
 
 SEXP chr_c(SEXP x, SEXP y);
@@ -515,6 +517,7 @@ extern SEXP syms_stop_matches_relationship_one_to_many;
 extern SEXP syms_stop_matches_relationship_many_to_one;
 extern SEXP syms_warn_matches_relationship_many_to_many;
 extern SEXP syms_stop_combine_unmatched;
+extern SEXP syms_stop_unsupported_storage_type;
 extern SEXP syms_action;
 extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;

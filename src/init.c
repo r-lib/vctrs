@@ -173,6 +173,7 @@ extern r_obj* ffi_vec_replace_values(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_o
 extern r_obj* ffi_vec_if_else(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_pany(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_pall(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_unstructure(r_obj*);
 
 
 // Maturing
@@ -383,6 +384,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_if_else",                           (DL_FUNC) &ffi_vec_if_else, 6},
   {"ffi_vec_pany",                              (DL_FUNC) &ffi_vec_pany, 4},
   {"ffi_vec_pall",                              (DL_FUNC) &ffi_vec_pall, 4},
+  {"ffi_vec_unstructure",                       (DL_FUNC) &ffi_vec_unstructure, 1},
   {"ffi_exp_vec_cast",                          (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };
