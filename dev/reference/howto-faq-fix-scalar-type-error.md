@@ -40,7 +40,8 @@ it possible for your class to dispatch on `list` methods of S3 generics:
     my_generic.list <- function(x) "dispatched!"
 
     my_generic(my_list)
-    #> Error in UseMethod("my_generic"): no applicable method for 'my_generic' applied to an object of class "my_class"
+    #> Error in `UseMethod()`:
+    #> ! no applicable method for 'my_generic' applied to an object of class "my_class"
 
     my_generic(my_explicit_list)
     #> [1] "dispatched!"
