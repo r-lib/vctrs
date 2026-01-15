@@ -1804,7 +1804,7 @@ It’s good practice to test your new class. Specific recommendations:
   motivation for creating your own S3 class in the first place, so this
   will alert you to unexpected changes in your printed output. Read more
   about `verify_output()` in the [testthat v2.3.0 blog
-  post](https://www.tidyverse.org/blog/2019/11/testthat-2-3-0/); it’s an
+  post](https://tidyverse.org/blog/2019/11/testthat-2-3-0/); it’s an
   example of a so-called [golden
   test](https://ro-che.info/articles/2017-12-04-golden-tests).
 

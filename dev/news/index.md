@@ -269,7 +269,7 @@
 
 - R \>=4.0.0 is now required. This is still more permissive than the
   general tidyverse policy of supporting the [5 most recent versions of
-  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+  R](https://tidyverse.org/blog/2019/04/r-version-support/).
 
 - [`obj_is_list()`](https://vctrs.r-lib.org/dev/reference/obj_is_list.md)
   now returns `FALSE` for list arrays. Functions such as
@@ -459,7 +459,7 @@ CRAN release: 2023-03-15
 
 - R \>=3.5.0 is now explicitly required. This is in line with the
   tidyverse policy of supporting the [5 most recent versions of
-  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+  R](https://tidyverse.org/blog/2019/04/r-version-support/).
 
 ## vctrs 0.5.2
 
