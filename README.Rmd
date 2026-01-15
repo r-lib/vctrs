@@ -27,17 +27,17 @@ There are three main goals to the vctrs package, each described in a vignette:
   `class()`; `vignette("type-size")`. These definitions are paired with a
   framework for size-recycling and type-coercion. `ptype` should evoke the
   notion of a prototype, i.e. the original or typical form of something.
-  
+
 * To define size- and type-stability as desirable function properties, use
   them to analyse existing base functions, and to propose better alternatives;
   `vignette("stability")`. This work has been particularly motivated by
   thinking about the ideal properties of `c()`, `ifelse()`, and `rbind()`.
-  
+
 * To provide a new `vctr` base class that makes it easy to create new S3
-  vectors; `vignette("s3-vector")`. vctrs provides methods for many base 
-  generics in terms of a few new vctrs generics, making implementation 
+  vectors; `vignette("s3-vector")`. vctrs provides methods for many base
+  generics in terms of a few new vctrs generics, making implementation
   considerably simpler and more robust.
-  
+
 vctrs is a developer-focussed package. Understanding and extending vctrs requires some effort from developers, but should be invisible to most users. It's our hope that having an underlying theory will mean that users can build up an accurate mental model without explicitly learning the theory. vctrs will typically be used by other packages, making it easy for them to provide new classes of S3 vectors that are supported throughout the tidyverse (and beyond). For that reason, vctrs has few dependencies.
 
 ## Installation
@@ -61,30 +61,10 @@ pak::pak("r-lib/vctrs")
 library(vctrs)
 
 # Sizes
-str(vec_size_common(1, 1:10))
+vec_size_common(1, 1:10)
 str(vec_recycle_common(1, 1:10))
 
 # Prototypes
-str(vec_ptype_common(FALSE, 1L, 2.5))
+vec_ptype_common(FALSE, 1L, 2.5)
 str(vec_cast_common(FALSE, 1L, 2.5))
 ```
-
-## Motivation
-
-The original motivation for vctrs comes from two separate but related problems. The first problem is that `base::c()` has rather undesirable behaviour when you mix different S3 vectors:
-
-```{r}
-# combining factors makes integers
-c(factor("a"), factor("b"))
-
-# combining dates and date-times gives incorrect values; also, order matters
-dt <- as.Date("2020-01-01")
-dttm <- as.POSIXct(dt)
-
-c(dt, dttm)
-c(dttm, dt)
-```
-
-This behaviour arises because `c()` has dual purposes: as well as its primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, `?POSIXct` suggests that you should use `c()` if you want to reset the timezone. 
-
-The second problem is that `dplyr::bind_rows()` is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns, including lists of data frames, data frames, and matrices.
