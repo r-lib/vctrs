@@ -1,14 +1,33 @@
 # vctrs (development version)
 
+## Features
+
+* New `vec_if_else()` for performing a vectorized if-else. It is exactly the same as `dplyr::if_else()`, but much faster and more memory efficient (#2030).
+
+* New `vec_case_when()` and `vec_replace_when()` for recoding and replacing using logical conditions (#2024).
+
+* New `vec_recode_values()` and `vec_replace_values()` for recoding and replacing values. In particular, this makes it easy to recode a vector using a lookup table (#2027).
+
+* New `list_combine()` for combining a list of vectors together according to a set of `indices`. We now recommend using:
+
+  * `list_combine(x, indices = indices, size = size)` over `list_unchop(x, indices = indices)`
+  * `vec_c(!!!x)` over `list_unchop(x)`
+
+  `list_unchop()` is not being deprecated, we just no longer feel like it has the best name or the most correct API, and all future work will be put into improving `list_combine()`. `list_combine()` is already much more powerful than `list_unchop()`, with new `unmatched`, `multiple`, and `slice_x` (like `slice_value` of `vec_assign()`) arguments and the ability to provide logical `indices`.
+
+  `list_combine()` is the engine that powers `vec_case_when()`, `vec_replace_when()`, `vec_recode_values()`, `vec_replace_values()`, and parts of `vec_if_else()`.
+
+* New `vec_pany()` and `vec_pall()`, parallel variants of `any()` and `all()` (in the same way that `pmin()` and `pmax()` are parallel variants of `min()` and `max()`).
+
 * New `list_of_transpose()` for transposing a `<list_of>` (#2059).
 
 * New `list_of_ptype()` and `list_of_size()` accessors.
 
-* Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens the list to better align with base R and the existing `$<-` and `[<-` methods (#2112).
+* New `vec_check_recyclable()`, `list_all_recyclable()`, and `list_check_all_recyclable()`.
 
-* `as_list_of()` on an existing `<list_of>` no longer has a `.ptype` argument for changing the type on the fly, as this feels incompatible with the new system that allows restricting both the type and size. If you really need this, coerce to a bare list with `as.list()` first, then coerce back to a `<list_of>` using the `<list>` method of `as_list_of()`.
+* New `slice_value` argument for `vec_assign()` to optionally slice `value` by `i` before performing the assignment. It is an optimized form of `vec_slice(x, i) <- vec_slice(value, i)` that avoids materializing `vec_slice(value, i)` (#2009).
 
-* `list_of()` can now restrict the element size in addition to the element type. For example:
+* New `.size` argument for `list_of()` that can restrict the element size in addition to the element type. For example:
 
   ``` r
   # Restricts the element type, but not the size (default behavior)
@@ -21,85 +40,13 @@
   list_of(1:2, 3:4, .ptype = integer(), .size = 2)
   ```
 
-* `obj_is_list()` now returns `FALSE` for list arrays. Functions such as `list_drop_empty()` and `list_combine()` validate their input using `obj_is_list()`, but aren't well defined on list arrays.
-
-* `vec_cast()` with arrays no longer clones when no casting is required (#2006).
-
-* `vec_rank()` now throws an improved error on non-vector types, like `NULL` (#1967).
-
-* `vec_ptype_common()` has gained a `.finalise` argument that defaults to `TRUE`. Setting this to `FALSE` lets you opt out of prototype finalisation, which allows `vec_ptype_common()` to act like `vec_ptype()` and `vec_ptype2()`, which don't finalise. This can be useful in some advanced common type determination cases (#2100).
-
-* New `vec_pany()` and `vec_pall()`, parallel variants of `any()` and `all()` (in the same way that `pmin()` and `pmax()` are parallel variants of `min()` and `max()`).
-
-* The deprecated C callable for `vec_is_vector()` has been removed.
-
-* Fixed the C level signature for the `exp_short_init_compact_seq()` callable.
-
-* Experimental "partial" type support has been removed. This idea never panned out and was not widely used. The following functions have been removed (#2101):
-
-  * `is_partial()`
-  * `new_partial()`
-  * `partial_factor()`
-  * `partial_frame()`
-
-* Methods for the deprecated testthat function `is_informative_error()` have been removed (#2089).
-
-* `obj_check_vector()` now throws a clearer error message. In particular, special info bullets have been added that link out to FAQ pages and explain common issues around incompatible S3 lists and data frames (#2061).
-
-* R >=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the [5 most recent versions of R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
-
-* `vec_interleave()` gains new `.size` and `.error_call` arguments.
-
-* `vec_interleave()` now reports the correct index in errors when `NULL`s are present.
-
-* New `list_combine()` for combining a list of vectors together according to a set of `indices`. We now recommend using:
-
-  * `list_combine(x, indices = indices, size = size)` over `list_unchop(x, indices = indices)`
-  * `vec_c(!!!x)` over `list_unchop(x)`
-
-  `list_unchop()` is not being deprecated, we just no longer feel like it has the best name or the most correct API, and all future work will be put into improving `list_combine()`. `list_combine()` is already much more powerful than `list_unchop()`, with new `unmatched`, `multiple`, and `slice_x` (like `slice_value` of `vec_assign()`) arguments and the ability to provide logical `indices`.
-
-  `list_combine()` is the engine that powers `vec_case_when()`, `vec_replace_when()`, `vec_recode_values()`, `vec_replace_values()`, and parts of `vec_if_else()`.
-
-* New `vec_check_recyclable()`, `list_all_recyclable()`, and `list_check_all_recyclable()`.
-
-* `list_all_vectors()`, `list_all_size()`, `list_check_all_vectors()`, and `list_check_all_size()` have all gained an `allow_null` argument, which skips over `NULL` when performing their respective check (#1762).
-
-* `vec_ptype_common()` now reports more accurate error argument names (#2048).
-
-* `vec_c()`, `list_unchop()`, `vec_size_common()`, `vec_recycle_common()`, `vec_ptype_common()`, `list_sizes()`, `list_check_all_vectors()`, and other vctrs functions that take a list of objects are now more performant, particularly when many small objects are provided (#2034, #2035, #2041, #2042, #2043, #2044, #2070).
-
-* New `vec_if_else()` for performing a vectorized if-else. It is exactly the same as `dplyr::if_else()`, but much faster and memory efficient (#2030).
-
-* New `vec_recode_values()` and `vec_replace_values()` for recoding and replacing values. In particular, this makes it easy to recode a vector using a lookup table (#2027).
-
-* New `vec_case_when()` and `vec_replace_when()` for recoding and replacing using logical conditions (#2024).
-
-* `vec_equal()` now efficiently internally recycles `x` and `y` elements of size 1 (#2028).
-
-* `list_unchop()` now assigns names correctly when overlapping `indices` are involved (#2019).
-
 * New `.name_spec = "inner"` option for `vec_c()`, `list_unchop()`, and `vec_rbind()`. This efficiently ignores all outer names, while retaining any inner names (#1988).
 
-* `list_unchop()` now works in an edge case with a single `NA` recycled to size 0 (#1989).
+* New `allow_null` argument for `list_all_vectors()`, `list_all_size()`, `list_check_all_vectors()`, and `list_check_all_size()`, which skips over `NULL` when performing their respective check (#1762).
 
-* `list_unchop()` now efficiently internally recycles `x` elements of size 1 (#2013).
+* New `.size` and `.error_call` arguments for `vec_interleave()`.
 
-* `list_unchop()` now correctly respects `indices` when combining fallback data frame columns (#1975).
-
-* `vec_assign()` has gained a new `slice_value` argument to optionally slice `value` by `i` before performing the assignment. It is an optimized form of `vec_slice(x, i) <- vec_slice(value, i)` that avoids materializing `vec_slice(value, i)` (#2009).
-
-* `vec_assign()` and `vec_slice<-()` are now more efficient with logical `i` (#2009).
-
-* `vec_assign()` and `vec_slice<-()` now efficiently internally recycle `value` of size 1 at the C level, resulting in less memory usage.
-
-* `vec_assign()` no longer modifies `POSIXlt` and `vctrs_rcrd` types in place (#1951).
-
-* data.table's `IDate` class now has `vec_proxy()` and `vec_restore()` methods, fixing a number of issues with that class (#1549, #1961, #1972, #1781).
-
-* `vec_locate_sorted_groups()` and `vec_order_radix()` no longer crash on columns of type complex (tidyverse/dplyr#7708).
-
-* Functions backed by a dictionary based implementation are often significantly faster, depending on the exact inputs used. This includes: `vec_match()`, `vec_in()`, `vec_group_loc()`, `vec_count()`, `vec_unique()`, and more (#1976).
+* New `.finalise` argument for `vec_ptype_common()` that defaults to `TRUE`. Setting this to `FALSE` lets you opt out of prototype finalisation, which allows `vec_ptype_common()` to act like `vec_ptype()` and `vec_ptype2()`, which don't finalise. This can be useful in some advanced common type determination cases (#2100).
 
 * The following functions are no longer experimental:
   * `vec_fill_missing()`
@@ -108,10 +55,69 @@
   * `vec_group_rle()`
   * `vec_locate_matches()`
 
+## Bug fixes
+
+* data.table's `IDate` class now has `vec_proxy()` and `vec_restore()` methods, fixing a number of issues with that class (#1549, #1961, #1972, #1781).
+
+* `vec_detect_complete(NULL)` now returns `logical()`, consistent with `vec_detect_missing(NULL)` (#1916).
+
+* `vec_assign()` no longer modifies `POSIXlt` and `vctrs_rcrd` types in place (#1951).
+
+* `vec_interleave()` now reports the correct index in errors when `NULL`s are present.
+
+* `list_unchop()` now assigns names correctly when overlapping `indices` are involved (#2019).
+
+* `list_unchop()` now works in an edge case with a single `NA` recycled to size 0 (#1989).
+
+* `list_unchop()` now correctly respects `indices` when combining fallback data frame columns (#1975).
+
+* `vec_locate_sorted_groups()` and `vec_order_radix()` no longer crash on columns of type complex (tidyverse/dplyr#7708).
+
 * Hashing is now supported for lists containing complex or raw vectors, enabling functions like `vec_unique_loc()` to work on these objects (#1992, #2046).
 
-* `vec_detect_complete(NULL)` now returns `logical()`, consistent with
-  `vec_detect_missing(NULL)` (#1916).
+* `obj_check_vector()` now throws a clearer error message. In particular, special info bullets have been added that link out to FAQ pages and explain common issues around incompatible S3 lists and data frames (#2061).
+
+* `vec_rank()` now throws an improved error on non-vector types, like `NULL` (#1967).
+
+* `vec_ptype_common()` now reports more accurate error argument names (#2048).
+
+* Fixed the C level signature for the `exp_short_init_compact_seq()` callable.
+
+* Methods for the deprecated testthat function `is_informative_error()` have been removed (#2089).
+
+## Performance
+
+* `vec_c()`, `list_unchop()`, `vec_size_common()`, `vec_recycle_common()`, `vec_ptype_common()`, `list_sizes()`, `list_check_all_vectors()`, and other vctrs functions that take a list of objects are now more performant, particularly when many small objects are provided (#2034, #2035, #2041, #2042, #2043, #2044, #2070).
+
+* `vec_match()`, `vec_in()`, `vec_group_loc()`, `vec_count()`, `vec_unique()` and other functions backed by a dictionary based implementation are often significantly faster, depending on the exact inputs used (#1976).
+
+* `vec_equal()` now efficiently internally recycles `x` and `y` elements of size 1 (#2028).
+
+* `list_unchop()` now efficiently internally recycles `x` elements of size 1 (#2013).
+
+* `vec_assign()` and `vec_slice<-()` now efficiently internally recycle `value` of size 1.
+
+* `vec_assign()` and `vec_slice<-()` are now more efficient with logical `i` (#2009).
+
+* `vec_cast()` with arrays no longer clones when no casting is required (#2006).
+
+## Breaking changes
+
+* R >=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the [5 most recent versions of R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+
+* `obj_is_list()` now returns `FALSE` for list arrays. Functions such as `list_drop_empty()` and `list_combine()` validate their input using `obj_is_list()`, but aren't well defined on list arrays.
+
+* Assigning `NULL` into a `<list_of>` via `x[[i]] <- NULL` now shortens the list to better align with base R and the existing `$<-` and `[<-` methods (#2112).
+
+* `as_list_of()` on an existing `<list_of>` no longer has a `.ptype` argument for changing the type on the fly, as this feels incompatible with the new system that allows restricting both the type and size. If you really need this, coerce to a bare list with `as.list()` first, then coerce back to a `<list_of>` using the `<list>` method of `as_list_of()`.
+
+* Experimental "partial" type support has been removed. This idea never panned out and was not widely used. The following functions have been removed (#2101):
+  * `is_partial()`
+  * `new_partial()`
+  * `partial_factor()`
+  * `partial_frame()`
+
+* The deprecated C callable for `vec_is_vector()` has been removed.
 
 # vctrs 0.6.5
 
