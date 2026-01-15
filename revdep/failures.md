@@ -1,55 +1,3 @@
-# amberr (1.2.0)
-
-* GitHub: <https://github.com/obiba/amberr>
-* Email: <mailto:yannick.marcon@obiba.org>
-* GitHub mirror: <https://github.com/cran/amberr>
-
-Run `revdepcheck::cloud_details(, "amberr")` for more info
-
-## In both
-
-*   checking whether package ‘amberr’ can be installed ... ERROR
-     ```
-     Installation failed.
-     See ‘/tmp/workdir/amberr/new/amberr.Rcheck/00install.out’ for details.
-     ```
-
-## Installation
-
-### Devel
-
-```
-* installing *source* package ‘amberr’ ...
-** this is package ‘amberr’ version ‘1.2.0’
-** package ‘amberr’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error: object ‘at_depth’ is not exported by 'namespace:purrr'
-Execution halted
-ERROR: lazy loading failed for package ‘amberr’
-* removing ‘/tmp/workdir/amberr/new/amberr.Rcheck/amberr’
-
-
-```
-### CRAN
-
-```
-* installing *source* package ‘amberr’ ...
-** this is package ‘amberr’ version ‘1.2.0’
-** package ‘amberr’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error: object ‘at_depth’ is not exported by 'namespace:purrr'
-Execution halted
-ERROR: lazy loading failed for package ‘amberr’
-* removing ‘/tmp/workdir/amberr/old/amberr.Rcheck/amberr’
-
-
-```
 # bayesdfa (1.3.4)
 
 * GitHub: <https://github.com/fate-ewi/bayesdfa>
@@ -196,214 +144,6 @@ Run `revdepcheck::cloud_details(, "CytoML")` for more info
 
 
 ```
-# DSMolgenisArmadillo (3.0.2)
-
-* GitHub: <https://github.com/molgenis/molgenis-r-datashield>
-* Email: <mailto:m.k.slofstra@umcg.nl>
-* GitHub mirror: <https://github.com/cran/DSMolgenisArmadillo>
-
-Run `revdepcheck::cloud_details(, "DSMolgenisArmadillo")` for more info
-
-## Error before installation
-
-### Devel
-
-```
-* using log directory ‘/tmp/workdir/DSMolgenisArmadillo/new/DSMolgenisArmadillo.Rcheck’
-* using R version 4.5.1 (2025-06-13)
-* using platform: x86_64-pc-linux-gnu
-* R was compiled by
-    gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-    GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-* running under: Ubuntu 24.04.3 LTS
-* using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘DSMolgenisArmadillo/DESCRIPTION’ ... OK
-...
-* checking files in ‘vignettes’ ... OK
-* checking examples ... OK
-* checking for unstated dependencies in ‘tests’ ... OK
-* checking tests ... OK
-  Running ‘testthat.R’
-* checking for unstated dependencies in vignettes ... OK
-* checking package vignettes ... OK
-* checking re-building of vignette outputs ... OK
-* DONE
-Status: OK
-
-
-
-
-
-```
-### CRAN
-
-```
-* using log directory ‘/tmp/workdir/DSMolgenisArmadillo/old/DSMolgenisArmadillo.Rcheck’
-* using R version 4.5.1 (2025-06-13)
-* using platform: x86_64-pc-linux-gnu
-* R was compiled by
-    gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-    GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-* running under: Ubuntu 24.04.3 LTS
-* using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘DSMolgenisArmadillo/DESCRIPTION’ ... OK
-...
-* checking files in ‘vignettes’ ... OK
-* checking examples ... OK
-* checking for unstated dependencies in ‘tests’ ... OK
-* checking tests ... OK
-  Running ‘testthat.R’
-* checking for unstated dependencies in vignettes ... OK
-* checking package vignettes ... OK
-* checking re-building of vignette outputs ... OK
-* DONE
-Status: OK
-
-
-
-
-
-```
-# dsTidyverse (1.0.4)
-
-* Email: <mailto:t.j.cadman@umcg.nl>
-* GitHub mirror: <https://github.com/cran/dsTidyverse>
-
-Run `revdepcheck::cloud_details(, "dsTidyverse")` for more info
-
-## Error before installation
-
-### Devel
-
-```
-* using log directory ‘/tmp/workdir/dsTidyverse/new/dsTidyverse.Rcheck’
-* using R version 4.5.1 (2025-06-13)
-* using platform: x86_64-pc-linux-gnu
-* R was compiled by
-    gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-    GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-* running under: Ubuntu 24.04.3 LTS
-* using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘dsTidyverse/DESCRIPTION’ ... OK
-...
-* checking for code/documentation mismatches ... OK
-* checking Rd \usage sections ... OK
-* checking Rd contents ... OK
-* checking for unstated dependencies in examples ... OK
-* checking examples ... NONE
-* checking for unstated dependencies in ‘tests’ ... OK
-* checking tests ... OK
-  Running ‘testthat.R’
-* DONE
-Status: OK
-
-
-
-
-
-```
-### CRAN
-
-```
-* using log directory ‘/tmp/workdir/dsTidyverse/old/dsTidyverse.Rcheck’
-* using R version 4.5.1 (2025-06-13)
-* using platform: x86_64-pc-linux-gnu
-* R was compiled by
-    gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-    GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-* running under: Ubuntu 24.04.3 LTS
-* using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘dsTidyverse/DESCRIPTION’ ... OK
-...
-* checking for code/documentation mismatches ... OK
-* checking Rd \usage sections ... OK
-* checking Rd contents ... OK
-* checking for unstated dependencies in examples ... OK
-* checking examples ... NONE
-* checking for unstated dependencies in ‘tests’ ... OK
-* checking tests ... OK
-  Running ‘testthat.R’
-* DONE
-Status: OK
-
-
-
-
-
-```
-# dsTidyverseClient (1.0.2)
-
-* Email: <mailto:t.j.cadman@umcg.nl>
-* GitHub mirror: <https://github.com/cran/dsTidyverseClient>
-
-Run `revdepcheck::cloud_details(, "dsTidyverseClient")` for more info
-
-## Error before installation
-
-### Devel
-
-```
-* using log directory ‘/tmp/workdir/dsTidyverseClient/new/dsTidyverseClient.Rcheck’
-* using R version 4.5.1 (2025-06-13)
-* using platform: x86_64-pc-linux-gnu
-* R was compiled by
-    gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-    GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-* running under: Ubuntu 24.04.3 LTS
-* using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘dsTidyverseClient/DESCRIPTION’ ... OK
-...
-* checking files in ‘vignettes’ ... OK
-* checking examples ... OK
-* checking for unstated dependencies in ‘tests’ ... OK
-* checking tests ... OK
-  Running ‘testthat.R’
-* checking for unstated dependencies in vignettes ... OK
-* checking package vignettes ... OK
-* checking re-building of vignette outputs ... OK
-* DONE
-Status: OK
-
-
-
-
-
-```
-### CRAN
-
-```
-* using log directory ‘/tmp/workdir/dsTidyverseClient/old/dsTidyverseClient.Rcheck’
-* using R version 4.5.1 (2025-06-13)
-* using platform: x86_64-pc-linux-gnu
-* R was compiled by
-    gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-    GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-* running under: Ubuntu 24.04.3 LTS
-* using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘dsTidyverseClient/DESCRIPTION’ ... OK
-...
-* checking files in ‘vignettes’ ... OK
-* checking examples ... OK
-* checking for unstated dependencies in ‘tests’ ... OK
-* checking tests ... OK
-  Running ‘testthat.R’
-* checking for unstated dependencies in vignettes ... OK
-* checking package vignettes ... OK
-* checking re-building of vignette outputs ... OK
-* DONE
-Status: OK
-
-
-
-
-
-```
 # flowWorkspace (NA)
 
 * : <UNKNOWN>
@@ -429,56 +169,6 @@ Run `revdepcheck::cloud_details(, "flowWorkspace")` for more info
 
 
 
-
-
-```
-# galvanizer (0.5.3)
-
-* GitHub: <https://github.com/jonlinca/galvanizer>
-* Email: <mailto:hello@jonlin.ca>
-* GitHub mirror: <https://github.com/cran/galvanizer>
-
-Run `revdepcheck::cloud_details(, "galvanizer")` for more info
-
-## In both
-
-*   checking whether package ‘galvanizer’ can be installed ... ERROR
-     ```
-     Installation failed.
-     See ‘/tmp/workdir/galvanizer/new/galvanizer.Rcheck/00install.out’ for details.
-     ```
-
-## Installation
-
-### Devel
-
-```
-* installing *source* package ‘galvanizer’ ...
-** this is package ‘galvanizer’ version ‘0.5.3’
-** package ‘galvanizer’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** byte-compile and prepare package for lazy loading
-Error: object ‘at_depth’ is not exported by 'namespace:purrr'
-Execution halted
-ERROR: lazy loading failed for package ‘galvanizer’
-* removing ‘/tmp/workdir/galvanizer/new/galvanizer.Rcheck/galvanizer’
-
-
-```
-### CRAN
-
-```
-* installing *source* package ‘galvanizer’ ...
-** this is package ‘galvanizer’ version ‘0.5.3’
-** package ‘galvanizer’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** byte-compile and prepare package for lazy loading
-Error: object ‘at_depth’ is not exported by 'namespace:purrr'
-Execution halted
-ERROR: lazy loading failed for package ‘galvanizer’
-* removing ‘/tmp/workdir/galvanizer/old/galvanizer.Rcheck/galvanizer’
 
 
 ```
@@ -723,59 +413,157 @@ ERROR: compilation failed for package ‘rshift’
 
 
 ```
-# tidyjson (0.3.2)
+# sift (NA)
 
-* GitHub: <https://github.com/colearendt/tidyjson>
-* Email: <mailto:cole@posit.co>
-* GitHub mirror: <https://github.com/cran/tidyjson>
+* : <UNKNOWN>
 
-Run `revdepcheck::cloud_details(, "tidyjson")` for more info
+Run `revdepcheck::cloud_details(, "sift")` for more info
 
-## In both
-
-*   checking whether package ‘tidyjson’ can be installed ... ERROR
-     ```
-     Installation failed.
-     See ‘/tmp/workdir/tidyjson/new/tidyjson.Rcheck/00install.out’ for details.
-     ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘tidyjson’ ...
-** this is package ‘tidyjson’ version ‘0.3.2’
-** package ‘tidyjson’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error: object ‘at_depth’ is not exported by 'namespace:purrr'
-Execution halted
-ERROR: lazy loading failed for package ‘tidyjson’
-* removing ‘/tmp/workdir/tidyjson/new/tidyjson.Rcheck/tidyjson’
+
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘tidyjson’ ...
-** this is package ‘tidyjson’ version ‘0.3.2’
-** package ‘tidyjson’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error: object ‘at_depth’ is not exported by 'namespace:purrr'
-Execution halted
-ERROR: lazy loading failed for package ‘tidyjson’
-* removing ‘/tmp/workdir/tidyjson/old/tidyjson.Rcheck/tidyjson’
+
+
+
+
+
+
+```
+# Signac (1.16.0)
+
+* GitHub: <https://github.com/stuart-lab/signac>
+* Email: <mailto:stuartt@a-star.edu.sg>
+* GitHub mirror: <https://github.com/cran/Signac>
+
+Run `revdepcheck::cloud_details(, "Signac")` for more info
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/Signac/new/Signac.Rcheck’
+* using R version 4.5.1 (2025-06-13)
+* using platform: x86_64-pc-linux-gnu
+* R was compiled by
+    gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+    GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+* running under: Ubuntu 24.04.3 LTS
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘Signac/DESCRIPTION’ ... OK
+...
+* checking for GNU extensions in Makefiles ... OK
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
+* checking use of PKG_*FLAGS in Makefiles ... OK
+* checking compiled code ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* DONE
+Status: OK
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/Signac/old/Signac.Rcheck’
+* using R version 4.5.1 (2025-06-13)
+* using platform: x86_64-pc-linux-gnu
+* R was compiled by
+    gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+    GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+* running under: Ubuntu 24.04.3 LTS
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘Signac/DESCRIPTION’ ... OK
+...
+* checking for GNU extensions in Makefiles ... OK
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
+* checking use of PKG_*FLAGS in Makefiles ... OK
+* checking compiled code ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* DONE
+Status: OK
+
+
+
+
+
+```
+# tipitaka (NA)
+
+* : <UNKNOWN>
+
+Run `revdepcheck::cloud_details(, "tipitaka")` for more info
+
+## Error before installation
+
+### Devel
+
+```
+
+
+
+
+
+
+```
+### CRAN
+
+```
+
+
+
+
+
+
+```
+# triangulr (NA)
+
+* : <UNKNOWN>
+
+Run `revdepcheck::cloud_details(, "triangulr")` for more info
+
+## Error before installation
+
+### Devel
+
+```
+
+
+
+
+
+
+```
+### CRAN
+
+```
+
+
+
+
 
 
 ```
