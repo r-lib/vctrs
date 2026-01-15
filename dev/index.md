@@ -59,57 +59,19 @@ pak::pak("r-lib/vctrs")
 library(vctrs)
 
 # Sizes
-str(vec_size_common(1, 1:10))
-#>  int 10
+vec_size_common(1, 1:10)
+#> [1] 10
 str(vec_recycle_common(1, 1:10))
 #> List of 2
 #>  $ : num [1:10] 1 1 1 1 1 1 1 1 1 1
 #>  $ : int [1:10] 1 2 3 4 5 6 7 8 9 10
 
 # Prototypes
-str(vec_ptype_common(FALSE, 1L, 2.5))
-#>  num(0)
+vec_ptype_common(FALSE, 1L, 2.5)
+#> numeric(0)
 str(vec_cast_common(FALSE, 1L, 2.5))
 #> List of 3
 #>  $ : num 0
 #>  $ : num 1
 #>  $ : num 2.5
 ```
-
-## Motivation
-
-The original motivation for vctrs comes from two separate but related
-problems. The first problem is that
-[`base::c()`](https://rdrr.io/r/base/c.html) has rather undesirable
-behaviour when you mix different S3 vectors:
-
-``` r
-# combining factors makes integers
-c(factor("a"), factor("b"))
-#> [1] 1 1
-
-# combining dates and date-times gives incorrect values; also, order matters
-dt <- as.Date("2020-01-01")
-dttm <- as.POSIXct(dt)
-
-c(dt, dttm)
-#> [1] "2020-01-01"    "4321940-06-07"
-c(dttm, dt)
-#> [1] "2019-12-31 19:00:00 EST" "1970-01-01 00:04:22 EST"
-```
-
-This behaviour arises because [`c()`](https://rdrr.io/r/base/c.html) has
-dual purposes: as well as its primary duty of combining vectors, it has
-a secondary duty of stripping attributes. For example,
-[`?POSIXct`](https://rdrr.io/r/base/DateTimeClasses.html) suggests that
-you should use [`c()`](https://rdrr.io/r/base/c.html) if you want to
-reset the timezone.
-
-The second problem is that
-[`dplyr::bind_rows()`](https://dplyr.tidyverse.org/reference/bind_rows.html)
-is not extensible by others. Currently, it handles arbitrary S3 classes
-using heuristics, but these often fail, and it feels like we really need
-to think through the problem in order to build a principled solution.
-This intersects with the need to cleanly support more types of data
-frame columns, including lists of data frames, data frames, and
-matrices.
