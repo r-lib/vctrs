@@ -103,7 +103,7 @@
 
 ## Breaking changes
 
-* R >=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the [5 most recent versions of R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+* R >=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the [5 most recent versions of R](https://tidyverse.org/blog/2019/04/r-version-support/).
 
 * `obj_is_list()` now returns `FALSE` for list arrays. Functions such as `list_drop_empty()` and `list_combine()` validate their input using `obj_is_list()`, but aren't well defined on list arrays.
 
@@ -211,7 +211,7 @@
 
 * R >=3.5.0 is now explicitly required. This is in line with the tidyverse
   policy of supporting the [5 most recent versions of
-  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+  R](https://tidyverse.org/blog/2019/04/r-version-support/).
 
 # vctrs 0.5.2
 
