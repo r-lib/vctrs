@@ -2,6 +2,10 @@
 
 ## vctrs (development version)
 
+## vctrs 0.7.0
+
+CRAN release: 2026-01-16
+
 ### Features
 
 - New

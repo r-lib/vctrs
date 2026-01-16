@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.5.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,8 +40,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.7.0" id="vctrs-070">vctrs 0.7.0<a class="anchor" aria-label="anchor" href="#vctrs-070"></a></h2><p class="text-muted">CRAN release: 2026-01-16</p>
 <div class="section level3">
-<h3 id="features-development-version">Features<a class="anchor" aria-label="anchor" href="#features-development-version"></a></h3>
+<h3 id="features-0-7-0">Features<a class="anchor" aria-label="anchor" href="#features-0-7-0"></a></h3>
 <ul><li><p>New <code><a href="../reference/vec_if_else.html">vec_if_else()</a></code> for performing a vectorized if-else. It is exactly the same as <code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code>, but much faster and more memory efficient (<a href="https://github.com/r-lib/vctrs/issues/2030" class="external-link">#2030</a>).</p></li>
 <li><p>New <code><a href="../reference/vec-case-and-replace.html">vec_case_when()</a></code> and <code><a href="../reference/vec-case-and-replace.html">vec_replace_when()</a></code> for recoding and replacing using logical conditions (<a href="https://github.com/r-lib/vctrs/issues/2024" class="external-link">#2024</a>).</p></li>
 <li><p>New <code><a href="../reference/vec-recode-and-replace.html">vec_recode_values()</a></code> and <code><a href="../reference/vec-recode-and-replace.html">vec_replace_values()</a></code> for recoding and replacing values. In particular, this makes it easy to recode a vector using a lookup table (<a href="https://github.com/r-lib/vctrs/issues/2027" class="external-link">#2027</a>).</p></li>
@@ -87,7 +90,7 @@
 </ul></li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-0-7-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-7-0"></a></h3>
 <ul><li><p>data.table’s <code>IDate</code> class now has <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> and <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> methods, fixing a number of issues with that class (<a href="https://github.com/r-lib/vctrs/issues/1549" class="external-link">#1549</a>, <a href="https://github.com/r-lib/vctrs/issues/1961" class="external-link">#1961</a>, <a href="https://github.com/r-lib/vctrs/issues/1972" class="external-link">#1972</a>, <a href="https://github.com/r-lib/vctrs/issues/1781" class="external-link">#1781</a>).</p></li>
 <li><p><code>vec_detect_complete(NULL)</code> now returns <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical()</a></code>, consistent with <code>vec_detect_missing(NULL)</code> (<a href="https://github.com/r-lib/vctrs/issues/1916" class="external-link">#1916</a>).</p></li>
 <li><p><code><a href="../reference/vec_slice.html">vec_assign()</a></code> no longer modifies <code>POSIXlt</code> and <code>vctrs_rcrd</code> types in place (<a href="https://github.com/r-lib/vctrs/issues/1951" class="external-link">#1951</a>).</p></li>
@@ -104,7 +107,7 @@
 <li><p>Methods for the deprecated testthat function <code>is_informative_error()</code> have been removed (<a href="https://github.com/r-lib/vctrs/issues/2089" class="external-link">#2089</a>).</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="performance-development-version">Performance<a class="anchor" aria-label="anchor" href="#performance-development-version"></a></h3>
+<h3 id="performance-0-7-0">Performance<a class="anchor" aria-label="anchor" href="#performance-0-7-0"></a></h3>
 <ul><li><p><code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/list_unchop.html">list_unchop()</a></code>, <code><a href="../reference/vec_size.html">vec_size_common()</a></code>, <code><a href="../reference/vec_recycle.html">vec_recycle_common()</a></code>, <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>, <code><a href="../reference/vec_size.html">list_sizes()</a></code>, <code><a href="../reference/obj_is_list.html">list_check_all_vectors()</a></code>, and other vctrs functions that take a list of objects are now more performant, particularly when many small objects are provided (<a href="https://github.com/r-lib/vctrs/issues/2034" class="external-link">#2034</a>, <a href="https://github.com/r-lib/vctrs/issues/2035" class="external-link">#2035</a>, <a href="https://github.com/r-lib/vctrs/issues/2041" class="external-link">#2041</a>, <a href="https://github.com/r-lib/vctrs/issues/2042" class="external-link">#2042</a>, <a href="https://github.com/r-lib/vctrs/issues/2043" class="external-link">#2043</a>, <a href="https://github.com/r-lib/vctrs/issues/2044" class="external-link">#2044</a>, <a href="https://github.com/r-lib/vctrs/issues/2070" class="external-link">#2070</a>).</p></li>
 <li><p><code><a href="../reference/vec_match.html">vec_match()</a></code>, <code><a href="../reference/vec_match.html">vec_in()</a></code>, <code><a href="../reference/vec_group.html">vec_group_loc()</a></code>, <code><a href="../reference/vec_count.html">vec_count()</a></code>, <code><a href="../reference/vec_unique.html">vec_unique()</a></code> and other functions backed by a dictionary based implementation are often significantly faster, depending on the exact inputs used (<a href="https://github.com/r-lib/vctrs/issues/1976" class="external-link">#1976</a>).</p></li>
 <li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> now efficiently internally recycles <code>x</code> and <code>y</code> elements of size 1 (<a href="https://github.com/r-lib/vctrs/issues/2028" class="external-link">#2028</a>).</p></li>
@@ -114,7 +117,7 @@
 <li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> with arrays no longer clones when no casting is required (<a href="https://github.com/r-lib/vctrs/issues/2006" class="external-link">#2006</a>).</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-0-7-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-7-0"></a></h3>
 <ul><li><p>R &gt;=4.0.0 is now required. This is still more permissive than the general tidyverse policy of supporting the <a href="https://tidyverse.org/blog/2019/04/r-version-support/" class="external-link">5 most recent versions of R</a>.</p></li>
 <li><p><code><a href="../reference/obj_is_list.html">obj_is_list()</a></code> now returns <code>FALSE</code> for list arrays. Functions such as <code><a href="../reference/list_drop_empty.html">list_drop_empty()</a></code> and <code><a href="../reference/list_combine.html">list_combine()</a></code> validate their input using <code><a href="../reference/obj_is_list.html">obj_is_list()</a></code>, but aren’t well defined on list arrays.</p></li>
 <li><p>Assigning <code>NULL</code> into a <code>&lt;list_of&gt;</code> via <code>x[[i]] &lt;- NULL</code> now shortens the list to better align with base R and the existing <code>$&lt;-</code> and <code>[&lt;-</code> methods (<a href="https://github.com/r-lib/vctrs/issues/2112" class="external-link">#2112</a>).</p></li>
