@@ -1,0 +1,292 @@
+# Package index
+
+## User FAQ
+
+- [`faq-compatibility-types`](https://vctrs.r-lib.org/reference/faq-compatibility-types.md)
+  : FAQ - How is the compatibility of vector types decided?
+- [`faq-error-incompatible-attributes`](https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.md)
+  : FAQ - Error/Warning: Some attributes are incompatible
+- [`faq-error-scalar-type`](https://vctrs.r-lib.org/reference/faq-error-scalar-type.md)
+  [`faq_error_scalar_type`](https://vctrs.r-lib.org/reference/faq-error-scalar-type.md)
+  : FAQ - Error: Input must be a vector
+
+## Developer FAQ
+
+- [`howto-faq-coercion-data-frame`](https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.md)
+  : FAQ - How to implement ptype2 and cast methods? (Data frames)
+- [`howto-faq-coercion`](https://vctrs.r-lib.org/reference/howto-faq-coercion.md)
+  : FAQ - How to implement ptype2 and cast methods?
+- [`howto-faq-fix-scalar-type-error`](https://vctrs.r-lib.org/reference/howto-faq-fix-scalar-type-error.md)
+  [`howto_faq_fix_scalar_type_error`](https://vctrs.r-lib.org/reference/howto-faq-fix-scalar-type-error.md)
+  : FAQ - Why isn't my class treated as a vector?
+- [`theory-faq-coercion`](https://vctrs.r-lib.org/reference/theory-faq-coercion.md)
+  : FAQ - How does coercion work in vctrs?
+- [`theory-faq-recycling`](https://vctrs.r-lib.org/reference/theory-faq-recycling.md)
+  [`vector_recycling_rules`](https://vctrs.r-lib.org/reference/theory-faq-recycling.md)
+  : FAQ - How does recycling work in vctrs and the tidyverse?
+- [`reference-faq-compatibility`](https://vctrs.r-lib.org/reference/reference-faq-compatibility.md)
+  : FAQ - Is my class compatible with vctrs?
+
+## Internal FAQ
+
+- [`internal-faq-matches-algorithm`](https://vctrs.r-lib.org/reference/internal-faq-matches-algorithm.md)
+  :
+
+  Internal FAQ - Implementation of
+  [`vec_locate_matches()`](https://vctrs.r-lib.org/reference/vec_locate_matches.md)
+
+- [`internal-faq-ptype2-identity`](https://vctrs.r-lib.org/reference/internal-faq-ptype2-identity.md)
+  :
+
+  Internal FAQ -
+  [`vec_ptype2()`](https://vctrs.r-lib.org/reference/vec_ptype2.md),
+  `NULL`, and unspecified vectors
+
+## Genericity
+
+- [`vec_ptype2()`](https://vctrs.r-lib.org/reference/vec_ptype2.md) :
+  Find the common type for a pair of vectors
+- [`vec_cast()`](https://vctrs.r-lib.org/reference/vec_cast.md)
+  [`vec_cast_common()`](https://vctrs.r-lib.org/reference/vec_cast.md) :
+  Cast a vector to a specified type
+- [`vec_proxy()`](https://vctrs.r-lib.org/reference/vec_proxy.md)
+  [`vec_restore()`](https://vctrs.r-lib.org/reference/vec_proxy.md)
+  **\[experimental\]** : Proxy and restore
+- [`vec_proxy_compare()`](https://vctrs.r-lib.org/reference/vec_proxy_compare.md)
+  [`vec_proxy_order()`](https://vctrs.r-lib.org/reference/vec_proxy_compare.md)
+  : Comparison and order proxy
+- [`vec_proxy_equal()`](https://vctrs.r-lib.org/reference/vec_proxy_equal.md)
+  : Equality proxy
+
+## Foundations
+
+- [`vec_data()`](https://vctrs.r-lib.org/reference/vec_data.md)
+  **\[experimental\]** : Extract underlying data
+- [`vec_ptype()`](https://vctrs.r-lib.org/reference/vec_ptype.md)
+  [`vec_ptype_common()`](https://vctrs.r-lib.org/reference/vec_ptype.md)
+  [`vec_ptype_show()`](https://vctrs.r-lib.org/reference/vec_ptype.md) :
+  Find the prototype of a set of vectors
+- [`vec_size()`](https://vctrs.r-lib.org/reference/vec_size.md)
+  [`vec_size_common()`](https://vctrs.r-lib.org/reference/vec_size.md)
+  [`list_sizes()`](https://vctrs.r-lib.org/reference/vec_size.md)
+  [`vec_is_empty()`](https://vctrs.r-lib.org/reference/vec_size.md) :
+  Number of observations
+- [`obj_is_vector()`](https://vctrs.r-lib.org/reference/vector-checks.md)
+  [`obj_check_vector()`](https://vctrs.r-lib.org/reference/vector-checks.md)
+  [`vec_check_size()`](https://vctrs.r-lib.org/reference/vector-checks.md)
+  [`vec_check_recyclable()`](https://vctrs.r-lib.org/reference/vector-checks.md)
+  : Vector checks
+- [`obj_is_list()`](https://vctrs.r-lib.org/reference/obj_is_list.md)
+  [`obj_check_list()`](https://vctrs.r-lib.org/reference/obj_is_list.md)
+  [`list_all_vectors()`](https://vctrs.r-lib.org/reference/obj_is_list.md)
+  [`list_check_all_vectors()`](https://vctrs.r-lib.org/reference/obj_is_list.md)
+  [`list_all_size()`](https://vctrs.r-lib.org/reference/obj_is_list.md)
+  [`list_check_all_size()`](https://vctrs.r-lib.org/reference/obj_is_list.md)
+  [`list_all_recyclable()`](https://vctrs.r-lib.org/reference/obj_is_list.md)
+  [`list_check_all_recyclable()`](https://vctrs.r-lib.org/reference/obj_is_list.md)
+  : List checks
+
+## Combining
+
+- [`vec_c()`](https://vctrs.r-lib.org/reference/vec_c.md) : Combine many
+  vectors into one vector
+- [`list_combine()`](https://vctrs.r-lib.org/reference/list_combine.md)
+  : Combine a list of vectors
+- [`vec_interleave()`](https://vctrs.r-lib.org/reference/vec_interleave.md)
+  : Interleave many vectors into one vector
+- [`vec_rbind()`](https://vctrs.r-lib.org/reference/vec_bind.md)
+  [`vec_cbind()`](https://vctrs.r-lib.org/reference/vec_bind.md) :
+  Combine many data frames into one data frame
+- [`name_spec`](https://vctrs.r-lib.org/reference/name_spec.md) : Name
+  specifications
+
+## Slicing and recycling
+
+- [`vec_init()`](https://vctrs.r-lib.org/reference/vec_init.md) :
+  Initialize a vector
+- [`vec_slice()`](https://vctrs.r-lib.org/reference/vec_slice.md)
+  [`` `vec_slice<-`() ``](https://vctrs.r-lib.org/reference/vec_slice.md)
+  [`vec_assign()`](https://vctrs.r-lib.org/reference/vec_slice.md) : Get
+  or set observations in a vector
+- [`vec_recycle()`](https://vctrs.r-lib.org/reference/vec_recycle.md)
+  [`vec_recycle_common()`](https://vctrs.r-lib.org/reference/vec_recycle.md)
+  : Vector recycling
+- [`vec_chop()`](https://vctrs.r-lib.org/reference/vec_chop.md) :
+  Chopping
+- [`list_drop_empty()`](https://vctrs.r-lib.org/reference/list_drop_empty.md)
+  : Drop empty elements from a list
+
+## Assigning
+
+- [`vec_slice()`](https://vctrs.r-lib.org/reference/vec_slice.md)
+  [`` `vec_slice<-`() ``](https://vctrs.r-lib.org/reference/vec_slice.md)
+  [`vec_assign()`](https://vctrs.r-lib.org/reference/vec_slice.md) : Get
+  or set observations in a vector
+- [`vec_fill_missing()`](https://vctrs.r-lib.org/reference/vec_fill_missing.md)
+  : Fill in missing values with the previous or following value
+
+## Recoding
+
+- [`vec_if_else()`](https://vctrs.r-lib.org/reference/vec_if_else.md) :
+  Vectorized if-else
+- [`vec_case_when()`](https://vctrs.r-lib.org/reference/vec-case-and-replace.md)
+  [`vec_replace_when()`](https://vctrs.r-lib.org/reference/vec-case-and-replace.md)
+  : Recode and replace using logical conditions
+- [`vec_recode_values()`](https://vctrs.r-lib.org/reference/vec-recode-and-replace.md)
+  [`vec_replace_values()`](https://vctrs.r-lib.org/reference/vec-recode-and-replace.md)
+  : Recode and replace values
+
+## Equality and ordering
+
+- [`vec_equal()`](https://vctrs.r-lib.org/reference/vec_equal.md) :
+  Equality
+- [`vec_detect_complete()`](https://vctrs.r-lib.org/reference/vec_detect_complete.md)
+  : Complete
+- [`vec_detect_missing()`](https://vctrs.r-lib.org/reference/missing.md)
+  [`vec_any_missing()`](https://vctrs.r-lib.org/reference/missing.md) :
+  Missing values
+- [`vec_compare()`](https://vctrs.r-lib.org/reference/vec_compare.md) :
+  Compare two vectors
+
+## Sorting
+
+- [`vec_order()`](https://vctrs.r-lib.org/reference/vec_order.md)
+  [`vec_sort()`](https://vctrs.r-lib.org/reference/vec_order.md) : Order
+  and sort vectors
+- [`vec_rank()`](https://vctrs.r-lib.org/reference/vec_rank.md) :
+  Compute ranks
+
+## Matching and splitting
+
+- [`vec_count()`](https://vctrs.r-lib.org/reference/vec_count.md) :
+  Count unique values in a vector
+- [`vec_duplicate_any()`](https://vctrs.r-lib.org/reference/vec_duplicate.md)
+  [`vec_duplicate_detect()`](https://vctrs.r-lib.org/reference/vec_duplicate.md)
+  [`vec_duplicate_id()`](https://vctrs.r-lib.org/reference/vec_duplicate.md)
+  : Find duplicated values
+- [`vec_unique()`](https://vctrs.r-lib.org/reference/vec_unique.md)
+  [`vec_unique_loc()`](https://vctrs.r-lib.org/reference/vec_unique.md)
+  [`vec_unique_count()`](https://vctrs.r-lib.org/reference/vec_unique.md)
+  : Find and count unique values
+- [`vec_match()`](https://vctrs.r-lib.org/reference/vec_match.md)
+  [`vec_in()`](https://vctrs.r-lib.org/reference/vec_match.md) : Find
+  matching observations across vectors
+- [`vec_locate_matches()`](https://vctrs.r-lib.org/reference/vec_locate_matches.md)
+  : Locate observations matching specified conditions
+- [`vec_set_intersect()`](https://vctrs.r-lib.org/reference/vec-set.md)
+  [`vec_set_difference()`](https://vctrs.r-lib.org/reference/vec-set.md)
+  [`vec_set_union()`](https://vctrs.r-lib.org/reference/vec-set.md)
+  [`vec_set_symmetric_difference()`](https://vctrs.r-lib.org/reference/vec-set.md)
+  : Set operations
+- [`vec_split()`](https://vctrs.r-lib.org/reference/vec_split.md) :
+  Split a vector into groups
+
+## Sequences and repetitions
+
+- [`vec_rep()`](https://vctrs.r-lib.org/reference/vec-rep.md)
+  [`vec_rep_each()`](https://vctrs.r-lib.org/reference/vec-rep.md)
+  [`vec_unrep()`](https://vctrs.r-lib.org/reference/vec-rep.md) : Repeat
+  a vector
+- [`vec_seq_along()`](https://vctrs.r-lib.org/reference/vec_seq_along.md)
+  [`vec_init_along()`](https://vctrs.r-lib.org/reference/vec_seq_along.md)
+  : Useful sequences
+- [`vec_identify_runs()`](https://vctrs.r-lib.org/reference/runs.md)
+  [`vec_run_sizes()`](https://vctrs.r-lib.org/reference/runs.md) : Runs
+- [`vec_expand_grid()`](https://vctrs.r-lib.org/reference/vec_expand_grid.md)
+  : Create a data frame from all combinations of the inputs
+
+## Reducers
+
+- [`vec_pany()`](https://vctrs.r-lib.org/reference/parallel-operators.md)
+  [`vec_pall()`](https://vctrs.r-lib.org/reference/parallel-operators.md)
+  :
+
+  Parallel [`any()`](https://rdrr.io/r/base/any.html) and
+  [`all()`](https://rdrr.io/r/base/all.html)
+
+## New classes
+
+- [`list_of()`](https://vctrs.r-lib.org/reference/list_of.md)
+  [`as_list_of()`](https://vctrs.r-lib.org/reference/list_of.md)
+  [`is_list_of()`](https://vctrs.r-lib.org/reference/list_of.md)
+  [`vec_ptype2(`*`<vctrs_list_of>`*`)`](https://vctrs.r-lib.org/reference/list_of.md)
+  [`vec_cast(`*`<vctrs_list_of>`*`)`](https://vctrs.r-lib.org/reference/list_of.md)
+  : Construct a list of homogenous vectors
+
+- [`list_of_ptype()`](https://vctrs.r-lib.org/reference/list-of-attributes.md)
+  [`list_of_size()`](https://vctrs.r-lib.org/reference/list-of-attributes.md)
+  :
+
+  `list_of` attributes
+
+- [`list_of_transpose()`](https://vctrs.r-lib.org/reference/list_of_transpose.md)
+  : Transpose a list of homogenous vectors
+
+## Data frame
+
+- [`df_list()`](https://vctrs.r-lib.org/reference/df_list.md) : Collect
+  columns for data frame construction
+- [`new_data_frame()`](https://vctrs.r-lib.org/reference/new_data_frame.md)
+  : Assemble attributes for data frame construction
+- [`data_frame()`](https://vctrs.r-lib.org/reference/data_frame.md) :
+  Construct a data frame
+- [`df_ptype2()`](https://vctrs.r-lib.org/reference/df_ptype2.md)
+  [`df_cast()`](https://vctrs.r-lib.org/reference/df_ptype2.md)
+  [`tib_ptype2()`](https://vctrs.r-lib.org/reference/df_ptype2.md)
+  [`tib_cast()`](https://vctrs.r-lib.org/reference/df_ptype2.md) :
+  Coercion between two data frames
+
+## User tools
+
+- [`` `%0%` ``](https://vctrs.r-lib.org/reference/op-empty-default.md) :
+  Default value for empty vectors
+
+## Developer tools
+
+- [`new_vctr()`](https://vctrs.r-lib.org/reference/new_vctr.md) : vctr
+  (vector) S3 class
+- [`vec_ptype_full()`](https://vctrs.r-lib.org/reference/vec_ptype_full.md)
+  [`vec_ptype_abbr()`](https://vctrs.r-lib.org/reference/vec_ptype_full.md)
+  : Vector type as a string
+- [`stop_incompatible_type()`](https://vctrs.r-lib.org/reference/vctrs-conditions.md)
+  [`stop_incompatible_cast()`](https://vctrs.r-lib.org/reference/vctrs-conditions.md)
+  [`stop_incompatible_op()`](https://vctrs.r-lib.org/reference/vctrs-conditions.md)
+  [`stop_incompatible_size()`](https://vctrs.r-lib.org/reference/vctrs-conditions.md)
+  [`allow_lossy_cast()`](https://vctrs.r-lib.org/reference/vctrs-conditions.md)
+  : Custom conditions for vctrs package
+- [`new_rcrd()`](https://vctrs.r-lib.org/reference/new_rcrd.md) : rcrd
+  (record) S3 class
+- [`fields()`](https://vctrs.r-lib.org/reference/fields.md)
+  [`n_fields()`](https://vctrs.r-lib.org/reference/fields.md)
+  [`field()`](https://vctrs.r-lib.org/reference/fields.md)
+  [`` `field<-`() ``](https://vctrs.r-lib.org/reference/fields.md) :
+  Tools for accessing the fields of a record.
+- [`s3_register`](https://vctrs.r-lib.org/reference/s3_register.md) :
+  Register a method for a suggested dependency
+- [`vec_arith()`](https://vctrs.r-lib.org/reference/vec_arith.md)
+  [`vec_arith_base()`](https://vctrs.r-lib.org/reference/vec_arith.md)
+  [`MISSING()`](https://vctrs.r-lib.org/reference/vec_arith.md) :
+  Arithmetic operations
+- [`vec_math()`](https://vctrs.r-lib.org/reference/vec_math.md)
+  [`vec_math_base()`](https://vctrs.r-lib.org/reference/vec_math.md) :
+  Mathematical operations
+- [`unspecified()`](https://vctrs.r-lib.org/reference/vctrs-unspecified.md)
+  [`vec_ptype_finalise()`](https://vctrs.r-lib.org/reference/vctrs-unspecified.md)
+  : Unspecified vectors and prototype finalisation
+- [`vec_default_cast()`](https://vctrs.r-lib.org/reference/vec_default_ptype2.md)
+  [`vec_default_ptype2()`](https://vctrs.r-lib.org/reference/vec_default_ptype2.md)
+  : Default cast and ptype2 methods
+- [`vec_as_names()`](https://vctrs.r-lib.org/reference/vec_as_names.md)
+  : Retrieve and repair names
+- [`vec_names2()`](https://vctrs.r-lib.org/reference/vec_names.md)
+  [`vec_names()`](https://vctrs.r-lib.org/reference/vec_names.md)
+  [`vec_set_names()`](https://vctrs.r-lib.org/reference/vec_names.md) :
+  Get or set the names of a vector
+- [`vec_as_location()`](https://vctrs.r-lib.org/reference/vec_as_location.md)
+  [`num_as_location()`](https://vctrs.r-lib.org/reference/vec_as_location.md)
+  [`vec_as_location2()`](https://vctrs.r-lib.org/reference/vec_as_location.md)
+  [`num_as_location2()`](https://vctrs.r-lib.org/reference/vec_as_location.md)
+  : Create a vector of locations
+- [`vec_as_subscript()`](https://vctrs.r-lib.org/reference/vec_as_subscript.md)
+  [`vec_as_subscript2()`](https://vctrs.r-lib.org/reference/vec_as_subscript.md)
+  **\[experimental\]** : Convert to a base subscript type

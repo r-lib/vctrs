@@ -1,0 +1,85 @@
+# FAQ - Error: Input must be a vector
+
+This error occurs when a function expects a vector and gets a scalar
+object instead. This commonly happens when some code attempts to assign
+a scalar object as column in a data frame:
+
+    fn <- function() NULL
+    tibble::tibble(x = fn)
+    #> Error in `tibble::tibble()`:
+    #> ! All columns in a tibble must be vectors.
+    #> x Column `x` is a function.
+
+    fit <- lm(1:3 ~ 1)
+    tibble::tibble(x = fit)
+    #> Error in `tibble::tibble()`:
+    #> ! All columns in a tibble must be vectors.
+    #> x Column `x` is a `lm` object.
+
+## Vectorness in base R and in the tidyverse
+
+In base R, almost everything is a vector or behaves like a vector. In
+the tidyverse we have chosen to be a bit stricter about what is
+considered a vector. The main question we ask ourselves to decide on the
+vectorness of a type is whether it makes sense to include that object as
+a column in a data frame.
+
+The main difference is that S3 lists are considered vectors by base R
+but in the tidyverse that’s not the case by default:
+
+    fit <- lm(1:3 ~ 1)
+
+    typeof(fit)
+    #> [1] "list"
+    class(fit)
+    #> [1] "lm"
+
+    # S3 lists can be subset like a vector using base R:
+    fit[c(1, 4)]
+    #> $coefficients
+    #> (Intercept)
+    #>           2
+    #>
+    #> $rank
+    #> [1] 1
+
+    # But not in vctrs
+    vctrs::vec_slice(fit, c(1, 4))
+    #> Error in `vctrs::vec_slice()`:
+    #> ! `x` must be a vector, not a <lm> object.
+    #> x Detected incompatible scalar S3 list. To be treated as a vector, the object must explicitly inherit from <list> or should implement a `vec_proxy()` method. Class: <lm>.
+    #> i If this object comes from a package, please report this error to the package author.
+    #> i Read our FAQ about creating vector types (`?vctrs::howto_faq_fix_scalar_type_error`) to learn more.
+
+Defused function calls are another (more esoteric) example:
+
+    call <- quote(foo(bar = TRUE, baz = FALSE))
+    call
+    #> foo(bar = TRUE, baz = FALSE)
+
+    # They can be subset like a vector using base R:
+    call[1:2]
+    #> foo(bar = TRUE)
+    lapply(call, function(x) x)
+    #> [[1]]
+    #> foo
+    #>
+    #> $bar
+    #> [1] TRUE
+    #>
+    #> $baz
+    #> [1] FALSE
+
+    # But not with vctrs:
+    vctrs::vec_slice(call, 1:2)
+    #> Error in `vctrs::vec_slice()`:
+    #> ! `x` must be a vector, not a call.
+    #> i Read our FAQ about scalar types (`?vctrs::faq_error_scalar_type`) to learn more.
+
+## I get a scalar type error but I think this is a bug
+
+It’s possible the author of the class needs to do some work to declare
+their class a vector. Consider reaching out to the author. We have
+written a [developer FAQ
+page](https://vctrs.r-lib.org/reference/howto-faq-fix-scalar-type-error.md)
+to help them fix the issue.

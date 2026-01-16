@@ -1,324 +1,115 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://vctrs.r-lib.org/404.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/articles/pillar.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/articles/s3-vector.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/articles/stability.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/articles/type-size.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/index.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/as-is.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/data_frame.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/df_list.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/df_ptype2.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/faq-compatibility-types.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/faq-error-scalar-type.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/fields.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/howto-faq-coercion.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/howto-faq-fix-scalar-type-error.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/int64.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/internal-faq-matches-algorithm.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/internal-faq-ptype2-identity.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/list_drop_empty.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/list_of.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/maybe_lossy_cast.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/missing.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/name_spec.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/new_data_frame.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/new_date.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/new_factor.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/new_list_of.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/new_partial.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/new_rcrd.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/new_vctr.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/obj_is_list.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/obj_print.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/op-empty-default.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/order-radix.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/partial_factor.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/partial_frame.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/reference-faq-compatibility.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/runs.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/s3_register.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/table.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/theory-faq-coercion.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/theory-faq-recycling.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/unspecified.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vctrs-conditions.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vctrs-data-frame.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vctrs-package.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec-rep.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec-set.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_arith.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_as_index.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_as_location.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_as_names.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_as_names_legacy.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_as_subscript.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_assert.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_bind.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_c.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_cast.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_cbind_frame_ptype.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_chop.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_compare.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_count.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_data.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_default_ptype2.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_detect_complete.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_duplicate.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_empty.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_equal.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_equal_na.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_expand_grid.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_fill_missing.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_group.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_init.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_interleave.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_is_list.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_locate_matches.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_locate_sorted_groups.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_match.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_math.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_names.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_order.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_proxy.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_proxy_compare.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_proxy_equal.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_ptype.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_ptype2.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_ptype_full.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_rank.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_recycle.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_repeat.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_seq_along.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_size.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_slice.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_split.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_type.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_unchop.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vec_unique.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vector-checks.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://vctrs.r-lib.org/404.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/LICENSE-text.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/LICENSE.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/articles/index.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/articles/pillar.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/articles/s3-vector.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/articles/stability.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/articles/type-size.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/authors.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/index.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/news/index.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/as-is.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/data_frame.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/df_list.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/df_ptype2.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/faq-compatibility-types.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/faq-error-scalar-type.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/fields.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/howto-faq-coercion.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/howto-faq-fix-scalar-type-error.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/index.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/int64.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/internal-faq-matches-algorithm.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/internal-faq-ptype2-identity.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/list-of-attributes.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/list_combine.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/list_drop_empty.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/list_of.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/list_of_transpose.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/list_unchop.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/maybe_lossy_cast.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/missing.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/name_spec.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/new_data_frame.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/new_date.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/new_factor.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/new_list_of.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/new_rcrd.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/new_vctr.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/obj_is_list.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/obj_print.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/op-empty-default.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/order-radix.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/parallel-operators.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/reference-faq-compatibility.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/runs.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/s3_register.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/table.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/theory-faq-coercion.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/theory-faq-recycling.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vctrs-conditions.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vctrs-data-frame.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vctrs-package.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vctrs-unspecified.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec-case-and-replace.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec-recode-and-replace.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec-rep.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec-set.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_arith.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_as_index.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_as_location.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_as_names.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_as_names_legacy.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_as_subscript.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_assert.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_bind.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_c.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_cast.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_cbind_frame_ptype.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_chop.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_compare.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_count.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_data.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_default_ptype2.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_detect_complete.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_duplicate.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_empty.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_equal.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_equal_na.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_expand_grid.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_fill_missing.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_group.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_if_else.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_init.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_interleave.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_is_list.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_locate_matches.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_locate_sorted_groups.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_match.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_math.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_names.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_order.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_proxy.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_proxy_compare.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_proxy_equal.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_ptype.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_ptype2.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_ptype_full.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_rank.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_recycle.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_repeat.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_seq_along.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_size.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_slice.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_split.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_type.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_unchop.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vec_unique.html</loc></url>
+<url><loc>https://vctrs.r-lib.org/reference/vector-checks.html</loc></url>
 </urlset>
+

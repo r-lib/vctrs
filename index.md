@@ -1,0 +1,77 @@
+# vctrs
+
+There are three main goals to the vctrs package, each described in a
+vignette:
+
+- To propose
+  [`vec_size()`](https://vctrs.r-lib.org/reference/vec_size.md) and
+  [`vec_ptype()`](https://vctrs.r-lib.org/reference/vec_ptype.md) as
+  alternatives to [`length()`](https://rdrr.io/r/base/length.html) and
+  [`class()`](https://rdrr.io/r/base/class.html);
+  [`vignette("type-size")`](https://vctrs.r-lib.org/articles/type-size.md).
+  These definitions are paired with a framework for size-recycling and
+  type-coercion. `ptype` should evoke the notion of a prototype,
+  i.e. the original or typical form of something.
+
+- To define size- and type-stability as desirable function properties,
+  use them to analyse existing base functions, and to propose better
+  alternatives;
+  [`vignette("stability")`](https://vctrs.r-lib.org/articles/stability.md).
+  This work has been particularly motivated by thinking about the ideal
+  properties of [`c()`](https://rdrr.io/r/base/c.html),
+  [`ifelse()`](https://rdrr.io/r/base/ifelse.html), and
+  [`rbind()`](https://rdrr.io/r/base/cbind.html).
+
+- To provide a new `vctr` base class that makes it easy to create new S3
+  vectors;
+  [`vignette("s3-vector")`](https://vctrs.r-lib.org/articles/s3-vector.md).
+  vctrs provides methods for many base generics in terms of a few new
+  vctrs generics, making implementation considerably simpler and more
+  robust.
+
+vctrs is a developer-focussed package. Understanding and extending vctrs
+requires some effort from developers, but should be invisible to most
+users. It’s our hope that having an underlying theory will mean that
+users can build up an accurate mental model without explicitly learning
+the theory. vctrs will typically be used by other packages, making it
+easy for them to provide new classes of S3 vectors that are supported
+throughout the tidyverse (and beyond). For that reason, vctrs has few
+dependencies.
+
+## Installation
+
+Install vctrs from CRAN with:
+
+``` r
+install.packages("vctrs")
+```
+
+Alternatively, if you need the development version, install it with:
+
+``` r
+# install.packages("pak")
+pak::pak("r-lib/vctrs")
+```
+
+## Usage
+
+``` r
+library(vctrs)
+
+# Sizes
+vec_size_common(1, 1:10)
+#> [1] 10
+str(vec_recycle_common(1, 1:10))
+#> List of 2
+#>  $ : num [1:10] 1 1 1 1 1 1 1 1 1 1
+#>  $ : int [1:10] 1 2 3 4 5 6 7 8 9 10
+
+# Prototypes
+vec_ptype_common(FALSE, 1L, 2.5)
+#> numeric(0)
+str(vec_cast_common(FALSE, 1L, 2.5))
+#> List of 3
+#>  $ : num 0
+#>  $ : num 1
+#>  $ : num 2.5
+```
