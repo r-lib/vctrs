@@ -35,7 +35,7 @@ vec_proxy.AsIs <- function(x, ...) {
 
 #' @export
 vec_restore.AsIs <- function(x, to, ...) {
-  asis_restore(x)
+  asis_restore(NextMethod())
 }
 
 #' @export
@@ -115,6 +115,6 @@ asis_strip <- function(x) {
 asis_restore <- function(x) {
   # Using `oldClass()` here to return `NULL` for atomics
   # so that their implicit class isn't added
-  class(x) <- c("AsIs", oldClass(x))
+  class(x) <- unique.default(c("AsIs", oldClass(x)))
   x
 }
