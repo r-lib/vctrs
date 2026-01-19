@@ -46,7 +46,7 @@ enum rownames_type {
   ROWNAMES_TYPE_identifiers
 };
 enum rownames_type rownames_type(r_obj* rn);
-r_ssize rownames_size(r_obj* rn);
+r_ssize rownames_size(r_obj* rn, enum rownames_type type);
 
 r_obj* df_ptype2(
   r_obj* x,
