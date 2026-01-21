@@ -9,8 +9,8 @@ SEXP fct_ptype2(
   struct vctrs_arg* p_x_arg,
   struct vctrs_arg* p_y_arg
 ) {
-  SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
-  SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
+  SEXP x_levels = PROTECT(Rf_getAttrib(x, R_LevelsSymbol));
+  SEXP y_levels = PROTECT(Rf_getAttrib(y, R_LevelsSymbol));
 
   if (TYPEOF(x_levels) != STRSXP) {
     stop_corrupt_factor_levels(x, p_x_arg);
@@ -20,16 +20,14 @@ SEXP fct_ptype2(
     stop_corrupt_factor_levels(y, p_y_arg);
   }
 
-  // Quick early exit for identical levels pointing to the same SEXP
-  if (x_levels == y_levels) {
-    return new_empty_factor(x_levels);
-  }
-
-  SEXP levels = PROTECT(levels_union(x_levels, y_levels));
+  // Use `x_levels` if they are equal pointers, otherwise compute union
+  SEXP levels = (x_levels == y_levels) ?
+    x_levels :
+    levels_union(x_levels, y_levels);
+  PROTECT(levels);
 
   SEXP out = new_empty_factor(levels);
-
-  UNPROTECT(1);
+  UNPROTECT(3);
   return out;
 }
 
@@ -61,13 +59,14 @@ r_obj* ord_ptype2(
   struct r_lazy call,
   enum s3_fallback s3_fallback
 ) {
-  r_obj* x_levels = r_attrib_get(x, R_LevelsSymbol);
-  r_obj* y_levels = r_attrib_get(y, R_LevelsSymbol);
+  r_obj* x_levels = PROTECT(Rf_getAttrib(x, R_LevelsSymbol));
+  r_obj* y_levels = PROTECT(Rf_getAttrib(y, R_LevelsSymbol));
 
+  SEXP out;
   if (ord_ptype2_validate(x_levels, y_levels, x, y, p_x_arg, p_y_arg)) {
-    return new_empty_ordered(x_levels);
+    out = new_empty_ordered(x_levels);
   } else {
-    return vec_ptype2_default(
+    out = vec_ptype2_default(
       x,
       y,
       p_x_arg,
@@ -76,6 +75,9 @@ r_obj* ord_ptype2(
       s3_fallback
     );
   }
+
+  UNPROTECT(2);
+  return out;
 }
 
 static SEXP levels_union(SEXP x, SEXP y) {
@@ -273,9 +275,10 @@ SEXP fct_as_factor(SEXP x,
 
 // [[ include("factor.h") ]]
 SEXP ord_as_ordered(const struct cast_opts* p_opts) {
-  r_obj* x_levels = r_attrib_get(p_opts->x, R_LevelsSymbol);
-  r_obj* to_levels = r_attrib_get(p_opts->to, R_LevelsSymbol);
+  SEXP x_levels = PROTECT(Rf_getAttrib(p_opts->x, R_LevelsSymbol));
+  SEXP to_levels = PROTECT(Rf_getAttrib(p_opts->to, R_LevelsSymbol));
 
+  SEXP out;
   if (ord_ptype2_validate(
     x_levels,
     to_levels,
@@ -284,15 +287,20 @@ SEXP ord_as_ordered(const struct cast_opts* p_opts) {
     p_opts->p_x_arg,
     p_opts->p_to_arg
   )) {
-    return p_opts->x;
+    out = p_opts->x;
   } else {
-    return vec_cast_default(p_opts->x,
-                            p_opts->to,
-                            p_opts->p_x_arg,
-                            p_opts->p_to_arg,
-                            p_opts->call,
-                            p_opts->s3_fallback);
+    out = vec_cast_default(
+      p_opts->x,
+      p_opts->to,
+      p_opts->p_x_arg,
+      p_opts->p_to_arg,
+      p_opts->call,
+      p_opts->s3_fallback
+    );
   }
+
+  UNPROTECT(2);
+  return out;
 }
 
 static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {
