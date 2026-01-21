@@ -765,19 +765,21 @@ r_obj* df_cast_match(const struct cast_opts* opts,
   for (; i < to_len; ++i) {
     r_ssize pos = to_dups_pos_data[i];
 
-    r_obj* col;
     if (pos == r_globals.na_int) {
       r_obj* to_col = r_list_get(to, i);
-      col = vec_init(to_col, size);
 
       // FIXME: Need to initialise the vector because we currently use
       // `vec_assign()` in `vec_rbind()` before falling back. Attach
       // an attribute to recognise unspecified vectors in
       // `base_c_invoke()`.
       if (opts->s3_fallback && vec_is_common_class_fallback(to_col)) {
-        KEEP(col);
+        r_obj* col = KEEP(vec_init(to_col, size));
         r_attrib_poke(col, r_sym("vctrs:::unspecified"), r_true);
+        r_list_poke(out, i, col);
         FREE(1);
+      } else {
+        r_obj* col = vec_init(to_col, size);
+        r_list_poke(out, i, col);
       }
     } else {
       --pos; // 1-based index
@@ -792,10 +794,10 @@ r_obj* df_cast_match(const struct cast_opts* opts,
         .call = opts->call,
         .s3_fallback = opts->s3_fallback
       };
-      col = vec_cast_opts(&col_opts);
-    }
 
-    r_list_poke(out, i, col);
+      r_obj* col = vec_cast_opts(&col_opts);
+      r_list_poke(out, i, col);
+    }
   }
 
   // Restore data frame size before calling `vec_restore()`. `x` and
