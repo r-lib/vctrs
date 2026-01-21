@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.7.1
 
 * Fixed some protection issues discovered by rchk.
 
