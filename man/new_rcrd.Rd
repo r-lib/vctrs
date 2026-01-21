@@ -20,7 +20,7 @@ named vectors.}
 }
 \description{
 The rcrd class extends \link{vctr}. A rcrd is composed of 1 or more \link{field}s,
-which must be vectors of the same length. Is designed specifically for
+which must be vectors of the same length. It's designed specifically for
 classes that can naturally be decomposed into multiple vectors of the same
 length, like \link{POSIXlt}, but where the organisation should be considered
 an implementation detail invisible to the user (unlike a \link{data.frame}).
