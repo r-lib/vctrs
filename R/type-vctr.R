@@ -552,6 +552,23 @@ vec_cast_or_na <- function(x, to, ...) {
 
 #' @export
 min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (dots_n(...) != 0L) {
+    sizes <- list_sizes(list(x, ...))
+    if (any(sizes != 1L)) {
+      cli::cli_abort(c(
+        "Can't use `...` unless {.arg x} and each of {.arg ...} are of size 1.",
+        "i" = "Size of {.arg x} was {vec_size(x)}",
+        "i" = "{cli::qty(rlang::dots_n(...))}
+               Size{?s} of {.arg ...} {?was/were} {list_sizes(list(...))}",
+        ">" = "If you wanted a size-1 result with the overall {.fn min},
+               use {.code min(c(<args>))}",
+        ">" = "If you wanted a vectorized/parallel {.fn pmin},
+               use {.code pmin(<args>)}"
+      ), class = "vctrs_error_min_intent_uncertain")
+    }
+    x <- vec_c(x, ...)
+  }
+
   if (vec_is_empty(x)) {
     return(vec_cast_or_na(Inf, x))
   }
@@ -573,6 +590,23 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
 #' @export
 max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (dots_n(...) != 0L) {
+    sizes <- list_sizes(list(x, ...))
+    if (any(sizes != 1L)) {
+      cli::cli_abort(c(
+        "Can't use `...` unless {.arg x} and each of {.arg ...} are of size 1.",
+        "i" = "Size of {.arg x} was {vec_size(x)}",
+        "i" = "{cli::qty(rlang::dots_n(...))}
+               Size{?s} of {.arg ...} {?was/were} {list_sizes(list(...))}",
+        ">" = "If you wanted a size-1 result with the overall {.fn max},
+               use {.code max(c(<args>))}",
+        ">" = "If you wanted a vectorized/parallel {.fn pmax},
+               use {.code pmax(<args>)}"
+      ), class = "vctrs_error_max_intent_uncertain")
+    }
+    x <- vec_c(x, ...)
+  }
+
   if (vec_is_empty(x)) {
     return(vec_cast_or_na(-Inf, x))
   }
@@ -594,6 +628,10 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
 #' @export
 range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (dots_n(...) != 0L) {
+    x <- vec_c(x, ...)
+  }
+
   if (vec_is_empty(x)) {
     return(vec_cast_or_na(c(Inf, -Inf), x))
   }

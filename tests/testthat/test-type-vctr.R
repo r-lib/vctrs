@@ -654,6 +654,43 @@ test_that("Summary generics behave identically to base for empty vctrs (#88)", {
   )
 })
 
+test_that("`min` and `max` either combine `x` and `...` or abort (#1372)", {
+  x <- new_vctr(1)
+  y <- new_vctr(3)
+  z <- new_vctr(5)
+
+  expect_identical(min(x, y), x)
+  expect_identical(min(y, x), x)
+  expect_identical(max(x, y), y)
+  expect_identical(max(y, x), y)
+
+  expect_identical(min(x, y, z), x)
+  expect_identical(max(x, y, z), z)
+
+  expect_error(min(rep(x, 5), y), class = "vctrs_error_min_intent_uncertain")
+  expect_error(min(x, rep(y, 5)), class = "vctrs_error_min_intent_uncertain")
+  expect_error(min(rep(x, 0), y), class = "vctrs_error_min_intent_uncertain")
+  expect_error(min(x, rep(y, 0)), class = "vctrs_error_min_intent_uncertain")
+  expect_error(max(rep(x, 5), y), class = "vctrs_error_max_intent_uncertain")
+  expect_error(max(x, rep(y, 5)), class = "vctrs_error_max_intent_uncertain")
+  expect_error(max(rep(x, 0), y), class = "vctrs_error_max_intent_uncertain")
+  expect_error(max(x, rep(y, 0)), class = "vctrs_error_max_intent_uncertain")
+
+  expect_snapshot(min(rep(x, 5), y), error = TRUE, cnd_class = TRUE)
+  expect_snapshot(min(x, rep(y, 5), z), error = TRUE, cnd_class = TRUE)
+  expect_snapshot(max(rep(x, 5), y), error = TRUE, cnd_class = TRUE)
+})
+
+test_that("`range` combines arguments as expected (#1372)", {
+  x <- new_vctr(1)
+  y <- new_vctr(3)
+  z <- new_vctr(as.numeric(13:11))
+
+  expect_identical(range(x, y), c(x, y))
+  expect_identical(range(y, x), c(x, y))
+  expect_identical(range(x, y, z), c(x, z[[1]]))
+})
+
 test_that("generic predicates return logical vectors (#251)", {
   x <- new_vctr(c(1, 2))
   expect_identical(is.finite(x), c(TRUE, TRUE))
