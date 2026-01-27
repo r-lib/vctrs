@@ -19,7 +19,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/r-lib/vctrs/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/r-lib/vctrs/blob/v0.7.1/DESCRIPTION)
 
 Wickham H, Henry L, Vaughan D (2026). *vctrs: Vector Helpers*. R package
 version 0.7.1, <https://vctrs.r-lib.org/>.
