@@ -2,6 +2,10 @@
 
 ## vctrs (development version)
 
+## vctrs 0.7.1
+
+CRAN release: 2026-01-23
+
 - Fixed some protection issues discovered by rchk.
 
 ## vctrs 0.7.0
