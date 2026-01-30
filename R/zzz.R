@@ -168,32 +168,23 @@
   })
 
   on_package_load("sf", {
-    import_from("sf", sf_deps, env = sf_env)
-
-    if (!env_has(ns_env("sf"), "vec_restore.sf")) {
-      s3_register("vctrs::vec_proxy", "sf", vec_proxy_sf)
-      s3_register("vctrs::vec_restore", "sf", vec_restore_sf)
-    }
-    if (!env_has(ns_env("sf"), "vec_ptype2.sf.sf")) {
-      s3_register("vctrs::vec_ptype2", "sf.sf", vec_ptype2_sf_sf)
-      s3_register(
-        "vctrs::vec_ptype2",
-        "sf.data.frame",
-        vec_ptype2_sf_data.frame
-      )
-      s3_register(
-        "vctrs::vec_ptype2",
-        "data.frame.sf",
-        vec_ptype2_data.frame_sf
-      )
-      s3_register("vctrs::vec_ptype2", "sf.tbl_df", vec_ptype2_sf_tbl_df)
-      s3_register("vctrs::vec_ptype2", "tbl_df.sf", vec_ptype2_tbl_df_sf)
-      s3_register("vctrs::vec_cast", "sf.sf", vec_cast_sf_sf)
-      s3_register("vctrs::vec_cast", "sf.data.frame", vec_cast_sf_data.frame)
-      s3_register("vctrs::vec_cast", "data.frame.sf", vec_cast_data.frame_sf)
-    }
-    if (!env_has(ns_env("sf"), "vec_proxy_order.sfc")) {
-      s3_register("vctrs::vec_proxy_order", "sfc", vec_proxy_order_sfc)
+    if (!is_installed("sf (>= 1.0-25)")) {
+      sf_update <- function(...) {
+        abort(
+          "Please update to sf >=1.0-25 for sf + vctrs/tidyverse compatibility."
+        )
+      }
+      s3_register("vctrs::vec_proxy", "sf", sf_update)
+      s3_register("vctrs::vec_restore", "sf", sf_update)
+      s3_register("vctrs::vec_ptype2", "sf.sf", sf_update)
+      s3_register("vctrs::vec_ptype2", "sf.data.frame", sf_update)
+      s3_register("vctrs::vec_ptype2", "data.frame.sf", sf_update)
+      s3_register("vctrs::vec_ptype2", "sf.tbl_df", sf_update)
+      s3_register("vctrs::vec_ptype2", "tbl_df.sf", sf_update)
+      s3_register("vctrs::vec_cast", "sf.sf", sf_update)
+      s3_register("vctrs::vec_cast", "sf.data.frame", sf_update)
+      s3_register("vctrs::vec_cast", "data.frame.sf", sf_update)
+      s3_register("vctrs::vec_proxy_order", "sfc", sf_update)
     }
   })
 
