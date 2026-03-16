@@ -1,7 +1,8 @@
 #ifndef VCTRS_TYPE_COMPLEX_H
 #define VCTRS_TYPE_COMPLEX_H
 
-#include "vctrs.h"
+#include "vctrs-core.h"
+#include "utils.h"
 
 /*
  * Normalises a complex value so that if one side is missing, both are. This

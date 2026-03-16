@@ -2,6 +2,7 @@
 #define VCTRS_TYPE_TIBBLE_H
 
 #include "vctrs-core.h"
+#include "cast.h"
 #include "ptype2.h"
 
 

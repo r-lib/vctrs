@@ -2,7 +2,6 @@
 #define VCTRS_GLOBALS_H
 
 #include <rlang.h>
-#include "rlang-dev.h"
 
 struct syms {
   r_obj* arg;

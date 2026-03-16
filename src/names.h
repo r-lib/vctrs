@@ -2,8 +2,6 @@
 #define VCTRS_NAMES_H
 
 #include "vctrs-core.h"
-#include "ownership.h"
-#include "utils.h"
 
 r_obj* vec_names(r_obj* x);
 r_obj* vec_names2(r_obj* x);

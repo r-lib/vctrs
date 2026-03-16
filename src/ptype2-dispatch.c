@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "type-data-frame.h"
 #include "type-factor.h"
 #include "type-tibble.h"
 #include "decl/ptype2-dispatch-decl.h"
