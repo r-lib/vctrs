@@ -111,24 +111,24 @@ df <- data.frame(
 # `vec_locate_sorted_groups()` is similar to `vec_group_loc()`, except keys
 # are returned ordered rather than by first appearance.
 vec_locate_sorted_groups(df)
-#>   key.g key.x  loc
-#> 1     1     2    6
-#> 2     1     3    7
-#> 3     1     4    8
-#> 4     1     5 3, 9
-#> 5     1    NA    1
-#> 6     2     1 4, 5
-#> 7     2     2    2
-#> 8     2     5   10
+#>   key.g key.x   loc
+#> 1     1     2     8
+#> 2     1     3     9
+#> 3     1     4 3, 10
+#> 4     1     5     5
+#> 5     1    NA     1
+#> 6     2     1  6, 7
+#> 7     2     2     4
+#> 8     2     5     2
 
 vec_group_loc(df)
-#>   key.g key.x  loc
-#> 1     1    NA    1
-#> 2     2     2    2
-#> 3     1     5 3, 9
-#> 4     2     1 4, 5
-#> 5     1     2    6
-#> 6     1     3    7
-#> 7     1     4    8
-#> 8     2     5   10
+#>   key.g key.x   loc
+#> 1     1    NA     1
+#> 2     2     5     2
+#> 3     1     4 3, 10
+#> 4     2     2     4
+#> 5     1     5     5
+#> 6     2     1  6, 7
+#> 7     1     2     8
+#> 8     1     3     9
 ```

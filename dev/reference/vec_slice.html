@@ -164,21 +164,21 @@ as the LHS.</p></li>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  6  3  1  4 10  8  7  2  5  9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  6  5  7  1  2  4  3 10  9  8</span>
 <span class="r-in"><span><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6 3 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6 5 7</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can assign with the infix variant:</span></span></span>
 <span class="r-in"><span><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   1   4  10   8   7   2   5   9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   7   1   2   4   3  10   9   8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Or with the regular variant that doesn't modify the original input:</span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">vec_assign</span><span class="op">(</span><span class="va">x</span>, <span class="fl">3</span>, <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">y</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100 500   4  10   8   7   2   5   9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100 500   1   2   4   3  10   9   8</span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   1   4  10   8   7   2   5   9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   7   1   2   4   3  10   9   8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Slicing objects of higher dimension:</span></span></span>
