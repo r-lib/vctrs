@@ -31,3 +31,4 @@
 ^[.]?air[.]toml$
 ^\.git-blame-ignore-revs$
 ^\.claude$
+^dev-notes$
