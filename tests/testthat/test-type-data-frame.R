@@ -467,6 +467,16 @@ test_that("new_data_frame() zaps existing attributes", {
   )
 })
 
+test_that("with zero columns, implied size is 0", {
+  # Empty data frame input
+  df <- new_data_frame(n = 10L)
+
+  # Input to `new_data_frame()` is treated as a list.
+  # Existing `row.names` are ignored, even if they might provide
+  # information in the case of 0 columns.
+  expect_identical(nrow(new_data_frame(df)), 0L)
+})
+
 # data_frame --------------------------------------------------------------
 
 test_that("data_frame() and df_list() report error context", {
