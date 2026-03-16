@@ -276,8 +276,7 @@ static SEXP new_date(SEXP x) {
 
   SEXP out = PROTECT(r_clone_referenced(x));
 
-  SET_ATTRIB(out, R_NilValue);
-
+  r_attrib_zap_all(out);
   r_attrib_poke_names(out, names);
   r_attrib_poke_class(out, classes_date);
 
@@ -310,11 +309,10 @@ static SEXP new_datetime(SEXP x, SEXP tzone) {
 
   SEXP out = PROTECT(r_clone_referenced(x));
 
-  SET_ATTRIB(out, R_NilValue);
-
+  r_attrib_zap_all(out);
   r_attrib_poke_names(out, names);
   r_attrib_poke_class(out, classes_posixct);
-  Rf_setAttrib(out, syms_tzone, tzone);
+  r_attrib_poke(out, syms_tzone, tzone);
 
   UNPROTECT(2);
   return out;
