@@ -35,11 +35,11 @@ r_obj* col_ptype(r_obj* x) {
 
 static inline
 r_obj* vec_ptype_slice(r_obj* x, r_obj* empty) {
-  if (r_attrib(x) == r_null) {
-    return empty;
-  } else {
+  if (r_attrib_has_any(x)) {
     // Slicing preserves attributes
     return vec_slice(x, r_null);
+  } else {
+    return empty;
   }
 }
 
