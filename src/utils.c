@@ -859,7 +859,8 @@ SEXP compact_rep_materialize(SEXP x) {
 }
 
 // Initialised at load time
-SEXP compact_condition_attrib = NULL;
+const char* compact_condition_class_string = NULL;
+SEXP compact_condition_classes = NULL;
 
 /**
  * Compact condition index
@@ -882,14 +883,14 @@ r_obj* new_compact_condition(R_xlen_t size) {
 
   r_obj* out = KEEP(r_alloc_raw(size * sizeof(bool)));
 
-  SET_ATTRIB(out, compact_condition_attrib);
+  r_attrib_poke_class(out, compact_condition_classes);
 
   FREE(1);
   return out;
 }
 
 bool is_compact_condition(r_obj* x) {
-  return ATTRIB(x) == compact_condition_attrib;
+  return r_inherits(x, compact_condition_class_string);
 }
 
 r_ssize compact_condition_size(r_obj* x) {
@@ -2017,9 +2018,10 @@ void vctrs_init_utils(SEXP ns) {
   R_PreserveObject(compact_rep_attrib);
   SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
 
-  compact_condition_attrib = Rf_cons(R_NilValue, R_NilValue);
-  R_PreserveObject(compact_condition_attrib);
-  SET_TAG(compact_condition_attrib, Rf_install("vctrs_compact_condition"));
+  compact_condition_class_string = "vctrs_compact_condition";
+  compact_condition_classes = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(compact_condition_classes);
+  SET_STRING_ELT(compact_condition_classes, 0, Rf_mkChar(compact_condition_class_string));
 
   rlang_result_names = Rf_allocVector(STRSXP, 2);
   R_PreserveObject(rlang_result_names);
