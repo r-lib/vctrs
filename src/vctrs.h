@@ -21,6 +21,7 @@
 #include "conditions.h"  // IWYU pragma: export
 #include "dictionary.h"  // IWYU pragma: export
 #include "dim.h"  // IWYU pragma: export
+#include "encoding.h" // IWYU pragma: export
 #include "equal.h"  // IWYU pragma: export
 #include "expand.h"  // IWYU pragma: export
 #include "lazy.h"  // IWYU pragma: export
@@ -53,7 +54,6 @@
 #include "strides.h"  // IWYU pragma: export
 #include "subscript-loc.h"  // IWYU pragma: export
 #include "subscript.h"  // IWYU pragma: export
-#include "translate.h"  // IWYU pragma: export
 #include "typeof2.h"  // IWYU pragma: export
 #include "typeof2-s3.h"  // IWYU pragma: export
 #include "utils-dispatch.h"  // IWYU pragma: export

@@ -90,9 +90,9 @@
  *
  * - `chr_order_radix()` - Same principle as integer/double ordering, but we
  *   iterate 1 character at a time. We assume a C locale here. Any non-ASCII and
- *   non-UTF-8 strings are translated up front by `vec_normalize_encoding()`. We
- *   have a number of short cuts for trying to exit out of this early so that we
- *   don't have to look at every byte of the string.
+ *   non-UTF-8 strings are translated up front by `obj_encode_utf8()`. We have a
+ *   number of short cuts for trying to exit out of this early so that we don't
+ *   have to look at every byte of the string.
  *
  * -----------------------------------------------------------------------------
  * Logicals
@@ -331,7 +331,7 @@ SEXP vec_order_info_impl(
   SEXP na_last = PROTECT_N(vec_order_compute_na_last(na_largest, decreasing), &n_prot);
 
   SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
-  proxy = PROTECT_N(vec_normalize_encoding(proxy), &n_prot);
+  proxy = PROTECT_N(obj_encode_utf8(proxy), &n_prot);
   proxy = PROTECT_N(proxy_apply_chr_proxy_collate(proxy, chr_proxy_collate), &n_prot);
 
   r_ssize size = vec_size(proxy);

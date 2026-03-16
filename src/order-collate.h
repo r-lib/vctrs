@@ -24,8 +24,8 @@
  * It expects that:
  * - If `proxy` is a data frame, it has been flattened by its corresponding
  *   `vec_proxy_*()` function.
- * - All character vectors in `proxy` have already been normalized to UTF-8
- *   by `vec_normalize_encoding()`.
+ * - All character vectors in `proxy` have already been reencoded to UTF-8
+ *   by `obj_encode_utf8()`.
  */
 SEXP proxy_apply_chr_proxy_collate(SEXP proxy, SEXP chr_proxy_collate);
 

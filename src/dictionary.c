@@ -159,7 +159,7 @@ SEXP vctrs_unique_loc(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
+  x = PROTECT_N(obj_encode_utf8(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -226,7 +226,7 @@ bool duplicated_any(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
+  x = PROTECT_N(obj_encode_utf8(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -277,7 +277,7 @@ SEXP vctrs_n_distinct(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
+  x = PROTECT_N(obj_encode_utf8(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -324,7 +324,7 @@ SEXP vctrs_id(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
+  x = PROTECT_N(obj_encode_utf8(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -431,10 +431,10 @@ SEXP vec_match_params(SEXP needles,
   PROTECT_N(haystack, &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
-  needles = PROTECT_N(vec_normalize_encoding(needles), &nprot);
+  needles = PROTECT_N(obj_encode_utf8(needles), &nprot);
 
   haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
-  haystack = PROTECT_N(vec_normalize_encoding(haystack), &nprot);
+  haystack = PROTECT_N(obj_encode_utf8(haystack), &nprot);
 
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
@@ -607,10 +607,10 @@ SEXP vec_in(
   PROTECT_N(haystack, &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
-  needles = PROTECT_N(vec_normalize_encoding(needles), &nprot);
+  needles = PROTECT_N(obj_encode_utf8(needles), &nprot);
 
   haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
-  haystack = PROTECT_N(vec_normalize_encoding(haystack), &nprot);
+  haystack = PROTECT_N(obj_encode_utf8(haystack), &nprot);
 
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
@@ -742,7 +742,7 @@ SEXP vctrs_count(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
+  x = PROTECT_N(obj_encode_utf8(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -826,7 +826,7 @@ SEXP vctrs_duplicated(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
+  x = PROTECT_N(obj_encode_utf8(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);

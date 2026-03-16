@@ -67,8 +67,8 @@ SEXP vec_equal(
   SEXP x_proxy = PROTECT(vec_proxy_equal(x));
   SEXP y_proxy = PROTECT(vec_proxy_equal(y));
 
-  x_proxy = PROTECT(vec_normalize_encoding(x_proxy));
-  y_proxy = PROTECT(vec_normalize_encoding(y_proxy));
+  x_proxy = PROTECT(obj_encode_utf8(x_proxy));
+  y_proxy = PROTECT(obj_encode_utf8(y_proxy));
 
   enum vctrs_type type = vec_proxy_typeof(x_proxy);
 
@@ -346,7 +346,7 @@ bool expr_equal_all(SEXP x, SEXP y, R_len_t n) {
     SEXP x_elt = VECTOR_ELT(x, i);
     SEXP y_elt = VECTOR_ELT(y, i);
 
-    if (!equal_object_normalized(x_elt, y_elt)) {
+    if (!equal_object_utf8(x_elt, y_elt)) {
       return false;
     }
   }
@@ -358,18 +358,18 @@ static inline bool vec_equal_attrib(SEXP x, SEXP y);
 
 // [[ include("vctrs.h") ]]
 bool equal_object(SEXP x, SEXP y) {
-  x = PROTECT(vec_normalize_encoding(x));
-  y = PROTECT(vec_normalize_encoding(y));
+  x = PROTECT(obj_encode_utf8(x));
+  y = PROTECT(obj_encode_utf8(y));
 
-  bool out = equal_object_normalized(x, y);
+  bool out = equal_object_utf8(x, y);
 
   UNPROTECT(2);
   return out;
 }
 
-// Assumes `vec_normalize_encoding()` has already been called
+// Assumes `obj_encode_utf8()` has already been called
 // [[ include("vctrs.h") ]]
-bool equal_object_normalized(SEXP x, SEXP y) {
+bool equal_object_utf8(SEXP x, SEXP y) {
   SEXPTYPE type = TYPEOF(x);
 
   if (type != TYPEOF(y)) {
@@ -409,18 +409,18 @@ bool equal_object_normalized(SEXP x, SEXP y) {
   case LANGSXP:
   case LISTSXP:
   case BCODESXP: {
-    if (!equal_object_normalized(ATTRIB(x), ATTRIB(y))) {
+    if (!equal_object_utf8(ATTRIB(x), ATTRIB(y))) {
       return false;
     }
 
-    if (!equal_object_normalized(CAR(x), CAR(y))) {
+    if (!equal_object_utf8(CAR(x), CAR(y))) {
       return false;
     }
 
     x = CDR(x);
     y = CDR(y);
 
-    if (!equal_object_normalized(x, y)) {
+    if (!equal_object_utf8(x, y)) {
       return false;
     }
 
@@ -428,16 +428,16 @@ bool equal_object_normalized(SEXP x, SEXP y) {
   }
 
   case CLOSXP:
-    if (!equal_object_normalized(ATTRIB(x), ATTRIB(y))) {
+    if (!equal_object_utf8(ATTRIB(x), ATTRIB(y))) {
       return false;
     }
-    if (!equal_object_normalized(r_fn_body(x), r_fn_body(y))) {
+    if (!equal_object_utf8(r_fn_body(x), r_fn_body(y))) {
       return false;
     }
-    if (!equal_object_normalized(r_fn_env(x), r_fn_env(y))) {
+    if (!equal_object_utf8(r_fn_env(x), r_fn_env(y))) {
       return false;
     }
-    if (!equal_object_normalized(r_fn_formals(x), r_fn_formals(y))) {
+    if (!equal_object_utf8(r_fn_formals(x), r_fn_formals(y))) {
       return false;
     }
     return true;
@@ -453,7 +453,7 @@ bool equal_object_normalized(SEXP x, SEXP y) {
     r_stop_internal("Unexpected reference type.");
 
   default:
-    stop_unimplemented_type("equal_object_normalized", TYPEOF(x));
+    stop_unimplemented_type("equal_object_utf8", TYPEOF(x));
   }
 
   R_len_t n = Rf_length(x);
@@ -507,7 +507,7 @@ static inline bool vec_equal_attrib(SEXP x, SEXP y) {
       return false;
     }
 
-    if (!equal_object_normalized(CAR(x_attrs), CAR(y_attrs))) {
+    if (!equal_object_utf8(CAR(x_attrs), CAR(y_attrs))) {
       return false;
     }
 

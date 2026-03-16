@@ -35,8 +35,8 @@ r_obj* vec_compare(r_obj* x, r_obj* y, bool na_equal) {
     stop_not_comparable(x, y, "must have the same types and lengths");
   }
 
-  x = KEEP(vec_normalize_encoding(x));
-  y = KEEP(vec_normalize_encoding(y));
+  x = KEEP(obj_encode_utf8(x));
+  y = KEEP(obj_encode_utf8(y));
 
   if (type == VCTRS_TYPE_dataframe) {
     r_obj* out = df_compare(x, y, na_equal, size);

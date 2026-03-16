@@ -1,9 +1,9 @@
-#ifndef VCTRS_TRANSLATE_H
-#define VCTRS_TRANSLATE_H
+#ifndef VCTRS_ENCODING_H
+#define VCTRS_ENCODING_H
 
 #include "vctrs-core.h"
 
-SEXP vec_normalize_encoding(SEXP x);
+SEXP obj_encode_utf8(SEXP x);
 
 // String encoding normalization
 //
@@ -25,7 +25,7 @@ SEXP vec_normalize_encoding(SEXP x);
 // The 2nd is possible to create with `iconv(mark = FALSE)`, i.e.
 // `iconv("\u00B0C", from = Encoding("\u00B0C"), to = "", mark = FALSE)`
 //
-// We need the 2nd to be normalized and marked as `CE_UTF8`, but
+// We need the 2nd to be reencoded and marked as `CE_UTF8`, but
 // `Rf_charIsUTF8()` can't help us with that because it returns `true`.
 //
 // Instead, we do a more granular check of:
@@ -37,7 +37,7 @@ SEXP vec_normalize_encoding(SEXP x);
 // be forced through `Rf_translateCharUTF8()` (which does nothing due to
 // `utf8locale = true`) and into `Rf_mkCharCE(, CE_UTF8)`, which marks it with
 // `CE_UTF8` so now we can `vec_match()` against it.
-static inline bool string_is_ascii_or_utf8(r_obj* x) {
+static inline bool str_is_ascii_or_utf8(r_obj* x) {
 #if (R_VERSION >= R_Version(4, 5, 0))
   return Rf_charIsASCII(x) || (Rf_getCharCE(x) == CE_UTF8) || (x == r_globals.na_str);
 #else
@@ -48,7 +48,7 @@ static inline bool string_is_ascii_or_utf8(r_obj* x) {
 #endif
 }
 
-static inline r_obj* string_as_utf8(r_obj* x) {
+static inline r_obj* str_as_utf8(r_obj* x) {
   return Rf_mkCharCE(Rf_translateCharUTF8(x), CE_UTF8);
 }
 

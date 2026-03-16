@@ -155,7 +155,7 @@ struct r_vector_bool* vec_detect_run_bounds_bool(r_obj* x,
   obj_check_vector(x, VCTRS_ALLOW_NULL_no, vec_args.x, error_call);
 
   r_obj* proxy = KEEP(vec_proxy_equal(x));
-  proxy = KEEP(vec_normalize_encoding(proxy));
+  proxy = KEEP(obj_encode_utf8(proxy));
 
   const r_ssize size = vec_size(proxy);
 
