@@ -412,7 +412,7 @@ bool vec_is_restored(r_obj* x, r_obj* to) {
     return true;
   }
 
-  r_obj* attrib = r_attrib(x);
+  r_obj* attrib = ATTRIB(x);
 
   if (attrib == r_null) {
     return false;

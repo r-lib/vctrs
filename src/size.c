@@ -100,7 +100,7 @@ r_obj* list_sizes(
 }
 
 r_ssize df_rownames_size(r_obj* x) {
-  for (r_obj* attr = r_attrib(x);
+  for (r_obj* attr = ATTRIB(x);
        attr != r_null;
        attr = r_node_cdr(attr)) {
     if (r_node_tag(attr) != r_syms.row_names) {

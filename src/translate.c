@@ -70,7 +70,7 @@ SEXP obj_normalize_encoding(SEXP x) {
   }
 
   // For performance, avoid `PROTECT()` / `UNPROTECT()` when not needed
-  SEXP attrib = r_attrib(x);
+  SEXP attrib = ATTRIB(x);
   if (attrib != r_null) {
     PROTECT(x);
     x = obj_attrib_normalize_encoding(x, attrib);

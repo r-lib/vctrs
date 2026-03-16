@@ -69,7 +69,7 @@ r_obj* vec_restore_dispatch(r_obj* x, r_obj* to) {
 // Knowledge about recursive ownership is not required here, we only touch
 // the container, not the elements inside.
 r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_ownership ownership) {
-  r_obj* attrib = r_attrib(to);
+  r_obj* attrib = ATTRIB(to);
 
   const bool is_s4 = r_is_s4(to);
 
