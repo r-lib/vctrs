@@ -1,6 +1,8 @@
 #ifndef VCTRS_REP_H
 #define VCTRS_REP_H
 
+#include "vctrs-core.h"
+
 r_obj* vec_rep(r_obj* x,
                int times,
                struct r_lazy error_call,

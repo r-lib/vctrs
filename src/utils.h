@@ -2,8 +2,7 @@
 #define VCTRS_UTILS_H
 
 #include "vctrs-core.h"
-#include "arg-counter.h"
-#include "rlang-dev.h"
+#include "arg.h"
 
 #define PROTECT_N(x, n) (++*n, PROTECT(x))
 #define PROTECT2(x, y) (PROTECT(x), PROTECT(y))

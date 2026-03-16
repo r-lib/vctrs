@@ -1,10 +1,10 @@
 #ifndef VCTRS_CORE_H
 #define VCTRS_CORE_H
 
-#include <rlang.h>
-#include "globals.h"
-#include "rlang-dev.h"
-#include "type-info.h"
+#include <rlang.h>  // IWYU pragma: export
+#include "globals.h"  // IWYU pragma: export
+#include "rlang-dev.h"  // IWYU pragma: export
+#include "type-info.h"  // IWYU pragma: export
 
 #include <stdlib.h>
 #include <stdbool.h>

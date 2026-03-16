@@ -14,6 +14,7 @@
 #define VCTRS_ORDER_H
 
 #include "vctrs-core.h"
+#include "utils.h"
 
 // -----------------------------------------------------------------------------
 

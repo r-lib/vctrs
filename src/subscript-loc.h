@@ -2,7 +2,6 @@
 #define VCTRS_SUBSCRIPT_LOC_H
 
 #include "vctrs-core.h"
-#include "utils.h"
 #include "subscript.h"
 
 

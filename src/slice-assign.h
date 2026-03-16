@@ -2,7 +2,6 @@
 #define VCTRS_SLICE_ASSIGN_H
 
 #include "vctrs-core.h"
-#include "ownership.h"
 
 /**
  * Optional `value` slicing

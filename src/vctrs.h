@@ -1,64 +1,64 @@
 #ifndef VCTRS_H
 #define VCTRS_H
 
-#include "vctrs-core.h"
+#include "vctrs-core.h"  // IWYU pragma: export
 
 
 // Vector types -------------------------------------------------
 
 
-#include "type-info.h"
+#include "type-info.h"  // IWYU pragma: export
 
-#include "arg-counter.h"
-#include "arg.h"
-#include "assert.h"
-#include "c.h"
-#include "cast-bare.h"
-#include "cast-dispatch.h"
-#include "cast.h"
-#include "compare.h"
-#include "complete.h"
-#include "conditions.h"
-#include "dictionary.h"
-#include "dim.h"
-#include "equal.h"
-#include "expand.h"
-#include "lazy.h"
-#include "list-combine.h"
-#include "match-compare.h"
-#include "match-joint.h"
-#include "missing.h"
-#include "names.h"
-#include "order-collate.h"
-#include "order-groups.h"
-#include "order-sortedness.h"
-#include "order.h"
-#include "ownership.h"
-#include "poly-op.h"
-#include "proxy.h"
-#include "proxy-restore.h"
-#include "ptype-common.h"
-#include "ptype.h"
-#include "ptype2-dispatch.h"
-#include "ptype2.h"
-#include "rep.h"
-#include "runs.h"
-#include "set.h"
-#include "shape.h"
-#include "size-common.h"
-#include "size.h"
-#include "slice-assign.h"
-#include "slice.h"
-#include "slice-chop.h"
-#include "strides.h"
-#include "subscript-loc.h"
-#include "subscript.h"
-#include "translate.h"
-#include "typeof2.h"
-#include "typeof2-s3.h"
-#include "utils-dispatch.h"
-#include "utils.h"
-#include "unspecified.h"
+#include "arg-counter.h"  // IWYU pragma: export
+#include "arg.h"  // IWYU pragma: export
+#include "assert.h"  // IWYU pragma: export
+#include "c.h"  // IWYU pragma: export
+#include "cast-bare.h"  // IWYU pragma: export
+#include "cast-dispatch.h"  // IWYU pragma: export
+#include "cast.h"  // IWYU pragma: export
+#include "compare.h"  // IWYU pragma: export
+#include "complete.h"  // IWYU pragma: export
+#include "conditions.h"  // IWYU pragma: export
+#include "dictionary.h"  // IWYU pragma: export
+#include "dim.h"  // IWYU pragma: export
+#include "equal.h"  // IWYU pragma: export
+#include "expand.h"  // IWYU pragma: export
+#include "lazy.h"  // IWYU pragma: export
+#include "list-combine.h"  // IWYU pragma: export
+#include "match-compare.h"  // IWYU pragma: export
+#include "match-joint.h"  // IWYU pragma: export
+#include "missing.h"  // IWYU pragma: export
+#include "names.h"  // IWYU pragma: export
+#include "order-collate.h"  // IWYU pragma: export
+#include "order-groups.h"  // IWYU pragma: export
+#include "order-sortedness.h"  // IWYU pragma: export
+#include "order.h"  // IWYU pragma: export
+#include "ownership.h"  // IWYU pragma: export
+#include "poly-op.h"  // IWYU pragma: export
+#include "proxy.h"  // IWYU pragma: export
+#include "proxy-restore.h"  // IWYU pragma: export
+#include "ptype-common.h"  // IWYU pragma: export
+#include "ptype.h"  // IWYU pragma: export
+#include "ptype2-dispatch.h"  // IWYU pragma: export
+#include "ptype2.h"  // IWYU pragma: export
+#include "rep.h"  // IWYU pragma: export
+#include "runs.h"  // IWYU pragma: export
+#include "set.h"  // IWYU pragma: export
+#include "shape.h"  // IWYU pragma: export
+#include "size-common.h"  // IWYU pragma: export
+#include "size.h"  // IWYU pragma: export
+#include "slice-assign.h"  // IWYU pragma: export
+#include "slice.h"  // IWYU pragma: export
+#include "slice-chop.h"  // IWYU pragma: export
+#include "strides.h"  // IWYU pragma: export
+#include "subscript-loc.h"  // IWYU pragma: export
+#include "subscript.h"  // IWYU pragma: export
+#include "translate.h"  // IWYU pragma: export
+#include "typeof2.h"  // IWYU pragma: export
+#include "typeof2-s3.h"  // IWYU pragma: export
+#include "utils-dispatch.h"  // IWYU pragma: export
+#include "utils.h"  // IWYU pragma: export
+#include "unspecified.h"  // IWYU pragma: export
 
 
 // Vector methods ------------------------------------------------

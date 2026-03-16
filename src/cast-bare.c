@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "type-data-frame.h"
 
 r_obj* int_as_logical(r_obj* x, bool* lossy) {
   int* data = r_int_begin(x);
