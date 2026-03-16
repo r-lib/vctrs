@@ -177,7 +177,7 @@ SEXP obj_attrib_normalize_encoding(SEXP x, SEXP attrib) {
   PROTECT(attrib_new);
 
   x = PROTECT(r_clone_referenced(x));
-  r_poke_attrib(x, attrib_new);
+  SET_ATTRIB(x, attrib_new);
 
   UNPROTECT(2);
   return x;

@@ -130,11 +130,11 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_ownership ownership) 
     r_obj* nms = KEEP(r_attrib_get(x, r_syms.names));
 
     // Check if `to` is a data frame early. If `x` and `to` point
-    // to the same reference, then `r_poke_attrib()` would alter `to`.
+    // to the same reference, then `SET_ATTRIB()` would alter `to`.
     r_obj* rownms = KEEP(df_rownames(x));
     const bool restore_rownms = rownms != r_null && is_data_frame(to);
 
-    r_poke_attrib(x, attrib);
+    SET_ATTRIB(x, attrib);
 
     r_attrib_poke(x, r_syms.names, nms);
 
@@ -146,7 +146,7 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_ownership ownership) 
   } else {
     r_obj* dimnames = KEEP(r_attrib_get(x, r_syms.dim_names));
 
-    r_poke_attrib(x, attrib);
+    SET_ATTRIB(x, attrib);
 
     r_attrib_poke(x, r_syms.dim, dim);
     r_attrib_poke(x, r_syms.dim_names, dimnames);
