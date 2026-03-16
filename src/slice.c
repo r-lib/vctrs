@@ -404,6 +404,16 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   }
 }
 
+static r_obj* vec_is_restored_cb(r_obj* tag, r_obj* _value, void* _data) {
+  if (tag == r_syms.names) {
+    // Keep iterating
+    return NULL;
+  } else {
+    // Restored!
+    return R_NilValue;
+  }
+}
+
 bool vec_is_restored(r_obj* x, r_obj* to) {
   // Don't restore if there is an actual `[` method that ignored
   // attributes. Some methods like [.ts intentionally strip the class
@@ -412,24 +422,13 @@ bool vec_is_restored(r_obj* x, r_obj* to) {
     return true;
   }
 
-  r_obj* attrib = ATTRIB(x);
-
-  if (attrib == r_null) {
+  if (!r_attrib_has_any(x)) {
     return false;
   }
 
   // Class is restored if it contains any other attributes than names.
   // We might want to add support for data frames later on.
-  r_obj* node = attrib;
-  while (node != r_null) {
-    if (r_node_tag(node) == r_syms.names) {
-      node = r_node_cdr(node);
-      continue;
-    }
-    return true;
-  }
-
-  return false;
+  return r_attrib_map(x, vec_is_restored_cb, NULL) != NULL;
 }
 
 r_obj* ffi_slice(r_obj* x,
