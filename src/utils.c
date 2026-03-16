@@ -819,7 +819,8 @@ SEXP compact_seq_materialize(SEXP x) {
 }
 
 // Initialised at load time
-SEXP compact_rep_attrib = NULL;
+const char* compact_rep_class_string = NULL;
+SEXP compact_rep_classes = NULL;
 
 void init_compact_rep(int* p, R_len_t i, R_len_t n) {
   p[0] = i;
@@ -838,14 +839,14 @@ SEXP compact_rep(R_len_t i, R_len_t n) {
   int* p = INTEGER(rep);
   init_compact_rep(p, i, n);
 
-  SET_ATTRIB(rep, compact_rep_attrib);
+  r_attrib_poke_class(rep, compact_rep_classes);
 
   UNPROTECT(1);
   return rep;
 }
 
 bool is_compact_rep(SEXP x) {
-  return ATTRIB(x) == compact_rep_attrib;
+  return r_inherits(x, compact_rep_class_string);
 }
 
 SEXP compact_rep_materialize(SEXP x) {
@@ -2016,9 +2017,10 @@ void vctrs_init_utils(SEXP ns) {
   R_PreserveObject(compact_seq_classes);
   SET_STRING_ELT(compact_seq_classes, 0, Rf_mkChar(compact_seq_class_string));
 
-  compact_rep_attrib = Rf_cons(R_NilValue, R_NilValue);
-  R_PreserveObject(compact_rep_attrib);
-  SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
+  compact_rep_class_string = "vctrs_compact_rep";
+  compact_rep_classes = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(compact_rep_classes);
+  SET_STRING_ELT(compact_rep_classes, 0, Rf_mkChar(compact_rep_class_string));
 
   compact_condition_class_string = "vctrs_compact_condition";
   compact_condition_classes = Rf_allocVector(STRSXP, 1);
