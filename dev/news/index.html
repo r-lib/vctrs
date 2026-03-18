@@ -40,7 +40,18 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-</div>
+<ul><li>
+<p>Pairlist tags and attribute names are now incorporated during object hashing. In practice this can come up when list elements are hashed inside functions like <code><a href="../reference/vec_unique.html">vec_unique()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/2154" class="external-link">#2154</a>).</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Only difference is the attribute name</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="fl">1</span>, foo <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="fl">1</span>, bar <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Used to return `x[1]`, now returns `x`</span></span>
+<span><span class="fu"><a href="../reference/vec_unique.html">vec_unique</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7.1" id="vctrs-071">vctrs 0.7.1<a class="anchor" aria-label="anchor" href="#vctrs-071"></a></h2><p class="text-muted">CRAN release: 2026-01-23</p>
 <ul><li>Fixed some protection issues discovered by rchk.</li>
@@ -70,7 +81,7 @@
 <li><p>New <code>slice_value</code> argument for <code><a href="../reference/vec_slice.html">vec_assign()</a></code> to optionally slice <code>value</code> by <code>i</code> before performing the assignment. It is an optimized form of <code>vec_slice(x, i) &lt;- vec_slice(value, i)</code> that avoids materializing <code>vec_slice(value, i)</code> (<a href="https://github.com/r-lib/vctrs/issues/2009" class="external-link">#2009</a>).</p></li>
 <li>
 <p>New <code>.size</code> argument for <code><a href="../reference/list_of.html">list_of()</a></code> that can restrict the element size in addition to the element type. For example:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Restricts the element type, but not the size (default behavior)</span></span>
 <span><span class="fu"><a href="../reference/list_of.html">list_of</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">4</span>, .ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, .size <span class="op">=</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">zap</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -670,23 +681,23 @@
 </li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">vec_cbind</span>(data, <span class="at">packed =</span> data)</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>data</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># A tibble: 3 x 3</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>      x y     packed<span class="sc">$</span>x <span class="sc">$</span>y</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">vec_cbind</span>(data, <span class="at">packed =</span> data)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>data</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># A tibble: 3 x 3</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>      x y     packed<span class="sc">$</span>x <span class="sc">$</span>y</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span>    <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
 <p>Packed data frames are nested in a single column. This makes it possible to access it through a single name:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>data<span class="sc">$</span>packed</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co"># A tibble: 3 x 2</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>      x y</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>data<span class="sc">$</span>packed</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co"># A tibble: 3 x 2</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>      x y</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="sc">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>chr<span class="sc">&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
 <p>We are planning to use this syntax more widely in the tidyverse.</p>
 </li>
 <li>
