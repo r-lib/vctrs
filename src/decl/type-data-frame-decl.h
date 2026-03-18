@@ -11,6 +11,9 @@ static
 r_obj* c_data_frame_class(r_obj* cls);
 
 static
+void attrib_append_row_names(r_obj* x, r_obj* row_names);
+
+static
 r_obj* data_frame(r_obj* x,
                   r_ssize size,
                   const struct name_repair_opts* p_name_repair_opts,

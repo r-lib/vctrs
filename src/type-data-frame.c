@@ -41,20 +41,22 @@ r_obj* ffi_new_data_frame(r_obj* args) {
   r_obj* cls = r_node_car(args); args = r_node_cdr(args);
   r_obj* attrib = args;
 
-  r_keep_loc pi;
-  KEEP_HERE(attrib, &pi);
-
   if (r_typeof(x) != R_TYPE_list) {
     r_abort_call(r_null, "`x` must be a list");
   }
 
-  bool has_names = false;
-  bool has_rownames = false;
+  // Input comes from the R side, so we must always clone it. This is also
+  // important because we pull attributes from `x` later on, but clear the ones
+  // on `out` right now because we build it from scratch.
+  r_obj* out = KEEP(r_clone(x));
+  r_attrib_zap_all(out);
 
-  r_obj* out = KEEP(r_clone_referenced(x));
+  r_obj* names = NULL;
+  r_obj* row_names = NULL;
 
   for (r_obj* node = attrib; node != r_null; node = r_node_cdr(node)) {
     r_obj* tag = r_node_tag(node);
+    r_obj* value = r_node_car(node);
 
     // We might add dynamic dots later on
     if (tag == r_syms.class_) {
@@ -62,7 +64,7 @@ r_obj* ffi_new_data_frame(r_obj* args) {
     }
 
     if (tag == r_syms.names) {
-      has_names = true;
+      names = value;
       continue;
     }
 
@@ -73,62 +75,78 @@ r_obj* ffi_new_data_frame(r_obj* args) {
       // expensive (tidyverse/dplyr#6596). So instead we say that user supplied
       // `row.names` overrides both the implied size of `x` and a user supplied
       // `n`, even if they are incompatible.
-      has_rownames = true;
+      row_names = value;
       continue;
     }
+
+    r_attrib_poke(out, tag, value);
   }
 
-  // Take names from `x` if `attrib` doesn't have any
-  if (!has_names) {
-    r_obj* nms = r_globals.empty_chr;
-    if (r_length(out)) {
-      nms = r_names(out);
+  // `names` handling:
+  // - If `...` had `names`, use them.
+  // - If `x` is empty, use `character()` names (supports empty `list()` case).
+  // - Use `r_names(x)`.
+  //
+  // Note that this means `new_data_frame(list(1))` purposefully constructs a
+  // corrupt data frame with no names, which is questionable, but we have a test
+  // for this and I think we use it for testing other edge cases.
+  if (names == NULL) {
+    if (r_length(x) == 0) {
+      names = r_globals.empty_chr;
+    } else {
+      names = r_names(x);
     }
-    KEEP(nms);
-
-    if (nms != r_null) {
-      attrib = r_new_node(nms, attrib);
-      r_node_poke_tag(attrib, r_syms.names);
-      KEEP_AT(attrib, pi);
-    }
-
-    FREE(1);
   }
+  r_attrib_poke_names(out, names);
 
-  if (!has_rownames) {
-    // Data frame size is determined in the following order:
-    // - By `row.names`, if provided, which will already be in `attrib`
-    // - By `n`, if provided (this is fully overriden by `row.names`)
-    // - By `x`, if neither `n` nor `row.names` is provided, where `x` could be
-    //   a data frame with its own row names attribute or a bare list
-    const r_ssize size = n != r_null ? df_size_from_n(n) : df_raw_size(x);
-
-    r_obj* rn = KEEP(new_compact_rownames(size));
-    attrib = r_new_node(rn, attrib);
-    r_node_poke_tag(attrib, r_syms.row_names);
-
-    FREE(1);
-    KEEP_AT(attrib, pi);
+  // `row.names` handling:
+  // - If `...` had `row.names`, use them.
+  // - If `n` was provided, use it (overridden by `row.names` in `...`).
+  // - Use `df_raw_size_from_list(x)`.
+  //
+  // Note that this means `new_data_frame(new_data_frame(n = 10L))` will return
+  // a zero row data frame. `new_data_frame()` always treats `x` as a bare list,
+  // even if it might contain some extra info about the `row.names` in the zero
+  // column data frame case.
+  if (row_names == NULL) {
+    const r_ssize size = n != r_null ? df_size_from_n(n) : df_raw_size_from_list(x);
+    row_names = new_compact_rownames(size);
   }
+  KEEP(row_names);
+  attrib_append_row_names(out, row_names);
+  FREE(1);
 
   if (cls == r_null) {
     cls = classes_data_frame;
   } else {
     cls = c_data_frame_class(cls);
   }
-  KEEP(cls);
-
-  attrib = r_new_node(cls, attrib);
-  r_node_poke_tag(attrib, r_syms.class_);
+  r_attrib_poke_class(out, cls);
 
   FREE(1);
-  KEEP_AT(attrib, pi);
-
-  SET_ATTRIB(out, attrib);
-  SET_OBJECT(out, 1);
-
-  FREE(2);
   return out;
+}
+
+// This utility appends a `row.names` attribute to `x`'s attribute
+// pairlist without expensive materialization.
+//
+// SAFETY: For simplicity, this does not check if a `row.names` attribute
+// already exists, as `new_data_frame()` clears all attributes up front.
+//
+// In R < 4.6.0, `Rf_setAttrib()` would materialize duckplyr's
+// ALTREP row names. It no longer does this thanks to:
+// https://github.com/r-devel/r-dev-day/issues/148
+static
+void attrib_append_row_names(r_obj* x, r_obj* row_names) {
+#if R_VERSION >= R_Version(4, 6, 0)
+  r_attrib_poke(x, r_syms.row_names, row_names);
+#else
+  r_obj* attrib = ATTRIB(x);
+  attrib = KEEP(r_new_node(row_names, attrib));
+  r_node_poke_tag(attrib, r_syms.row_names);
+  SET_ATTRIB(x, attrib);
+  FREE(1);
+#endif
 }
 
 static
