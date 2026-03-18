@@ -202,3 +202,24 @@ test_that("expression vectors hash to the same value as lists of calls/names", {
     obj_hash(list(call("mean"), call("sd")))
   )
 })
+
+test_that("language argument names are considered", {
+  expect_false(identical(
+    obj_hash(call("fn", foo = 1)),
+    obj_hash(call("fn", bar = 1))
+  ))
+})
+
+test_that("pairlist tags are considered", {
+  expect_false(identical(
+    obj_hash(pairlist(foo = 1)),
+    obj_hash(pairlist(bar = 1))
+  ))
+})
+
+test_that("attribute pairlist tags are considered", {
+  expect_false(identical(
+    obj_hash(structure(1, foo = 1)),
+    obj_hash(structure(1, bar = 1))
+  ))
+})

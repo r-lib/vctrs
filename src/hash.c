@@ -19,9 +19,8 @@ r_obj* ffi_obj_hash(r_obj* x) {
 uint32_t obj_hash(r_obj* x) {
   uint32_t hash = sexp_hash(x);
 
-  r_obj* attrib = ATTRIB(x);
-  if (attrib != r_null) {
-    hash = hash_combine(hash, obj_hash(attrib));
+  if (r_attrib_has_any(x)) {
+    hash = hash_combine(hash, attrib_hash(x));
   }
 
   return hash;
@@ -113,6 +112,7 @@ static inline uint32_t expr_hash(r_obj* x) {
 
 static inline uint32_t node_hash(r_obj* x) {
   uint32_t hash = 0;
+  hash = hash_combine(hash, obj_hash(r_node_tag(x)));
   hash = hash_combine(hash, obj_hash(r_node_car(x)));
   hash = hash_combine(hash, obj_hash(r_node_cdr(x)));
   return hash;
@@ -124,6 +124,23 @@ static inline uint32_t fn_hash(r_obj* x) {
   hash = hash_combine(hash, obj_hash(r_fn_env(x)));
   hash = hash_combine(hash, obj_hash(r_fn_formals(x)));
   return hash;
+}
+
+// Same idea as `node_hash()` where the `tag` and `value` of each node are
+// hashed, but using the `r_attrib_map()` API since we can't directly access an
+// object's attribute pairlist
+static inline uint32_t attrib_hash(r_obj* x) {
+  uint32_t hash = 0;
+  r_attrib_map(x, attrib_hash_cb, &hash);
+  return hash;
+}
+
+static inline r_obj* attrib_hash_cb(r_obj* tag, r_obj* value, void* data) {
+  uint32_t* p_hash = (uint32_t*) data;
+  *p_hash = hash_combine(*p_hash, obj_hash(tag));
+  *p_hash = hash_combine(*p_hash, obj_hash(value));
+  // Return C `NULL` to continue iteration through the attributes
+  return NULL;
 }
 
 // ----------------------------------------------------------------------------
