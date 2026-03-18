@@ -47,7 +47,7 @@ bool ord_ptype2_validate(
     stop_corrupt_ordered_levels(y, p_y_arg);
   }
 
-  return equal_object(x_levels, y_levels);
+  return obj_equal(x_levels, y_levels);
 }
 
 // [[ include("type-factor.h") ]]

@@ -15,11 +15,9 @@ SEXP vec_equal(
   struct r_lazy error_call
 );
 
-// equal_object() never propagates missingness, so
-// it can return a `bool`
-bool equal_object(SEXP x, SEXP y);
-bool equal_object_utf8(SEXP x, SEXP y);
-bool equal_names(SEXP x, SEXP y);
+// obj_equal() never propagates missingness, so it can return a `bool`
+bool obj_equal(r_obj* x, r_obj* y);
+bool obj_equal_utf8(r_obj* x, r_obj* y);
 
 // -----------------------------------------------------------------------------
 
@@ -47,7 +45,7 @@ static inline int raw_equal_na_equal(Rbyte x, Rbyte y) {
   return x == y;
 }
 static inline int list_equal_na_equal(SEXP x, SEXP y) {
-  return equal_object_utf8(x, y);
+  return obj_equal_utf8(x, y);
 }
 
 // -----------------------------------------------------------------------------

@@ -71,8 +71,8 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
     // Ensure `out` has the shape of `x`.
     // Native casting doesn't propagate shape.
     if (
-      !equal_object(r_dim(out), x_dim) ||
-      !equal_object(r_dim_names(out), x_dim_names)
+      !obj_equal(r_dim(out), x_dim) ||
+      !obj_equal(r_dim_names(out), x_dim_names)
     ) {
       out = KEEP(r_clone_referenced(out));
       r_attrib_poke_dim(out, x_dim);

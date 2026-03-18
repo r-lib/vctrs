@@ -68,5 +68,5 @@ vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
 }
 
 obj_equal <- function(x, y) {
-  .Call(vctrs_equal_object, x, y)
+  .Call(ffi_obj_equal, x, y)
 }

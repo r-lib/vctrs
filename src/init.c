@@ -17,7 +17,7 @@ extern SEXP vctrs_fields(SEXP);
 extern SEXP vctrs_n_fields(SEXP);
 extern r_obj* ffi_vec_hash(r_obj*);
 extern r_obj* ffi_obj_hash(r_obj*);
-extern SEXP vctrs_equal_object(SEXP, SEXP);
+extern r_obj* ffi_obj_equal(r_obj* x, r_obj* y);
 extern SEXP vctrs_duplicated(SEXP);
 extern SEXP vctrs_unique_loc(SEXP);
 extern SEXP vctrs_count(SEXP);
@@ -220,7 +220,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_n_fields",                            (DL_FUNC) &vctrs_n_fields, 1},
   {"ffi_vec_hash",                              (DL_FUNC) &ffi_vec_hash, 1},
   {"ffi_obj_hash",                              (DL_FUNC) &ffi_obj_hash, 1},
-  {"vctrs_equal_object",                        (DL_FUNC) &vctrs_equal_object, 2},
+  {"ffi_obj_equal",                             (DL_FUNC) &ffi_obj_equal, 2},
   {"vctrs_unique_loc",                          (DL_FUNC) &vctrs_unique_loc, 1},
   {"vctrs_duplicated",                          (DL_FUNC) &vctrs_duplicated, 1},
   {"vctrs_duplicated_any",                      (DL_FUNC) &vctrs_duplicated_any, 1},

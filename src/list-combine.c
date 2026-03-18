@@ -1084,7 +1084,7 @@ bool list_all_have_class(r_obj* xs, r_obj* class) {
 static
 bool obj_has_class(r_obj* x, r_obj* class) {
   r_obj* x_class = KEEP(r_class(x));
-  bool out = equal_object(x_class, class);
+  bool out = obj_equal(x_class, class);
   FREE(1);
   return out;
 }

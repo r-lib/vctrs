@@ -1,5 +1,7 @@
 #include "vctrs.h"
 
+#include "decl/equal-decl.h"
+
 // -----------------------------------------------------------------------------
 
 // [[ register() ]]
@@ -320,16 +322,88 @@ void vec_equal_col_na_propagate(
 
 // -----------------------------------------------------------------------------
 
+// [[ register() ]]
+r_obj* ffi_obj_equal(r_obj* x, r_obj* y) {
+  return r_lgl(obj_equal(x, y));
+}
+
+// [[ include("vctrs.h") ]]
+bool obj_equal(r_obj* x, r_obj* y) {
+  x = KEEP(obj_encode_utf8(x));
+  y = KEEP(obj_encode_utf8(y));
+
+  const bool out = obj_equal_utf8(x, y);
+
+  FREE(2);
+  return out;
+}
+
+// Assumes `obj_encode_utf8()` has already been called
+// [[ include("vctrs.h") ]]
+bool obj_equal_utf8(r_obj* x, r_obj* y) {
+  const enum r_type type = r_typeof(x);
+
+  // Types must be the same
+  if (type != r_typeof(y)) {
+    return false;
+  }
+
+  // Every type has a chance for an "equal pointer" optimization
+  if (x == y) {
+    return true;
+  }
+
+  switch (type) {
+  // Pure pointer comparison. If it didn't early exit in the pointer
+  // comparison above, then they must not be equal.
+  case R_TYPE_null:
+  case R_TYPE_symbol:
+  case R_TYPE_special:
+  case R_TYPE_builtin:
+  case R_TYPE_string:
+  case R_TYPE_environment:
+  case R_TYPE_pointer:
+    return false;
+
+  // Vectors
+  case R_TYPE_logical:
+  case R_TYPE_integer:
+  case R_TYPE_double:
+  case R_TYPE_character:
+  case R_TYPE_raw:
+  case R_TYPE_complex:
+  case R_TYPE_list:
+    return vec_equal_object(x, y, type);
+
+  // Expression vectors
+  case R_TYPE_expression:
+    return expr_equal_object(x, y);
+
+  // Node like
+  case R_TYPE_dots:
+  case R_TYPE_call:
+  case R_TYPE_pairlist:
+  case R_TYPE_bytecode:
+    return node_equal_object(x, y);
+
+  // Functions
+  case R_TYPE_closure:
+    return fn_equal_object(x, y);
+
+  default:
+    stop_unimplemented_type("obj_equal_utf8", type);
+  }
+}
+
 // Missingness is never propagated through objects,
 // so `na_equal` is always `true` in these macros
-
 #define EQUAL_ALL(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL)     \
   do {                                                    \
-    const CTYPE* p_x = CONST_DEREF(x);                    \
-    const CTYPE* p_y = CONST_DEREF(y);                    \
+    CTYPE const* v_x = CONST_DEREF(x);                    \
+    CTYPE const* v_y = CONST_DEREF(y);                    \
                                                           \
-    for (R_len_t i = 0; i < n; ++i) {                     \
-      if (!EQUAL_NA_EQUAL(p_x[i], p_y[i])) {              \
+    for (r_ssize i = 0; i < n; ++i) {                     \
+      if (!EQUAL_NA_EQUAL(v_x[i], v_y[i])) {              \
         return false;                                     \
       }                                                   \
     }                                                     \
@@ -337,16 +411,56 @@ void vec_equal_col_na_propagate(
   }                                                       \
   while (0)
 
+static inline bool vec_equal_object(r_obj* x, r_obj* y, enum r_type type) {
+  const r_ssize n = r_length(x);
+
+  // Length check
+  if (n != r_length(y)) {
+    return false;
+  }
+
+  // Attribute check
+  if (!vec_equal_attrib(x, y)) {
+    return false;
+  }
+
+  // Data check
+  switch (type) {
+  case R_TYPE_logical: EQUAL_ALL(int, r_lgl_cbegin, lgl_equal_na_equal);
+  case R_TYPE_integer: EQUAL_ALL(int, r_int_cbegin, int_equal_na_equal);
+  case R_TYPE_double: EQUAL_ALL(double, r_dbl_cbegin, dbl_equal_na_equal);
+  case R_TYPE_character: EQUAL_ALL(r_obj*, r_chr_cbegin, chr_equal_na_equal);
+  case R_TYPE_raw: EQUAL_ALL(Rbyte, r_raw_cbegin, raw_equal_na_equal);
+  case R_TYPE_complex: EQUAL_ALL(r_complex, r_cpl_cbegin, cpl_equal_na_equal);
+  case R_TYPE_list: EQUAL_ALL(r_obj*, r_list_cbegin, list_equal_na_equal);
+  default: r_stop_unreachable();
+  }
+}
+
+#undef EQUAL_ALL
+
 // Same as implementation for lists where we check length and attributes as
 // well, but `VECTOR_PTR_RO()` doesn't support EXPRSXP, so we must use a
 // separate loop that uses `VECTOR_ELT()` instead.
-static inline
-bool expr_equal_all(SEXP x, SEXP y, R_len_t n) {
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP x_elt = VECTOR_ELT(x, i);
-    SEXP y_elt = VECTOR_ELT(y, i);
+static inline bool expr_equal_object(r_obj* x, r_obj* y) {
+  const r_ssize n = r_length(x);
 
-    if (!equal_object_utf8(x_elt, y_elt)) {
+  // Length check
+  if (n != r_length(y)) {
+    return false;
+  }
+
+  // Attribute check
+  if (!vec_equal_attrib(x, y)) {
+    return false;
+  }
+
+  // Data check
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* x_elt = r_list_get(x, i);
+    r_obj* y_elt = r_list_get(y, i);
+
+    if (!obj_equal_utf8(x_elt, y_elt)) {
       return false;
     }
   }
@@ -354,139 +468,52 @@ bool expr_equal_all(SEXP x, SEXP y, R_len_t n) {
   return true;
 }
 
-static inline bool vec_equal_attrib(SEXP x, SEXP y);
+static inline bool node_equal_object(r_obj* x, r_obj* y) {
+  // Attribute check
+  if (!obj_equal_utf8(ATTRIB(x), ATTRIB(y))) {
+    return false;
+  }
 
-// [[ include("vctrs.h") ]]
-bool equal_object(SEXP x, SEXP y) {
-  x = PROTECT(obj_encode_utf8(x));
-  y = PROTECT(obj_encode_utf8(y));
+  // TODO!: Tag check
+  // if (!obj_equal_utf8(r_node_tag(x), r_node_tag(x))) {
+  //   return false;
+  // }
 
-  bool out = equal_object_utf8(x, y);
+  // Value check
+  if (!obj_equal_utf8(r_node_car(x), r_node_car(y))) {
+    return false;
+  }
 
-  UNPROTECT(2);
-  return out;
+  // Check rest
+  if (!obj_equal_utf8(r_node_cdr(x), r_node_cdr(y))) {
+    return false;
+  }
+
+  return true;
 }
 
-// Assumes `obj_encode_utf8()` has already been called
-// [[ include("vctrs.h") ]]
-bool equal_object_utf8(SEXP x, SEXP y) {
-  SEXPTYPE type = TYPEOF(x);
-
-  if (type != TYPEOF(y)) {
+static inline bool fn_equal_object(r_obj* x, r_obj* y) {
+  // Attribute check
+  if (!obj_equal_utf8(ATTRIB(x), ATTRIB(y))) {
     return false;
   }
 
-  // Pointer comparison is all that is required for these types
-  switch (type) {
-  case NILSXP:
-  case SYMSXP:
-  case SPECIALSXP:
-  case BUILTINSXP:
-  case CHARSXP:
-  case ENVSXP:
-  case EXTPTRSXP:
-    return x == y;
-  }
-
-  // For other types, try a pointer comparison first before
-  // performing an in depth equality check
-  if (x == y) {
-    return true;
-  }
-
-  switch (type) {
-  // Handled below
-  case LGLSXP:
-  case INTSXP:
-  case REALSXP:
-  case STRSXP:
-  case RAWSXP:
-  case CPLXSXP:
-  case EXPRSXP:
-  case VECSXP: break;
-
-  case DOTSXP:
-  case LANGSXP:
-  case LISTSXP:
-  case BCODESXP: {
-    if (!equal_object_utf8(ATTRIB(x), ATTRIB(y))) {
-      return false;
-    }
-
-    if (!equal_object_utf8(CAR(x), CAR(y))) {
-      return false;
-    }
-
-    x = CDR(x);
-    y = CDR(y);
-
-    if (!equal_object_utf8(x, y)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  case CLOSXP:
-    if (!equal_object_utf8(ATTRIB(x), ATTRIB(y))) {
-      return false;
-    }
-    if (!equal_object_utf8(r_fn_body(x), r_fn_body(y))) {
-      return false;
-    }
-    if (!equal_object_utf8(r_fn_env(x), r_fn_env(y))) {
-      return false;
-    }
-    if (!equal_object_utf8(r_fn_formals(x), r_fn_formals(y))) {
-      return false;
-    }
-    return true;
-
-  case NILSXP:
-  case SYMSXP:
-  case SPECIALSXP:
-  case BUILTINSXP:
-  case CHARSXP:
-  case ENVSXP:
-  case EXTPTRSXP:
-    // These are handled above with pointer comparison
-    r_stop_internal("Unexpected reference type.");
-
-  default:
-    stop_unimplemented_type("equal_object_utf8", TYPEOF(x));
-  }
-
-  R_len_t n = Rf_length(x);
-  if (n != Rf_length(y)) {
+  // Function body check
+  if (!obj_equal_utf8(r_fn_body(x), r_fn_body(y))) {
     return false;
   }
 
-  if (!vec_equal_attrib(x, y)) {
+  // Function environment check
+  if (!obj_equal_utf8(r_fn_env(x), r_fn_env(y))) {
     return false;
   }
 
-  switch (type) {
-  case LGLSXP:  EQUAL_ALL(int, LOGICAL_RO, lgl_equal_na_equal);
-  case INTSXP:  EQUAL_ALL(int, INTEGER_RO, int_equal_na_equal);
-  case REALSXP: EQUAL_ALL(double, REAL_RO, dbl_equal_na_equal);
-  case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_na_equal);
-  case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_na_equal);
-  case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal);
-  case VECSXP:  EQUAL_ALL(SEXP, VECTOR_PTR_RO, list_equal_na_equal);
-
-  // Want the length and attribute checks that are used on vectors,
-  // but needs its own special iteration loop
-  case EXPRSXP: return expr_equal_all(x, y, n);
-
-  default: stop_unimplemented_type("equal_object", type);
+  // Function formals check
+  if (!obj_equal_utf8(r_fn_formals(x), r_fn_formals(y))) {
+    return false;
   }
-}
 
-#undef EQUAL_ALL
-
-// [[ register() ]]
-SEXP vctrs_equal_object(SEXP x, SEXP y) {
-  return Rf_ScalarLogical(equal_object(x, y));
+  return true;
 }
 
 // TODO: Sort attributes by tag before comparison
@@ -507,7 +534,7 @@ static inline bool vec_equal_attrib(SEXP x, SEXP y) {
       return false;
     }
 
-    if (!equal_object_utf8(CAR(x_attrs), CAR(y_attrs))) {
+    if (!obj_equal_utf8(CAR(x_attrs), CAR(y_attrs))) {
       return false;
     }
 
@@ -516,16 +543,4 @@ static inline bool vec_equal_attrib(SEXP x, SEXP y) {
   }
 
   return true;
-}
-
-
-// [[ include("vctrs.h") ]]
-bool equal_names(SEXP x, SEXP y) {
-  SEXP x_names = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
-  SEXP y_names = PROTECT(Rf_getAttrib(y, R_NamesSymbol));
-
-  bool out = equal_object(x_names, y_names);
-
-  UNPROTECT(2);
-  return out;
 }

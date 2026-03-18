@@ -527,7 +527,7 @@ r_obj* df_ptype2(
 
   r_obj* out = r_null;
 
-  if (equal_object(x_names, y_names)) {
+  if (obj_equal(x_names, y_names)) {
     out = df_ptype2_loop(
       x,
       y,
@@ -743,7 +743,7 @@ r_obj* df_cast_opts(const struct cast_opts* opts) {
 
   r_obj* out = r_null;
 
-  if (equal_object(x_names, to_names)) {
+  if (obj_equal(x_names, to_names)) {
     out = df_cast_loop(opts, x_names);
   } else {
     out = df_cast_match(opts, x_names, to_names);
