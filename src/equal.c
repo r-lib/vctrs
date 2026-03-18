@@ -373,22 +373,22 @@ bool obj_equal_utf8(r_obj* x, r_obj* y) {
   case R_TYPE_raw:
   case R_TYPE_complex:
   case R_TYPE_list:
-    return vec_equal_object(x, y, type);
+    return obj_vec_equal(x, y, type);
 
   // Expression vectors
   case R_TYPE_expression:
-    return expr_equal_object(x, y);
+    return obj_expr_equal(x, y);
 
   // Node like
   case R_TYPE_dots:
   case R_TYPE_call:
   case R_TYPE_pairlist:
   case R_TYPE_bytecode:
-    return node_equal_object(x, y);
+    return obj_node_equal(x, y);
 
   // Functions
   case R_TYPE_closure:
-    return fn_equal_object(x, y);
+    return obj_fn_equal(x, y);
 
   default:
     stop_unimplemented_type("obj_equal_utf8", type);
@@ -397,7 +397,7 @@ bool obj_equal_utf8(r_obj* x, r_obj* y) {
 
 // Missingness is never propagated through objects,
 // so `na_equal` is always `true` in these macros
-#define EQUAL_ALL(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL)     \
+#define OBJ_VEC_EQUAL(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL) \
   do {                                                    \
     CTYPE const* v_x = CONST_DEREF(x);                    \
     CTYPE const* v_y = CONST_DEREF(y);                    \
@@ -411,7 +411,7 @@ bool obj_equal_utf8(r_obj* x, r_obj* y) {
   }                                                       \
   while (0)
 
-static inline bool vec_equal_object(r_obj* x, r_obj* y, enum r_type type) {
+static inline bool obj_vec_equal(r_obj* x, r_obj* y, enum r_type type) {
   const r_ssize n = r_length(x);
 
   // Length check
@@ -426,23 +426,23 @@ static inline bool vec_equal_object(r_obj* x, r_obj* y, enum r_type type) {
 
   // Data check
   switch (type) {
-  case R_TYPE_logical: EQUAL_ALL(int, r_lgl_cbegin, lgl_equal_na_equal);
-  case R_TYPE_integer: EQUAL_ALL(int, r_int_cbegin, int_equal_na_equal);
-  case R_TYPE_double: EQUAL_ALL(double, r_dbl_cbegin, dbl_equal_na_equal);
-  case R_TYPE_character: EQUAL_ALL(r_obj*, r_chr_cbegin, chr_equal_na_equal);
-  case R_TYPE_raw: EQUAL_ALL(Rbyte, r_raw_cbegin, raw_equal_na_equal);
-  case R_TYPE_complex: EQUAL_ALL(r_complex, r_cpl_cbegin, cpl_equal_na_equal);
-  case R_TYPE_list: EQUAL_ALL(r_obj*, r_list_cbegin, list_equal_na_equal);
+  case R_TYPE_logical: OBJ_VEC_EQUAL(int, r_lgl_cbegin, lgl_equal_na_equal);
+  case R_TYPE_integer: OBJ_VEC_EQUAL(int, r_int_cbegin, int_equal_na_equal);
+  case R_TYPE_double: OBJ_VEC_EQUAL(double, r_dbl_cbegin, dbl_equal_na_equal);
+  case R_TYPE_character: OBJ_VEC_EQUAL(r_obj*, r_chr_cbegin, chr_equal_na_equal);
+  case R_TYPE_raw: OBJ_VEC_EQUAL(Rbyte, r_raw_cbegin, raw_equal_na_equal);
+  case R_TYPE_complex: OBJ_VEC_EQUAL(r_complex, r_cpl_cbegin, cpl_equal_na_equal);
+  case R_TYPE_list: OBJ_VEC_EQUAL(r_obj*, r_list_cbegin, list_equal_na_equal);
   default: r_stop_unreachable();
   }
 }
 
-#undef EQUAL_ALL
+#undef OBJ_VEC_EQUAL
 
 // Same as implementation for lists where we check length and attributes as
 // well, but `VECTOR_PTR_RO()` doesn't support EXPRSXP, so we must use a
 // separate loop that uses `VECTOR_ELT()` instead.
-static inline bool expr_equal_object(r_obj* x, r_obj* y) {
+static inline bool obj_expr_equal(r_obj* x, r_obj* y) {
   const r_ssize n = r_length(x);
 
   // Length check
@@ -468,7 +468,7 @@ static inline bool expr_equal_object(r_obj* x, r_obj* y) {
   return true;
 }
 
-static inline bool node_equal_object(r_obj* x, r_obj* y) {
+static inline bool obj_node_equal(r_obj* x, r_obj* y) {
   // Attribute check
   if (!obj_equal_utf8(ATTRIB(x), ATTRIB(y))) {
     return false;
@@ -492,7 +492,7 @@ static inline bool node_equal_object(r_obj* x, r_obj* y) {
   return true;
 }
 
-static inline bool fn_equal_object(r_obj* x, r_obj* y) {
+static inline bool obj_fn_equal(r_obj* x, r_obj* y) {
   // Attribute check
   if (!obj_equal_utf8(ATTRIB(x), ATTRIB(y))) {
     return false;
