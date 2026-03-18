@@ -474,10 +474,10 @@ static inline bool obj_node_equal(r_obj* x, r_obj* y) {
     return false;
   }
 
-  // TODO!: Tag check
-  // if (!obj_equal_utf8(r_node_tag(x), r_node_tag(x))) {
-  //   return false;
-  // }
+  // Tag check
+  if (!obj_equal_utf8(r_node_tag(x), r_node_tag(y))) {
+    return false;
+  }
 
   // Value check
   if (!obj_equal_utf8(r_node_car(x), r_node_car(y))) {

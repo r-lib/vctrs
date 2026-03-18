@@ -316,6 +316,27 @@ test_that("can compare expressions", {
   expect_false(obj_equal(expression(x, y), expression(x)))
 })
 
+test_that("language argument names are considered", {
+  expect_false(obj_equal(
+    call("fn", foo = 1),
+    call("fn", bar = 1)
+  ))
+})
+
+test_that("pairlist tags are considered", {
+  expect_false(obj_equal(
+    pairlist(foo = 1),
+    pairlist(bar = 1)
+  ))
+})
+
+test_that("attribute pairlist tags are considered", {
+  expect_false(obj_equal(
+    structure(1, foo = 1),
+    structure(1, bar = 1)
+  ))
+})
+
 # na ----------------------------------------------------------------------
 
 test_that("NA propagate symmetrically (#204)", {
