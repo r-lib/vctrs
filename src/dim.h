@@ -36,7 +36,7 @@ static inline R_len_t vec_dim_n(SEXP x) {
 
 
 static inline bool has_dim(SEXP x) {
-  return ATTRIB(x) != R_NilValue && r_dim(x) != R_NilValue;
+  return r_attrib_has_any(x) && r_dim(x) != R_NilValue;
 }
 
 #endif

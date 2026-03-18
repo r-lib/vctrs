@@ -343,7 +343,7 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
   // Using `r_clone_referenced()` avoids an immediate copy using ALTREP wrappers.
   if (is_contiguous_subset) {
     SEXP out = PROTECT(r_clone_referenced(x));
-    SET_ATTRIB(out, R_NilValue);
+    r_attrib_zap_all(out);
 
     if (ordered) {
       init_ordered(out, to_levels);

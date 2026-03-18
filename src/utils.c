@@ -745,7 +745,8 @@ r_obj* list_pluck(r_obj* xs, r_ssize i) {
 
 
 // Initialised at load time
-SEXP compact_seq_attrib = NULL;
+const char* compact_seq_class_string = NULL;
+SEXP compact_seq_classes = NULL;
 
 // p[0] = Start value
 // p[1] = Sequence size. Always >= 0.
@@ -789,14 +790,14 @@ SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
   int* p = INTEGER(info);
   init_compact_seq(p, start, size, increasing);
 
-  SET_ATTRIB(info, compact_seq_attrib);
+  r_attrib_poke_class(info, compact_seq_classes);
 
   UNPROTECT(1);
   return info;
 }
 
 bool is_compact_seq(SEXP x) {
-  return ATTRIB(x) == compact_seq_attrib;
+  return r_inherits(x, compact_seq_class_string);
 }
 
 // Materialize a 1-based sequence
@@ -818,7 +819,8 @@ SEXP compact_seq_materialize(SEXP x) {
 }
 
 // Initialised at load time
-SEXP compact_rep_attrib = NULL;
+const char* compact_rep_class_string = NULL;
+SEXP compact_rep_classes = NULL;
 
 void init_compact_rep(int* p, R_len_t i, R_len_t n) {
   p[0] = i;
@@ -837,14 +839,14 @@ SEXP compact_rep(R_len_t i, R_len_t n) {
   int* p = INTEGER(rep);
   init_compact_rep(p, i, n);
 
-  SET_ATTRIB(rep, compact_rep_attrib);
+  r_attrib_poke_class(rep, compact_rep_classes);
 
   UNPROTECT(1);
   return rep;
 }
 
 bool is_compact_rep(SEXP x) {
-  return ATTRIB(x) == compact_rep_attrib;
+  return r_inherits(x, compact_rep_class_string);
 }
 
 SEXP compact_rep_materialize(SEXP x) {
@@ -859,7 +861,8 @@ SEXP compact_rep_materialize(SEXP x) {
 }
 
 // Initialised at load time
-SEXP compact_condition_attrib = NULL;
+const char* compact_condition_class_string = NULL;
+SEXP compact_condition_classes = NULL;
 
 /**
  * Compact condition index
@@ -882,14 +885,14 @@ r_obj* new_compact_condition(R_xlen_t size) {
 
   r_obj* out = KEEP(r_alloc_raw(size * sizeof(bool)));
 
-  SET_ATTRIB(out, compact_condition_attrib);
+  r_attrib_poke_class(out, compact_condition_classes);
 
   FREE(1);
   return out;
 }
 
 bool is_compact_condition(r_obj* x) {
-  return ATTRIB(x) == compact_condition_attrib;
+  return r_inherits(x, compact_condition_class_string);
 }
 
 r_ssize compact_condition_size(r_obj* x) {
@@ -2009,17 +2012,20 @@ void vctrs_init_utils(SEXP ns) {
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
   fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 
-  compact_seq_attrib = Rf_cons(R_NilValue, R_NilValue);
-  R_PreserveObject(compact_seq_attrib);
-  SET_TAG(compact_seq_attrib, Rf_install("vctrs_compact_seq"));
+  compact_seq_class_string = "vctrs_compact_seq";
+  compact_seq_classes = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(compact_seq_classes);
+  SET_STRING_ELT(compact_seq_classes, 0, Rf_mkChar(compact_seq_class_string));
 
-  compact_rep_attrib = Rf_cons(R_NilValue, R_NilValue);
-  R_PreserveObject(compact_rep_attrib);
-  SET_TAG(compact_rep_attrib, Rf_install("vctrs_compact_rep"));
+  compact_rep_class_string = "vctrs_compact_rep";
+  compact_rep_classes = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(compact_rep_classes);
+  SET_STRING_ELT(compact_rep_classes, 0, Rf_mkChar(compact_rep_class_string));
 
-  compact_condition_attrib = Rf_cons(R_NilValue, R_NilValue);
-  R_PreserveObject(compact_condition_attrib);
-  SET_TAG(compact_condition_attrib, Rf_install("vctrs_compact_condition"));
+  compact_condition_class_string = "vctrs_compact_condition";
+  compact_condition_classes = Rf_allocVector(STRSXP, 1);
+  R_PreserveObject(compact_condition_classes);
+  SET_STRING_ELT(compact_condition_classes, 0, Rf_mkChar(compact_condition_class_string));
 
   rlang_result_names = Rf_allocVector(STRSXP, 2);
   R_PreserveObject(rlang_result_names);

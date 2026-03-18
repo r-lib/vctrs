@@ -99,22 +99,28 @@ r_obj* list_sizes(
   return out;
 }
 
-r_ssize df_rownames_size(r_obj* x) {
-  for (r_obj* attr = r_attrib(x);
-       attr != r_null;
-       attr = r_node_cdr(attr)) {
-    if (r_node_tag(attr) != r_syms.row_names) {
-      continue;
-    }
-
-    return rownames_size(r_node_car(attr));
+r_obj* df_rownames_size_cb(r_obj* tag, r_obj* value, void* _data) {
+  if (tag == r_syms.row_names) {
+    // Found row names
+    return value;
+  } else {
+    // Continue iterating
+    return NULL;
   }
-
-  return -1;
 }
 
 // For performance, avoid Rf_getAttrib() because it automatically transforms
-// the rownames into an integer vector
+// automatic compact rownames into an ALTREP intseq.
+r_ssize df_rownames_size(r_obj* x) {
+  r_obj* row_names = r_attrib_map(x, df_rownames_size_cb, NULL);
+
+  if (row_names == NULL) {
+    return -1;
+  }
+
+  return rownames_size(row_names);
+}
+
 r_ssize df_size(r_obj* x) {
   r_ssize n = df_rownames_size(x);
 

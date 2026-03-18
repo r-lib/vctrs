@@ -19,7 +19,7 @@ r_obj* ffi_obj_hash(r_obj* x) {
 uint32_t obj_hash(r_obj* x) {
   uint32_t hash = sexp_hash(x);
 
-  r_obj* attrib = r_attrib(x);
+  r_obj* attrib = ATTRIB(x);
   if (attrib != r_null) {
     hash = hash_combine(hash, obj_hash(attrib));
   }

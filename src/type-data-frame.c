@@ -124,9 +124,8 @@ r_obj* ffi_new_data_frame(r_obj* args) {
   FREE(1);
   KEEP_AT(attrib, pi);
 
-
-  r_poke_attrib(out, attrib);
-  r_mark_object(out);
+  SET_ATTRIB(out, attrib);
+  SET_OBJECT(out, 1);
 
   FREE(2);
   return out;
