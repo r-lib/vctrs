@@ -12,6 +12,9 @@ static inline uint32_t expr_hash(r_obj* x);
 static inline uint32_t node_hash(r_obj* x);
 static inline uint32_t fn_hash(r_obj* x);
 
+static inline uint32_t attrib_hash(r_obj* x);
+static inline r_obj* attrib_hash_cb(r_obj* tag, r_obj* value, void* data);
+
 static inline void lgl_hash_fill_na_equal(r_obj* x, r_ssize size, uint32_t* v_out);
 static inline void int_hash_fill_na_equal(r_obj* x, r_ssize size, uint32_t* v_out);
 static inline void dbl_hash_fill_na_equal(r_obj* x, r_ssize size, uint32_t* v_out);
