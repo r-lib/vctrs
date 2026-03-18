@@ -516,32 +516,77 @@ static inline bool obj_fn_equal(r_obj* x, r_obj* y) {
   return true;
 }
 
-// TODO: Sort attributes by tag before comparison
+struct attrib_equal_data {
+  r_obj* y;
+  r_ssize x_size;
+};
+struct attrib_count_data {
+  r_ssize y_size;
+};
 
+// Compares attributes of `x` and `y` in an order-independent manner by looking
+// up each of `x`'s attributes in `y` by tag, then verifying `y` has no extra
+// attributes.
+//
+// Note that this is not very efficient, but we can't do much better if we want
+// order-independent comparisons since we no longer have direct access to the
+// pairlists via `ATTRIB()`. It only really affects equality comparisons with
+// lists that have elements with many attributes, which is fairly rare.
 static inline bool obj_attrib_equal(r_obj* x, r_obj* y) {
-  r_obj* x_node = ATTRIB(x);
-  r_obj* y_node = ATTRIB(y);
+  const bool x_has_attrib = r_attrib_has_any(x);
+  const bool y_has_attrib = r_attrib_has_any(y);
 
-  if (x_node == r_null && y_node != r_null) {
-    // Handle edge case
+  if (!x_has_attrib && !y_has_attrib) {
+    // Neither have attributes
+    return true;
+  }
+
+  if (x_has_attrib != y_has_attrib) {
+    // One or the other has attributes, but not both
     return false;
   }
 
-  while (x_node != r_null) {
-    if (y_node == r_null) {
-      return false;
-    }
+  // Ok, now we know both have attributes, compare them
+  struct attrib_equal_data equal_data = {
+    .y = y,
+    .x_size = 0
+  };
+  r_obj* result = r_attrib_map(x, obj_attrib_equal_cb, &equal_data);
 
-    if (!obj_equal_utf8(r_node_tag(x_node), r_node_tag(y_node))) {
-      return false;
-    }
-    if (!obj_equal_utf8(r_node_car(x_node), r_node_car(y_node))) {
-      return false;
-    }
-
-    x_node = r_node_cdr(x_node);
-    y_node = r_node_cdr(y_node);
+  // We got the signal that an attribute was different
+  if (result == r_null) {
+    return false;
   }
 
-  return true;
+  // All attributes in `x` equal attributes in `y`.
+  // Lastly,  ensure `y` doesn't have more attributes than `x`.
+  struct attrib_count_data count_data = {
+    .y_size = 0
+  };
+  r_attrib_map(y, obj_attrib_count_cb, &count_data);
+
+  return equal_data.x_size == count_data.y_size;
+}
+
+static r_obj* obj_attrib_equal_cb(r_obj* tag, r_obj* value, void* data) {
+  struct attrib_equal_data* p_data = (struct attrib_equal_data*) data;
+  p_data->x_size++;
+
+  r_obj* y_value = r_attrib_get(p_data->y, tag);
+
+  if (!obj_equal_utf8(value, y_value)) {
+    // Different!
+    return r_null;
+  }
+
+  // Continue
+  return NULL;
+}
+
+static r_obj* obj_attrib_count_cb(r_obj* _tag, r_obj* _value, void* data) {
+  struct attrib_count_data* p_data = (struct attrib_count_data*) data;
+  p_data->y_size++;
+
+  // Continue
+  return NULL;
 }
