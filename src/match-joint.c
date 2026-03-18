@@ -100,11 +100,11 @@ r_obj* vec_joint_xtfrm(r_obj* x,
   r_obj* proxies = KEEP_N(vec_joint_proxy_order(x, y), &n_prot);
 
   r_obj* x_proxy = r_list_get(proxies, 0);
-  x_proxy = KEEP_N(vec_normalize_encoding(x_proxy), &n_prot);
+  x_proxy = KEEP_N(obj_encode_utf8(x_proxy), &n_prot);
   x_proxy = KEEP_N(proxy_apply_chr_proxy_collate(x_proxy, chr_proxy_collate), &n_prot);
 
   r_obj* y_proxy = r_list_get(proxies, 1);
-  y_proxy = KEEP_N(vec_normalize_encoding(y_proxy), &n_prot);
+  y_proxy = KEEP_N(obj_encode_utf8(y_proxy), &n_prot);
   y_proxy = KEEP_N(proxy_apply_chr_proxy_collate(y_proxy, chr_proxy_collate), &n_prot);
 
   // Called with `direction = "asc", na_value = "smallest"` to match the

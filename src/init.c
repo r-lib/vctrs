@@ -129,8 +129,8 @@ extern r_obj* ffi_vec_run_sizes(r_obj*, r_obj*);
 extern SEXP vctrs_slice_complete(SEXP);
 extern SEXP vctrs_locate_complete(SEXP);
 extern SEXP vctrs_detect_complete(SEXP);
-extern SEXP vctrs_normalize_encoding(SEXP);
-extern r_obj* ffi_chr_is_normalized(r_obj*);
+extern r_obj* ffi_obj_encode_utf8(r_obj*);
+extern r_obj* ffi_chr_is_ascii_or_utf8(r_obj*);
 extern SEXP vctrs_order(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_locate_sorted_groups(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -339,8 +339,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_slice_complete",                      (DL_FUNC) &vctrs_slice_complete, 1},
   {"vctrs_locate_complete",                     (DL_FUNC) &vctrs_locate_complete, 1},
   {"vctrs_detect_complete",                     (DL_FUNC) &vctrs_detect_complete, 1},
-  {"vctrs_normalize_encoding",                  (DL_FUNC) &vctrs_normalize_encoding, 1},
-  {"ffi_chr_is_normalized",                     (DL_FUNC) &ffi_chr_is_normalized, 1},
+  {"ffi_obj_encode_utf8",                       (DL_FUNC) &ffi_obj_encode_utf8, 1},
+  {"ffi_chr_is_ascii_or_utf8",                  (DL_FUNC) &ffi_chr_is_ascii_or_utf8, 1},
   {"vctrs_order",                               (DL_FUNC) &vctrs_order, 5},
   {"vctrs_locate_sorted_groups",                (DL_FUNC) &vctrs_locate_sorted_groups, 5},
   {"vctrs_order_info",                          (DL_FUNC) &vctrs_order_info, 5},

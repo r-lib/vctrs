@@ -23,7 +23,7 @@ int dbl_compare_scalar(double x, double y) {
 }
 static inline
 int chr_compare_scalar(r_obj* x, r_obj* y) {
-  // Assume translation handled by `vec_normalize_encoding()`
+  // Assume UTF-8 encoding is handled by `obj_encode_utf8()`
   int cmp = strcmp(r_str_c_string(x), r_str_c_string(y));
   return cmp / abs(cmp);
 }

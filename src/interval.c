@@ -106,10 +106,10 @@ r_obj* vec_interval_group_info(r_obj* start,
   KEEP_N(end, &n_prot);
 
   r_obj* start_proxy = KEEP_N(vec_proxy_compare(start), &n_prot);
-  start_proxy = KEEP_N(vec_normalize_encoding(start_proxy), &n_prot);
+  start_proxy = KEEP_N(obj_encode_utf8(start_proxy), &n_prot);
 
   r_obj* end_proxy = KEEP_N(vec_proxy_compare(end), &n_prot);
-  end_proxy = KEEP_N(vec_normalize_encoding(end_proxy), &n_prot);
+  end_proxy = KEEP_N(obj_encode_utf8(end_proxy), &n_prot);
 
   const enum vctrs_type type_proxy = vec_proxy_typeof(start_proxy);
 
@@ -350,10 +350,10 @@ r_obj* vec_interval_complement(r_obj* start,
   KEEP_N(end, &n_prot);
 
   r_obj* start_proxy = KEEP_N(vec_proxy_compare(start), &n_prot);
-  start_proxy = KEEP_N(vec_normalize_encoding(start_proxy), &n_prot);
+  start_proxy = KEEP_N(obj_encode_utf8(start_proxy), &n_prot);
 
   r_obj* end_proxy = KEEP_N(vec_proxy_compare(end), &n_prot);
-  end_proxy = KEEP_N(vec_normalize_encoding(end_proxy), &n_prot);
+  end_proxy = KEEP_N(obj_encode_utf8(end_proxy), &n_prot);
 
   const enum vctrs_type type_proxy = vec_proxy_typeof(start_proxy);
 
@@ -390,7 +390,7 @@ r_obj* vec_interval_complement(r_obj* start,
     KEEP_N(lower, &n_prot);
 
     r_obj* lower_proxy = KEEP_N(vec_proxy_compare(lower), &n_prot);
-    lower_proxy = KEEP_N(vec_normalize_encoding(lower_proxy), &n_prot);
+    lower_proxy = KEEP_N(obj_encode_utf8(lower_proxy), &n_prot);
 
     r_obj* lower_complete = KEEP_N(vec_detect_complete(lower_proxy), &n_prot);
     if (!r_lgl_get(lower_complete, 0)) {
@@ -419,7 +419,7 @@ r_obj* vec_interval_complement(r_obj* start,
     KEEP_N(upper, &n_prot);
 
     r_obj* upper_proxy = KEEP_N(vec_proxy_compare(upper), &n_prot);
-    upper_proxy = KEEP_N(vec_normalize_encoding(upper_proxy), &n_prot);
+    upper_proxy = KEEP_N(obj_encode_utf8(upper_proxy), &n_prot);
 
     r_obj* upper_complete = KEEP_N(vec_detect_complete(upper_proxy), &n_prot);
     if (!r_lgl_get(upper_complete, 0)) {
@@ -761,10 +761,10 @@ r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
   KEEP_N(end, &n_prot);
 
   r_obj* start_proxy = KEEP_N(vec_proxy_compare(start), &n_prot);
-  start_proxy = KEEP_N(vec_normalize_encoding(start_proxy), &n_prot);
+  start_proxy = KEEP_N(obj_encode_utf8(start_proxy), &n_prot);
 
   r_obj* end_proxy = KEEP_N(vec_proxy_compare(end), &n_prot);
-  end_proxy = KEEP_N(vec_normalize_encoding(end_proxy), &n_prot);
+  end_proxy = KEEP_N(obj_encode_utf8(end_proxy), &n_prot);
 
   const enum vctrs_type type_proxy = vec_proxy_typeof(start_proxy);
 

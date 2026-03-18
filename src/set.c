@@ -71,10 +71,10 @@ r_obj* vec_set_intersect(r_obj* x,
   KEEP_N(y, &n_prot);
 
   r_obj* x_proxy = KEEP_N(vec_proxy_equal(x), &n_prot);
-  x_proxy = KEEP_N(vec_normalize_encoding(x_proxy), &n_prot);
+  x_proxy = KEEP_N(obj_encode_utf8(x_proxy), &n_prot);
 
   r_obj* y_proxy = KEEP_N(vec_proxy_equal(y), &n_prot);
-  y_proxy = KEEP_N(vec_normalize_encoding(y_proxy), &n_prot);
+  y_proxy = KEEP_N(obj_encode_utf8(y_proxy), &n_prot);
 
   const r_ssize x_size = vec_size(x_proxy);
   const r_ssize y_size = vec_size(y_proxy);
@@ -225,10 +225,10 @@ r_obj* vec_set_difference(r_obj* x,
   KEEP_N(y, &n_prot);
 
   r_obj* x_proxy = KEEP_N(vec_proxy_equal(x), &n_prot);
-  x_proxy = KEEP_N(vec_normalize_encoding(x_proxy), &n_prot);
+  x_proxy = KEEP_N(obj_encode_utf8(x_proxy), &n_prot);
 
   r_obj* y_proxy = KEEP_N(vec_proxy_equal(y), &n_prot);
-  y_proxy = KEEP_N(vec_normalize_encoding(y_proxy), &n_prot);
+  y_proxy = KEEP_N(obj_encode_utf8(y_proxy), &n_prot);
 
   const r_ssize x_size = vec_size(x_proxy);
   const r_ssize y_size = vec_size(y_proxy);
@@ -382,10 +382,10 @@ r_obj* vec_set_union(r_obj* x,
   KEEP_N(y, &n_prot);
 
   r_obj* x_proxy = KEEP_N(vec_proxy_equal(x), &n_prot);
-  x_proxy = KEEP_N(vec_normalize_encoding(x_proxy), &n_prot);
+  x_proxy = KEEP_N(obj_encode_utf8(x_proxy), &n_prot);
 
   r_obj* y_proxy = KEEP_N(vec_proxy_equal(y), &n_prot);
-  y_proxy = KEEP_N(vec_normalize_encoding(y_proxy), &n_prot);
+  y_proxy = KEEP_N(obj_encode_utf8(y_proxy), &n_prot);
 
   const r_ssize x_size = vec_size(x_proxy);
   const r_ssize y_size = vec_size(y_proxy);
@@ -632,10 +632,10 @@ r_obj* vec_set_symmetric_difference(r_obj* x,
   KEEP_N(y, &n_prot);
 
   r_obj* x_proxy = KEEP_N(vec_proxy_equal(x), &n_prot);
-  x_proxy = KEEP_N(vec_normalize_encoding(x_proxy), &n_prot);
+  x_proxy = KEEP_N(obj_encode_utf8(x_proxy), &n_prot);
 
   r_obj* y_proxy = KEEP_N(vec_proxy_equal(y), &n_prot);
-  y_proxy = KEEP_N(vec_normalize_encoding(y_proxy), &n_prot);
+  y_proxy = KEEP_N(obj_encode_utf8(y_proxy), &n_prot);
 
   const r_ssize x_size = vec_size(x_proxy);
   const r_ssize y_size = vec_size(y_proxy);

@@ -27,5 +27,11 @@ encoding_bytes <- function() {
 
 expect_equal_encoding <- function(object, expected) {
   args <- vec_recycle_common(object, expected)
-  expect_equal(Encoding(args[[1L]]), Encoding(args[[2L]]))
+  expect_identical(Encoding(args[[1L]]), Encoding(args[[2L]]))
+}
+expect_utf8_encoded <- function(object) {
+  expect_identical(Encoding(object), rep("UTF-8", length(object)))
+}
+expect_latin1_encoded <- function(object) {
+  expect_identical(Encoding(object), rep("latin1", length(object)))
 }
