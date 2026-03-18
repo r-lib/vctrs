@@ -420,7 +420,7 @@ static inline bool obj_vec_equal(r_obj* x, r_obj* y, enum r_type type) {
   }
 
   // Attribute check
-  if (!vec_equal_attrib(x, y)) {
+  if (!obj_attrib_equal(x, y)) {
     return false;
   }
 
@@ -451,7 +451,7 @@ static inline bool obj_expr_equal(r_obj* x, r_obj* y) {
   }
 
   // Attribute check
-  if (!vec_equal_attrib(x, y)) {
+  if (!obj_attrib_equal(x, y)) {
     return false;
   }
 
@@ -470,7 +470,7 @@ static inline bool obj_expr_equal(r_obj* x, r_obj* y) {
 
 static inline bool obj_node_equal(r_obj* x, r_obj* y) {
   // Attribute check
-  if (!obj_equal_utf8(ATTRIB(x), ATTRIB(y))) {
+  if (!obj_attrib_equal(x, y)) {
     return false;
   }
 
@@ -494,7 +494,7 @@ static inline bool obj_node_equal(r_obj* x, r_obj* y) {
 
 static inline bool obj_fn_equal(r_obj* x, r_obj* y) {
   // Attribute check
-  if (!obj_equal_utf8(ATTRIB(x), ATTRIB(y))) {
+  if (!obj_attrib_equal(x, y)) {
     return false;
   }
 
@@ -518,28 +518,29 @@ static inline bool obj_fn_equal(r_obj* x, r_obj* y) {
 
 // TODO: Sort attributes by tag before comparison
 
-static inline bool vec_equal_attrib(SEXP x, SEXP y) {
-  SEXP x_attrs = ATTRIB(x);
-  SEXP y_attrs = ATTRIB(y);
+static inline bool obj_attrib_equal(r_obj* x, r_obj* y) {
+  r_obj* x_node = ATTRIB(x);
+  r_obj* y_node = ATTRIB(y);
 
-  while (x_attrs != R_NilValue) {
-    if (y_attrs == R_NilValue) {
+  if (x_node == r_null && y_node != r_null) {
+    // Handle edge case
+    return false;
+  }
+
+  while (x_node != r_null) {
+    if (y_node == r_null) {
       return false;
     }
 
-    SEXP x_tag = TAG(x_attrs);
-    SEXP y_tag = TAG(x_attrs);
-
-    if (x_tag != y_tag) {
+    if (!obj_equal_utf8(r_node_tag(x_node), r_node_tag(y_node))) {
+      return false;
+    }
+    if (!obj_equal_utf8(r_node_car(x_node), r_node_car(y_node))) {
       return false;
     }
 
-    if (!obj_equal_utf8(CAR(x_attrs), CAR(y_attrs))) {
-      return false;
-    }
-
-    x_attrs = CDR(x_attrs);
-    y_attrs = CDR(y_attrs);
+    x_node = r_node_cdr(x_node);
+    y_node = r_node_cdr(y_node);
   }
 
   return true;

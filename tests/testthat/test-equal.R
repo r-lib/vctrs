@@ -284,6 +284,19 @@ test_that("not equal if attributes not equal", {
   expect_false(obj_equal(x1, x2))
 })
 
+test_that("not equal if only one has attributes", {
+  x1 <- structure(1, foo = 1)
+  x2 <- 1
+  expect_false(obj_equal(x1, x2))
+  expect_false(obj_equal(x2, x1))
+})
+
+test_that("not equal if attribute tag names are different", {
+  x1 <- structure(1, foo = 2)
+  x2 <- structure(1, bar = 2)
+  expect_false(obj_equal(x1, x2))
+})
+
 test_that("can compare expressions", {
   expect_true(obj_equal(expression(x), expression(x)))
   expect_false(obj_equal(expression(x), expression(y)))
