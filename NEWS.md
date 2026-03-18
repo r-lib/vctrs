@@ -1,5 +1,19 @@
 # vctrs (development version)
 
+* Pairlist tags and attribute names are now incorporated during object hashing.
+  In practice this can come up when list elements are hashed inside functions
+  like `vec_unique()` (#2154).
+
+  ```r
+  # Only difference is the attribute name
+  x <- list(
+    structure(1, foo = 2),
+    structure(1, bar = 2)
+  )
+  # Used to return `x[1]`, now returns `x`
+  vec_unique(x)
+  ```
+
 # vctrs 0.7.1
 
 * Fixed some protection issues discovered by rchk.
