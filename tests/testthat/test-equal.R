@@ -236,6 +236,26 @@ test_that("recycling works in all cases", {
   expect_identical(vec_equal(x, y), c(TRUE, TRUE))
 })
 
+test_that("equal if attributes are in different order (treated like a map)", {
+  x1 <- structure(1, foo = 1, bar = 2)
+  x2 <- structure(1, bar = 2, foo = 1)
+  expect_true(vec_equal(x1, x2))
+
+  x1 <- list(structure(expression(x = 1), foo = 1, bar = 2))
+  x2 <- list(structure(expression(x = 1), bar = 2, foo = 1))
+  expect_true(vec_equal(x1, x2))
+
+  x1 <- list(structure(pairlist(x = 1), foo = 1, bar = 2))
+  x2 <- list(structure(pairlist(x = 1), bar = 2, foo = 1))
+  expect_true(vec_equal(x1, x2))
+
+  # Want the same srcref
+  x0 <- function() {}
+  x1 <- list(structure(x0, foo = 1, bar = 2))
+  x2 <- list(structure(x0, bar = 2, foo = 1))
+  expect_true(vec_equal(x1, x2))
+})
+
 # object ------------------------------------------------------------------
 
 test_that("can compare NULL", {
@@ -295,6 +315,33 @@ test_that("not equal if attribute tag names are different", {
   x1 <- structure(1, foo = 2)
   x2 <- structure(1, bar = 2)
   expect_false(obj_equal(x1, x2))
+})
+
+test_that("not equal if one has more attributes than the other", {
+  x1 <- structure(1, foo = 1)
+  x2 <- structure(1, foo = 1, bar = 2)
+  expect_false(obj_equal(x1, x2))
+  expect_false(obj_equal(x2, x1))
+})
+
+test_that("equal if attributes are in different order (treated like a map)", {
+  x1 <- structure(1, foo = 1, bar = 2)
+  x2 <- structure(1, bar = 2, foo = 1)
+  expect_true(obj_equal(x1, x2))
+
+  x1 <- structure(expression(x = 1), foo = 1, bar = 2)
+  x2 <- structure(expression(x = 1), bar = 2, foo = 1)
+  expect_true(obj_equal(x1, x2))
+
+  x1 <- structure(pairlist(x = 1), foo = 1, bar = 2)
+  x2 <- structure(pairlist(x = 1), bar = 2, foo = 1)
+  expect_true(obj_equal(x1, x2))
+
+  # Want the same srcref
+  x0 <- function() {}
+  x1 <- structure(x0, foo = 1, bar = 2)
+  x2 <- structure(x0, bar = 2, foo = 1)
+  expect_true(obj_equal(x1, x2))
 })
 
 test_that("can compare expressions", {

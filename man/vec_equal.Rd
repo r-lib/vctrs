@@ -20,6 +20,11 @@ Will only contain \code{NA}s if \code{na_equal} is \code{FALSE}.
 \description{
 \code{vec_equal()} tests if two vectors are equal.
 }
+\details{
+Attributes of \code{x} and \code{y} are considered equal if they have the same names
+and values, even if the attribute ordering is different. This reflects the
+idea that attributes are treated as a map rather than an ordered list.
+}
 \section{Dependencies}{
 
 \itemize{

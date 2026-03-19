@@ -40,7 +40,13 @@ vec_proxy_equal.default <- function(x, ...) {
 
 #' Equality
 #'
+#' @description
 #' `vec_equal()` tests if two vectors are equal.
+#'
+#' @details
+#' Attributes of `x` and `y` are considered equal if they have the same names
+#' and values, even if the attribute ordering is different. This reflects the
+#' idea that attributes are treated as a map rather than an ordered list.
 #'
 #' @inheritParams vec_compare
 #' @return A logical vector the same size as the common size of `x` and `y`.
