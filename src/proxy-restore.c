@@ -64,104 +64,113 @@ r_obj* vec_restore_dispatch(r_obj* x, r_obj* to) {
                          syms_to, to);
 }
 
+struct vec_restore_collect_data {
+  r_obj* names;
+  r_obj* dim;
+  r_obj* dim_names;
+  r_obj* row_names;
+};
 
-// Copy attributes except names and dim. This duplicates `x` if needed.
-// Knowledge about recursive ownership is not required here, we only touch
-// the container, not the elements inside.
+static r_obj* vec_restore_collect_cb(r_obj* tag, r_obj* value, void* data) {
+  struct vec_restore_collect_data* p_data = (struct vec_restore_collect_data*) data;
+
+  if (tag == r_syms.names) {
+    p_data->names = value;
+    return NULL;
+  }
+  if (tag == r_syms.dim) {
+    p_data->dim = value;
+    return NULL;
+  }
+  if (tag == r_syms.dim_names) {
+    p_data->dim_names = value;
+    return NULL;
+  }
+  if (tag == r_syms.row_names) {
+    p_data->row_names = value;
+    return NULL;
+  }
+
+  return NULL;
+}
+
+// Default algorithm to restore `x` to the type of `to`
+//
+// 4 attributes from `x` are retained:
+// - `names`
+// - `dim`
+// - `dimnames`
+// - `row.names`
+//
+// All other `x` attributes are cleared and are replaced with `to`'s attributes.
+//
+// Duplicates `x` as needed according to `ownership`. Recursive ownership is
+// never useful here, because we only touch the container, not the elements inside.
 r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_ownership ownership) {
-  r_obj* attrib = ATTRIB(to);
-
-  const bool is_s4 = r_is_s4(to);
-
-  if (attrib == r_null && !is_s4) {
+  if (x == to) {
+    // Rare but useful pointer comparison
     return x;
   }
 
-  int n_prot = 0;
-
-  attrib = KEEP(r_clone(attrib));
-  ++n_prot;
-
-  x = KEEP(vec_clone_referenced(x, ownership));
-  ++n_prot;
-
-  // Remove vectorised attributes which might be incongruent after reshaping.
-  // Shouldn't matter for GNU R but other R implementations might have checks.
-  // Also record class to set it later with `r_attrib_poke()`. This restores
-  // the OBJECT bit and is likely more compatible with other implementations.
-  r_obj* cls = r_null;
-
-  {
-    r_obj* node = attrib;
-    r_obj* prev = r_null;
-
-    while (node != r_null) {
-      r_obj* tag = r_node_tag(node);
-
-      // Skip special attributes
-      if (tag == r_syms.names || tag == r_syms.dim ||
-          tag == r_syms.dim_names || tag == r_syms.class_ ||
-          tag == r_syms.row_names) {
-        if (tag == r_syms.class_) {
-          cls = r_node_car(node);
-        }
-
-        if (prev == r_null) {
-          attrib = r_node_cdr(attrib);
-        } else {
-          r_node_poke_cdr(prev, r_node_cdr(node));
-        }
-
-        node = r_node_cdr(node);
-        continue;
-      }
-
-      prev = node;
-      node = r_node_cdr(node);
-    }
+  if (!r_attrib_has_any(x) && !r_attrib_has_any(to)) {
+    // No one has attributes (nothing to clear, nothing to add).
+    // Don't need to worry about OBJECT/S4 bit, you'd always have at least one attribute.
+    return x;
   }
 
-  // Copy attributes but keep names and dims. Don't restore names for
-  // shaped objects since those are generated from dimnames.
-  r_obj* dim = KEEP(r_attrib_get(x, r_syms.dim));
-  ++n_prot;
+  // Note: Could this be `R_tryWrap()` one day? For backwards compatibility with
+  // R < 4.6, maybe we would have our own ALTREP wrapper class implementation?
+  // https://github.com/wch/r-source/commit/84293ec070c219b9ad2df44ae84d3f0f58d5ce7c
+  x = KEEP(vec_clone_referenced(x, ownership));
+
+  // In one pass, collect attributes we want to retain from `x`
+  struct vec_restore_collect_data data = {
+    .names = r_null,
+    .dim = r_null,
+    .dim_names = r_null,
+    .row_names = r_null
+  };
+  r_attrib_map(x, vec_restore_collect_cb, &data);
+  r_obj* names = KEEP(data.names);
+  r_obj* dim = KEEP(data.dim);
+  r_obj* dim_names = KEEP(data.dim_names);
+  r_obj* row_names = KEEP(data.row_names);
 
   if (dim == r_null) {
-    r_obj* nms = KEEP(r_attrib_get(x, r_syms.names));
-
-    // Check if `to` is a data frame early. If `x` and `to` point
-    // to the same reference, then `SET_ATTRIB()` would alter `to`.
-    r_obj* rownms = KEEP(df_rownames(x));
-    const bool restore_rownms = rownms != r_null && is_data_frame(to);
-
-    SET_ATTRIB(x, attrib);
-
-    r_attrib_poke(x, r_syms.names, nms);
-
-    // Don't restore row names if `to` isn't a data frame
-    if (restore_rownms) {
-      r_attrib_poke(x, r_syms.row_names, rownms);
-    }
-    FREE(2);
+    // This is a vector, clear any `dim` or `dim_names`
+    dim_names = r_null;
   } else {
-    r_obj* dimnames = KEEP(r_attrib_get(x, r_syms.dim_names));
-
-    SET_ATTRIB(x, attrib);
-
-    r_attrib_poke(x, r_syms.dim, dim);
-    r_attrib_poke(x, r_syms.dim_names, dimnames);
-    FREE(1);
+    // This is an array, clear any `names` or `row_names`
+    names = r_null;
+    row_names = r_null;
   }
 
-  if (cls != r_null) {
-    r_attrib_poke(x, r_syms.class_, cls);
+  // We don't actually retain row names if `to` isn't a data frame
+  if (row_names != r_null && !is_data_frame(to)) {
+    row_names = r_null;
   }
 
-  if (is_s4) {
-    x = r_as_s4(x);
-  }
+  // Copy over all attributes from `to`
+  //
+  // Uses `SHALLOW_DUPLICATE_ATTRIB()`. Notably:
+  // - Shallow clones attribute pairlist from `to`
+  // - `SET_ATTRIB()` for efficiency and avoids
+  //   `Rf_getAttrib()`/`Rf_setAttrib()` funny business
+  // - `SET_OBJECT()`
+  // - `SET_S4_OBJECT()` / `UNSET_S4_OBJECT()`
+  r_attrib_clone_from(x, to);
 
-  FREE(n_prot);
+  // Retain specific attributes from `x`
+  //
+  // We must set all 4! If `to` had `names` but `x` does not, then `names` will
+  // be `r_null` and will clear the `names` brought over by
+  // `r_attrib_clone_from()`.
+  r_attrib_poke(x, r_syms.names, names);
+  r_attrib_poke(x, r_syms.dim, dim);
+  r_attrib_poke(x, r_syms.dim_names, dim_names);
+  r_attrib_poke(x, r_syms.row_names, row_names);
+
+  FREE(5);
   return x;
 }
 
