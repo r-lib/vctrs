@@ -27,6 +27,13 @@ vec_equal(x, y, na_equal = FALSE, .ptype = NULL)
 A logical vector the same size as the common size of `x` and `y`. Will
 only contain `NA`s if `na_equal` is `FALSE`.
 
+## Details
+
+Attributes of `x` and `y` are considered equal if they have the same
+names and values, even if the attribute ordering is different. This
+reflects the idea that attributes are treated as a map rather than an
+ordered list.
+
 ## Dependencies
 
 - [`vec_cast_common()`](https://vctrs.r-lib.org/dev/reference/vec_cast.md)

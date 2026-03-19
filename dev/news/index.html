@@ -40,7 +40,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li>
+<ul><li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> now considers two objects with the same attribute names and values equivalent even if the attribute ordering is different. This reflects the fact that attributes are generally viewed as a map rather than an ordered list (<a href="https://github.com/r-lib/vctrs/issues/2156" class="external-link">#2156</a>).</p></li>
+<li>
 <p>Pairlist tags and attribute names are now incorporated during object hashing. In practice this can come up when list elements are hashed inside functions like <code><a href="../reference/vec_unique.html">vec_unique()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/2154" class="external-link">#2154</a>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only difference is the attribute name</span></span>

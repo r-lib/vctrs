@@ -2,6 +2,12 @@
 
 ## vctrs (development version)
 
+- [`vec_equal()`](https://vctrs.r-lib.org/dev/reference/vec_equal.md)
+  now considers two objects with the same attribute names and values
+  equivalent even if the attribute ordering is different. This reflects
+  the fact that attributes are generally viewed as a map rather than an
+  ordered list ([\#2156](https://github.com/r-lib/vctrs/issues/2156)).
+
 - Pairlist tags and attribute names are now incorporated during object
   hashing. In practice this can come up when list elements are hashed
   inside functions like
