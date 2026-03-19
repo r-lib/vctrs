@@ -1994,9 +1994,9 @@ void vctrs_init_utils(SEXP ns) {
   syms_index_style = Rf_install("index_style");
   syms_loc = Rf_install("loc");
 
-  fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
-  fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
-  fns_names = Rf_findVar(Rf_install("names"), R_BaseEnv);
+  fns_bracket = r_env_get(R_BaseEnv, syms_bracket);
+  fns_quote = r_env_get(R_BaseEnv, Rf_install("quote"));
+  fns_names = r_env_get(R_BaseEnv, Rf_install("names"));
 
   new_env_call = r_parse_eval("as.call(list(new.env, TRUE, NULL, NULL))", R_BaseEnv);
   R_PreserveObject(new_env_call);
