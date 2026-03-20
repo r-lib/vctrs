@@ -282,16 +282,17 @@ r_obj* vec_cast_common_opts(r_obj* xs,
   ));
 
   const r_ssize xs_size = r_length(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   r_obj* const* v_xs = r_list_cbegin(xs);
 
   r_obj* out = KEEP(r_alloc_list(xs_size));
-  r_attrib_poke_names(out, r_names(xs));
+  r_attrib_poke_names(out, xs_names);
 
   r_ssize i = 0;
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(
     opts->p_arg,
-    r_names(xs),
+    xs_names,
     xs_size,
     &i
   );
@@ -309,7 +310,7 @@ r_obj* vec_cast_common_opts(r_obj* xs,
     r_list_poke(out, i, vec_cast_opts(&cast_opts));
   }
 
-  FREE(3);
+  FREE(4);
   return out;
 }
 r_obj* vec_cast_common_params(r_obj* xs,
