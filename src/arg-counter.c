@@ -74,7 +74,7 @@ r_obj* reduce(
   void* data
 ) {
   const r_ssize n = r_length(rest);
-  r_obj* names = r_names(rest);
+  r_obj* names = KEEP(r_names(rest));
   r_obj* const* v_rest = r_list_cbegin(rest);
 
   struct counters* counters = new_counters(
@@ -94,6 +94,6 @@ r_obj* reduce(
     counters_increment(counters);
   }
 
-  FREE(2);
+  FREE(3);
   return current;
 }
