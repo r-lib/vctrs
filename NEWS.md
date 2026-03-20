@@ -1,5 +1,23 @@
 # vctrs (development version)
 
+* `vec_restore()`'s default method now consistently clears unrecognized attributes from `x`.
+
+  Previously:
+
+  ```r
+  x <- structure(1, foo = "bar")
+  to <- 2
+  vec_restore(x, to)
+  #> structure(1, foo = "bar")
+
+  x <- structure(1, foo = "bar")
+  to <- structure(2, a = "b")
+  vec_restore(x, to)
+  #> structure(1, a = "b")
+  ```
+
+  Now both `vec_restore()` calls consistently clear the unrecognized `foo` attribute (#2157).
+
 * `vec_equal()` now considers two objects with the same attribute names and values equivalent even if the attribute ordering is different. This reflects the fact that attributes are generally viewed as a map rather than an ordered list (#2156).
 
 * Pairlist tags and attribute names are now incorporated during object hashing.
