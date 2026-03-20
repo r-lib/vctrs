@@ -47,6 +47,8 @@
   vec_unique(x)
   ```
 
+- vctrs is now fully compliant with the R C API.
+
 ## vctrs 0.7.1
 
 CRAN release: 2026-01-23
