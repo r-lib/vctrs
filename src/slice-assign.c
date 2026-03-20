@@ -966,7 +966,7 @@ void list_check_all_condition_indices(
   r_ssize i = 0;
 
   const r_ssize xs_size = r_length(xs);
-  r_obj* xs_names = r_names(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   r_obj* const* v_xs = r_list_cbegin(xs);
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
@@ -976,7 +976,7 @@ void list_check_all_condition_indices(
     check_condition_index(v_xs[i], p_x_arg, call);
   }
 
-  FREE(1);
+  FREE(2);
 }
 
 // Cheap internal checks done right before assignment to avoid R crashes in corrupt cases
