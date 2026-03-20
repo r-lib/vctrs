@@ -65,15 +65,15 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
   }
 
   if (has_dim(x) || has_dim(to)) {
-    r_obj* x_dim = r_dim(x);
-    r_obj* x_dim_names = r_dim_names(x);
+    r_obj* x_dim = KEEP(r_dim(x));
+    r_obj* x_dim_names = KEEP(r_dim_names(x));
+
+    r_obj* out_dim = KEEP(r_dim(out));
+    r_obj* out_dim_names = KEEP(r_dim_names(out));
 
     // Ensure `out` has the shape of `x`.
     // Native casting doesn't propagate shape.
-    if (
-      !obj_equal(r_dim(out), x_dim) ||
-      !obj_equal(r_dim_names(out), x_dim_names)
-    ) {
+    if (!obj_equal(out_dim, x_dim) || !obj_equal(out_dim_names, x_dim_names)) {
       out = KEEP(r_clone_referenced(out));
       r_attrib_poke_dim(out, x_dim);
       r_attrib_poke_dim_names(out, x_dim_names);
@@ -84,7 +84,7 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
     // Broadcast `out` to the shape of `to`
     out = vec_shape_broadcast(out, to, p_x_arg, p_to_arg, call);
 
-    FREE(1);
+    FREE(5);
   }
 
   FREE(1);
