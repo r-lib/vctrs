@@ -371,23 +371,22 @@ r_obj* as_df_row_impl(r_obj* x,
 
   int nprot = 0;
 
-  r_obj* dim = vec_bare_dim(x);
+  r_obj* dim = KEEP_N(vec_bare_dim(x), &nprot);
   r_ssize ndim = (dim == r_null) ? 1 : r_length(dim);
 
   if (ndim > 2) {
     r_abort_lazy_call(error_call, "Can't bind arrays.");
   }
   if (ndim == 2) {
-    r_obj* out = KEEP(r_as_data_frame(x));
-    r_attrib_poke_names(out, vec_as_names(KEEP(colnames2(x)), name_repair));
-
-    FREE(2); FREE(nprot);
+    r_obj* out = KEEP_N(r_as_data_frame(x), &nprot);
+    r_attrib_poke_names(out, vec_as_names(KEEP_N(colnames2(x), &nprot), name_repair));
+    FREE(nprot);
     return out;
   }
 
   // Take names before removing dimensions so we get colnames if needed
-  r_obj* nms = KEEP(vec_names2(x));
-  nms = KEEP(vec_as_names(nms, name_repair));
+  r_obj* nms = KEEP_N(vec_names2(x), &nprot);
+  nms = KEEP_N(vec_as_names(nms, name_repair), &nprot);
 
   if (dim != r_null) {
     x = KEEP_N(r_clone_referenced(x), &nprot);
@@ -397,13 +396,13 @@ r_obj* as_df_row_impl(r_obj* x,
 
   // Remove names first as they are promoted to data frame column names.
   // Can be a user side object, so use `VCTRS_OWNERSHIP_foreign`.
-  x = KEEP(vec_set_names(x, r_null, VCTRS_OWNERSHIP_foreign));
+  x = KEEP_N(vec_set_names(x, r_null, VCTRS_OWNERSHIP_foreign), &nprot);
 
-  x = KEEP(vec_chop_unsafe(x, r_null, r_null));
+  x = KEEP_N(vec_chop_unsafe(x, r_null, r_null), &nprot);
   r_attrib_poke_names(x, nms);
   x = new_data_frame(x, 1);
 
-  FREE(4); FREE(nprot);
+  FREE(nprot);
   return x;
 }
 
