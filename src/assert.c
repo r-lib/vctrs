@@ -127,7 +127,7 @@ bool list_all_size(
   r_ssize i = 0;
 
   const r_ssize xs_size = r_length(xs);
-  r_obj* xs_names = r_names(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   r_obj* const* v_xs = r_list_cbegin(xs);
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
@@ -143,7 +143,7 @@ bool list_all_size(
     }
   }
 
-  FREE(1);
+  FREE(2);
   return out;
 }
 
