@@ -2,6 +2,29 @@
 
 ## vctrs (development version)
 
+- [`vec_restore()`](https://vctrs.r-lib.org/dev/reference/vec_proxy.md)’s
+  default method now consistently clears unrecognized attributes from
+  `x`.
+
+  Previously:
+
+  ``` r
+  x <- structure(1, foo = "bar")
+  to <- 2
+  vec_restore(x, to)
+  #> structure(1, foo = "bar")
+
+  x <- structure(1, foo = "bar")
+  to <- structure(2, a = "b")
+  vec_restore(x, to)
+  #> structure(1, a = "b")
+  ```
+
+  Now both
+  [`vec_restore()`](https://vctrs.r-lib.org/dev/reference/vec_proxy.md)
+  calls consistently clear the unrecognized `foo` attribute
+  ([\#2157](https://github.com/r-lib/vctrs/issues/2157)).
+
 - [`vec_equal()`](https://vctrs.r-lib.org/dev/reference/vec_equal.md)
   now considers two objects with the same attribute names and values
   equivalent even if the attribute ordering is different. This reflects
