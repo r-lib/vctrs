@@ -1417,7 +1417,7 @@ r_obj* vec_recycle_xs_fallback(
   struct r_lazy error_call
 ) {
   r_ssize xs_size = vec_size(xs);
-  r_obj* xs_names = r_names(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   xs = KEEP(r_clone_referenced(xs));
 
   r_ssize i = 0;
@@ -1439,7 +1439,7 @@ r_obj* vec_recycle_xs_fallback(
     r_list_poke(xs, i, vec_recycle_fallback(x, index_size, p_x_arg, error_call));
   }
 
-  FREE(2);
+  FREE(3);
   return xs;
 }
 
