@@ -234,13 +234,14 @@ r_obj* vec_recycle_common(
   }
 
   r_obj* const* v_xs = r_list_cbegin(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   const r_ssize xs_size = r_length(xs);
 
   r_ssize xs_index = 0;
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(
     p_xs_arg,
-    r_names(xs),
+    xs_names,
     xs_size,
     &xs_index
   );
@@ -259,13 +260,13 @@ r_obj* vec_recycle_common(
   }
 
   if (xs_index == xs_size) {
-    FREE(1);
+    FREE(2);
     return xs;
   }
 
   // Otherwise we need a new list
   r_obj* out = KEEP(r_alloc_list(xs_size));
-  r_attrib_poke_names(out, r_names(xs));
+  r_attrib_poke_names(out, xs_names);
 
   // Copy over everything before `xs_index`
   for (r_ssize i = 0; i < xs_index; ++i) {
@@ -280,6 +281,6 @@ r_obj* vec_recycle_common(
     ++xs_index;
   }
 
-  FREE(2);
+  FREE(3);
   return out;
 }
