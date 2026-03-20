@@ -774,8 +774,6 @@ r_obj* vec_set_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_own
     return set_rownames_dispatch(x, names);
   }
 
-  int nprot = 0;
-
   r_obj* dim_names = r_attrib_get(x, r_syms.dim_names);
 
   // Early exit when no new row names and no existing row names
@@ -785,20 +783,22 @@ r_obj* vec_set_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_own
     }
   }
 
-  x = KEEP_N(vec_clone_referenced(x, ownership), &nprot);
+  // Okay, now protect `dim_names`
+  KEEP(dim_names);
+
+  x = KEEP(vec_clone_referenced(x, ownership));
 
   if (dim_names == r_null) {
-    dim_names = KEEP_N(r_alloc_list(vec_dim_n(x)), &nprot);
+    dim_names = KEEP(r_alloc_list(vec_dim_n(x)));
   } else {
     // Also clone attribute
-    dim_names = KEEP_N(r_clone(dim_names), &nprot);
+    dim_names = KEEP(r_clone(dim_names));
   }
 
   r_list_poke(dim_names, 0, names);
-
   r_attrib_poke(x, r_syms.dim_names, dim_names);
 
-  FREE(nprot);
+  FREE(3);
   return x;
 }
 

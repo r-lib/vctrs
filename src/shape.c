@@ -46,6 +46,18 @@ r_obj* ffi_vec_shape2(r_obj* x, r_obj* y, r_obj* frame) {
   return vec_shape2(x, y, &x_arg, &y_arg);
 }
 
+// This function is fairly important for performance, because `vec_shaped_ptype()`
+// is called on every ptype2 iteration. This example runs roughly 15% faster if
+// we completely avoid any `KEEP()` and `FREE()` calls in the happy path, which
+// justifies the somewhat ugly code flow.
+//
+// ```r
+// x <- as.list(1:1e6)
+// vec_ptype_common(!!!x)
+// ```
+//
+// rchk asserts that `r_dim()` creates a potentially fresh variable, even though
+// we are mostly confident it does not
 static inline
 r_obj* vec_shape2(
   r_obj* x,
@@ -53,23 +65,32 @@ r_obj* vec_shape2(
   struct vctrs_arg* p_x_arg,
   struct vctrs_arg* p_y_arg
 ) {
-  // Expect that `r_dim()` does not allocate, so we don't protect these!
-  // This is somewhat important for performance, because `vec_shaped_ptype()`
-  // is called on every ptype2 iteration.
   r_obj* x_dimensions = r_dim(x);
-  r_obj* y_dimensions = r_dim(y);
 
   if (x_dimensions == r_null) {
+    r_obj* y_dimensions = r_dim(y);
+
     if (y_dimensions == r_null) {
       return r_null;
     } else {
-      return dims_shape(y_dimensions);
+      KEEP(y_dimensions);
+      r_obj* out = dims_shape(y_dimensions);
+      FREE(1);
+      return out;
     }
   } else {
+    KEEP(x_dimensions);
+    r_obj* y_dimensions = r_dim(y);
+
     if (y_dimensions == r_null) {
-      return dims_shape(x_dimensions);
+      r_obj* out = dims_shape(x_dimensions);
+      FREE(1);
+      return out;
     } else {
-      return dims_shape2(x_dimensions, y_dimensions, x, y, p_x_arg, p_y_arg);
+      KEEP(y_dimensions);
+      r_obj* out = dims_shape2(x_dimensions, y_dimensions, x, y, p_x_arg, p_y_arg);
+      FREE(2);
+      return out;
     }
   }
 }

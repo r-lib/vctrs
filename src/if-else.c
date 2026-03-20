@@ -207,9 +207,9 @@ r_obj* atomic_if_else(
 
   // Grab names before casting as casting may drop them
   // https://github.com/r-lib/vctrs/issues/623
-  r_obj* true_names = r_names(true_);
-  r_obj* false_names = r_names(false_);
-  r_obj* missing_names = has_missing ? r_names(missing) : r_null;
+  r_obj* true_names = KEEP_N(r_names(true_), &n_prot);
+  r_obj* false_names = KEEP_N(r_names(false_), &n_prot);
+  r_obj* missing_names = KEEP_N(has_missing ? r_names(missing) : r_null, &n_prot);
 
   const bool has_true_names = true_names != r_null;
   const bool has_false_names = false_names != r_null;

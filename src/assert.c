@@ -127,7 +127,7 @@ bool list_all_size(
   r_ssize i = 0;
 
   const r_ssize xs_size = r_length(xs);
-  r_obj* xs_names = r_names(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   r_obj* const* v_xs = r_list_cbegin(xs);
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
@@ -143,7 +143,7 @@ bool list_all_size(
     }
   }
 
-  FREE(1);
+  FREE(2);
   return out;
 }
 
@@ -183,7 +183,7 @@ void list_check_all_size(
   r_ssize i = 0;
 
   const r_ssize xs_size = r_length(xs);
-  r_obj* xs_names = r_names(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   r_obj* const* v_xs = r_list_cbegin(xs);
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
@@ -193,7 +193,7 @@ void list_check_all_size(
     vec_check_size(v_xs[i], size, allow_null, p_x_arg, call);
   }
 
-  FREE(1);
+  FREE(2);
 }
 
 r_obj* ffi_obj_is_list(r_obj* x) {
@@ -269,7 +269,7 @@ bool list_all_recyclable(
   r_ssize i = 0;
 
   const r_ssize xs_size = r_length(xs);
-  r_obj* xs_names = r_names(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   r_obj* const* v_xs = r_list_cbegin(xs);
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
@@ -285,7 +285,7 @@ bool list_all_recyclable(
     }
   }
 
-  FREE(1);
+  FREE(2);
   return out;
 }
 
@@ -325,7 +325,7 @@ void list_check_all_recyclable(
   r_ssize i = 0;
 
   const r_ssize xs_size = r_length(xs);
-  r_obj* xs_names = r_names(xs);
+  r_obj* xs_names = KEEP(r_names(xs));
   r_obj* const* v_xs = r_list_cbegin(xs);
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(p_xs_arg, xs_names, xs_size, &i);
@@ -335,5 +335,5 @@ void list_check_all_recyclable(
     vec_check_recyclable(v_xs[i], size, allow_null, p_x_arg, call);
   }
 
-  FREE(1);
+  FREE(2);
 }

@@ -572,15 +572,13 @@ static r_obj* obj_attrib_equal_cb(r_obj* tag, r_obj* value, void* data) {
   struct attrib_equal_data* p_data = (struct attrib_equal_data*) data;
   p_data->x_size++;
 
-  r_obj* y_value = r_attrib_get(p_data->y, tag);
+  r_obj* y_value = KEEP(r_attrib_get(p_data->y, tag));
 
-  if (!obj_equal_utf8(value, y_value)) {
-    // Different!
-    return r_null;
-  }
+  // Return `r_null` when different to signal that we are done
+  SEXP out = obj_equal_utf8(value, y_value) ? NULL : r_null;
 
-  // Continue
-  return NULL;
+  FREE(1);
+  return out;
 }
 
 static r_obj* obj_attrib_count_cb(r_obj* _tag, r_obj* _value, void* data) {
