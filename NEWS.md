@@ -1,3 +1,5 @@
+# vctrs (development version)
+
 # vctrs 0.7.2
 
 * `vec_restore()`'s default method now consistently clears unrecognized attributes from `x`.
