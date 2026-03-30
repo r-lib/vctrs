@@ -2,6 +2,10 @@
 
 ## vctrs (development version)
 
+## vctrs 0.7.2
+
+CRAN release: 2026-03-21
+
 - [`vec_restore()`](https://vctrs.r-lib.org/dev/reference/vec_proxy.md)’s
   default method now consistently clears unrecognized attributes from
   `x`.
