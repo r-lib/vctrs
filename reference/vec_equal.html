@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Equality</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/v0.7.1/R/equal.R" class="external-link"><code>R/equal.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/main/R/equal.R" class="external-link"><code>R/equal.R</code></a></small>
       <div class="d-none name"><code>vec_equal.Rd</code></div>
     </div>
 
@@ -68,6 +68,12 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A logical vector the same size as the common size of <code>x</code> and <code>y</code>.
 Will only contain <code>NA</code>s if <code>na_equal</code> is <code>FALSE</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Attributes of <code>x</code> and <code>y</code> are considered equal if they have the same names
+and values, even if the attribute ordering is different. This reflects the
+idea that attributes are treated as a map rather than an ordered list.</p>
     </div>
     <div class="section level2">
     <h2 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a></h2>

@@ -55,24 +55,24 @@ functions that work with the dual of unique values: duplicated values.
 ``` r
 x <- rpois(100, 8)
 vec_unique(x)
-#>  [1]  4 13 10  5  8  7  9  6 15 12 11 14  2
+#>  [1] 10  5  7 15 12 11  9  4  8 13  6 14  2
 vec_unique_loc(x)
-#>  [1]  1  2  3  4  5  8  9 11 14 20 25 27 31
+#>  [1]  1  2  3  4  5  6  9 15 16 21 29 56 60
 vec_unique_count(x)
 #> [1] 13
 
 # `vec_unique()` returns values in the order that encounters them
 # use sort = "location" to match to the result of `vec_count()`
 head(vec_unique(x))
-#> [1]  4 13 10  5  8  7
+#> [1] 10  5  7 15 12 11
 head(vec_count(x, sort = "location"))
 #>   key count
-#> 1   4     3
-#> 2  13     4
-#> 3  10     6
-#> 4   5     9
-#> 5   8    15
-#> 6   7    17
+#> 1  10     8
+#> 2   5    11
+#> 3   7    18
+#> 4  15     2
+#> 5  12     5
+#> 6  11     7
 
 # Normally missing values are not considered to be equal
 NA == NA

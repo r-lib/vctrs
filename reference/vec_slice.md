@@ -134,21 +134,21 @@ error if they don't implement a
 ``` r
 x <- sample(10)
 x
-#>  [1]  6  3  1  4 10  8  7  2  5  9
+#>  [1]  6  5  7  1  2  4  3 10  9  8
 vec_slice(x, 1:3)
-#> [1] 6 3 1
+#> [1] 6 5 7
 
 # You can assign with the infix variant:
 vec_slice(x, 2) <- 100
 x
-#>  [1]   6 100   1   4  10   8   7   2   5   9
+#>  [1]   6 100   7   1   2   4   3  10   9   8
 
 # Or with the regular variant that doesn't modify the original input:
 y <- vec_assign(x, 3, 500)
 y
-#>  [1]   6 100 500   4  10   8   7   2   5   9
+#>  [1]   6 100 500   1   2   4   3  10   9   8
 x
-#>  [1]   6 100   1   4  10   8   7   2   5   9
+#>  [1]   6 100   7   1   2   4   3  10   9   8
 
 
 # Slicing objects of higher dimension:

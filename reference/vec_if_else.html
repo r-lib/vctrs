@@ -13,7 +13,7 @@ missing into account when determining what the output type should be."><meta pro
 
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@ missing into account when determining what the output type should be."><meta pro
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Vectorized if-else</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/v0.7.1/R/if-else.R" class="external-link"><code>R/if-else.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/main/R/if-else.R" class="external-link"><code>R/if-else.R</code></a></small>
       <div class="d-none name"><code>vec_if_else.Rd</code></div>
     </div>
 
@@ -134,10 +134,10 @@ values from <code>missing</code>, if provided, otherwise a missing value will be
 <span class="r-in"><span><span class="co"># Unlike `ifelse()`, `vec_if_else()` preserves types</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span>, <span class="va">x</span>, <span class="cn">NA</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  2 NA  2 NA NA  3 NA  1  1 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] NA  1 NA  1  1 NA  2 NA  3  1</span>
 <span class="r-in"><span><span class="fu">vec_if_else</span><span class="op">(</span><span class="va">x</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span>, <span class="va">x</span>, <span class="cn">NA</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] b    &lt;NA&gt; b    &lt;NA&gt; &lt;NA&gt; c    &lt;NA&gt; a    a    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: a b c d e</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] &lt;NA&gt; a    &lt;NA&gt; a    a    &lt;NA&gt; b    &lt;NA&gt; c    a   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: a b c e</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># `vec_if_else()` also works with data frames</span></span></span>
 <span class="r-in"><span><span class="va">condition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>

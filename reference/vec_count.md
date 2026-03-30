@@ -74,70 +74,70 @@ x <- letters[rpois(100, 6)]
 # default is to sort by frequency
 vec_count(x)
 #>    key count
-#> 1    f    16
-#> 2    g    16
-#> 3    d    15
-#> 4    e    11
-#> 5    h    11
-#> 6    i    11
-#> 7    j     5
-#> 8    b     4
-#> 9    c     4
-#> 10   n     2
-#> 11   a     2
-#> 12   m     2
-#> 13   k     1
+#> 1    f    21
+#> 2    e    19
+#> 3    g    16
+#> 4    d    14
+#> 5    h     9
+#> 6    b     6
+#> 7    c     4
+#> 8    j     3
+#> 9    k     2
+#> 10   l     2
+#> 11   i     2
+#> 12   n     1
+#> 13   a     1
 
 # by can sort by key
 vec_count(x, sort = "key")
 #>    key count
-#> 1    a     2
-#> 2    b     4
+#> 1    a     1
+#> 2    b     6
 #> 3    c     4
-#> 4    d    15
-#> 5    e    11
-#> 6    f    16
+#> 4    d    14
+#> 5    e    19
+#> 6    f    21
 #> 7    g    16
-#> 8    h    11
-#> 9    i    11
-#> 10   j     5
-#> 11   k     1
-#> 12   m     2
-#> 13   n     2
+#> 8    h     9
+#> 9    i     2
+#> 10   j     3
+#> 11   k     2
+#> 12   l     2
+#> 13   n     1
 
 # or location of first value
 vec_count(x, sort = "location")
 #>    key count
-#> 1    e    11
-#> 2    f    16
-#> 3    j     5
-#> 4    d    15
+#> 1    e    19
+#> 2    d    14
+#> 3    c     4
+#> 4    k     2
 #> 5    g    16
-#> 6    b     4
-#> 7    n     2
-#> 8    c     4
-#> 9    h    11
-#> 10   i    11
-#> 11   a     2
-#> 12   m     2
-#> 13   k     1
+#> 6    l     2
+#> 7    b     6
+#> 8    f    21
+#> 9    j     3
+#> 10   h     9
+#> 11   i     2
+#> 12   n     1
+#> 13   a     1
 head(x)
-#> [1] "e" "f" "j" "e" "d" "g"
+#> [1] "e" "e" "d" "e" "c" "e"
 
 # or not at all
 vec_count(x, sort = "none")
 #>    key count
-#> 1    g    16
-#> 2    h    11
-#> 3    d    15
-#> 4    n     2
-#> 5    b     4
-#> 6    i    11
-#> 7    k     1
-#> 8    c     4
-#> 9    j     5
-#> 10   f    16
-#> 11   m     2
-#> 12   e    11
-#> 13   a     2
+#> 1    l     2
+#> 2    i     2
+#> 3    k     2
+#> 4    j     3
+#> 5    f    21
+#> 6    g    16
+#> 7    a     1
+#> 8    d    14
+#> 9    e    19
+#> 10   c     4
+#> 11   n     1
+#> 12   h     9
+#> 13   b     6
 ```

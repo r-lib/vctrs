@@ -11,7 +11,7 @@ and [&amp;lt;- that match vec_size() instead of length()."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,7 @@ and [&amp;lt;- that match vec_size() instead of length()."><meta property="og:im
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Get or set observations in a vector</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/v0.7.1/R/slice.R" class="external-link"><code>R/slice.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/main/R/slice.R" class="external-link"><code>R/slice.R</code></a></small>
       <div class="d-none name"><code>vec_slice.Rd</code></div>
     </div>
 
@@ -164,21 +164,21 @@ as the LHS.</p></li>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  6  3  1  4 10  8  7  2  5  9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  6  5  7  1  2  4  3 10  9  8</span>
 <span class="r-in"><span><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6 3 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6 5 7</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can assign with the infix variant:</span></span></span>
 <span class="r-in"><span><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   1   4  10   8   7   2   5   9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   7   1   2   4   3  10   9   8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Or with the regular variant that doesn't modify the original input:</span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">vec_assign</span><span class="op">(</span><span class="va">x</span>, <span class="fl">3</span>, <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">y</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100 500   4  10   8   7   2   5   9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100 500   1   2   4   3  10   9   8</span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   1   4  10   8   7   2   5   9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   7   1   2   4   3  10   9   8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Slicing objects of higher dimension:</span></span></span>

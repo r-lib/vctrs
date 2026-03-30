@@ -1,5 +1,56 @@
 # Changelog
 
+## vctrs 0.7.2
+
+CRAN release: 2026-03-21
+
+- [`vec_restore()`](https://vctrs.r-lib.org/reference/vec_proxy.md)’s
+  default method now consistently clears unrecognized attributes from
+  `x`.
+
+  Previously:
+
+  ``` r
+  x <- structure(1, foo = "bar")
+  to <- 2
+  vec_restore(x, to)
+  #> structure(1, foo = "bar")
+
+  x <- structure(1, foo = "bar")
+  to <- structure(2, a = "b")
+  vec_restore(x, to)
+  #> structure(1, a = "b")
+  ```
+
+  Now both
+  [`vec_restore()`](https://vctrs.r-lib.org/reference/vec_proxy.md)
+  calls consistently clear the unrecognized `foo` attribute
+  ([\#2157](https://github.com/r-lib/vctrs/issues/2157)).
+
+- [`vec_equal()`](https://vctrs.r-lib.org/reference/vec_equal.md) now
+  considers two objects with the same attribute names and values
+  equivalent even if the attribute ordering is different. This reflects
+  the fact that attributes are generally viewed as a map rather than an
+  ordered list ([\#2156](https://github.com/r-lib/vctrs/issues/2156)).
+
+- Pairlist tags and attribute names are now incorporated during object
+  hashing. In practice this can come up when list elements are hashed
+  inside functions like
+  [`vec_unique()`](https://vctrs.r-lib.org/reference/vec_unique.md)
+  ([\#2154](https://github.com/r-lib/vctrs/issues/2154)).
+
+  ``` r
+  # Only difference is the attribute name
+  x <- list(
+    structure(1, foo = 2),
+    structure(1, bar = 2)
+  )
+  # Used to return `x[1]`, now returns `x`
+  vec_unique(x)
+  ```
+
+- vctrs is now fully compliant with the R C API.
+
 ## vctrs 0.7.1
 
 CRAN release: 2026-01-23

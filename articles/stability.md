@@ -235,7 +235,7 @@ c(mean, globalenv())
 #> [[1]]
 #> function (x, ...) 
 #> UseMethod("mean")
-#> <bytecode: 0x5568800c0f38>
+#> <bytecode: 0x56472b80d720>
 #> <environment: namespace:base>
 #> 
 #> [[2]]
@@ -255,7 +255,7 @@ c("x", getRversion())
 #> [1] "x"
 #> 
 #> [[2]]
-#> [1] 4 5 2
+#> [1] 4 5 3
 ```
 
 [`vec_c()`](https://vctrs.r-lib.org/reference/vec_c.md) throws an error
@@ -564,7 +564,7 @@ if_else(x > 2, factor("small"), factor("big"))
 #> [1] <NA>  big   big   small small
 #> Levels: small big
 if_else(x > 2, Sys.Date(), Sys.Date() + 7)
-#> [1] NA           "2026-02-03" "2026-02-03" "2026-01-27" "2026-01-27"
+#> [1] NA           "2026-04-06" "2026-04-06" "2026-03-30" "2026-03-30"
 ```
 
 By using [`vec_size()`](https://vctrs.r-lib.org/reference/vec_size.md)

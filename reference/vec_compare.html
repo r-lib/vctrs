@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Compare two vectors</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/v0.7.1/R/compare.R" class="external-link"><code>R/compare.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/main/R/compare.R" class="external-link"><code>R/compare.R</code></a></small>
       <div class="d-none name"><code>vec_compare.Rd</code></div>
     </div>
 
@@ -96,7 +96,7 @@ if either <code>x</code> or <code>y</code> is <code>NA</code>.</p>
 <span class="r-in"><span><span class="fu">vec_compare</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] -1 -1 -1 -1  0  1  1  1  1  1</span>
 <span class="r-in"><span><span class="fu">vec_compare</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] -1 -1 -1 -1 -1 -1  1  1 -1  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] -1 -1 -1 -1 -1  1  1  1 -1 -1</span>
 <span class="r-in"><span><span class="fu">vec_compare</span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="st">"d"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] -1 -1 -1  0  1  1  1  1  1  1</span>
 <span class="r-in"><span></span></span>
