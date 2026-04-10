@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Fixed an accidental usage of non-API `PRVALUE()` (#2165).
+
 # vctrs 0.7.2
 
 * `vec_restore()`'s default method now consistently clears unrecognized attributes from `x`.
