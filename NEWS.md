@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
+
 * Fixed an accidental usage of non-API `PRVALUE()` (#2165).
 
 # vctrs 0.7.2
