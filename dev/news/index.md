@@ -2,6 +2,10 @@
 
 ## vctrs (development version)
 
+## vctrs 0.7.3
+
+CRAN release: 2026-04-11
+
 - Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
 
 - Fixed an accidental usage of non-API `PRVALUE()`
