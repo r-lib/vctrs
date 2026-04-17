@@ -22,12 +22,12 @@ Source:
 [`DESCRIPTION`](https://github.com/r-lib/vctrs/blob/main/DESCRIPTION)
 
 Wickham H, Henry L, Vaughan D (2026). *vctrs: Vector Helpers*. R package
-version 0.7.2, <https://vctrs.r-lib.org/>.
+version 0.7.3, <https://vctrs.r-lib.org/>.
 
     @Manual{,
       title = {vctrs: Vector Helpers},
       author = {Hadley Wickham and Lionel Henry and Davis Vaughan},
       year = {2026},
-      note = {R package version 0.7.2},
+      note = {R package version 0.7.3},
       url = {https://vctrs.r-lib.org/},
     }

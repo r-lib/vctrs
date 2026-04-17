@@ -411,7 +411,7 @@ You’ll also get mostly correct behaviour for
 c(percent(0.5), 1)
 #> [1] 0.5 1.0
 c(percent(0.5), factor(1))
-#> Error in `vec_c()`:
+#> Error in `vec_c()` at vctrs/R/type-vctr.R:178:3:
 #> ! Can't combine `..1` <vctrs_percent> and `..2` <factor<25c7e>>.
 
 # Incorrect
@@ -803,11 +803,11 @@ yet. Printing causes an error:
 ``` r
 x
 #> <vctrs_rational[10]>
-#> Error in `format()`:
+#> Error in `format()` at vctrs/R/print-str.R:45:3:
 #> ! `format.vctrs_rational()` not implemented.
 
 str(x)
-#> Error in `format()`:
+#> Error in `format()` at vctrs/R/print-str.R:126:3:
 #> ! `format.vctrs_rational()` not implemented.
 ```
 
@@ -1414,13 +1414,13 @@ But we can’t do arithmetic:
 
 ``` r
 x + 1
-#> Error in `vec_arith()`:
+#> Error in `vec_arith()` at vctrs/R/type-vctr.R:657:5:
 #> ! <vctrs_meter> + <double> is not permitted
 meter(10) + meter(1)
-#> Error in `vec_arith()`:
+#> Error in `vec_arith()` at vctrs/R/type-vctr.R:657:5:
 #> ! <vctrs_meter> + <vctrs_meter> is not permitted
 meter(10) * 3
-#> Error in `vec_arith()`:
+#> Error in `vec_arith()` at vctrs/R/type-vctr.R:672:3:
 #> ! <vctrs_meter> * <double> is not permitted
 ```
 
@@ -1476,7 +1476,7 @@ meter(10) - meter(1)
 meter(10) / meter(1)
 #> [1] 10
 meter(10) * meter(1)
-#> Error in `vec_arith()`:
+#> Error in `vec_arith()` at vctrs/R/type-vctr.R:672:3:
 #> ! <vctrs_meter> * <vctrs_meter> is not permitted
 ```
 
@@ -1516,10 +1516,10 @@ meter(20) / 10
 #> <vctrs_meter[1]>
 #> [1] 2 m
 10 / meter(20)
-#> Error in `vec_arith()`:
+#> Error in `vec_arith()` at vctrs/R/type-vctr.R:677:3:
 #> ! <double> / <vctrs_meter> is not permitted
 meter(20) + 10
-#> Error in `vec_arith()`:
+#> Error in `vec_arith()` at vctrs/R/type-vctr.R:657:5:
 #> ! <vctrs_meter> + <double> is not permitted
 ```
 

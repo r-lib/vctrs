@@ -1,5 +1,14 @@
 # Changelog
 
+## vctrs 0.7.3
+
+CRAN release: 2026-04-11
+
+- Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
+
+- Fixed an accidental usage of non-API `PRVALUE()`
+  ([\#2165](https://github.com/r-lib/vctrs/issues/2165)).
+
 ## vctrs 0.7.2
 
 CRAN release: 2026-03-21

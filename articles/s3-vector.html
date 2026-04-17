@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -417,7 +417,7 @@ exception is when you use <code><a href="https://rdrr.io/r/base/c.html" class="e
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.5 1.0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_c()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_c()` at vctrs/R/type-vctr.R:178:3:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine `..1` &lt;vctrs_percent&gt; and `..2` &lt;factor&lt;25c7e&gt;&gt;.</span></span>
 <span></span>
 <span><span class="co"># Incorrect</span></span>
@@ -737,11 +737,11 @@ new rational vector <code>x</code> yet. Printing causes an error:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span></span>
 <span><span class="co">#&gt; &lt;vctrs_rational[10]&gt;</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `format()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `format()` at vctrs/R/print-str.R:45:3:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> `format.vctrs_rational()` not implemented.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `format()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `format()` at vctrs/R/print-str.R:126:3:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> `format.vctrs_rational()` not implemented.</span></span></code></pre></div>
 <p>This is because we haven’t defined how our class can be printed from
 the underlying data. Note that if you want to look under the hood during
@@ -1254,13 +1254,13 @@ mathematic operations work:</p>
 <p>But we can’t do arithmetic:</p>
 <div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()` at vctrs/R/type-vctr.R:657:5:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span></span>
 <span><span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()` at vctrs/R/type-vctr.R:657:5:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; + &lt;vctrs_meter&gt; is not permitted</span></span>
 <span><span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fl">3</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()` at vctrs/R/type-vctr.R:672:3:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; * &lt;double&gt; is not permitted</span></span></code></pre></div>
 <p>To allow these infix functions to work, we’ll need to provide
 <code><a href="../reference/vec_arith.html">vec_arith()</a></code> generic. But before we do that, let’s think
@@ -1308,7 +1308,7 @@ message for everything else.</p>
 <span><span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">/</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 10</span></span>
 <span><span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()` at vctrs/R/type-vctr.R:672:3:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; * &lt;vctrs_meter&gt; is not permitted</span></span></code></pre></div>
 <p>Next we write the pair of methods for arithmetic with a meter and a
 number. These are almost identical, but while <code>meter(10) / 2</code>
@@ -1346,10 +1346,10 @@ operands, we dispatch over <code>numeric</code> here instead of
 <span><span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span></span>
 <span><span class="co">#&gt; [1] 2 m</span></span>
 <span><span class="fl">10</span> <span class="op">/</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()` at vctrs/R/type-vctr.R:677:3:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;double&gt; / &lt;vctrs_meter&gt; is not permitted</span></span>
 <span><span class="fu">meter</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op">+</span> <span class="fl">10</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()` at vctrs/R/type-vctr.R:657:5:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span></span></code></pre></div>
 <p>For completeness, we also need
 <code>vec_arith.vctrs_meter.MISSING</code> for the unary <code>+</code>
