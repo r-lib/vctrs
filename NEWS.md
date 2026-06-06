@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* The coercion how-to now recommends returning `vec_default_ptype2()` from
+  `vec_ptype2()` methods with incompatible attributes, rather than calling
+  `stop_incompatible_type()` directly (#1731, @LeonidasZhak).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.

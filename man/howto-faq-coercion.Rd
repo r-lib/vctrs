@@ -174,9 +174,11 @@ vec_ptype2.double.my_natural <- function(x, y, ...) \{
 \subsection{Incompatible attributes}{
 
 Most of the time, inputs are incompatible because they have different
-classes for which no \code{vec_ptype2()} method is implemented. More rarely,
-inputs could be incompatible because of their attributes. In that case
-incompatibility is signalled by calling \code{stop_incompatible_type()}.
+classes for which no \code{vec_ptype2()} method is implemented.
+More rarely, inputs could be incompatible because of their attributes.
+In that case, return the result of \code{vec_default_ptype2()}.
+The default method ultimately signals an incompatible type error if no
+restart supplies a compatible prototype.
 
 In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of \verb{<factor>} that has stricter combination
@@ -186,7 +188,7 @@ are not compatible.
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_strict_factor.my_strict_factor <- function(x, y, ..., x_arg = "", y_arg = "") \{
   if (!setequal(levels(x), levels(y))) \{
-    stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+    return(vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg))
   \}
 
   x
@@ -194,7 +196,7 @@ vec_ptype2.my_strict_factor.my_strict_factor <- function(x, y, ..., x_arg = "", 
 }\if{html}{\out{</div>}}
 
 Note how the methods need to take \code{x_arg} and \code{y_arg} parameters and
-pass them on to \code{stop_incompatible_type()}. These argument tags help
+pass them on to \code{vec_default_ptype2()}. These argument tags help
 create more informative error messages when the common type
 determination is for a column of a data frame. They are part of the
 generic signature but can usually be left out if not used.

@@ -77,9 +77,10 @@ emptied of their elements. They implement two behaviours:
 \item If the types of their inputs are compatible, indicate which of them is
 the richer type by returning it. If the types are of equal resolution,
 return any of the two.
-\item Throw an error with \code{stop_incompatible_type()} when it can be
-determined from the attributes that the types of the inputs are not
-compatible.
+\item If it can be determined from the attributes that the types of the
+inputs are not compatible, return \code{vec_default_ptype2(x, y, ...)}.
+The default method throws \code{stop_incompatible_type()} if no restart supplies
+a compatible prototype.
 }
 \subsection{Type compatibility}{
 
