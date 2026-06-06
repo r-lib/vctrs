@@ -130,7 +130,7 @@ vec_count_impl <- function(x) {
 #' # Location of the unique values:
 #' vec_unique_loc(x)
 #' # Equivalent to `duplicated()`:
-#' vec_duplicate_id(x) == seq_along(x)
+#' vec_duplicate_id(x) != seq_along(x)
 NULL
 
 #' @rdname vec_duplicate
