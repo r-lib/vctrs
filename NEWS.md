@@ -1,5 +1,10 @@
 # vctrs (development version)
 
+* Fixed a protection bug in the C implementation of subscript errors: the
+  evaluated `call` of a `vctrs_error_subscript_type` condition could be
+  corrupted (or crash R) if a garbage collection occurred while the condition
+  was being constructed (#2173).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
