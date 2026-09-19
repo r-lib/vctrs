@@ -66,7 +66,7 @@ vec_duplicate_id(x)
 # Location of the unique values:
 vec_unique_loc(x)
 # Equivalent to `duplicated()`:
-vec_duplicate_id(x) == seq_along(x)
+vec_duplicate_id(x) != seq_along(x)
 }
 \seealso{
 \code{\link[=vec_unique]{vec_unique()}} for functions that work with the dual of duplicated
