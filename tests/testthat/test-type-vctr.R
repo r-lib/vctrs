@@ -577,6 +577,20 @@ test_that("additional subscripts are handled (#269)", {
   expect_identical(x[, 1], new_2d(c(1, 2), dim = c(2, 1)))
 })
 
+test_that("`drop` is accepted when subsetting (#1880)", {
+  x <- new_vctr(c(a = 1, b = 2, c = 3))
+  expect_identical(x[2, drop = FALSE], x[2])
+  expect_identical(x[2:3, drop = FALSE], x[2:3])
+  expect_identical(x["b", drop = FALSE], x["b"])
+
+  new_2d <- function(.data, dim) {
+    vctrs::new_vctr(.data, dim = dim, class = "vctrs_2d")
+  }
+  x <- new_2d(c(1, 2), dim = c(2L, 1L))
+  expect_identical(x[1, 1, drop = FALSE], x[1, 1])
+  expect_identical(x[, 1, drop = FALSE], x[, 1])
+})
+
 
 # summary generics --------------------------------------------------------
 
