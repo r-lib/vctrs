@@ -349,6 +349,11 @@ as_universal_names <- function(names, quiet = FALSE) {
   needs_suffix <- empty | vec_duplicate_detect(new_names)
   new_names <- append_pos(new_names, needs_suffix = needs_suffix)
 
+  # A name like "1" is made syntactic as "...1", which can collide with the
+  # suffixed name of an empty name at position 1
+  needs_suffix <- !needs_suffix & vec_duplicate_detect(new_names)
+  new_names <- append_pos(new_names, needs_suffix = needs_suffix)
+
   if (!quiet) {
     describe_repair(names, new_names)
   }

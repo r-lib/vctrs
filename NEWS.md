@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_as_names()` with `repair = "universal"` now returns unique names when an
+  empty name and a name like `"1"` would both become `"...1"` (#1013, @taekop).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
