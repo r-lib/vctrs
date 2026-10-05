@@ -185,6 +185,37 @@ test_that("vec_as_names() is noisy by default", {
   })
 })
 
+test_that("universal repair is unique when numbers collide with positions (#1013)", {
+  expect_identical(
+    vec_as_names(c("", "1"), repair = "universal_quiet"),
+    c("...1", "...1...2")
+  )
+  expect_identical(
+    vec_as_names(c("..1", "1"), repair = "universal_quiet"),
+    c("...1", "...1...2")
+  )
+  expect_identical(
+    vec_as_names(c(NA, "1"), repair = "universal_quiet"),
+    c("...1", "...1...2")
+  )
+
+  out <- vec_as_names(
+    c("", "5", "a", "b", "", "1"),
+    repair = "universal_quiet"
+  )
+  expect_false(anyDuplicated(out) > 0)
+  expect_identical(out[c(1, 3, 4, 5)], c("...1", "a", "b", "...5"))
+
+  expect_identical(
+    vec_as_names(c("1", ""), repair = "universal_quiet"),
+    c("...1", "...2")
+  )
+  expect_identical(
+    vec_as_names(c("", "a"), repair = "universal_quiet"),
+    c("...1", "a")
+  )
+})
+
 test_that("validate_minimal_names() checks names", {
   expect_snapshot({
     (expect_error(validate_minimal_names(1), "must return a character vector"))
