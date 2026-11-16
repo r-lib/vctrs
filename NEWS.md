@@ -10,6 +10,8 @@
 
 * Fixed a small protection bug (#2173).
 
+* `vec_names()` no longer calls `names()` through R for factors, ordered factors, Dates, and POSIXct date-times unless a `names()` method is defined for their class. This speeds up operations that retrieve names element by element over these types, such as `vec_c()` and `list_unchop()` with many inputs.
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
