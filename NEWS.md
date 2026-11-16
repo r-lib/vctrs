@@ -1,6 +1,6 @@
 # vctrs (development version)
 
-* Fixed a performance regression introduced in vctrs 0.7.2 that slowed down `vec_chop()`, as well as `vec_c()` and `list_unchop()` with many inputs, by up to 1.5x.
+* Fixed a performance regression introduced in vctrs 0.7.2 that slowed down `vec_chop()`, as well as `vec_c()` and `list_unchop()` with many inputs, by up to 1.5x (#2182).
 
 * Removed the vctrs methods for sf, as these now live in sf (#2143).
 
