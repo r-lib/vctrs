@@ -91,6 +91,20 @@ test_that("levels that are a prefix of the other levels union to the longer leve
   expect_equal(vec_ptype2(abc, ba), abc)
 })
 
+test_that("casting to equal levels stored in a separate object returns plain factors as is", {
+  to <- factor(levels = c("a", "b"))
+  x <- factor(c("b", "a"), levels = c("a", "b"))
+  out <- vec_cast(x, to)
+  expect_identical(out, x)
+  expect_identical(rlang::obj_address(out), rlang::obj_address(x))
+
+  # Other attributes are still stripped, as when the levels are a prefix
+  y <- structure(c(x = 2L, y = 1L), levels = c("a", "b"), class = "factor", foo = "bar")
+  out <- vec_cast(y, to)
+  expect_identical(out, x)
+  expect_identical(rlang::obj_address(levels(out)), rlang::obj_address(levels(to)))
+})
+
 test_that("levels that only differ in encoding are still unioned as equal", {
   encs <- encodings()
   x <- factor(encs$utf8)

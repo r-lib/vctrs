@@ -324,6 +324,15 @@ SEXP ord_as_ordered(const struct cast_opts* p_opts) {
   return out;
 }
 
+static r_obj* non_factor_attrib_cb(r_obj* tag, r_obj* value, void* data) {
+  // Returning non-`NULL` stops the iteration
+  return (tag == R_LevelsSymbol || tag == R_ClassSymbol) ? NULL : r_null;
+}
+
+static bool has_non_factor_attrib(SEXP x) {
+  return r_attrib_map(x, non_factor_attrib_cb, NULL) != NULL;
+}
+
 static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {
   // Early exit if levels are identical
   if (x_levels == to_levels) {
@@ -363,6 +372,18 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
   // Duplicate, strip non-factor attributes, and re-initialize with new levels.
   // Using `r_clone_referenced()` avoids an immediate copy using ALTREP wrappers.
   if (is_contiguous_subset) {
+    // Equal levels stored in a separate object. If `x` has no attributes for
+    // the re-initialization to strip, it would come out equal to `x`: its
+    // class is already the bare class it was dispatched here with.
+    const bool unchanged =
+      x_levels_size == to_levels_size &&
+      TYPEOF(x) == INTSXP &&
+      !has_non_factor_attrib(x);
+
+    if (unchanged) {
+      return x;
+    }
+
     SEXP out = PROTECT(r_clone_referenced(x));
     r_attrib_zap_all(out);
 
