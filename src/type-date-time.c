@@ -5,8 +5,6 @@ static SEXP new_date(SEXP x);
 static SEXP new_datetime(SEXP x, SEXP tzone);
 static SEXP new_empty_datetime(SEXP tzone);
 
-static SEXP date_validate(SEXP x);
-static SEXP datetime_validate(SEXP x);
 static SEXP datetime_validate_tzone(SEXP x);
 static SEXP datetime_validate_type(SEXP x);
 
@@ -331,7 +329,7 @@ SEXP vctrs_date_validate(SEXP x) {
 }
 
 // Ensure that a `Date` is internally stored as a double vector
-static SEXP date_validate(SEXP x) {
+SEXP date_validate(SEXP x) {
   switch (TYPEOF(x)) {
   case REALSXP:
     return x;
@@ -352,7 +350,7 @@ SEXP vctrs_datetime_validate(SEXP x) {
 
 // Ensure that a `POSIXct` is internally stored as a double vector.
 // Also checks that the `tzone` attribute is non-NULL.
-static SEXP datetime_validate(SEXP x) {
+SEXP datetime_validate(SEXP x) {
   x = PROTECT(datetime_validate_tzone(x));
   x = PROTECT(datetime_validate_type(x));
   UNPROTECT(2);

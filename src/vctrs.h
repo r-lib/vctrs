@@ -203,6 +203,9 @@ SEXP vec_date_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
 SEXP vec_posixct_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
 SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
 
+SEXP date_validate(SEXP x);
+SEXP datetime_validate(SEXP x);
+
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
 

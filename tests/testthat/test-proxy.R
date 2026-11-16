@@ -58,6 +58,38 @@ test_that("vec_proxy() transforms records to data frames", {
   }
 })
 
+test_that("vec_proxy() of base classes validates without R dispatch", {
+  f <- factor(c("a", "b"))
+  expect_identical(vec_proxy(f), f)
+  expect_identical(vec_proxy(as.ordered(f)), as.ordered(f))
+
+  # Integer backed dates and date-times are converted to doubles
+  date <- structure(1L, class = "Date")
+  expect_identical(vec_proxy(date), structure(1, class = "Date"))
+
+  dttm <- structure(1L, class = c("POSIXct", "POSIXt"), tzone = "UTC")
+  expect_identical(
+    vec_proxy(dttm),
+    structure(1, class = c("POSIXct", "POSIXt"), tzone = "UTC")
+  )
+
+  # A missing `tzone` is standardized to `""`, without modifying the input
+  dttm <- structure(1, class = c("POSIXct", "POSIXt"))
+  expect_identical(attr(vec_proxy(dttm), "tzone"), "")
+  expect_null(attr(dttm, "tzone"))
+})
+
+test_that("vec_proxy() of base classes still dispatches to user overrides", {
+  local_methods(
+    vec_proxy.factor = function(x, ...) "factor override",
+    vec_proxy.Date = function(x, ...) "Date override",
+    vec_proxy.POSIXct = function(x, ...) "POSIXct override"
+  )
+  expect_identical(vec_proxy(factor("a")), "factor override")
+  expect_identical(vec_proxy(new_date(0)), "Date override")
+  expect_identical(vec_proxy(new_datetime(0)), "POSIXct override")
+})
+
 test_that("vec_proxy() is a no-op with non vectors", {
   x <- foobar(list())
   expect_identical(vec_proxy(x), x)
