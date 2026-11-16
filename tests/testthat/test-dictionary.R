@@ -354,6 +354,37 @@ test_that("can propagate NaN as a missing value (#1252)", {
   )
 })
 
+test_that("complete haystack rows still match after many incomplete rows", {
+  # Many distinct incomplete rows, followed by complete rows, so that skipping
+  # incomplete rows while loading must not shift any match positions
+  n <- 1000L
+  haystack <- data_frame(
+    a = c(rep(NA, n), 1L, 2L, 1L),
+    b = c(seq_len(n), 1L, 2L, 1L)
+  )
+  needles <- data_frame(a = c(2L, NA, 1L, 3L), b = c(2L, 1L, 1L, 3L))
+
+  expect_identical(
+    vec_match(needles, haystack, na_equal = FALSE),
+    c(n + 2L, NA, n + 1L, NA)
+  )
+  expect_identical(
+    vec_in(needles, haystack, na_equal = FALSE),
+    c(TRUE, NA, TRUE, FALSE)
+  )
+  expect_identical(
+    vec_match(needles, haystack, na_equal = TRUE),
+    c(n + 2L, 1L, n + 1L, NA)
+  )
+
+  haystack <- c(complex(real = NA, imaginary = seq_len(n)), 1, 2)
+  needles <- c(2, complex(real = NA, imaginary = 1), 1)
+  expect_identical(
+    vec_match(needles, haystack, na_equal = FALSE),
+    c(n + 2L, NA, n + 1L)
+  )
+})
+
 test_that("missing values are propagated across columns", {
   for (na_value in list(NA, na_int, na_dbl, na_cpl, na_chr, list(NULL))) {
     df <- data_frame(x = 1, y = data_frame(foo = 2, bar = na_value), z = 3)

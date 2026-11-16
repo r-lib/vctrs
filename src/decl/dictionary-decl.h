@@ -45,7 +45,7 @@ void vec_in_loop_propagate(
 );
 
 static inline
-void load_with_haystack(struct dictionary* d, R_len_t n_haystack);
+void load_with_haystack(struct dictionary* d, R_len_t n_haystack, bool na_equal);
 
 static inline
 void vctrs_count_loop(struct dictionary* d, R_len_t n, int* p_count);
