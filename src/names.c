@@ -172,7 +172,9 @@ r_obj* vec_names_impl(r_obj* x, bool proxy) {
 // common on per-element and per-column paths, where that evaluation dominates,
 // so for them we look for a `names()` method ourselves, in the same places as
 // the other base generic checks (the global env and base's S3 methods table),
-// and only dispatch if one exists.
+// and only dispatch if one exists. R's own lookup wouldn't find a user's method
+// anywhere else: since R 3.6.0, it skips attached environments between the
+// global env and base.
 static
 bool needs_names_dispatch(r_obj* x) {
   switch (class_type(x)) {
