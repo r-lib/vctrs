@@ -10,7 +10,7 @@
 
 * Fixed a small protection bug (#2173).
 
-* `vec_proxy()` no longer evaluates vctrs' own R methods for factors, ordered factors, Dates, and POSIXct date-times, and runs their C equivalents directly instead. This makes many operations roughly 2x faster when they work element by element or column by column over these types, such as `vec_c()`, `list_unchop()`, and `vec_rbind()` with many small inputs, or `vec_slice()` on a single row of a data frame. User defined `vec_proxy()` methods for these classes are still respected.
+* `vec_proxy()` no longer evaluates vctrs' own R methods for factors, ordered factors, Dates, and POSIXct date-times, and runs their C equivalents directly instead. This makes many operations roughly 2x faster when they work element by element or column by column over these types, such as `vec_c()`, `list_unchop()`, and `vec_rbind()` with many small inputs, or `vec_slice()` on a single row of a data frame. User defined `vec_proxy()` methods for these classes are still respected (#2186).
 
 # vctrs 0.7.3
 
