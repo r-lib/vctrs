@@ -354,8 +354,6 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
     return R_NilValue;
   }
 
-  R_len_t x_size = vec_size(x);
-
   const SEXP* p_x_levels = STRING_PTR_RO(x_levels);
   const SEXP* p_to_levels = STRING_PTR_RO(to_levels);
 
@@ -397,6 +395,8 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
     return out;
   }
 
+  // Only needed for recoding, and costly for a factor because it takes its proxy
+  R_len_t x_size = vec_size(x);
   const int* p_x = INTEGER_RO(x);
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, x_size));
