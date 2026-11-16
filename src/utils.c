@@ -744,9 +744,27 @@ r_obj* list_pluck(r_obj* xs, r_ssize i) {
 }
 
 
+// Compact subscripts are marked with a sentinel attribute rather than a class.
+// Setting a class goes through `classgets()` and sets the OBJECT bit, and
+// checking one requires `Rf_inherits()` string comparisons. Markers are checked
+// several times per chunk in `vec_chop()` and per element in `list_combine()`,
+// so the check needs to be cheap. For a non-special symbol, `Rf_getAttrib()` is
+// a plain walk over the (single node) attribute list that never allocates.
+
 // Initialised at load time
-const char* compact_seq_class_string = NULL;
-SEXP compact_seq_classes = NULL;
+static r_obj* syms_compact_seq = NULL;
+static r_obj* syms_compact_rep = NULL;
+static r_obj* syms_compact_condition = NULL;
+
+static inline
+bool has_compact_marker(r_obj* x, r_obj* marker) {
+  return Rf_getAttrib(x, marker) != r_null;
+}
+
+static inline
+void poke_compact_marker(r_obj* x, r_obj* marker) {
+  r_attrib_poke(x, marker, r_true);
+}
 
 // p[0] = Start value
 // p[1] = Sequence size. Always >= 0.
@@ -790,14 +808,14 @@ SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
   int* p = INTEGER(info);
   init_compact_seq(p, start, size, increasing);
 
-  r_attrib_poke_class(info, compact_seq_classes);
+  poke_compact_marker(info, syms_compact_seq);
 
   UNPROTECT(1);
   return info;
 }
 
 bool is_compact_seq(SEXP x) {
-  return r_inherits(x, compact_seq_class_string);
+  return has_compact_marker(x, syms_compact_seq);
 }
 
 // Materialize a 1-based sequence
@@ -818,10 +836,6 @@ SEXP compact_seq_materialize(SEXP x) {
   return out;
 }
 
-// Initialised at load time
-const char* compact_rep_class_string = NULL;
-SEXP compact_rep_classes = NULL;
-
 void init_compact_rep(int* p, R_len_t i, R_len_t n) {
   p[0] = i;
   p[1] = n;
@@ -839,14 +853,14 @@ SEXP compact_rep(R_len_t i, R_len_t n) {
   int* p = INTEGER(rep);
   init_compact_rep(p, i, n);
 
-  r_attrib_poke_class(rep, compact_rep_classes);
+  poke_compact_marker(rep, syms_compact_rep);
 
   UNPROTECT(1);
   return rep;
 }
 
 bool is_compact_rep(SEXP x) {
-  return r_inherits(x, compact_rep_class_string);
+  return has_compact_marker(x, syms_compact_rep);
 }
 
 SEXP compact_rep_materialize(SEXP x) {
@@ -859,10 +873,6 @@ SEXP compact_rep_materialize(SEXP x) {
   UNPROTECT(1);
   return out;
 }
-
-// Initialised at load time
-const char* compact_condition_class_string = NULL;
-SEXP compact_condition_classes = NULL;
 
 /**
  * Compact condition index
@@ -885,14 +895,14 @@ r_obj* new_compact_condition(R_xlen_t size) {
 
   r_obj* out = KEEP(r_alloc_raw(size * sizeof(bool)));
 
-  r_attrib_poke_class(out, compact_condition_classes);
+  poke_compact_marker(out, syms_compact_condition);
 
   FREE(1);
   return out;
 }
 
 bool is_compact_condition(r_obj* x) {
-  return r_inherits(x, compact_condition_class_string);
+  return has_compact_marker(x, syms_compact_condition);
 }
 
 r_ssize compact_condition_size(r_obj* x) {
@@ -2012,20 +2022,9 @@ void vctrs_init_utils(SEXP ns) {
   fns_as_data_frame2 = r_env_get(ns, syms_as_data_frame2);
   fns_colnames = r_env_get(R_BaseEnv, syms_colnames);
 
-  compact_seq_class_string = "vctrs_compact_seq";
-  compact_seq_classes = Rf_allocVector(STRSXP, 1);
-  R_PreserveObject(compact_seq_classes);
-  SET_STRING_ELT(compact_seq_classes, 0, Rf_mkChar(compact_seq_class_string));
-
-  compact_rep_class_string = "vctrs_compact_rep";
-  compact_rep_classes = Rf_allocVector(STRSXP, 1);
-  R_PreserveObject(compact_rep_classes);
-  SET_STRING_ELT(compact_rep_classes, 0, Rf_mkChar(compact_rep_class_string));
-
-  compact_condition_class_string = "vctrs_compact_condition";
-  compact_condition_classes = Rf_allocVector(STRSXP, 1);
-  R_PreserveObject(compact_condition_classes);
-  SET_STRING_ELT(compact_condition_classes, 0, Rf_mkChar(compact_condition_class_string));
+  syms_compact_seq = Rf_install("vctrs_compact_seq");
+  syms_compact_rep = Rf_install("vctrs_compact_rep");
+  syms_compact_condition = Rf_install("vctrs_compact_condition");
 
   rlang_result_names = Rf_allocVector(STRSXP, 2);
   R_PreserveObject(rlang_result_names);
