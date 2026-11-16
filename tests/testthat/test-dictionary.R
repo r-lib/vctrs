@@ -206,6 +206,19 @@ test_that("can take the unique locations of dfs with list-cols", {
   expect_identical(vec_unique_loc(df), c(1L, 2L, 4L))
 })
 
+test_that("dictionary functions ignore attribute order of list elements (#2180)", {
+  x <- structure(1L, foo = 1L, bar = "1L")
+  y <- structure(1L, bar = "1L", foo = 1L)
+
+  expect_identical(vec_unique_count(list(x, y)), 1L)
+  expect_identical(vec_match(list(x), list(y)), 1L)
+  expect_identical(vec_in(list(x), list(y)), TRUE)
+
+  df_x <- data_frame(v1 = list(x))
+  df_y <- data_frame(v1 = list(y))
+  expect_identical(vec_locate_matches(df_x, df_y)$haystack, 1L)
+})
+
 # matching ----------------------------------------------------------------
 
 test_that("vec_match() matches match()", {

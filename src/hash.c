@@ -128,7 +128,11 @@ static inline uint32_t fn_hash(r_obj* x) {
 
 // Same idea as `node_hash()` where the `tag` and `value` of each node are
 // hashed, but using the `r_attrib_map()` API since we can't directly access an
-// object's attribute pairlist
+// object's attribute pairlist.
+//
+// `obj_equal()` treats attributes as an unordered map, so the hash must not
+// depend on attribute order either. Each tag/value pair is hashed on its own,
+// and the pair hashes are then summed, which is commutative (#2180).
 static inline uint32_t attrib_hash(r_obj* x) {
   uint32_t hash = 0;
   r_attrib_map(x, attrib_hash_cb, &hash);
@@ -137,8 +141,13 @@ static inline uint32_t attrib_hash(r_obj* x) {
 
 static inline r_obj* attrib_hash_cb(r_obj* tag, r_obj* value, void* data) {
   uint32_t* p_hash = (uint32_t*) data;
-  *p_hash = hash_combine(*p_hash, obj_hash(tag));
-  *p_hash = hash_combine(*p_hash, obj_hash(value));
+
+  uint32_t pair_hash = 0;
+  pair_hash = hash_combine(pair_hash, obj_hash(tag));
+  pair_hash = hash_combine(pair_hash, obj_hash(value));
+
+  *p_hash += pair_hash;
+
   // Return C `NULL` to continue iteration through the attributes
   return NULL;
 }

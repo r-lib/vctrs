@@ -10,6 +10,8 @@
 
 * Fixed a small protection bug (#2173).
 
+* Dictionary based functions like `vec_unique()`, `vec_match()`, `vec_in()`, and `vec_locate_matches()` now ignore attribute ordering when comparing list elements, consistent with `vec_equal()`. Previously, list elements that differed only in attribute order were considered equal by `vec_equal()` but distinct by these functions (#2180).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
