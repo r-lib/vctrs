@@ -59,6 +59,47 @@ test_that("factors level are unioned", {
   expect_equal(vec_ptype_common(fb, fa), factor(levels = c("b", "a")))
 })
 
+test_that("equal levels stored in separate objects are reused", {
+  x <- factor("a", levels = c("a", "b"))
+  y <- factor("b", levels = c("a", "b"))
+  expect_false(rlang::obj_address(levels(x)) == rlang::obj_address(levels(y)))
+
+  ptype <- vec_ptype2(x, y)
+  expect_equal(ptype, factor(levels = c("a", "b")))
+  expect_identical(rlang::obj_address(levels(ptype)), rlang::obj_address(levels(x)))
+
+  ptype <- vec_ptype2(y, x)
+  expect_identical(rlang::obj_address(levels(ptype)), rlang::obj_address(levels(y)))
+
+  xs <- lapply(1:3, function(i) factor(letters[i], levels = letters[1:3]))
+  expect_identical(list_unchop(xs), factor(letters[1:3], levels = letters[1:3]))
+})
+
+test_that("levels that are a prefix of the other levels union to the longer levels", {
+  ab <- factor(levels = c("a", "b"))
+  abc <- factor(levels = c("a", "b", "c"))
+  expect_equal(vec_ptype2(ab, abc), abc)
+  expect_equal(vec_ptype2(abc, ab), abc)
+
+  empty <- factor()
+  expect_equal(vec_ptype2(empty, abc), abc)
+  expect_equal(vec_ptype2(abc, empty), abc)
+
+  # Not a prefix, so the levels are still unioned in order of appearance
+  ba <- factor(levels = c("b", "a"))
+  expect_equal(vec_ptype2(ba, abc), factor(levels = c("b", "a", "c")))
+  expect_equal(vec_ptype2(abc, ba), abc)
+})
+
+test_that("levels that only differ in encoding are still unioned as equal", {
+  encs <- encodings()
+  x <- factor(encs$utf8)
+  y <- factor(encs$latin1)
+
+  expect_identical(levels(vec_ptype2(x, y)), encs$utf8)
+  expect_identical(levels(vec_ptype2(y, x)), encs$latin1)
+})
+
 test_that("coercion errors with factors", {
   f <- factor(levels = "a")
 

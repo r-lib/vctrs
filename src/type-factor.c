@@ -20,11 +20,7 @@ SEXP fct_ptype2(
     stop_corrupt_factor_levels(y, p_y_arg);
   }
 
-  // Use `x_levels` if they are equal pointers, otherwise compute union
-  SEXP levels = (x_levels == y_levels) ?
-    x_levels :
-    levels_union(x_levels, y_levels);
-  PROTECT(levels);
+  SEXP levels = PROTECT(levels_union(x_levels, y_levels));
 
   SEXP out = new_empty_factor(levels);
   UNPROTECT(3);
@@ -81,6 +77,31 @@ r_obj* ord_ptype2(
 }
 
 static SEXP levels_union(SEXP x, SEXP y) {
+  if (x == y) {
+    return x;
+  }
+
+  // When one set of levels is a prefix of the other, the longer one is
+  // the union. This covers equal levels stored in separate objects, which
+  // would otherwise be unioned again at every step of a fold over many
+  // inputs. Equal pointers mean equal strings because CHARSXPs are cached.
+  // Strings that only match after translation take the full union below.
+  R_len_t x_size = Rf_length(x);
+  R_len_t y_size = Rf_length(y);
+  R_len_t size = (x_size < y_size) ? x_size : y_size;
+
+  const SEXP* p_x = STRING_PTR_RO(x);
+  const SEXP* p_y = STRING_PTR_RO(y);
+
+  R_len_t i = 0;
+  while (i < size && p_x[i] == p_y[i]) {
+    ++i;
+  }
+
+  if (i == size) {
+    return (x_size >= y_size) ? x : y;
+  }
+
   SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(args, 0, x);
   SET_VECTOR_ELT(args, 1, y);
