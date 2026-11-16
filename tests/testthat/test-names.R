@@ -61,6 +61,12 @@ test_that("vec_names() dispatches for base classes with a registered `names()` m
   expect_identical(vec_names(new_date(0)), "registered")
 })
 
+test_that("vec_names() dispatches for S4 objects of base classes", {
+  local_s4_method("names", "Date", function(x) "S4")
+  expect_identical(vec_names(asS4(new_date(0))), "S4")
+  expect_null(vec_names(new_date(0)))
+})
+
 
 # vec_names2() -------------------------------------------------------------
 

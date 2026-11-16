@@ -174,9 +174,14 @@ r_obj* vec_names_impl(r_obj* x, bool proxy) {
 // the other base generic checks (the global env and base's S3 methods table),
 // and only dispatch if one exists. R's own lookup wouldn't find a user's method
 // anywhere else: since R 3.6.0, it skips attached environments between the
-// global env and base.
+// global env and base. S4 objects always dispatch, since `names()` also
+// dispatches on S4 methods for them.
 static
 bool needs_names_dispatch(r_obj* x) {
+  if (r_is_s4(x)) {
+    return true;
+  }
+
   switch (class_type(x)) {
   case VCTRS_CLASS_bare_factor:
     return has_names_method(syms_names_factor);
