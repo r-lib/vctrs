@@ -99,7 +99,11 @@ static SEXP levels_union(SEXP x, SEXP y) {
   }
 
   if (i == size) {
-    return (x_size >= y_size) ? x : y;
+    // Return a copy rather than an input's levels object. A cast returns a
+    // factor unchanged, attributes and all, when its levels are the same
+    // object as the target's, so reusing an input's object here would make
+    // casts to the common type keep attributes that they otherwise strip.
+    return r_clone((x_size >= y_size) ? x : y);
   }
 
   SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));

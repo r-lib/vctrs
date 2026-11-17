@@ -59,20 +59,32 @@ test_that("factors level are unioned", {
   expect_equal(vec_ptype_common(fb, fa), factor(levels = c("b", "a")))
 })
 
-test_that("equal levels stored in separate objects are reused", {
+test_that("equal levels stored in separate objects union to a copy of the levels", {
   x <- factor("a", levels = c("a", "b"))
   y <- factor("b", levels = c("a", "b"))
   expect_false(rlang::obj_address(levels(x)) == rlang::obj_address(levels(y)))
 
   ptype <- vec_ptype2(x, y)
   expect_equal(ptype, factor(levels = c("a", "b")))
-  expect_identical(rlang::obj_address(levels(ptype)), rlang::obj_address(levels(x)))
-
-  ptype <- vec_ptype2(y, x)
-  expect_identical(rlang::obj_address(levels(ptype)), rlang::obj_address(levels(y)))
+  expect_false(rlang::obj_address(levels(ptype)) == rlang::obj_address(levels(x)))
+  expect_false(rlang::obj_address(levels(ptype)) == rlang::obj_address(levels(y)))
 
   xs <- lapply(1:3, function(i) factor(letters[i], levels = letters[1:3]))
   expect_identical(list_unchop(xs), factor(letters[1:3], levels = letters[1:3]))
+})
+
+test_that("casting to the common type strips attributes when the levels are stored separately", {
+  x <- structure(c(a = 1L), levels = c("a", "b"), class = "factor", foo = "bar")
+  expected <- factor("a", levels = c("a", "b"))
+
+  # Equal levels
+  y <- factor("b", levels = c("a", "b"))
+  expect_identical(vec_cast(x, vec_ptype2(x, y)), expected)
+  expect_identical(vec_cast_common(x, y)[[1]], expected)
+
+  # Prefix levels
+  z <- factor("a")
+  expect_identical(vec_cast_common(x, z)[[1]], expected)
 })
 
 test_that("levels that are a prefix of the other levels union to the longer levels", {
