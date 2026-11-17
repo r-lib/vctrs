@@ -305,7 +305,8 @@ r_obj* vec_cast_common_opts(r_obj* xs,
       .to = type,
       .p_x_arg = p_x_arg,
       .call = opts->call,
-      .s3_fallback = opts->s3_fallback
+      .s3_fallback = opts->s3_fallback,
+      .missing_cols_as_null = opts->missing_cols_as_null
     };
     r_list_poke(out, i, vec_cast_opts(&cast_opts));
   }

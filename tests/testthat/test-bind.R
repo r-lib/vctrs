@@ -198,6 +198,25 @@ test_that("can rbind missing vectors", {
   )
 })
 
+test_that("columns an input lacks are filled with missing values", {
+  x <- data_frame(
+    int = 1L,
+    fct = factor("a"),
+    date = new_date(0),
+    lst = list(1),
+    df = data_frame(a = "b"),
+    rcrd = new_rcrd(list(r = 1L))
+  )
+  y <- data_frame(z = 2)
+  missing_x <- vec_init(x)
+
+  for (out in list(vec_rbind(x, y, x), list_unchop(list(x, y, x)), vec_c(x, y, x))) {
+    expect_identical(out$z, c(NA, 2, NA))
+    expect_identical(vec_slice(out[names(x)], 2L), missing_x)
+    expect_identical(vec_slice(out[names(x)], c(1L, 3L)), vec_rbind(x, x))
+  }
+})
+
 test_that("vec_rbind() respects size invariants (#286)", {
   expect_identical(vec_rbind(), new_data_frame(n = 0L))
 

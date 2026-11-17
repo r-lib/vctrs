@@ -804,6 +804,12 @@ r_obj* df_assign(r_obj* x,
     r_obj* out_elt = r_list_get(out, i);
     r_obj* value_elt = r_list_get(value, i);
 
+    if (value_elt == r_null) {
+      // A column `value` lacks, left by a cast with `missing_cols_as_null`.
+      // `out` is already missing there.
+      continue;
+    }
+
     // No need to cast or recycle because those operations are
     // recursive and have already been performed. However, proxy and
     // restore are not necessarily recursive and we might need to

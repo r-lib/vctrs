@@ -783,6 +783,11 @@ r_obj* df_cast_match(const struct cast_opts* opts,
     r_ssize pos = to_dups_pos_data[i];
 
     if (pos == r_globals.na_int) {
+      if (opts->missing_cols_as_null) {
+        // Left as the `NULL` that `r_alloc_list()` filled in
+        continue;
+      }
+
       r_obj* to_col = r_list_get(to, i);
 
       // FIXME: Need to initialise the vector because we currently use
