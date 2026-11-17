@@ -163,6 +163,42 @@ test_that("vec_ptype_common() of many data frames handles the common class fallb
   )
 })
 
+test_that("vec_ptype_common() of many tibbles retypes data frame columns at `NULL`", {
+  local_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod())
+  )
+
+  # `vec_ptype2()` of a tibble and `NULL` turns `b$x` into a fallback type
+  xs <- list(
+    tibble(b = data_frame(x = foobar(1))),
+    tibble(a = 1),
+    NULL,
+    tibble(c = 1),
+    tibble(d = 2),
+    NULL,
+    tibble(e = 3, b = data_frame(y = foobar(4)))
+  )
+  expect_identical(
+    vec_ptype_common_fallback(!!!xs),
+    vec_ptype_finalise(Reduce(
+      function(acc, x) vec_ptype2_opts(acc, x, opts = enabled_fallback_opts()),
+      xs,
+      NULL
+    ))
+  )
+
+  # So `vec_rbind()` combines it with `c()`
+  xs <- list(
+    tibble(b = data_frame(x = foobar(1))),
+    tibble(a = 1),
+    NULL,
+    tibble(c = 1),
+    tibble(d = 2)
+  )
+  out <- vec_rbind(!!!xs)
+  expect_identical(out$b$x, quux(c(1, NA, NA, NA)))
+})
+
 test_that("vec_ptype_common() of many data frames matches names like `vec_match()`", {
   utf8 <- "caf\u00e9"
   latin1 <- iconv(utf8, "UTF-8", "latin1")

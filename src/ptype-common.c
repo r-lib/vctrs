@@ -15,6 +15,11 @@ struct df_ptype_acc {
   bool active;
   bool tibble;
 
+  // Whether a column is a data frame. Those are retyped with `vec_ptype()`,
+  // except by `vec_ptype2()` of a tibble with `NULL` under the common class
+  // fallback, which retypes them with `vec_ptype2()`.
+  bool df_col;
+
   // Column names, the names encoded as UTF-8 to match them like `vec_match()`
   // does, and column types. `n_types` lags `n_names` while a data frame's new
   // columns are being typed.
@@ -196,7 +201,10 @@ r_obj* ptype2_common(r_obj* current,
   // Inputs left after `next`
   --p_reduce_opts->n_remaining;
 
-  if (p_acc->active) {
+  int n_prot = 0;
+  const bool was_active = p_acc->active;
+
+  if (was_active) {
     int left = -1;
 
     if (df_ptype_acc_add(p_acc, next, counters, p_reduce_opts, &left)) {
@@ -208,10 +216,7 @@ r_obj* ptype2_common(r_obj* current,
       return current;
     }
 
-    current = KEEP(df_ptype_acc_finish(p_acc));
-    r_obj* out = ptype2_common_impl(current, next, counters, p_reduce_opts);
-    FREE(1);
-    return out;
+    current = KEEP_N(df_ptype_acc_finish(p_acc), &n_prot);
   }
 
   r_obj* out = ptype2_common_impl(current, next, counters, p_reduce_opts);
@@ -219,17 +224,18 @@ r_obj* ptype2_common(r_obj* current,
   // Accumulate from the common type of two data frames rather than from the
   // first one. Its columns have been retyped by `vec_ptype2()`, which can
   // differ from their `vec_ptype()`, as with the common class fallback.
-  // Setting up costs about as much as one `vec_ptype2()`, so only when there
-  // are at least two inputs left.
+  // Retyping the accumulated type against `NULL` keeps that. Setting up costs
+  // about as much as one `vec_ptype2()`, so only when there are at least two
+  // inputs left.
   bool tibble;
   if (p_reduce_opts->n_remaining >= 2 &&
-      is_plain_df(next, &tibble) &&
+      ((was_active && next == r_null) || is_plain_df(next, &tibble)) &&
       is_plain_df(current, &tibble)) {
-    KEEP(out);
+    KEEP_N(out, &n_prot);
     df_ptype_acc_start(p_acc, out);
-    FREE(1);
   }
 
+  FREE(n_prot);
   return out;
 }
 
@@ -283,6 +289,8 @@ void df_ptype_acc_start(struct df_ptype_acc* p_acc, r_obj* x) {
   r_obj* const* v_names = r_chr_cbegin(names);
   r_obj* const* v_x = r_list_cbegin(x);
 
+  bool df_col = false;
+
   for (r_ssize i = 0; i < size; ++i) {
     int loc;
 
@@ -292,10 +300,12 @@ void df_ptype_acc_start(struct df_ptype_acc* p_acc, r_obj* x) {
     }
 
     r_list_poke(p_acc->types, i, v_x[i]);
+    df_col = df_col || is_bare_data_frame(v_x[i]);
   }
 
   p_acc->n_types = size;
   p_acc->tibble = tibble;
+  p_acc->df_col = df_col;
   p_acc->active = true;
 }
 
@@ -311,6 +321,10 @@ bool df_ptype_acc_add(
   int* p_left
 ) {
   if (next == r_null) {
+    if (p_acc->tibble && p_acc->df_col && p_reduce_opts->s3_fallback == S3_FALLBACK_true) {
+      return false;
+    }
+
     // `vec_ptype2(current, NULL)` retypes `current`, which leaves it as it is
     *p_left = 1;
     return true;
@@ -416,6 +430,7 @@ bool df_ptype_acc_add(
       &_
     );
     r_list_poke(p_acc->types, acc_loc, type);
+    p_acc->df_col = p_acc->df_col || is_bare_data_frame(type);
   }
 
   for (r_ssize i = 0; i < n_new; ++i) {
@@ -431,6 +446,7 @@ bool df_ptype_acc_add(
     );
     r_list_poke(p_acc->types, p_acc->n_types, type);
     ++p_acc->n_types;
+    p_acc->df_col = p_acc->df_col || is_bare_data_frame(type);
   }
 
   // Same as `vec_ptype2()`: a tibble wins over a data frame
