@@ -1892,6 +1892,65 @@ test_that("can order complex vectors", {
   )
 })
 
+test_that("character vectors are ordered as `order()` orders them in the current locale", {
+  # Includes strings that may collate as equal, depending on the platform
+  x <- c("b", "A", "a", NA, "B", "é", "é", "e", "b", NA, "A", "")
+
+  expect_identical(vec_order(x), order(x))
+  expect_identical(
+    vec_order(x, direction = "desc"),
+    order(x, decreasing = TRUE, na.last = FALSE)
+  )
+  expect_identical(vec_order(x, na_value = "smallest"), order(x, na.last = FALSE))
+  expect_identical(
+    vec_order(x, direction = "desc", na_value = "smallest"),
+    order(x, decreasing = TRUE)
+  )
+  expect_identical(vec_sort(x), x[order(x)])
+})
+
+test_that("character vectors in different encodings are ordered as `order()` orders them", {
+  encs <- encodings()
+  x <- c(encs$utf8, "a", encs$latin1, "z", encs$unknown, encs$utf8)
+
+  expect_identical(vec_order(x), order(x))
+  expect_identical(
+    vec_order(x, direction = "desc"),
+    order(x, decreasing = TRUE, na.last = FALSE)
+  )
+})
+
+test_that("character vectors are ordered as `order()` orders them in the C locale", {
+  withr::local_collate("C")
+  x <- c("b", "A", "a", NA, "B", "a")
+  expect_identical(vec_order(x), order(x))
+})
+
+test_that("data frames with character columns are ordered as `order()` orders them", {
+  df <- data.frame(
+    g = c("b", "A", "a", NA, "b", "B", "a"),
+    x = c(2, 1, 3, 1, 1, NA, 3)
+  )
+
+  expect_identical(vec_order(df), order(df$g, df$x))
+  expect_identical(
+    vec_order(df, direction = "desc"),
+    order(df$g, df$x, decreasing = TRUE, na.last = FALSE)
+  )
+  expect_identical(vec_order(data_frame(y = df)), vec_order(df))
+})
+
+test_that("classed character columns are still ordered through `xtfrm()`", {
+  local_methods(xtfrm.vctrs_foobar = function(x) -rank(unclass(x)))
+
+  # A second column keeps the proxy a data frame
+  df <- data_frame(
+    x = structure(c("a", "c", "b"), class = "vctrs_foobar"),
+    y = c(1, 1, 1)
+  )
+  expect_identical(vec_order(df), c(2L, 3L, 1L))
+})
+
 test_that("can order tibbles that contain non-comparable objects", {
   expect_equal(vec_order(data_frame(x = list(10, 2, 1))), 1:3)
 })
