@@ -10,7 +10,7 @@
 
 * Fixed a small protection bug (#2173).
 
-* `vec_rbind()`, `vec_c()`, and `list_unchop()` are faster and use less memory when combining data frames that don't all have the same columns. Columns an input lacks are no longer filled with missing values only to be copied into an output that is already missing there.
+* `vec_rbind()`, `vec_c()`, and `list_unchop()` are faster and use less memory when combining data frames that don't all have the same columns. Columns an input lacks are no longer filled with missing values only to be copied into an output that is already missing there (#2194).
 
 # vctrs 0.7.3
 
