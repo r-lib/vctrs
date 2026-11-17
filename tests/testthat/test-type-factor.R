@@ -87,6 +87,26 @@ test_that("casting to the common type strips attributes when the levels are stor
   expect_identical(vec_cast_common(x, z)[[1]], expected)
 })
 
+test_that("levels with attributes keep the full union and cast behaviour", {
+  attr_levels <- structure(c("a", "b"), foo = "bar")
+  x <- new_factor(1L, levels = attr_levels)
+  to <- new_factor(levels = c("a", "b"))
+
+  # The full union drops attributes, and a cast takes the target's levels
+  expect_identical(levels(vec_ptype2(x, to)), c("a", "b"))
+  expect_identical(levels(vec_ptype2(x, new_factor(levels = "a"))), c("a", "b"))
+  expect_identical(levels(vec_cast(x, to)), c("a", "b"))
+
+  plain <- new_factor(1L, levels = c("a", "b"))
+  to_attr <- new_factor(levels = attr_levels)
+  expect_identical(levels(vec_cast(plain, to_attr)), attr_levels)
+
+  # The full union keeps names on the levels, but a cast still takes the target's
+  named <- new_factor(1L, levels = c(p = "a", q = "b"))
+  expect_identical(levels(vec_ptype2(named, to)), c(p = "a", q = "b"))
+  expect_identical(levels(vec_cast(named, to)), c("a", "b"))
+})
+
 test_that("levels that are a prefix of the other levels union to the longer levels", {
   ab <- factor(levels = c("a", "b"))
   abc <- factor(levels = c("a", "b", "c"))

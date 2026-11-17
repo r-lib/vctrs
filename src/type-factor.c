@@ -76,16 +76,18 @@ r_obj* ord_ptype2(
   return out;
 }
 
-static SEXP levels_union(SEXP x, SEXP y) {
-  if (x == y) {
-    return x;
+// When one set of levels is a prefix of the other, the longer one is the
+// union. This covers equal levels stored in separate objects, which would
+// otherwise be unioned again at every step of a fold over many inputs.
+// Returns `NULL` when neither is a prefix of the other, or when either has
+// attributes, so the full union keeps deciding what happens to those.
+// Equal pointers mean equal strings because CHARSXPs are cached. Strings
+// that only match after translation take the full union.
+static SEXP levels_prefix_longer(SEXP x, SEXP y) {
+  if (r_attrib_has_any(x) || r_attrib_has_any(y)) {
+    return NULL;
   }
 
-  // When one set of levels is a prefix of the other, the longer one is
-  // the union. This covers equal levels stored in separate objects, which
-  // would otherwise be unioned again at every step of a fold over many
-  // inputs. Equal pointers mean equal strings because CHARSXPs are cached.
-  // Strings that only match after translation take the full union below.
   R_len_t x_size = Rf_length(x);
   R_len_t y_size = Rf_length(y);
   R_len_t size = (x_size < y_size) ? x_size : y_size;
@@ -93,17 +95,27 @@ static SEXP levels_union(SEXP x, SEXP y) {
   const SEXP* p_x = STRING_PTR_RO(x);
   const SEXP* p_y = STRING_PTR_RO(y);
 
-  R_len_t i = 0;
-  while (i < size && p_x[i] == p_y[i]) {
-    ++i;
+  for (R_len_t i = 0; i < size; ++i) {
+    if (p_x[i] != p_y[i]) {
+      return NULL;
+    }
   }
 
-  if (i == size) {
+  return (x_size >= y_size) ? x : y;
+}
+
+static SEXP levels_union(SEXP x, SEXP y) {
+  if (x == y) {
+    return x;
+  }
+
+  SEXP longer = levels_prefix_longer(x, y);
+  if (longer != NULL) {
     // Return a copy rather than an input's levels object. A cast returns a
     // factor unchanged, attributes and all, when its levels are the same
     // object as the target's, so reusing an input's object here would make
     // casts to the common type keep attributes that they otherwise strip.
-    return r_clone((x_size >= y_size) ? x : y);
+    return r_clone(longer);
   }
 
   SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
@@ -376,11 +388,15 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
   if (is_contiguous_subset) {
     // Equal levels stored in a separate object. If `x` has no attributes for
     // the re-initialization to strip, it would come out equal to `x`: its
-    // class is already the bare class it was dispatched here with.
+    // class is already the bare class it was dispatched here with. Neither
+    // set of levels may have attributes, since `x` keeps its own levels
+    // rather than taking `to`'s.
     const bool unchanged =
       x_levels_size == to_levels_size &&
       TYPEOF(x) == INTSXP &&
-      !has_non_factor_attrib(x);
+      !has_non_factor_attrib(x) &&
+      !r_attrib_has_any(x_levels) &&
+      !r_attrib_has_any(to_levels);
 
     if (unchanged) {
       return x;
