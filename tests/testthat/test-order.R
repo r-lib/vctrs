@@ -1892,26 +1892,38 @@ test_that("can order complex vectors", {
   )
 })
 
+test_that("characters are only ranked when large enough and not mostly unique", {
+  x <- c("b", "a", "b", NA)
+  expect_identical(chr_collate_rank(x), x)
+  expect_identical(chr_collate_rank(rep(x, 20)), rep(c(2L, 1L, 2L, NA), 20))
+
+  distinct <- as.character(1:100)
+  expect_identical(chr_collate_rank(distinct), distinct)
+})
+
 test_that("character vectors are ordered as `order()` orders them in the current locale", {
   # Includes strings that may collate as equal, depending on the platform
   x <- c("b", "A", "a", NA, "B", "é", "é", "e", "b", NA, "A", "")
 
-  expect_identical(vec_order(x), order(x))
-  expect_identical(
-    vec_order(x, direction = "desc"),
-    order(x, decreasing = TRUE, na.last = FALSE)
-  )
-  expect_identical(vec_order(x, na_value = "smallest"), order(x, na.last = FALSE))
-  expect_identical(
-    vec_order(x, direction = "desc", na_value = "smallest"),
-    order(x, decreasing = TRUE)
-  )
-  expect_identical(vec_sort(x), x[order(x)])
+  # Ordered directly, and through ranks
+  for (y in list(x, rep(x, 10))) {
+    expect_identical(vec_order(y), order(y))
+    expect_identical(
+      vec_order(y, direction = "desc"),
+      order(y, decreasing = TRUE, na.last = FALSE)
+    )
+    expect_identical(vec_order(y, na_value = "smallest"), order(y, na.last = FALSE))
+    expect_identical(
+      vec_order(y, direction = "desc", na_value = "smallest"),
+      order(y, decreasing = TRUE)
+    )
+    expect_identical(vec_sort(y), y[order(y)])
+  }
 })
 
 test_that("character vectors in different encodings are ordered as `order()` orders them", {
   encs <- encodings()
-  x <- c(encs$utf8, "a", encs$latin1, "z", encs$unknown, encs$utf8)
+  x <- rep(c(encs$utf8, "a", encs$latin1, "z", encs$unknown, encs$utf8), 10)
 
   expect_identical(vec_order(x), order(x))
   expect_identical(
@@ -1922,14 +1934,14 @@ test_that("character vectors in different encodings are ordered as `order()` ord
 
 test_that("character vectors are ordered as `order()` orders them in the C locale", {
   withr::local_collate("C")
-  x <- c("b", "A", "a", NA, "B", "a")
+  x <- rep(c("b", "A", "a", NA, "B", "a"), 10)
   expect_identical(vec_order(x), order(x))
 })
 
 test_that("data frames with character columns are ordered as `order()` orders them", {
   df <- data.frame(
-    g = c("b", "A", "a", NA, "b", "B", "a"),
-    x = c(2, 1, 3, 1, 1, NA, 3)
+    g = rep(c("b", "A", "a", NA, "b", "B", "a"), 10),
+    x = rep(c(2, 1, 3, 1, 1, NA, 3), 10)
   )
 
   expect_identical(vec_order(df), order(df$g, df$x))

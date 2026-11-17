@@ -366,8 +366,19 @@ vec_order <- function(
 # the unique strings are compared with the locale's slow collation, and
 # `order()` can radix sort the integers. Ties keep strings that collate as
 # equal tied, so `order()` still leaves them in their original order.
+#
+# Ranking costs about as much as ordering the unique strings, plus some fixed
+# overhead, so `x` is returned as is when it's small or mostly unique.
 chr_collate_rank <- function(x) {
+  if (length(x) < 50L) {
+    return(x)
+  }
+
   keys <- unique(x)
+  if (length(keys) > 0.85 * length(x)) {
+    return(x)
+  }
+
   ranks <- rank(keys, ties.method = "min", na.last = "keep")
   ranks[match(x, keys)]
 }
