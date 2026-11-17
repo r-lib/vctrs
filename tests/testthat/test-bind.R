@@ -217,6 +217,23 @@ test_that("columns an input lacks are filled with missing values", {
   }
 })
 
+test_that("record columns an input lacks still get the `c()` fallback for their fields", {
+  local_methods(
+    c.vctrs_foobar = function(...) foobar(NextMethod()),
+    vec_ptype2.vctrs_rec_fallback.vctrs_rec_fallback = function(x, y, ...) {
+      new_rcrd(list(x = vec_ptype2(field(x, "x"), field(y, "x"), ...)), class = "vctrs_rec_fallback")
+    },
+    vec_cast.vctrs_rec_fallback.vctrs_rec_fallback = function(x, to, ...) x
+  )
+
+  x <- data_frame(x = new_rcrd(list(x = foobar(1L)), class = "vctrs_rec_fallback"))
+  y <- data_frame(y = 2L)
+
+  out <- vec_rbind(x, y)
+  expect_identical(out$y, c(NA, 2L))
+  expect_identical(field(out$x, "x"), foobar(c(1L, NA)))
+})
+
 test_that("vec_rbind() respects size invariants (#286)", {
   expect_identical(vec_rbind(), new_data_frame(n = 0L))
 

@@ -516,7 +516,8 @@ r_obj* list_combine_impl(
   // Without `indices`, each row of the already missing `out` is assigned once,
   // so data frame columns an element lacks don't need filling in. With
   // `indices`, a later element can overwrite an earlier one's rows. Common
-  // class fallback columns are combined from `xs` afterwards.
+  // class fallback columns are combined from `xs` afterwards. They can be
+  // nested in proxies, such as record fields, so check the proxied `out`.
   struct cast_opts cast_opts = {
     .to = ptype,
     .p_x_arg = p_x_arg,
@@ -524,8 +525,8 @@ r_obj* list_combine_impl(
     .s3_fallback = s3_fallback,
     .missing_cols_as_null =
       !has_indices &&
-      is_data_frame(ptype) &&
-      !needs_df_list_combine_common_class_fallback(ptype)
+      is_data_frame(out) &&
+      !needs_df_list_combine_common_class_fallback(out)
   };
 
   r_keep_loc x_pi;
