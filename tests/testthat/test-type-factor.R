@@ -137,6 +137,19 @@ test_that("casting to equal levels stored in a separate object returns plain fac
   expect_identical(rlang::obj_address(levels(out)), rlang::obj_address(levels(to)))
 })
 
+test_that("casting to equal levels re-initializes factors that aren't laid out plainly", {
+  to <- factor(levels = c("a", "b"))
+  expected <- structure(1L, levels = c("a", "b"), class = "factor")
+
+  named_class <- structure(1L, levels = c("a", "b"), class = c(label = "factor"))
+  expect_identical(attributes(vec_cast(named_class, to)), attributes(expected))
+
+  class_first <- structure(1L, class = "factor", levels = c("a", "b"))
+  expect_identical(attributes(vec_cast(class_first, to)), attributes(expected))
+
+  expect_false(isS4(vec_cast(asS4(expected), to)))
+})
+
 test_that("levels that only differ in encoding are still unioned as equal", {
   encs <- encodings()
   x <- factor(encs$utf8)

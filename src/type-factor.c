@@ -340,13 +340,33 @@ SEXP ord_as_ordered(const struct cast_opts* p_opts) {
   return out;
 }
 
-static r_obj* non_factor_attrib_cb(r_obj* tag, r_obj* value, void* data) {
+static r_obj* plain_factor_attrib_cb(r_obj* tag, r_obj* value, void* data) {
+  int* p_n = (int*) data;
+  r_obj* expected_tag = (*p_n == 0) ? R_LevelsSymbol : R_ClassSymbol;
+  ++(*p_n);
+
   // Returning non-`NULL` stops the iteration
-  return (tag == R_LevelsSymbol || tag == R_ClassSymbol) ? NULL : r_null;
+  if (*p_n > 2 || tag != expected_tag || r_attrib_has_any(value)) {
+    return r_null;
+  }
+  return NULL;
 }
 
-static bool has_non_factor_attrib(SEXP x) {
-  return r_attrib_map(x, non_factor_attrib_cb, NULL) != NULL;
+// Whether `x` is laid out exactly as `init_factor()` and `init_ordered()` leave
+// a cleared vector: `levels` then `class`, neither with attributes of their
+// own, and no S4 bit. The class values are already the bare class `x` was
+// dispatched with.
+static bool is_plain_factor(SEXP x) {
+  if (TYPEOF(x) != INTSXP || r_is_s4(x)) {
+    return false;
+  }
+
+  int n = 0;
+  if (r_attrib_map(x, plain_factor_attrib_cb, &n) != NULL) {
+    return false;
+  }
+
+  return n == 2;
 }
 
 static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {
@@ -386,17 +406,13 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
   // Duplicate, strip non-factor attributes, and re-initialize with new levels.
   // Using `r_clone_referenced()` avoids an immediate copy using ALTREP wrappers.
   if (is_contiguous_subset) {
-    // Equal levels stored in a separate object. If `x` has no attributes for
-    // the re-initialization to strip, it would come out equal to `x`: its
-    // class is already the bare class it was dispatched here with. Neither
-    // set of levels may have attributes, since `x` keeps its own levels
-    // rather than taking `to`'s.
+    // Equal levels stored in a separate object. A plain factor would come out
+    // of the re-initialization below identical to `x`, so return it as is.
+    // `to`'s levels can't have attributes either, since `x` keeps its own.
     const bool unchanged =
       x_levels_size == to_levels_size &&
-      TYPEOF(x) == INTSXP &&
-      !has_non_factor_attrib(x) &&
-      !r_attrib_has_any(x_levels) &&
-      !r_attrib_has_any(to_levels);
+      !r_attrib_has_any(to_levels) &&
+      is_plain_factor(x);
 
     if (unchanged) {
       return x;
