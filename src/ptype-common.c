@@ -14,11 +14,7 @@
 struct df_ptype_acc {
   bool active;
   bool tibble;
-
-  // Whether a column is a data frame. Those are retyped with `vec_ptype()`,
-  // except by `vec_ptype2()` of a tibble with `NULL` under the common class
-  // fallback, which retypes them with `vec_ptype2()`.
-  bool df_col;
+  bool fallback;
 
   // Column names, the names encoded as UTF-8 to match them like `vec_match()`
   // does, and column types. `n_types` lags `n_names` while a data frame's new
@@ -30,6 +26,22 @@ struct df_ptype_acc {
   r_ssize n_types;
   r_ssize capacity;
 
+  // Under the common class fallback, `vec_ptype2()` retypes a column that a
+  // data frame lacks with `vec_ptype2(x, x)`. That can still change a classed
+  // column that was just combined with another, for instance by turning the
+  // `c()` fallback fields of its data frame columns into fallback types. So
+  // such columns are retyped once more by the next data frame that lacks
+  // them. `v_retype` is `1` for those columns, `2` while the current data
+  // frame has them, and `0` otherwise. Only allocated under the fallback.
+  int* v_retype;
+  int* v_retype_locs;
+  r_ssize n_retype;
+
+  // Whether a column is a data frame. Those are retyped with `vec_ptype()`,
+  // except by `vec_ptype2()` of a tibble with `NULL` under the common class
+  // fallback, which retypes them with `vec_ptype2()`.
+  bool df_col;
+
   // Open addressing hash table of locations in `keys`, `-1` when empty. Starts
   // out as `small_table`, to save an allocation.
   int* v_table;
@@ -37,8 +49,9 @@ struct df_ptype_acc {
   int small_table[DF_PTYPE_ACC_SMALL_TABLE_SIZE];
 
   // For each column of the next data frame: pairs of locations in the common
-  // type and in the data frame for columns already seen, then the locations
-  // of new columns in the data frame
+  // type and in the data frame for columns already seen, with `-1` for the
+  // latter for columns to retype, then the locations of new columns in the
+  // data frame
   int* v_scratch;
   r_ssize scratch_size;
   int small_scratch[DF_PTYPE_ACC_SMALL_SCRATCH_SIZE];
@@ -51,6 +64,8 @@ enum df_ptype_acc_shelter {
   DF_PTYPE_ACC_SHELTER_names,
   DF_PTYPE_ACC_SHELTER_keys,
   DF_PTYPE_ACC_SHELTER_types,
+  DF_PTYPE_ACC_SHELTER_retype,
+  DF_PTYPE_ACC_SHELTER_retype_locs,
   DF_PTYPE_ACC_SHELTER_table,
   DF_PTYPE_ACC_SHELTER_scratch,
   DF_PTYPE_ACC_SHELTER_N
@@ -154,6 +169,7 @@ r_obj* vec_ptype_common(
     // Not zero initialised, to skip clearing the small buffers
     struct df_ptype_acc df_acc;
     df_acc.active = false;
+    df_acc.fallback = s3_fallback == S3_FALLBACK_true;
     df_acc.shelter = r_null;
     KEEP_HERE(r_null, &df_acc.shelter_pi);
     ++n_prot;
@@ -224,15 +240,16 @@ r_obj* ptype2_common(r_obj* current,
   // Accumulate from the common type of two data frames rather than from the
   // first one. Its columns have been retyped by `vec_ptype2()`, which can
   // differ from their `vec_ptype()`, as with the common class fallback.
-  // Retyping the accumulated type against `NULL` keeps that. Setting up costs
-  // about as much as one `vec_ptype2()`, so only when there are at least two
-  // inputs left.
+  // Setting up costs about as much as one `vec_ptype2()`, so only when there
+  // are at least two inputs left.
+  const bool retyped = was_active && next == r_null;
+
   bool tibble;
   if (p_reduce_opts->n_remaining >= 2 &&
-      ((was_active && next == r_null) || is_plain_df(next, &tibble)) &&
+      (retyped || is_plain_df(next, &tibble)) &&
       is_plain_df(current, &tibble)) {
     KEEP_N(out, &n_prot);
-    df_ptype_acc_start(p_acc, out);
+    df_ptype_acc_start(p_acc, out, retyped);
   }
 
   FREE(n_prot);
@@ -269,10 +286,12 @@ r_obj* ptype2_common_impl(
 
 // -----------------------------------------------------------------------------
 
-// Starts accumulating from the common type `x` of two data frames. Leaves
-// `p_acc` inactive if `x` has names `df_ptype_acc_add()` can't match.
+// Starts accumulating from the common type `x` of two data frames, or from
+// `vec_ptype2(current, NULL)` when `retyped`, which retypes every column with
+// `vec_ptype2()` if anything. Leaves `p_acc` inactive if `x` has names
+// `df_ptype_acc_add()` can't match.
 static
-void df_ptype_acc_start(struct df_ptype_acc* p_acc, r_obj* x) {
+void df_ptype_acc_start(struct df_ptype_acc* p_acc, r_obj* x, bool retyped) {
   bool tibble;
   if (!is_plain_df(x, &tibble)) {
     return;
@@ -299,8 +318,13 @@ void df_ptype_acc_start(struct df_ptype_acc* p_acc, r_obj* x) {
       return;
     }
 
-    r_list_poke(p_acc->types, i, v_x[i]);
-    df_col = df_col || is_bare_data_frame(v_x[i]);
+    r_obj* type = v_x[i];
+    r_list_poke(p_acc->types, i, type);
+
+    if (!retyped) {
+      df_ptype_acc_mark_retype(p_acc, i, type);
+      df_col = df_col || is_bare_data_frame(type);
+    }
   }
 
   p_acc->n_types = size;
@@ -321,7 +345,7 @@ bool df_ptype_acc_add(
   int* p_left
 ) {
   if (next == r_null) {
-    if (p_acc->tibble && p_acc->df_col && p_reduce_opts->s3_fallback == S3_FALLBACK_true) {
+    if (p_acc->fallback && p_acc->tibble && (p_acc->df_col || p_acc->n_retype > 0)) {
       return false;
     }
 
@@ -342,10 +366,11 @@ bool df_ptype_acc_add(
 
   const r_ssize size = r_length(names);
   const r_ssize acc_size = p_acc->n_types;
+  const r_ssize n_retype = p_acc->n_retype;
 
-  df_ptype_acc_reserve_scratch(p_acc, size);
+  df_ptype_acc_reserve_scratch(p_acc, 3 * size + 2 * n_retype);
   int* v_existing = p_acc->v_scratch;
-  int* v_new = p_acc->v_scratch + 2 * size;
+  int* v_new = p_acc->v_scratch + 2 * (size + n_retype);
 
   r_ssize n_existing = 0;
   r_ssize n_new = 0;
@@ -370,6 +395,9 @@ bool df_ptype_acc_add(
       if (n_existing > 0 && loc <= v_existing[2 * (n_existing - 1)]) {
         sorted = false;
       }
+      if (n_retype > 0 && p_acc->v_retype[loc]) {
+        p_acc->v_retype[loc] = 2;
+      }
       v_existing[2 * n_existing] = loc;
       v_existing[2 * n_existing + 1] = i;
       ++n_existing;
@@ -380,6 +408,22 @@ bool df_ptype_acc_add(
     }
     }
   }
+
+  // Columns to retype that `next` lacks are retyped in place, like
+  // `df_ptype2()` does
+  for (r_ssize i = 0; i < n_retype; ++i) {
+    const int loc = p_acc->v_retype_locs[i];
+
+    if (p_acc->v_retype[loc] == 1) {
+      v_existing[2 * n_existing] = loc;
+      v_existing[2 * n_existing + 1] = -1;
+      ++n_existing;
+      sorted = false;
+    }
+
+    p_acc->v_retype[loc] = 0;
+  }
+  p_acc->n_retype = 0;
 
   if (!sorted) {
     // `df_ptype2()` combines the columns in the order of `current`, which
@@ -417,11 +461,25 @@ bool df_ptype_acc_add(
 
   for (r_ssize i = 0; i < n_existing; ++i) {
     acc_loc = v_existing[2 * i];
+    r_obj* acc_col = r_list_get(p_acc->types, acc_loc);
+
+    if (v_existing[2 * i + 1] == -1) {
+      r_obj* type = vec_ptype_or_s3_fallback(
+        acc_col,
+        p_acc_col_arg,
+        vec_typeof(acc_col),
+        p_reduce_opts->call,
+        p_reduce_opts->s3_fallback
+      );
+      r_list_poke(p_acc->types, acc_loc, type);
+      continue;
+    }
+
     next_loc = v_existing[2 * i + 1];
 
     int _;
     r_obj* type = vec_ptype2(
-      r_list_get(p_acc->types, acc_loc),
+      acc_col,
       v_next[next_loc],
       p_acc_col_arg,
       p_next_col_arg,
@@ -430,6 +488,8 @@ bool df_ptype_acc_add(
       &_
     );
     r_list_poke(p_acc->types, acc_loc, type);
+
+    df_ptype_acc_mark_retype(p_acc, acc_loc, type);
     p_acc->df_col = p_acc->df_col || is_bare_data_frame(type);
   }
 
@@ -445,8 +505,11 @@ bool df_ptype_acc_add(
       p_reduce_opts->s3_fallback
     );
     r_list_poke(p_acc->types, p_acc->n_types, type);
-    ++p_acc->n_types;
+
+    df_ptype_acc_mark_retype(p_acc, p_acc->n_types, type);
     p_acc->df_col = p_acc->df_col || is_bare_data_frame(type);
+
+    ++p_acc->n_types;
   }
 
   // Same as `vec_ptype2()`: a tibble wins over a data frame
@@ -459,6 +522,35 @@ bool df_ptype_acc_add(
 
   FREE(2);
   return true;
+}
+
+// Marks the column at `loc` to be retyped by the next data frame that lacks
+// it, if `vec_ptype2(type, type)` might change `type`. Factors, dates and
+// date-times are combined natively and don't contain data frames.
+static inline
+void df_ptype_acc_mark_retype(struct df_ptype_acc* p_acc, r_ssize loc, r_obj* type) {
+  if (!p_acc->fallback || !r_is_object(type)) {
+    return;
+  }
+
+  switch (class_type(type)) {
+  case VCTRS_CLASS_bare_data_frame:
+  case VCTRS_CLASS_bare_factor:
+  case VCTRS_CLASS_bare_ordered:
+  case VCTRS_CLASS_bare_date:
+  case VCTRS_CLASS_bare_posixct:
+    return;
+  default:
+    break;
+  }
+
+  if (vec_typeof(type) != VCTRS_TYPE_s3) {
+    return;
+  }
+
+  p_acc->v_retype[loc] = 1;
+  p_acc->v_retype_locs[p_acc->n_retype] = loc;
+  ++p_acc->n_retype;
 }
 
 // Returns the common type as a data frame and stops accumulating. Builds it
@@ -542,6 +634,9 @@ enum df_ptype_acc_locate df_ptype_acc_locate(
   p_acc->v_table[slot] = *p_loc;
   r_chr_poke(p_acc->keys, p_acc->n_names, key);
   r_chr_poke(p_acc->names, p_acc->n_names, name);
+  if (p_acc->fallback) {
+    p_acc->v_retype[p_acc->n_names] = 0;
+  }
   ++p_acc->n_names;
 
   if (2 * p_acc->n_names > p_acc->table_size) {
@@ -603,6 +698,16 @@ void df_ptype_acc_grow(struct df_ptype_acc* p_acc) {
   p_acc->types = r_list_resize(p_acc->types, capacity);
   r_list_poke(p_acc->shelter, DF_PTYPE_ACC_SHELTER_types, p_acc->types);
 
+  if (p_acc->fallback) {
+    r_obj* retype = r_int_resize(r_list_get(p_acc->shelter, DF_PTYPE_ACC_SHELTER_retype), capacity);
+    r_list_poke(p_acc->shelter, DF_PTYPE_ACC_SHELTER_retype, retype);
+    p_acc->v_retype = r_int_begin(retype);
+
+    r_obj* retype_locs = r_int_resize(r_list_get(p_acc->shelter, DF_PTYPE_ACC_SHELTER_retype_locs), capacity);
+    r_list_poke(p_acc->shelter, DF_PTYPE_ACC_SHELTER_retype_locs, retype_locs);
+    p_acc->v_retype_locs = r_int_begin(retype_locs);
+  }
+
   p_acc->capacity = capacity;
 }
 
@@ -625,6 +730,16 @@ void df_ptype_acc_reset(struct df_ptype_acc* p_acc, r_ssize size) {
     p_acc->types = r_alloc_list(capacity);
     r_list_poke(shelter, DF_PTYPE_ACC_SHELTER_types, p_acc->types);
 
+    if (p_acc->fallback) {
+      r_obj* retype = r_alloc_integer(capacity);
+      r_list_poke(shelter, DF_PTYPE_ACC_SHELTER_retype, retype);
+      p_acc->v_retype = r_int_begin(retype);
+
+      r_obj* retype_locs = r_alloc_integer(capacity);
+      r_list_poke(shelter, DF_PTYPE_ACC_SHELTER_retype_locs, retype_locs);
+      p_acc->v_retype_locs = r_int_begin(retype_locs);
+    }
+
     p_acc->capacity = capacity;
     p_acc->table_size = 0;
     p_acc->v_scratch = p_acc->small_scratch;
@@ -637,6 +752,7 @@ void df_ptype_acc_reset(struct df_ptype_acc* p_acc, r_ssize size) {
 
   p_acc->n_names = 0;
   p_acc->n_types = 0;
+  p_acc->n_retype = 0;
 
   r_ssize table_size = 32;
   while (table_size < 2 * size) {
@@ -647,11 +763,11 @@ void df_ptype_acc_reset(struct df_ptype_acc* p_acc, r_ssize size) {
 
 static
 void df_ptype_acc_reserve_scratch(struct df_ptype_acc* p_acc, r_ssize size) {
-  if (3 * size <= p_acc->scratch_size) {
+  if (size <= p_acc->scratch_size) {
     return;
   }
 
-  const r_ssize scratch_size = r_ssize_mult(size, 6);
+  const r_ssize scratch_size = r_ssize_mult(size, 2);
 
   r_obj* scratch = r_alloc_integer(scratch_size);
   r_list_poke(p_acc->shelter, DF_PTYPE_ACC_SHELTER_scratch, scratch);

@@ -13,7 +13,7 @@ r_obj* ptype2_common_impl(
 );
 
 static
-void df_ptype_acc_start(struct df_ptype_acc* p_acc, r_obj* x);
+void df_ptype_acc_start(struct df_ptype_acc* p_acc, r_obj* x, bool retyped);
 
 static
 bool df_ptype_acc_add(
@@ -23,6 +23,9 @@ bool df_ptype_acc_add(
   struct ptype_common_reduce_opts* p_reduce_opts,
   int* p_left
 );
+
+static inline
+void df_ptype_acc_mark_retype(struct df_ptype_acc* p_acc, r_ssize loc, r_obj* type);
 
 static
 r_obj* df_ptype_acc_finish(struct df_ptype_acc* p_acc);
