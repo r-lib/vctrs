@@ -118,7 +118,7 @@ character vectors than to round numbers:
     # But they are incompatible with integers
     vec_ptype2(factor("a"), 1L)
     #> Error:
-    #> ! Can't combine `factor("a")` <factor<4d52a>> and `1L` <integer>.
+    #> ! Can't combine `factor("a")` <factor<345dd>> and `1L` <integer>.
 
 #### Richness of type
 

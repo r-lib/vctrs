@@ -1,9 +1,9 @@
 # Factor/ordered factor S3 class
 
-A [factor](https://rdrr.io/r/base/factor.html) is an integer with
+A [base::factor](https://rdrr.io/r/base/factor.html) is an integer with
 attribute `levels`, a character vector. There should be one level for
 each integer between 1 and `max(x)`. An
-[ordered](https://rdrr.io/r/base/factor.html) factor has the same
+[base::ordered](https://rdrr.io/r/base/factor.html) factor has the same
 properties as a factor, but possesses an extra class that marks levels
 as having a total ordering.
 

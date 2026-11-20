@@ -23,6 +23,8 @@ Useful links:
 
 Authors:
 
+- Davis Vaughan <davis@posit.co>
+
 - Hadley Wickham <hadley@posit.co>
 
 - Lionel Henry <lionel@posit.co>
