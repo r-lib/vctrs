@@ -1,9 +1,6 @@
 # vctrs (development version)
 
-* Fixed a protection bug in the C implementation of subscript errors: the
-  evaluated `call` of a `vctrs_error_subscript_type` condition could be
-  corrupted (or crash R) if a garbage collection occurred while the condition
-  was being constructed (#2173).
+* Fixed a small protection bug (#2173).
 
 * Fixed a performance regression for `vec_c()` and `list_unchop()` with many inputs (#2182, @kevinushey).
 
