@@ -2,8 +2,8 @@
 
 ## vctrs (development version)
 
-- Fixed a small protection bug
-  ([\#2173](https://github.com/r-lib/vctrs/issues/2173)).
+- Removed the vctrs methods for sf, as these now live in sf
+  ([\#2143](https://github.com/r-lib/vctrs/issues/2143)).
 
 - Fixed a performance regression for
   [`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md) and
@@ -12,9 +12,6 @@
   ([\#2182](https://github.com/r-lib/vctrs/issues/2182),
   [@kevinushey](https://github.com/kevinushey)).
 
-- Removed the vctrs methods for sf, as these now live in sf
-  ([\#2143](https://github.com/r-lib/vctrs/issues/2143)).
-
 - Fixed a factor related
   [`structure()`](https://rdrr.io/r/base/structure.html) call for R
   4.7.0 compatibility
@@ -22,6 +19,9 @@
 
 - Fixed `str.vctrs_vctr()` to work with the new spacing rules of
   [`utils::str()`](https://rdrr.io/r/utils/str.html) in R \>=4.7.0.
+
+- Fixed a small protection bug
+  ([\#2173](https://github.com/r-lib/vctrs/issues/2173)).
 
 ## vctrs 0.7.3
 
