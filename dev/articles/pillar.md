@@ -24,6 +24,7 @@ documentation and the `NAMESPACE` file. In this vignette, we’ll attach
 pillar and vctrs:
 
 ``` r
+
 library(vctrs)
 library(pillar)
 ```
@@ -33,6 +34,7 @@ the packages by then to the `Imports:` section of your `DESCRIPTION`.
 The following helper does this for you:
 
 ``` r
+
 usethis::use_package("vctrs")
 usethis::use_package("pillar")
 ```
@@ -49,6 +51,7 @@ frames for free. See
 for details on the record data type.
 
 ``` r
+
 #' @export
 latlon <- function(lat, lon) {
   new_rcrd(list(lat = lat, lon = lon), class = "earth_latlon")
@@ -93,6 +96,7 @@ made a class using the vctrs infrastructure and have provided a
 [`format()`](https://rdrr.io/r/base/format.html) method:
 
 ``` r
+
 library(tibble)
 #> 
 #> Attaching package: 'tibble'
@@ -140,6 +144,7 @@ header. For your own classes, strive for an evocative abbreviation
 that’s under 6 characters.
 
 ``` r
+
 #' @export
 vec_ptype_abbr.earth_latlon <- function(x) {
   "latlon"
@@ -177,6 +182,7 @@ First we define a degree formatter that makes use of
 [`style_subtle()`](https://pillar.r-lib.org/reference/style_subtle.html):
 
 ``` r
+
 deg_min_color <- function(x, direction) {
   pm <- if (direction == "lat") c("N", "S") else c("E", "W")
 
@@ -201,6 +207,7 @@ And then we pass that to our
 [`format()`](https://rdrr.io/r/base/format.html) method:
 
 ``` r
+
 #' @importFrom pillar pillar_shaft
 #' @export
 pillar_shaft.earth_latlon <- function(x, ...) {
@@ -214,6 +221,7 @@ doesn’t look any different, but if you run the code yourself you’ll see
 an improved display.
 
 ``` r
+
 data
 #> # A tibble: 6 × 3
 #>   venue          year              loc
@@ -235,6 +243,7 @@ Tibbles can automatically compacts columns when there’s no enough
 horizontal space to display everything:
 
 ``` r
+
 print(data, width = 30)
 #> # A tibble: 6 × 3
 #>   venue  year              loc
@@ -252,6 +261,7 @@ specified a minimum width when constructing the shaft. Let’s fix that
 and re-print the data:
 
 ``` r
+
 #' @importFrom pillar pillar_shaft
 #' @export
 pillar_shaft.earth_latlon <- function(x, ...) {
@@ -278,6 +288,7 @@ be nicer to show full degrees and remove the minutes. We’ll first write
 a function that does this:
 
 ``` r
+
 deg <- function(x, direction) {
   pm <- if (direction == "lat") c("N", "S") else c("E", "W")
 
@@ -295,6 +306,7 @@ Then use it as part of more sophisticated implementation of the
 method:
 
 ``` r
+
 #' @importFrom pillar pillar_shaft
 #' @export
 pillar_shaft.earth_latlon <- function(x, ...) {
@@ -331,6 +343,7 @@ formatting of our choice is passed to the
 function:
 
 ``` r
+
 #' @export
 format.pillar_shaft_latlon <- function(x, width, ...) {
   if (get_max_extent(x$deg_min) <= width) {
@@ -380,6 +393,7 @@ Use this testthat expectation in one of your test files to create a
 snapshot test:
 
 ``` r
+
 expect_snapshot(pillar_shaft(data$loc))
 ```
 

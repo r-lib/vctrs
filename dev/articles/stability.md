@@ -14,6 +14,7 @@ types (and size) of variables makes it possible to spot unpleasant edge
 cases.
 
 ``` r
+
 library(vctrs)
 library(rlang)
 library(zeallot)
@@ -66,6 +67,7 @@ To make these ideas concrete, let’s apply them to a few base functions:
     type-unstable:
 
     ``` r
+
     vec_ptype_show(median(c(1L, 1L)))
     #> Prototype: double
     vec_ptype_show(median(c(1L, 1L, 1L)))
@@ -80,6 +82,7 @@ To make these ideas concrete, let’s apply them to a few base functions:
     types:
 
     ``` r
+
     vec_ptype_show(sapply(1L, function(x) c(x, x)))
     #> Prototype: integer[,1]
     vec_ptype_show(sapply(integer(), function(x) c(x, x)))
@@ -101,6 +104,7 @@ To make these ideas concrete, let’s apply them to a few base functions:
     `c(x, y)` doesn’t always output the same type as `c(y, x)`.
 
     ``` r
+
     vec_ptype_show(c(NA, Sys.Date()))
     #> Prototype: double
     vec_ptype_show(c(Sys.Date(), NA))
@@ -113,6 +117,7 @@ To make these ideas concrete, let’s apply them to a few base functions:
     dealing with non-vectors (see the later section “Non-vectors”):
 
     ``` r
+
     env <- new.env(parent = emptyenv())
     length(env)
     #> [1] 0
@@ -134,6 +139,7 @@ To make these ideas concrete, let’s apply them to a few base functions:
     `cond`:
 
     ``` r
+
     vec_ptype_show(ifelse(NA, 1L, 1L))
     #> Prototype: logical
     vec_ptype_show(ifelse(FALSE, 1L, 1L))
@@ -186,6 +192,7 @@ hierarchy of types: character \> complex \> double \> integer \>
 logical.
 
 ``` r
+
 c(FALSE, 1L, 2.5)
 #> [1] 0.0 1.0 2.5
 ```
@@ -194,6 +201,7 @@ c(FALSE, 1L, 2.5)
 similar rules:
 
 ``` r
+
 vec_c(FALSE, 1L, 2.5)
 #> [1] 0.0 1.0 2.5
 ```
@@ -201,6 +209,7 @@ vec_c(FALSE, 1L, 2.5)
 But it does not automatically coerce to character vectors or lists:
 
 ``` r
+
 c(FALSE, "x")
 #> [1] "FALSE" "x"
 vec_c(FALSE, "x")
@@ -223,6 +232,7 @@ vec_c(FALSE, list(1))
 In general, most base methods do not throw an error:
 
 ``` r
+
 c(10.5, factor("x"))
 #> [1] 10.5  1.0
 ```
@@ -231,11 +241,12 @@ If the inputs aren’t vectors, [`c()`](https://rdrr.io/r/base/c.html)
 automatically puts them in a list:
 
 ``` r
+
 c(mean, globalenv())
 #> [[1]]
 #> function (x, ...) 
 #> UseMethod("mean")
-#> <bytecode: 0x557abb964528>
+#> <bytecode: 0x5ffb88600250>
 #> <environment: namespace:base>
 #> 
 #> [[2]]
@@ -246,6 +257,7 @@ For numeric versions, this depends on the order of inputs. Version first
 is an error, otherwise the input is wrapped in a list:
 
 ``` r
+
 c(getRversion(), "x")
 #> Error:
 #> ! invalid version specification 'x'
@@ -255,13 +267,14 @@ c("x", getRversion())
 #> [1] "x"
 #> 
 #> [[2]]
-#> [1] 4 5 3
+#> [1] 4 6 2
 ```
 
 [`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md) throws an
 error if the inputs are not vectors or not automatically coercible:
 
 ``` r
+
 vec_c(mean, globalenv())
 #> Error in `vec_size()`:
 #> ! `x` must be a vector, not a function.
@@ -269,7 +282,7 @@ vec_c(mean, globalenv())
 
 vec_c(Sys.Date(), factor("x"), "x")
 #> Error in `vec_c()`:
-#> ! Can't combine `..1` <date> and `..2` <factor<bf275>>.
+#> ! Can't combine `..1` <date> and `..2` <factor<9758a>>.
 ```
 
 ### Factors
@@ -277,6 +290,7 @@ vec_c(Sys.Date(), factor("x"), "x")
 Combining two factors returns an integer vector:
 
 ``` r
+
 fa <- factor("a")
 fb <- factor("b")
 
@@ -297,6 +311,7 @@ unnecessarily onerous. (This is backed up by experience with
 which is stricter and is a common source of user difficulty.)
 
 ``` r
+
 vec_c(fa, fb)
 #> [1] a b
 #> Levels: a b
@@ -311,6 +326,7 @@ vec_c(fb, fa)
 with date-times:
 
 ``` r
+
 datetime_nz <- as.POSIXct("2020-01-01 09:00", tz = "Pacific/Auckland")
 c(datetime_nz)
 #> [1] "2020-01-01 09:00:00 NZDT"
@@ -324,6 +340,7 @@ the source of considerable user pain.
 time zones:
 
 ``` r
+
 vec_c(datetime_nz)
 #> [1] "2020-01-01 09:00:00 NZDT"
 ```
@@ -335,16 +352,16 @@ there’s no easy way to change the time zone in base R), so vctrs chooses
 to use the first non-local time zone:
 
 ``` r
+
 datetime_local <- as.POSIXct("2020-01-01 09:00")
 datetime_houston <- as.POSIXct("2020-01-01 09:00", tz = "US/Central")
 
 vec_c(datetime_local, datetime_houston, datetime_nz)
-#> [1] "2020-01-01 03:00:00 CST" "2020-01-01 09:00:00 CST"
-#> [3] "2019-12-31 14:00:00 CST"
+#> [1] "2020-01-01 09:00:00" "2020-01-01 09:00:00" "2019-12-31 20:00:00"
 vec_c(datetime_houston, datetime_nz)
-#> [1] "2020-01-01 09:00:00 CST" "2019-12-31 14:00:00 CST"
+#> [1] "2020-01-01 09:00:00" "2019-12-31 20:00:00"
 vec_c(datetime_nz, datetime_houston)
-#> [1] "2020-01-01 09:00:00 NZDT" "2020-01-02 04:00:00 NZDT"
+#> [1] "2020-01-01 09:00:00 NZDT" "2020-01-01 22:00:00 NZDT"
 ```
 
 ### Dates and date-times
@@ -353,6 +370,7 @@ Combining dates and date-times with
 [`c()`](https://rdrr.io/r/base/c.html) gives silently incorrect results:
 
 ``` r
+
 date <- as.Date("2020-01-01")
 datetime <- as.POSIXct("2020-01-01 09:00")
 
@@ -373,6 +391,7 @@ date-times, vctrs returns a date-time and converts dates to date-times
 at midnight (in the timezone of the date-time).
 
 ``` r
+
 vec_c(date, datetime)
 #> [1] "2020-01-01 00:00:00 UTC" "2020-01-01 09:00:00 UTC"
 vec_c(date, datetime_nz)
@@ -386,6 +405,7 @@ If a missing value comes at the beginning of the inputs,
 behaviour, which strips all attributes:
 
 ``` r
+
 c(NA, fa)
 #> [1] NA  1
 c(NA, date)
@@ -401,6 +421,7 @@ the
 class which can be converted to any other 1d type:
 
 ``` r
+
 vec_c(NA, fa)
 #> [1] <NA> a   
 #> Levels: a
@@ -417,6 +438,7 @@ Because it is *almost always* length-stable,
 (into a list):
 
 ``` r
+
 df1 <- data.frame(x = 1)
 df2 <- data.frame(x = 2)
 str(c(df1, df1))
@@ -429,6 +451,7 @@ str(c(df1, df1))
 size-stable, which implies it will row-bind data frames:
 
 ``` r
+
 vec_c(df1, df2)
 #>   x
 #> 1 1
@@ -440,6 +463,7 @@ vec_c(df1, df2)
 The same reasoning applies to matrices:
 
 ``` r
+
 m <- matrix(1:4, nrow = 2)
 c(m, m)
 #> [1] 1 2 3 4 1 2 3 4
@@ -456,6 +480,7 @@ One difference is that
 “broadcast” a vector to match the dimensions of a matrix:
 
 ``` r
+
 c(m, 1)
 #> [1] 1 2 3 4 1
 
@@ -476,6 +501,7 @@ i.e. the common type and total size, and then allocate it with
 then insert each input into the correct place in the output.
 
 ``` r
+
 vec_c <- function(...) {
   args <- compact(list2(...))
 
@@ -542,6 +568,7 @@ internalised the ideas of type- and size-stability:
 This leads to the following implementation:
 
 ``` r
+
 if_else <- function(test, yes, no) {
   if (!is_logical(test)) {
     abort("`test` must be a logical vector.")
@@ -564,7 +591,7 @@ if_else(x > 2, factor("small"), factor("big"))
 #> [1] <NA>  big   big   small small
 #> Levels: small big
 if_else(x > 2, Sys.Date(), Sys.Date() + 7)
-#> [1] NA           "2026-04-24" "2026-04-24" "2026-04-17" "2026-04-17"
+#> [1] NA           "2026-11-27" "2026-11-27" "2026-11-20" "2026-11-20"
 ```
 
 By using
@@ -574,6 +601,7 @@ this definition of `if_else()` automatically works with data.frames and
 matrices:
 
 ``` r
+
 if_else(x > 2, data.frame(x = 1), data.frame(y = 2))
 #>    x  y
 #> 1 NA NA

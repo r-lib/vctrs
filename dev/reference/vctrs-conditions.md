@@ -114,6 +114,7 @@ allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
 ## Examples
 
 ``` r
+
 # Most of the time, `maybe_lossy_cast()` returns its input normally:
 maybe_lossy_cast(
   c("foo", "bar"),

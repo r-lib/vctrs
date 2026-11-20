@@ -158,7 +158,7 @@ try(allow_lossy_cast(vec_cast(c(1, 2), logical()), to_ptype = integer()))
 # No sensible coercion is possible so an error is generated
 try(vec_cast(1.5, factor("a")))
 #> Error in eval(expr, envir) : 
-#>   Can't convert `1.5` <double> to <factor<4d52a>>.
+#>   Can't convert `1.5` <double> to <factor<345dd>>.
 
 # Cast to common type
 vec_cast_common(factor("a"), factor(c("a", "b")))

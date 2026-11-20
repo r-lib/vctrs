@@ -181,9 +181,9 @@ vec_ptype_show(Sys.Date())
 vec_ptype_show(Sys.time())
 #> Prototype: datetime<local>
 vec_ptype_show(factor("a"))
-#> Prototype: factor<4d52a>
+#> Prototype: factor<345dd>
 vec_ptype_show(ordered("a"))
-#> Prototype: ordered<4d52a>
+#> Prototype: ordered<345dd>
 
 # Matrices -----------------------------------------------
 # The prototype of a matrix includes the number of columns
@@ -201,7 +201,7 @@ vec_ptype_show(iris)
 #>   Sepal.Width : double
 #>   Petal.Length: double
 #>   Petal.Width : double
-#>   Species     : factor<fb977>
+#>   Species     : factor<0e2e0>
 #> >
 
 # The prototype of multiple data frames includes the prototype

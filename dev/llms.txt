@@ -43,12 +43,14 @@ dependencies.
 Install vctrs from CRAN with:
 
 ``` r
+
 install.packages("vctrs")
 ```
 
 Alternatively, if you need the development version, install it with:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("r-lib/vctrs")
 ```
@@ -56,6 +58,7 @@ pak::pak("r-lib/vctrs")
 ## Usage
 
 ``` r
+
 library(vctrs)
 
 # Sizes

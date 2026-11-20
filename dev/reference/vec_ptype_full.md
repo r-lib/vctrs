@@ -62,7 +62,7 @@ cat(vec_ptype_full(iris))
 #>   Sepal.Width : double
 #>   Petal.Length: double
 #>   Petal.Width : double
-#>   Species     : factor<fb977>
+#>   Species     : factor<0e2e0>
 #> >
 
 cat(vec_ptype_abbr(1:10))

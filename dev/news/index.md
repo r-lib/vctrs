@@ -22,6 +22,7 @@ CRAN release: 2026-03-21
   Previously:
 
   ``` r
+
   x <- structure(1, foo = "bar")
   to <- 2
   vec_restore(x, to)
@@ -51,6 +52,7 @@ CRAN release: 2026-03-21
   ([\#2154](https://github.com/r-lib/vctrs/issues/2154)).
 
   ``` r
+
   # Only difference is the attribute name
   x <- list(
     structure(1, foo = 2),
@@ -167,6 +169,7 @@ CRAN release: 2026-01-16
   example:
 
   ``` r
+
   # Restricts the element type, but not the size (default behavior)
   list_of(1:2, 3:4, .ptype = integer(), .size = zap())
 
@@ -1950,7 +1953,7 @@ CRAN release: 2020-02-20
 - [`vec_slice()`](https://vctrs.r-lib.org/dev/reference/vec_slice.md)
   and [`vec_chop()`](https://vctrs.r-lib.org/dev/reference/vec_chop.md)
   now work correctly with
-  [`bit64::integer64()`](https://rdrr.io/pkg/bit64/man/bit64-package.html)
+  [`bit64::integer64()`](https://bit64.r-lib.org/reference/bit64-package.html)
   objects when an `NA` subscript is supplied. By extension, this means
   that [`vec_init()`](https://vctrs.r-lib.org/dev/reference/vec_init.md)
   now works with these objects as well

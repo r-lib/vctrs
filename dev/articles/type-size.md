@@ -16,6 +16,7 @@ for [`c()`](https://rdrr.io/r/base/c.html) and
 data frames with columns that are matrices or data frames.
 
 ``` r
+
 library(vctrs)
 ```
 
@@ -68,6 +69,7 @@ allows us to see the prototypes base R classes:
   [`typeof()`](https://rdrr.io/r/base/typeof.html):
 
   ``` r
+
   vec_ptype_show(FALSE)
   #> Prototype: logical
   vec_ptype_show(1L)
@@ -84,6 +86,7 @@ allows us to see the prototypes base R classes:
   dimensions after the first:
 
   ``` r
+
   vec_ptype_show(array(logical(), c(2, 3)))
   #> Prototype: logical[,3]
   vec_ptype_show(array(integer(), c(2, 3, 4)))
@@ -98,10 +101,11 @@ allows us to see the prototypes base R classes:
   their levels are also equal.
 
   ``` r
+
   vec_ptype_show(factor("a"))
-  #> Prototype: factor<4d52a>
+  #> Prototype: factor<345dd>
   vec_ptype_show(ordered("b"))
-  #> Prototype: ordered<9b7e3>
+  #> Prototype: ordered<3e2c8>
   ```
 
   While
@@ -110,6 +114,7 @@ allows us to see the prototypes base R classes:
   levels:
 
   ``` r
+
   vec_ptype(factor("a"))
   #> factor()
   #> Levels: a
@@ -120,6 +125,7 @@ allows us to see the prototypes base R classes:
   have a unit.
 
   ``` r
+
   vec_ptype_show(Sys.Date())
   #> Prototype: date
   vec_ptype_show(Sys.time())
@@ -132,6 +138,7 @@ allows us to see the prototypes base R classes:
   frame is the name and prototype of each column:
 
   ``` r
+
   vec_ptype_show(data.frame(a = FALSE, b = 1L, c = 2.5, d = "x"))
   #> Prototype: data.frame<
   #>   a: logical
@@ -145,6 +152,7 @@ allows us to see the prototypes base R classes:
   this a “recursive” type:
 
   ``` r
+
   df <- data.frame(x = FALSE)
   df$y <- data.frame(a = 1L, b = 2.5)
   vec_ptype_show(df)
@@ -199,6 +207,7 @@ but play with
   automatically:
 
   ``` r
+
   vec_ptype_show(logical(), integer(), double())
   #> Prototype: <double>
   #> 0. (           , <logical> ) = <logical>
@@ -213,6 +222,7 @@ but play with
 - Matrices and arrays are automatically broadcast to higher dimensions:
 
   ``` r
+
   vec_ptype_show(
     array(1, c(0, 1)), 
     array(1, c(0, 2))
@@ -237,6 +247,7 @@ but play with
   Provided that the dimensions follow the vctrs recycling rules:
 
   ``` r
+
   vec_ptype_show(
     array(1, c(0, 2)), 
     array(1, c(0, 3))
@@ -249,6 +260,7 @@ but play with
 - Factors combine levels in the order in which they appear.
 
   ``` r
+
   fa <- factor("a")
   fb <- factor("b")
 
@@ -261,6 +273,7 @@ but play with
 - Combining a date and date-time yields a date-time:
 
   ``` r
+
   vec_ptype_show(new_date(), new_datetime())
   #> Prototype: <datetime<local>>
   #> 0. (        , <date>            ) = <date>           
@@ -271,6 +284,7 @@ but play with
   input:
 
   ``` r
+
   vec_ptype_show(
     new_datetime(tzone = "US/Central"), 
     new_datetime(tzone = "Pacific/Auckland")
@@ -284,6 +298,7 @@ but play with
   will win:
 
   ``` r
+
   vec_ptype_show(
     new_datetime(tzone = ""), 
     new_datetime(tzone = ""), 
@@ -299,6 +314,7 @@ but play with
   that occurs in both data frames:
 
   ``` r
+
   vec_ptype_show(
     data.frame(x = FALSE), 
     data.frame(x = 1L),
@@ -313,6 +329,7 @@ but play with
   And the union of the columns that only occur in one:
 
   ``` r
+
   vec_ptype_show(data.frame(x = 1, y = 1), data.frame(y = 1, z = 1))
   #> Prototype: <data.frame<
   #>   x: double
@@ -341,6 +358,7 @@ want is a set of vectors coerced to that common type. That’s the job of
 [`vec_cast_common()`](https://vctrs.r-lib.org/dev/reference/vec_cast.md):
 
 ``` r
+
 str(vec_cast_common(
   FALSE, 
   1:5, 
@@ -376,6 +394,7 @@ Alternatively, you can cast to a specific prototype using
 [`vec_cast()`](https://vctrs.r-lib.org/dev/reference/vec_cast.md):
 
 ``` r
+
 # Cast succeeds
 vec_cast(c(1, 2), integer())
 #> [1] 1 2
@@ -383,7 +402,7 @@ vec_cast(c(1, 2), integer())
 # Cast fails
 vec_cast(c(1.5, 2.5), factor("a"))
 #> Error:
-#> ! Can't convert `c(1.5, 2.5)` <double> to <factor<4d52a>>.
+#> ! Can't convert `c(1.5, 2.5)` <double> to <factor<345dd>>.
 ```
 
 If a cast is possible in general (i.e., double -\> integer), but
@@ -391,6 +410,7 @@ information is lost for a specific input (e.g. 1.5 -\> 1), it will
 generate an error.
 
 ``` r
+
 vec_cast(c(1.5, 2), integer())
 #> Error:
 #> ! Can't convert from `c(1.5, 2)` <double> to <integer> due to loss of precision.
@@ -401,6 +421,7 @@ You can suppress the lossy cast errors with
 [`allow_lossy_cast()`](https://vctrs.r-lib.org/dev/reference/vctrs-conditions.md):
 
 ``` r
+
 allow_lossy_cast(
   vec_cast(c(1.5, 2), integer())
 )
@@ -411,6 +432,7 @@ This will suppress all lossy cast errors. Supply prototypes if you want
 to be specific about the type of lossy cast allowed:
 
 ``` r
+
 allow_lossy_cast(
   vec_cast(c(1.5, 2), integer()),
   x_ptype = double(),
@@ -470,6 +492,7 @@ the underlying object. `vec_slice(x, i)` is equivalent to:
 - `x[i, , , drop = FALSE]` when `x` is a 3d array.
 
 ``` r
+
 x <- sample(1:10)
 df <- data.frame(x = x)
 
@@ -498,6 +521,7 @@ in
 which gives the common size of a set of vectors:
 
 ``` r
+
 vec_size_common(1:3, 1:3, 1:3)
 #> [1] 3
 vec_size_common(1:10, 1)
@@ -523,6 +547,7 @@ You can apply the recycling rules in two ways:
   [`vec_recycle()`](https://vctrs.r-lib.org/dev/reference/vec_recycle.md):
 
   ``` r
+
   vec_recycle(1:3, 3)
   #> [1] 1 2 3
   vec_recycle(1, 10)
@@ -534,6 +559,7 @@ You can apply the recycling rules in two ways:
   [`vec_recycle_common()`](https://vctrs.r-lib.org/dev/reference/vec_recycle.md):
 
   ``` r
+
   vec_recycle_common(1:3, 1:3)
   #> [[1]]
   #> [1] 1 2 3
@@ -560,6 +586,7 @@ Generally, in base R, when a pair of vectors is not the same length, the
 shorter vector is recycled to the same length as the longer:
 
 ``` r
+
 rep(1, 6) + 1
 #> [1] 2 2 2 2 2 2
 rep(1, 6) + 1:2
@@ -572,6 +599,7 @@ If the length of the longer vector is not an integer multiple of the
 length of the shorter, you usually get a warning:
 
 ``` r
+
 invisible(pmax(1:2, 1:3))
 #> Warning in pmax(1:2, 1:3): an argument will be fractionally recycled
 invisible(1:2 + 1:3)
@@ -585,6 +613,7 @@ invisible(cbind(1:2, 1:3))
 But some functions recycle silently:
 
 ``` r
+
 length(atan2(1:3, 1:2))
 #> [1] 3
 length(paste(1:3, 1:2))
@@ -597,6 +626,7 @@ And [`data.frame()`](https://rdrr.io/r/base/data.frame.html) throws an
 error:
 
 ``` r
+
 data.frame(1:2, 1:3)
 #> Error in `data.frame()`:
 #> ! arguments imply differing number of rows: 2, 3
@@ -607,6 +637,7 @@ involving a zero-length vector has a zero-length result”. But outside of
 arithmetic, this rule is not consistently followed:
 
 ``` r
+
 # length-0 output
 1:2 + integer()
 #> integer(0)
