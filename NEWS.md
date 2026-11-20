@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.7.4
 
 * Removed the vctrs methods for sf, as these now live in sf (#2143).
 
