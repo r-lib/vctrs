@@ -443,7 +443,7 @@ SEXP vec_match_params(SEXP needles,
   PROTECT_DICT(d, &nprot);
 
   // Load dictionary with haystack
-  load_with_haystack(d, n_haystack);
+  load_with_haystack(d, n_haystack, na_equal);
 
   struct dictionary* d_needles = new_dictionary_params(needles, true, na_equal);
   PROTECT_DICT(d_needles, &nprot);
@@ -619,7 +619,7 @@ SEXP vec_in(
   PROTECT_DICT(d, &nprot);
 
   // Load dictionary with haystack
-  load_with_haystack(d, n_haystack);
+  load_with_haystack(d, n_haystack, na_equal);
 
   struct dictionary* d_needles = new_dictionary_params(needles, true, na_equal);
   PROTECT_DICT(d_needles, &nprot);
@@ -718,22 +718,59 @@ do {                                              \
 }                                                 \
 while (0)
 
+// When propagating missing values, incomplete haystack elements can never be
+// matched: incomplete needles short-circuit to `NA`, and complete needles never
+// equal them. They also all share the `HASH_MISSING` hash, so inserting them
+// would put every distinct incomplete element (e.g. data frame rows with an
+// `NA` in different columns) on one probe sequence, making the load quadratic.
+#define LOAD_WITH_HAYSTACK_PROPAGATE(DICT_HASH_SCALAR, DICT_IS_INCOMPLETE) \
+do {                                                                       \
+  for (int i = 0; i < n_haystack; ++i) {                                   \
+    if (DICT_IS_INCOMPLETE(d, i)) {                                        \
+      continue;                                                            \
+    }                                                                      \
+                                                                           \
+    uint32_t hash = DICT_HASH_SCALAR(d, i);                                \
+                                                                           \
+    if (d->key[hash] == DICT_EMPTY) {                                      \
+      dict_put(d, hash, i);                                                \
+    }                                                                      \
+  }                                                                        \
+}                                                                          \
+while (0)
+
 static inline
-void load_with_haystack(struct dictionary* d, R_len_t n_haystack) {
-  switch (d->p_poly_vec->type) {
-  case VCTRS_TYPE_null: LOAD_WITH_HAYSTACK(nil_dict_hash_scalar); break;
-  case VCTRS_TYPE_logical: LOAD_WITH_HAYSTACK(lgl_dict_hash_scalar); break;
-  case VCTRS_TYPE_integer: LOAD_WITH_HAYSTACK(int_dict_hash_scalar); break;
-  case VCTRS_TYPE_double: LOAD_WITH_HAYSTACK(dbl_dict_hash_scalar); break;
-  case VCTRS_TYPE_complex: LOAD_WITH_HAYSTACK(cpl_dict_hash_scalar); break;
-  case VCTRS_TYPE_character: LOAD_WITH_HAYSTACK(chr_dict_hash_scalar); break;
-  case VCTRS_TYPE_raw: LOAD_WITH_HAYSTACK(raw_dict_hash_scalar); break;
-  case VCTRS_TYPE_list: LOAD_WITH_HAYSTACK(list_dict_hash_scalar); break;
-  case VCTRS_TYPE_dataframe: LOAD_WITH_HAYSTACK(df_dict_hash_scalar); break;
-  default: stop_unimplemented_vctrs_type("vec_match_loop", d->p_poly_vec->type);
+void load_with_haystack(struct dictionary* d, R_len_t n_haystack, bool na_equal) {
+  if (na_equal) {
+    switch (d->p_poly_vec->type) {
+    case VCTRS_TYPE_null: LOAD_WITH_HAYSTACK(nil_dict_hash_scalar); break;
+    case VCTRS_TYPE_logical: LOAD_WITH_HAYSTACK(lgl_dict_hash_scalar); break;
+    case VCTRS_TYPE_integer: LOAD_WITH_HAYSTACK(int_dict_hash_scalar); break;
+    case VCTRS_TYPE_double: LOAD_WITH_HAYSTACK(dbl_dict_hash_scalar); break;
+    case VCTRS_TYPE_complex: LOAD_WITH_HAYSTACK(cpl_dict_hash_scalar); break;
+    case VCTRS_TYPE_character: LOAD_WITH_HAYSTACK(chr_dict_hash_scalar); break;
+    case VCTRS_TYPE_raw: LOAD_WITH_HAYSTACK(raw_dict_hash_scalar); break;
+    case VCTRS_TYPE_list: LOAD_WITH_HAYSTACK(list_dict_hash_scalar); break;
+    case VCTRS_TYPE_dataframe: LOAD_WITH_HAYSTACK(df_dict_hash_scalar); break;
+    default: stop_unimplemented_vctrs_type("load_with_haystack", d->p_poly_vec->type);
+    }
+  } else {
+    switch (d->p_poly_vec->type) {
+    case VCTRS_TYPE_null: LOAD_WITH_HAYSTACK_PROPAGATE(nil_dict_hash_scalar, nil_dict_is_incomplete); break;
+    case VCTRS_TYPE_logical: LOAD_WITH_HAYSTACK_PROPAGATE(lgl_dict_hash_scalar, lgl_dict_is_incomplete); break;
+    case VCTRS_TYPE_integer: LOAD_WITH_HAYSTACK_PROPAGATE(int_dict_hash_scalar, int_dict_is_incomplete); break;
+    case VCTRS_TYPE_double: LOAD_WITH_HAYSTACK_PROPAGATE(dbl_dict_hash_scalar, dbl_dict_is_incomplete); break;
+    case VCTRS_TYPE_complex: LOAD_WITH_HAYSTACK_PROPAGATE(cpl_dict_hash_scalar, cpl_dict_is_incomplete); break;
+    case VCTRS_TYPE_character: LOAD_WITH_HAYSTACK_PROPAGATE(chr_dict_hash_scalar, chr_dict_is_incomplete); break;
+    case VCTRS_TYPE_raw: LOAD_WITH_HAYSTACK_PROPAGATE(raw_dict_hash_scalar, raw_dict_is_incomplete); break;
+    case VCTRS_TYPE_list: LOAD_WITH_HAYSTACK_PROPAGATE(list_dict_hash_scalar, list_dict_is_incomplete); break;
+    case VCTRS_TYPE_dataframe: LOAD_WITH_HAYSTACK_PROPAGATE(df_dict_hash_scalar, df_dict_is_incomplete); break;
+    default: stop_unimplemented_vctrs_type("load_with_haystack", d->p_poly_vec->type);
+    }
   }
 }
 
+#undef LOAD_WITH_HAYSTACK_PROPAGATE
 #undef LOAD_WITH_HAYSTACK
 
 SEXP vctrs_count(SEXP x) {

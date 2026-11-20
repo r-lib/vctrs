@@ -10,6 +10,8 @@
 
 * Fixed a small protection bug (#2173).
 
+* `vec_match()` and `vec_in()` with `na_equal = FALSE` no longer take quadratic time when the haystack contains many distinct incomplete values, such as data frame rows with missing values in different columns (#2184).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
