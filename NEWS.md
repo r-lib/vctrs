@@ -10,6 +10,8 @@
 
 * Fixed a small protection bug (#2173).
 
+* Finding the common type of factors no longer recomputes the union of their levels when the levels are equal but stored in separate objects, or when one set of levels is a prefix of the other. Casting a factor to equal levels stored in a separate object also no longer copies it, unless it has attributes other than its levels and class. This speeds up `vec_rbind()`, `vec_c()`, and `list_unchop()` over many factors that were created separately with the same levels (#2190).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.

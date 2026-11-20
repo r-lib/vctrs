@@ -59,6 +59,106 @@ test_that("factors level are unioned", {
   expect_equal(vec_ptype_common(fb, fa), factor(levels = c("b", "a")))
 })
 
+test_that("equal levels stored in separate objects union to a copy of the levels", {
+  x <- factor("a", levels = c("a", "b"))
+  y <- factor("b", levels = c("a", "b"))
+  expect_false(rlang::obj_address(levels(x)) == rlang::obj_address(levels(y)))
+
+  ptype <- vec_ptype2(x, y)
+  expect_equal(ptype, factor(levels = c("a", "b")))
+  expect_false(rlang::obj_address(levels(ptype)) == rlang::obj_address(levels(x)))
+  expect_false(rlang::obj_address(levels(ptype)) == rlang::obj_address(levels(y)))
+
+  xs <- lapply(1:3, function(i) factor(letters[i], levels = letters[1:3]))
+  expect_identical(list_unchop(xs), factor(letters[1:3], levels = letters[1:3]))
+})
+
+test_that("casting to the common type strips attributes when the levels are stored separately", {
+  x <- structure(c(a = 1L), levels = c("a", "b"), class = "factor", foo = "bar")
+  expected <- factor("a", levels = c("a", "b"))
+
+  # Equal levels
+  y <- factor("b", levels = c("a", "b"))
+  expect_identical(vec_cast(x, vec_ptype2(x, y)), expected)
+  expect_identical(vec_cast_common(x, y)[[1]], expected)
+
+  # Prefix levels
+  z <- factor("a")
+  expect_identical(vec_cast_common(x, z)[[1]], expected)
+})
+
+test_that("levels with attributes keep the full union and cast behaviour", {
+  attr_levels <- structure(c("a", "b"), foo = "bar")
+  x <- new_factor(1L, levels = attr_levels)
+  to <- new_factor(levels = c("a", "b"))
+
+  # The full union drops attributes, and a cast takes the target's levels
+  expect_identical(levels(vec_ptype2(x, to)), c("a", "b"))
+  expect_identical(levels(vec_ptype2(x, new_factor(levels = "a"))), c("a", "b"))
+  expect_identical(levels(vec_cast(x, to)), c("a", "b"))
+
+  plain <- new_factor(1L, levels = c("a", "b"))
+  to_attr <- new_factor(levels = attr_levels)
+  expect_identical(levels(vec_cast(plain, to_attr)), attr_levels)
+
+  # The full union keeps names on the levels, but a cast still takes the target's
+  named <- new_factor(1L, levels = c(p = "a", q = "b"))
+  expect_identical(levels(vec_ptype2(named, to)), c(p = "a", q = "b"))
+  expect_identical(levels(vec_cast(named, to)), c("a", "b"))
+})
+
+test_that("levels that are a prefix of the other levels union to the longer levels", {
+  ab <- factor(levels = c("a", "b"))
+  abc <- factor(levels = c("a", "b", "c"))
+  expect_equal(vec_ptype2(ab, abc), abc)
+  expect_equal(vec_ptype2(abc, ab), abc)
+
+  empty <- factor()
+  expect_equal(vec_ptype2(empty, abc), abc)
+  expect_equal(vec_ptype2(abc, empty), abc)
+
+  # Not a prefix, so the levels are still unioned in order of appearance
+  ba <- factor(levels = c("b", "a"))
+  expect_equal(vec_ptype2(ba, abc), factor(levels = c("b", "a", "c")))
+  expect_equal(vec_ptype2(abc, ba), abc)
+})
+
+test_that("casting to equal levels stored in a separate object returns plain factors as is", {
+  to <- factor(levels = c("a", "b"))
+  x <- factor(c("b", "a"), levels = c("a", "b"))
+  out <- vec_cast(x, to)
+  expect_identical(out, x)
+  expect_identical(rlang::obj_address(out), rlang::obj_address(x))
+
+  # Other attributes are still stripped, as when the levels are a prefix
+  y <- structure(c(x = 2L, y = 1L), levels = c("a", "b"), class = "factor", foo = "bar")
+  out <- vec_cast(y, to)
+  expect_identical(out, x)
+  expect_identical(rlang::obj_address(levels(out)), rlang::obj_address(levels(to)))
+})
+
+test_that("casting to equal levels re-initializes factors that aren't laid out plainly", {
+  to <- factor(levels = c("a", "b"))
+  expected <- structure(1L, levels = c("a", "b"), class = "factor")
+
+  named_class <- structure(1L, levels = c("a", "b"), class = c(label = "factor"))
+  expect_identical(attributes(vec_cast(named_class, to)), attributes(expected))
+
+  class_first <- structure(1L, class = "factor", levels = c("a", "b"))
+  expect_identical(attributes(vec_cast(class_first, to)), attributes(expected))
+
+  expect_false(isS4(vec_cast(asS4(expected), to)))
+})
+
+test_that("levels that only differ in encoding are still unioned as equal", {
+  encs <- encodings()
+  x <- factor(encs$utf8)
+  y <- factor(encs$latin1)
+
+  expect_identical(levels(vec_ptype2(x, y)), encs$utf8)
+  expect_identical(levels(vec_ptype2(y, x)), encs$latin1)
+})
+
 test_that("coercion errors with factors", {
   f <- factor(levels = "a")
 

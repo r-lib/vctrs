@@ -20,11 +20,7 @@ SEXP fct_ptype2(
     stop_corrupt_factor_levels(y, p_y_arg);
   }
 
-  // Use `x_levels` if they are equal pointers, otherwise compute union
-  SEXP levels = (x_levels == y_levels) ?
-    x_levels :
-    levels_union(x_levels, y_levels);
-  PROTECT(levels);
+  SEXP levels = PROTECT(levels_union(x_levels, y_levels));
 
   SEXP out = new_empty_factor(levels);
   UNPROTECT(3);
@@ -80,7 +76,48 @@ r_obj* ord_ptype2(
   return out;
 }
 
+// When one set of levels is a prefix of the other, the longer one is the
+// union. This covers equal levels stored in separate objects, which would
+// otherwise be unioned again at every step of a fold over many inputs.
+// Returns `NULL` when neither is a prefix of the other, or when either has
+// attributes, so the full union keeps deciding what happens to those.
+// Equal pointers mean equal strings because CHARSXPs are cached. Strings
+// that only match after translation take the full union.
+static SEXP levels_prefix_longer(SEXP x, SEXP y) {
+  if (r_attrib_has_any(x) || r_attrib_has_any(y)) {
+    return NULL;
+  }
+
+  R_len_t x_size = Rf_length(x);
+  R_len_t y_size = Rf_length(y);
+  R_len_t size = (x_size < y_size) ? x_size : y_size;
+
+  const SEXP* p_x = STRING_PTR_RO(x);
+  const SEXP* p_y = STRING_PTR_RO(y);
+
+  for (R_len_t i = 0; i < size; ++i) {
+    if (p_x[i] != p_y[i]) {
+      return NULL;
+    }
+  }
+
+  return (x_size >= y_size) ? x : y;
+}
+
 static SEXP levels_union(SEXP x, SEXP y) {
+  if (x == y) {
+    return x;
+  }
+
+  SEXP longer = levels_prefix_longer(x, y);
+  if (longer != NULL) {
+    // Return a copy rather than an input's levels object. A cast returns a
+    // factor unchanged, attributes and all, when its levels are the same
+    // object as the target's, so reusing an input's object here would make
+    // casts to the common type keep attributes that they otherwise strip.
+    return r_clone(longer);
+  }
+
   SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(args, 0, x);
   SET_VECTOR_ELT(args, 1, y);
@@ -303,6 +340,35 @@ SEXP ord_as_ordered(const struct cast_opts* p_opts) {
   return out;
 }
 
+static r_obj* plain_factor_attrib_cb(r_obj* tag, r_obj* value, void* data) {
+  int* p_n = (int*) data;
+  r_obj* expected_tag = (*p_n == 0) ? R_LevelsSymbol : R_ClassSymbol;
+  ++(*p_n);
+
+  // Returning non-`NULL` stops the iteration
+  if (*p_n > 2 || tag != expected_tag || r_attrib_has_any(value)) {
+    return r_null;
+  }
+  return NULL;
+}
+
+// Whether `x` is laid out exactly as `init_factor()` and `init_ordered()` leave
+// a cleared vector: `levels` then `class`, neither with attributes of their
+// own, and no S4 bit. The class values are already the bare class `x` was
+// dispatched with.
+static bool is_plain_factor(SEXP x) {
+  if (TYPEOF(x) != INTSXP || r_is_s4(x)) {
+    return false;
+  }
+
+  int n = 0;
+  if (r_attrib_map(x, plain_factor_attrib_cb, &n) != NULL) {
+    return false;
+  }
+
+  return n == 2;
+}
+
 static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {
   // Early exit if levels are identical
   if (x_levels == to_levels) {
@@ -324,8 +390,6 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
     return R_NilValue;
   }
 
-  R_len_t x_size = vec_size(x);
-
   const SEXP* p_x_levels = STRING_PTR_RO(x_levels);
   const SEXP* p_to_levels = STRING_PTR_RO(to_levels);
 
@@ -342,6 +406,18 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
   // Duplicate, strip non-factor attributes, and re-initialize with new levels.
   // Using `r_clone_referenced()` avoids an immediate copy using ALTREP wrappers.
   if (is_contiguous_subset) {
+    // Equal levels stored in a separate object. A plain factor would come out
+    // of the re-initialization below identical to `x`, so return it as is.
+    // `to`'s levels can't have attributes either, since `x` keeps its own.
+    const bool unchanged =
+      x_levels_size == to_levels_size &&
+      !r_attrib_has_any(to_levels) &&
+      is_plain_factor(x);
+
+    if (unchanged) {
+      return x;
+    }
+
     SEXP out = PROTECT(r_clone_referenced(x));
     r_attrib_zap_all(out);
 
@@ -355,6 +431,8 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
     return out;
   }
 
+  // Only needed for recoding, and costly for a factor because it takes its proxy
+  R_len_t x_size = vec_size(x);
   const int* p_x = INTEGER_RO(x);
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, x_size));
