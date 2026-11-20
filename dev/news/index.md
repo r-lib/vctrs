@@ -2,6 +2,9 @@
 
 ## vctrs (development version)
 
+- `str.vctrs_vctr()` now works with the new spacing rules of
+  [`utils::str()`](https://rdrr.io/r/utils/str.html) in R \>=4.7.0.
+
 ## vctrs 0.7.3
 
 CRAN release: 2026-04-11

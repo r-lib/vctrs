@@ -114,7 +114,7 @@ x
 #> [1] 0.0000000 0.3333333 0.6666667 1.0000000        NA
 
 str(x)
-#>  vctrs_pr [1:5] 0.0000000, 0.3333333, 0.6666667, 1.0000000,        NA
+#> vctrs_pr [1:5] 0.0000000, 0.3333333, 0.6666667, 1.0000000,        NA
 ```
 
 Note that we prefix the name of the class with the name of the package.
@@ -224,7 +224,7 @@ tibble::tibble(x)
 #> 5      NA
 
 str(x)
-#>  prcnt [1:5] 0%, 33.3%, 66.7%, 100%, <NA>
+#> prcnt [1:5] 0%, 33.3%, 66.7%, 100%, <NA>
 ```
 
 If you need more control over printing in tibbles, implement a method
@@ -847,7 +847,7 @@ x
 #> ! `format.vctrs_rational()` not implemented.
 
 str(x)
-#> Error in `format()` at vctrs/R/print-str.R:126:3:
+#> Error in `format()` at vctrs/R/print-str.R:139:3:
 #> ! `format.vctrs_rational()` not implemented.
 ```
 
@@ -907,7 +907,7 @@ implementation details from the user:
 ``` r
 
 str(x)
-#>  rtnl [1:10] 1/1, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7, 1/8, 1/9, 1/10
+#> rtnl [1:10] 1/1, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7, 1/8, 1/9, 1/10
 ```
 
 For `rational`,
