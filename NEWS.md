@@ -1,14 +1,14 @@
 # vctrs (development version)
 
-* Fixed a small protection bug (#2173).
+* Removed the vctrs methods for sf, as these now live in sf (#2143).
 
 * Fixed a performance regression for `vec_c()` and `list_unchop()` with many inputs (#2182, @kevinushey).
-
-* Removed the vctrs methods for sf, as these now live in sf (#2143).
 
 * Fixed a factor related `structure()` call for R 4.7.0 compatibility (#2198).
 
 * Fixed `str.vctrs_vctr()` to work with the new spacing rules of `utils::str()` in R >=4.7.0.
+
+* Fixed a small protection bug (#2173).
 
 # vctrs 0.7.3
 
