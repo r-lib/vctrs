@@ -136,14 +136,23 @@ r_obj* vec_rbind(r_obj* xs,
     }
   }
 
-  // Must happen after the `names_to` column has been added to `ptype`
-  xs = vec_cast_common_params(
-    xs,
-    ptype,
-    S3_FALLBACK_true,
-    vec_args.empty,
-    error_call
-  );
+  r_obj* proxy = KEEP_N(vec_proxy_recurse(ptype), &n_prot);
+
+  // Must happen after the `names_to` column has been added to `ptype`.
+  //
+  // Each row of the already missing `out` is assigned once, so columns an
+  // input lacks don't need filling in. Common class fallback columns are
+  // combined from the cast `xs` afterwards, so they need them filled. They
+  // can be nested in proxies, such as record fields, so check the proxy.
+  const struct cast_common_opts cast_opts = {
+    .p_arg = vec_args.empty,
+    .call = error_call,
+    .s3_fallback = S3_FALLBACK_true,
+    .missing_cols_as_null =
+      is_data_frame(proxy) &&
+      !needs_df_list_combine_common_class_fallback(proxy)
+  };
+  xs = vec_cast_common_opts(xs, ptype, &cast_opts);
   KEEP_N(xs, &n_prot);
 
   // Find individual input sizes and total size of output
@@ -159,7 +168,6 @@ r_obj* vec_rbind(r_obj* xs,
     sizes[i] = size;
   }
 
-  r_obj* proxy = KEEP_N(vec_proxy_recurse(ptype), &n_prot);
   if (!is_data_frame(proxy)) {
     r_abort_lazy_call(error_call, "Can't fill a data frame that doesn't have a data frame proxy.");
   }

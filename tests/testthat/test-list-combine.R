@@ -11,6 +11,20 @@ test_that("basic `list_combine()` works", {
   )
 })
 
+test_that("later data frames overwrite overlapping rows with missing values for columns they lack", {
+  x <- list(data_frame(x = 1:3, y = 4:6), data_frame(x = 9L))
+  indices <- list(1:3, 2L)
+
+  expect_identical(
+    list_combine(x, indices = indices, size = 3, multiple = "last"),
+    data_frame(x = c(1L, 9L, 3L), y = c(4L, NA, 6L))
+  )
+  expect_identical(
+    list_combine(x, indices = indices, size = 3, multiple = "first"),
+    data_frame(x = 1:3, y = 4:6)
+  )
+})
+
 test_that("`list_combine()` works with homogeneous fallback in `default`", {
   # This errors
   expect_snapshot(error = TRUE, {

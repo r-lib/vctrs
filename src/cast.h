@@ -11,12 +11,18 @@ struct cast_opts {
   struct vctrs_arg* p_to_arg;
   struct r_lazy call;
   enum s3_fallback s3_fallback;
+  // Leave the data frame columns of `to` that `x` lacks as `NULL` instead of
+  // filling them with missing values. Only for callers that pass the result
+  // straight to `df_assign()`, which skips them, writing each output row once
+  // into an output that is already missing.
+  bool missing_cols_as_null;
 };
 
 struct cast_common_opts {
   struct vctrs_arg* p_arg;
   struct r_lazy call;
   enum s3_fallback s3_fallback;
+  bool missing_cols_as_null;
 };
 
 r_obj* vec_cast_opts(const struct cast_opts* opts);
