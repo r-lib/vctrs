@@ -371,7 +371,7 @@ vec_remove <- function(x, i) {
   vec_slice(x, -vec_as_location(i, length(x), names(x)))
 }
 
-vec_index <- function(x, i, ...) {
+vec_index <- function(x, i, ..., drop = FALSE) {
   i <- maybe_missing(i, TRUE)
   out <- vec_slice(x, i)
 

@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Subsetting a `vctrs_vctr` with `[` no longer fails when `drop` is supplied, e.g. `x[2, drop = FALSE]`. The argument is accepted and ignored (#1880, @taekop).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.
