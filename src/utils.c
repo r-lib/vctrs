@@ -744,27 +744,8 @@ r_obj* list_pluck(r_obj* xs, r_ssize i) {
 }
 
 
-// Compact subscripts are marked with a sentinel attribute rather than a class.
-// Setting a class goes through `classgets()` and sets the OBJECT bit, and
-// checking one requires `Rf_inherits()` string comparisons. Markers are checked
-// several times per chunk in `vec_chop()` and per element in `list_combine()`,
-// so the check needs to be cheap. For a non-special symbol, `Rf_getAttrib()` is
-// a plain walk over the (single node) attribute list that never allocates.
-
 // Initialised at load time
 static r_obj* syms_compact_seq = NULL;
-static r_obj* syms_compact_rep = NULL;
-static r_obj* syms_compact_condition = NULL;
-
-static inline
-bool has_compact_marker(r_obj* x, r_obj* marker) {
-  return Rf_getAttrib(x, marker) != r_null;
-}
-
-static inline
-void poke_compact_marker(r_obj* x, r_obj* marker) {
-  r_attrib_poke(x, marker, r_true);
-}
 
 // p[0] = Start value
 // p[1] = Sequence size. Always >= 0.
@@ -808,14 +789,14 @@ SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
   int* p = INTEGER(info);
   init_compact_seq(p, start, size, increasing);
 
-  poke_compact_marker(info, syms_compact_seq);
+  r_attrib_poke(info, syms_compact_seq, r_true);
 
   UNPROTECT(1);
   return info;
 }
 
 bool is_compact_seq(SEXP x) {
-  return has_compact_marker(x, syms_compact_seq);
+  return Rf_getAttrib(x, syms_compact_seq) != r_null;
 }
 
 // Materialize a 1-based sequence
@@ -836,6 +817,9 @@ SEXP compact_seq_materialize(SEXP x) {
   return out;
 }
 
+// Initialised at load time
+static r_obj* syms_compact_rep = NULL;
+
 void init_compact_rep(int* p, R_len_t i, R_len_t n) {
   p[0] = i;
   p[1] = n;
@@ -853,14 +837,14 @@ SEXP compact_rep(R_len_t i, R_len_t n) {
   int* p = INTEGER(rep);
   init_compact_rep(p, i, n);
 
-  poke_compact_marker(rep, syms_compact_rep);
+  r_attrib_poke(rep, syms_compact_rep, r_true);
 
   UNPROTECT(1);
   return rep;
 }
 
 bool is_compact_rep(SEXP x) {
-  return has_compact_marker(x, syms_compact_rep);
+  return Rf_getAttrib(x, syms_compact_rep) != r_null;
 }
 
 SEXP compact_rep_materialize(SEXP x) {
@@ -873,6 +857,9 @@ SEXP compact_rep_materialize(SEXP x) {
   UNPROTECT(1);
   return out;
 }
+
+// Initialised at load time
+static r_obj* syms_compact_condition = NULL;
 
 /**
  * Compact condition index
@@ -895,14 +882,14 @@ r_obj* new_compact_condition(R_xlen_t size) {
 
   r_obj* out = KEEP(r_alloc_raw(size * sizeof(bool)));
 
-  poke_compact_marker(out, syms_compact_condition);
+  r_attrib_poke(out, syms_compact_condition, r_true);
 
   FREE(1);
   return out;
 }
 
 bool is_compact_condition(r_obj* x) {
-  return has_compact_marker(x, syms_compact_condition);
+  return Rf_getAttrib(x, syms_compact_condition) != r_null;
 }
 
 r_ssize compact_condition_size(r_obj* x) {
