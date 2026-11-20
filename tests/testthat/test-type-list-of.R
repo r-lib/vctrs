@@ -279,11 +279,15 @@ test_that("print method gives human friendly output for multi line types", {
 
 test_that("str method is reasonably correct", {
   x <- list_of(1, 2:3)
-
   expect_snapshot(str(x))
-  expect_snapshot(str(list(list(x, y = 2:1))))
-
   expect_snapshot(str(x[0]))
+})
+
+test_that("str method is reasonably correct when nested", {
+  # Printing of nested `$ :List of 2` was corrected to `$ : List of 2`
+  skip_if_not(getRversion() >= "4.7.0")
+  x <- list_of(1, 2:3)
+  expect_snapshot(str(list(list(x, y = 2:1))))
   expect_snapshot(str(list(list(x[0], y = 2:1))))
 })
 

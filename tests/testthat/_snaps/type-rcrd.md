@@ -30,17 +30,24 @@
     Code
       str(r[1:10])
     Output
-       vctrs_tp [1:10] (1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1...
+      vctrs_tp [1:10] (1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,...
 
 ---
+
+    Code
+      str(r[0])
+    Output
+      vctrs_tp [0] 
+
+# str uses format when nested
 
     Code
       str(list(list(list(r, 1:100))))
     Output
       List of 1
-       $ :List of 1
-        ..$ :List of 2
-        .. ..$ : vctrs_tp [1:100] (1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7)...
+       $ : List of 1
+        ..$ : List of 2
+        .. ..$ : vctrs_tp [1:100] (1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7),...
         .. ..$ : int [1:100] 1 2 3 4 5 6 7 8 9 10 ...
 
 # dots are an error (#1295)

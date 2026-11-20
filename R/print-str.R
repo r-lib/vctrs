@@ -97,21 +97,34 @@ obj_str_data.default <- function(x, ...) {
 }
 
 obj_str_recursive <- function(x, ..., indent.str = "", nest.lev = 0) {
-  if (nest.lev != 0L) {
-    cat(" ")
+  cat_line(obj_str_title(x, vec_size(x), nest.lev))
+
+  data <- vec_data(x)
+
+  if (length(data) == 0L && !is.data.frame(data)) {
+    # Base `str()` would print an unindented `list()`. Data frame print method
+    # is still useful for column types and indents correctly.
+    return(invisible(x))
   }
-  cat_line(glue::glue("{vec_ptype_abbr(x)} [1:{vec_size(x)}] "))
 
   utils::str(
-    vec_data(x),
+    data,
     no.list = TRUE,
     ...,
     nest.lev = nest.lev + 1L,
     indent.str = indent.str
   )
+
+  invisible(x)
 }
 
-obj_str_leaf <- function(x, ..., indent.str = "", width = getOption("width")) {
+obj_str_leaf <- function(
+  x,
+  ...,
+  indent.str = "",
+  nest.lev = 0,
+  width = getOption("width")
+) {
   width <- width - nchar(indent.str) - 2
 
   # Avoid spending too much time formatting elements that won't see
@@ -122,10 +135,32 @@ obj_str_leaf <- function(x, ..., indent.str = "", width = getOption("width")) {
     out <- x
   }
 
-  title <- glue::glue(" {vec_ptype_abbr(x)} [1:{length(x)}] ")
+  title <- obj_str_title(x, length(x), nest.lev)
   cat_line(inline_list(title, format(out), width = width))
 
   invisible(x)
+}
+
+obj_str_title <- function(x, size, nest.lev) {
+  if (nest.lev == 0L || str_prints_space_after_colon()) {
+    padding <- ""
+  } else {
+    padding <- " "
+  }
+
+  if (size == 0L) {
+    size <- "[0]"
+  } else {
+    size <- glue::glue("[1:{size}]")
+  }
+
+  glue::glue("{padding}{vec_ptype_abbr(x)} {size} ")
+}
+
+# In R >= 4.7.0, `str()` prints `$ name: ` with a trailing space, so nested
+# elements no longer pad themselves with a leading space.
+str_prints_space_after_colon <- function() {
+  getRversion() >= "4.7.0"
 }
 
 #' @export

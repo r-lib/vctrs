@@ -54,7 +54,7 @@ tuple <- function(x = integer(), y = integer()) {
 
 tuple_methods <- list(
   format.vctrs_tuple = function(x, ...) {
-    paste0("(", field(x, "x"), ",", field(x, "y"), ")")
+    sprintf("(%s,%s)", field(x, "x"), field(x, "y"))
   },
   vec_ptype2.vctrs_tuple.vctrs_tuple = function(x, y, ...) x,
   vec_cast.vctrs_tuple.vctrs_tuple = function(x, to, ...) x
