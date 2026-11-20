@@ -149,7 +149,7 @@ r_obj* vec_names_impl(r_obj* x, bool proxy) {
   }
 
   if (vec_bare_dim(x) == r_null) {
-    if (!proxy && has_class) {
+    if (!proxy && has_class && needs_names_dispatch(x)) {
       return vctrs_dispatch1(syms_names, fns_names, syms_x, x);
     } else {
       return r_names(x);
@@ -165,6 +165,40 @@ r_obj* vec_names_impl(r_obj* x, bool proxy) {
   r_obj* out = r_list_get(dimnames, 0);
   FREE(1);
   return out;
+}
+
+// `names()` is an internal generic, so for classed vectors we generally have to
+// call it through R in case there is a method. These bare base classes are
+// common on per-element and per-column paths, where that evaluation dominates,
+// so for them we look for a `names()` method ourselves, in the same places as
+// the other base generic checks (the global env and base's S3 methods table),
+// and only dispatch if one exists. R's own lookup wouldn't find a user's method
+// anywhere else: since R 3.6.0, it skips attached environments between the
+// global env and base. S4 objects always dispatch, since `names()` also
+// dispatches on S4 methods for them.
+static
+bool needs_names_dispatch(r_obj* x) {
+  if (r_is_s4(x)) {
+    return true;
+  }
+
+  switch (class_type(x)) {
+  case VCTRS_CLASS_bare_factor:
+    return has_names_method(syms_names_factor);
+  case VCTRS_CLASS_bare_ordered:
+    return has_names_method(syms_names_ordered) || has_names_method(syms_names_factor);
+  case VCTRS_CLASS_bare_date:
+    return has_names_method(syms_names_date);
+  case VCTRS_CLASS_bare_posixct:
+    return has_names_method(syms_names_posixct) || has_names_method(syms_names_posixt);
+  default:
+    return true;
+  }
+}
+
+static inline
+bool has_names_method(r_obj* sym) {
+  return s3_sym_get_method(sym, base_method_table) != r_null;
 }
 
 // [[ register() ]]
@@ -1042,6 +1076,12 @@ void vctrs_init_names(r_obj* ns) {
   fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
   syms_internal_spec = r_sym("_spec");
 
+  syms_names_factor = r_sym("names.factor");
+  syms_names_ordered = r_sym("names.ordered");
+  syms_names_date = r_sym("names.Date");
+  syms_names_posixct = r_sym("names.POSIXct");
+  syms_names_posixt = r_sym("names.POSIXt");
+
   name_spec_inner = r_chr("inner");
   r_preserve(name_spec_inner);
 
@@ -1064,6 +1104,11 @@ static r_obj* syms_glue_as_name_spec = NULL;
 static r_obj* syms_internal_spec = NULL;
 static r_obj* syms_set_rownames_dispatch = NULL;
 static r_obj* syms_set_names_dispatch = NULL;
+static r_obj* syms_names_factor = NULL;
+static r_obj* syms_names_ordered = NULL;
+static r_obj* syms_names_date = NULL;
+static r_obj* syms_names_posixct = NULL;
+static r_obj* syms_names_posixt = NULL;
 
 static r_obj* fns_as_universal_names = NULL;
 static r_obj* fns_check_unique_names = NULL;

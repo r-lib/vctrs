@@ -9,6 +9,17 @@ static r_obj* syms_set_rownames_dispatch;
 static r_obj* fns_set_rownames_dispatch;
 static r_obj* syms_set_names_dispatch;
 static r_obj* fns_set_names_dispatch;
+static r_obj* syms_names_factor;
+static r_obj* syms_names_ordered;
+static r_obj* syms_names_date;
+static r_obj* syms_names_posixct;
+static r_obj* syms_names_posixt;
+
+static
+bool needs_names_dispatch(r_obj* x);
+
+static inline
+bool has_names_method(r_obj* sym);
 
 static
 void describe_repair(r_obj* old_names, r_obj* new_names);

@@ -22,6 +22,51 @@ test_that("vec_names() dispatches", {
   expect_identical(vec_names(foobar()), "dispatched!")
 })
 
+test_that("vec_names() retrieves names of base classes", {
+  x <- set_names(factor(c("a", "b")), c("x", "y"))
+  expect_identical(vec_names(x), c("x", "y"))
+  expect_identical(vec_names(as.ordered(x)), c("x", "y"))
+  expect_null(vec_names(unname(x)))
+
+  x <- set_names(new_date(c(0, 1)), c("x", "y"))
+  expect_identical(vec_names(x), c("x", "y"))
+  expect_null(vec_names(unname(x)))
+
+  x <- set_names(new_datetime(c(0, 1)), c("x", "y"))
+  expect_identical(vec_names(x), c("x", "y"))
+  expect_null(vec_names(unname(x)))
+
+  # Not a bare class we skip dispatch for, uses base's `names.POSIXlt()`
+  x <- as.POSIXlt(x)
+  expect_identical(vec_names(x), names(x))
+})
+
+test_that("vec_names() dispatches for base classes with a `names()` method", {
+  local_methods(
+    names.factor = function(x) "factor",
+    names.Date = function(x) "Date",
+    names.POSIXt = function(x) "POSIXt"
+  )
+  expect_identical(vec_names(factor("a")), "factor")
+  expect_identical(vec_names(as.ordered(factor("a"))), "factor")
+  expect_identical(vec_names(new_date(0)), "Date")
+  expect_identical(vec_names(new_datetime(0)), "POSIXt")
+})
+
+test_that("vec_names() dispatches for base classes with a registered `names()` method", {
+  local_bindings(
+    names.Date = function(x) "registered",
+    .env = get(".__S3MethodsTable__.", envir = baseenv())
+  )
+  expect_identical(vec_names(new_date(0)), "registered")
+})
+
+test_that("vec_names() dispatches for S4 objects of base classes", {
+  local_s4_method("names", "Date", function(x) "S4")
+  expect_identical(vec_names(asS4(new_date(0))), "S4")
+  expect_null(vec_names(new_date(0)))
+})
+
 
 # vec_names2() -------------------------------------------------------------
 
