@@ -253,5 +253,7 @@ vec_cbind_frame_ptype.default <- function(x, ...) {
 
 #' @export
 vec_cbind_frame_ptype.sf <- function(x, ...) {
+  # Still need this experimental method even after
+  # https://github.com/r-spatial/sf/pull/2584
   data.frame()
 }
