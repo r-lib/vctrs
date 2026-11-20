@@ -2,6 +2,9 @@
 
 ## vctrs (development version)
 
+- Fixed a small protection bug
+  ([\#2173](https://github.com/r-lib/vctrs/issues/2173)).
+
 - Fixed a performance regression for
   [`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md) and
   [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
