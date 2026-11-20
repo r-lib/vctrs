@@ -223,3 +223,17 @@ test_that("attribute pairlist tags are considered", {
     obj_hash(structure(1, bar = 1))
   ))
 })
+
+test_that("attribute order is ignored, consistent with `obj_equal()` (#2180)", {
+  x <- structure(1L, foo = 1L, bar = "1L")
+  y <- structure(1L, bar = "1L", foo = 1L)
+  expect_true(obj_equal(x, y))
+  expect_identical(obj_hash(x), obj_hash(y))
+})
+
+test_that("attribute tags stay paired with their values", {
+  expect_false(identical(
+    obj_hash(structure(1, foo = 1, bar = 2)),
+    obj_hash(structure(1, foo = 2, bar = 1))
+  ))
+})
