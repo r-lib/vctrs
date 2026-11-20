@@ -2,6 +2,13 @@
 
 ## vctrs (development version)
 
+- Fixed a performance regression for
+  [`vec_c()`](https://vctrs.r-lib.org/dev/reference/vec_c.md) and
+  [`list_unchop()`](https://vctrs.r-lib.org/dev/reference/list_unchop.md)
+  with many inputs
+  ([\#2182](https://github.com/r-lib/vctrs/issues/2182),
+  [@kevinushey](https://github.com/kevinushey)).
+
 - Removed the vctrs methods for sf, as these now live in sf
   ([\#2143](https://github.com/r-lib/vctrs/issues/2143)).
 
