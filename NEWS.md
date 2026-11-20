@@ -10,6 +10,8 @@
 
 * Fixed a small protection bug (#2173).
 
+* `vec_order()` and `vec_sort()` are much faster on character vectors with repeated values, and on data frames with such columns. Only the unique strings are now compared in the current locale, and the results are unchanged (#2192).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.

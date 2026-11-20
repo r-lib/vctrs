@@ -1892,6 +1892,77 @@ test_that("can order complex vectors", {
   )
 })
 
+test_that("characters are only ranked when large enough and not mostly unique", {
+  x <- c("b", "a", "b", NA)
+  expect_identical(chr_collate_rank(x), x)
+  expect_identical(chr_collate_rank(rep(x, 20)), rep(c(2L, 1L, 2L, NA), 20))
+
+  distinct <- as.character(1:100)
+  expect_identical(chr_collate_rank(distinct), distinct)
+})
+
+test_that("character vectors are ordered as `order()` orders them in the current locale", {
+  # Includes strings that may collate as equal, depending on the platform
+  x <- c("b", "A", "a", NA, "B", "é", "é", "e", "b", NA, "A", "")
+
+  # Ordered directly, and through ranks
+  for (y in list(x, rep(x, 10))) {
+    expect_identical(vec_order(y), order(y))
+    expect_identical(
+      vec_order(y, direction = "desc"),
+      order(y, decreasing = TRUE, na.last = FALSE)
+    )
+    expect_identical(vec_order(y, na_value = "smallest"), order(y, na.last = FALSE))
+    expect_identical(
+      vec_order(y, direction = "desc", na_value = "smallest"),
+      order(y, decreasing = TRUE)
+    )
+    expect_identical(vec_sort(y), y[order(y)])
+  }
+})
+
+test_that("character vectors in different encodings are ordered as `order()` orders them", {
+  encs <- encodings()
+  x <- rep(c(encs$utf8, "a", encs$latin1, "z", encs$unknown, encs$utf8), 10)
+
+  expect_identical(vec_order(x), order(x))
+  expect_identical(
+    vec_order(x, direction = "desc"),
+    order(x, decreasing = TRUE, na.last = FALSE)
+  )
+})
+
+test_that("character vectors are ordered as `order()` orders them in the C locale", {
+  withr::local_collate("C")
+  x <- rep(c("b", "A", "a", NA, "B", "a"), 10)
+  expect_identical(vec_order(x), order(x))
+})
+
+test_that("data frames with character columns are ordered as `order()` orders them", {
+  df <- data.frame(
+    g = rep(c("b", "A", "a", NA, "b", "B", "a"), 10),
+    x = rep(c(2, 1, 3, 1, 1, NA, 3), 10)
+  )
+
+  expect_identical(vec_order(df), order(df$g, df$x))
+  expect_identical(
+    vec_order(df, direction = "desc"),
+    order(df$g, df$x, decreasing = TRUE, na.last = FALSE)
+  )
+  expect_identical(vec_order(data_frame(y = df)), vec_order(df))
+})
+
+test_that("classed character columns are still ordered through `xtfrm()`", {
+  local_methods(xtfrm.vctrs_foobar = function(x) -rank(unclass(x)))
+
+  # A second column keeps the proxy a data frame
+  df <- data_frame(
+    x = structure(c("a", "c", "b"), class = "vctrs_foobar"),
+    y = c(1, 1, 1)
+  )
+  expect_identical(vec_order(df), c(2L, 3L, 1L))
+})
+
 test_that("can order tibbles that contain non-comparable objects", {
   expect_equal(vec_order(data_frame(x = list(10, 2, 1))), 1:3)
 })

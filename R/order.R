@@ -335,6 +335,9 @@ vec_order <- function(
     args <- map(unstructure(proxy), function(.x) {
       if (is.data.frame(.x)) {
         .x <- order(vec_order(.x, direction = direction, na_value = na_value))
+      } else if (is_character(.x) && !is.object(.x)) {
+        # Classed columns are left to `order()`, which calls `xtfrm()` on them
+        .x <- chr_collate_rank(.x)
       }
       .x
     })
@@ -349,10 +352,35 @@ vec_order <- function(
     if (is.object(proxy)) {
       proxy <- unstructure(proxy)
     }
+    if (is_character(proxy)) {
+      proxy <- chr_collate_rank(proxy)
+    }
     order(proxy, decreasing = decreasing, na.last = na.last)
   } else {
     abort("Invalid type returned by `vec_proxy_order()`.")
   }
+}
+
+# Integer ranks of `x` in the current locale's collation order, for `order()`.
+# Ordering by these gives the same result as ordering `x` itself, but only
+# the unique strings are compared with the locale's slow collation, and
+# `order()` can radix sort the integers. Ties keep strings that collate as
+# equal tied, so `order()` still leaves them in their original order.
+#
+# Ranking costs about as much as ordering the unique strings, plus some fixed
+# overhead, so `x` is returned as is when it's small or mostly unique.
+chr_collate_rank <- function(x) {
+  if (length(x) < 50L) {
+    return(x)
+  }
+
+  keys <- unique(x)
+  if (length(keys) > 0.85 * length(x)) {
+    return(x)
+  }
+
+  ranks <- rank(keys, ties.method = "min", na.last = "keep")
+  ranks[match(x, keys)]
 }
 
 #' @export
