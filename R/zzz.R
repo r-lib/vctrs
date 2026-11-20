@@ -168,10 +168,10 @@
   })
 
   on_package_load("sf", {
-    if (!is_installed("sf (>= 1.0-25)")) {
+    if (!is_installed("sf (>= 1.1-0)")) {
       sf_update <- function(...) {
         abort(
-          "Please update to sf >=1.0-25 for sf + vctrs/tidyverse compatibility."
+          "Please update to sf >=1.1-0 for sf + vctrs/tidyverse compatibility."
         )
       }
       s3_register("vctrs::vec_proxy", "sf", sf_update)
