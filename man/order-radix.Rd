@@ -103,7 +103,7 @@ algorithmic efficiency, in many real world uses it can be the cause of
 data analysis mistakes. To balance these trade-offs, you can supply a
 \code{chr_proxy_collate} function to transform character vectors into an
 alternative representation that orders in the C-locale in a less surprising
-way. For example, providing \code{\link[base:chartr]{base::tolower()}} as a transform will order the
+way. For example, providing \code{\link[base:tolower]{base::tolower()}} as a transform will order the
 original vector in a case-insensitive manner. Locale-aware ordering can be
 achieved by providing \code{stringi::stri_sort_key()} as a transform, setting the
 collation options as appropriate for your locale.

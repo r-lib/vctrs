@@ -51,7 +51,7 @@ haystack. \code{vec_match()} returns an integer vector giving location of
 \code{needle} in \code{haystack}, or \code{NA} if it's not found.
 }
 \details{
-\code{vec_in()} is equivalent to \link[base:match]{base::\%in\%}; \code{vec_match()} is equivalent to
+\code{vec_in()} is equivalent to \link[base:\%in\%]{base::\%in\%}; \code{vec_match()} is equivalent to
 \code{\link[base:match]{base::match()}}.
 }
 \section{Missing values}{

@@ -29,10 +29,10 @@ new_ordered(x = integer(), levels = character())
 \item{..., class}{Used to for subclasses.}
 }
 \description{
-A \link{factor} is an integer with attribute \code{levels}, a character vector. There
-should be one level for each integer between 1 and \code{max(x)}.
-An \link{ordered} factor has the same properties as a factor, but possesses
-an extra class that marks levels as having a total ordering.
+A \link[base:factor]{base::factor} is an integer with attribute \code{levels}, a character vector.
+There should be one level for each integer between 1 and \code{max(x)}. An
+\link[base:ordered]{base::ordered} factor has the same properties as a factor, but possesses an
+extra class that marks levels as having a total ordering.
 }
 \details{
 These functions help the base factor and ordered factor classes fit in to

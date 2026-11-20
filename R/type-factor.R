@@ -1,9 +1,9 @@
 #' Factor/ordered factor S3 class
 #'
-#' A [factor] is an integer with attribute `levels`, a character vector. There
-#' should be one level for each integer between 1 and `max(x)`.
-#' An [ordered] factor has the same properties as a factor, but possesses
-#' an extra class that marks levels as having a total ordering.
+#' A [base::factor] is an integer with attribute `levels`, a character vector.
+#' There should be one level for each integer between 1 and `max(x)`. An
+#' [base::ordered] factor has the same properties as a factor, but possesses an
+#' extra class that marks levels as having a total ordering.
 #'
 #' These functions help the base factor and ordered factor classes fit in to
 #' the vctrs type system by providing constructors, coercion functions,

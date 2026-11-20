@@ -75,7 +75,7 @@ rarely useful.
 \item Use \code{\link[=obj_is_vector]{obj_is_vector()}} or \code{\link[=obj_check_vector]{obj_check_vector()}} for vector checks
 \item Use \code{\link[=vec_check_size]{vec_check_size()}} for size checks
 \item Use \code{\link[=vec_cast]{vec_cast()}}, \code{\link[=inherits]{inherits()}}, or simple type predicates like
-\code{\link[rlang:type-predicates]{rlang::is_logical()}} for specific type checks
+\code{\link[rlang:is_logical]{rlang::is_logical()}} for specific type checks
 }
 }
 

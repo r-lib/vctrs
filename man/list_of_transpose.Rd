@@ -7,7 +7,7 @@
 list_of_transpose(x, ..., x_arg = caller_arg(x), error_call = current_env())
 }
 \arguments{
-\item{x}{A \link[=list_of]{list_of} with both \code{size} and \code{ptype} specified.}
+\item{x}{A \link{list_of} with both \code{size} and \code{ptype} specified.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 

@@ -67,7 +67,7 @@ repeated.
 }
 \details{
 Using \code{vec_unrep()} and \code{vec_rep_each()} together is similar to using
-\code{\link[base:rle]{base::rle()}} and \code{\link[base:rle]{base::inverse.rle()}}. The following invariant shows
+\code{\link[base:rle]{base::rle()}} and \code{\link[base:inverse.rle]{base::inverse.rle()}}. The following invariant shows
 the relationship between the two functions:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{compressed <- vec_unrep(x)

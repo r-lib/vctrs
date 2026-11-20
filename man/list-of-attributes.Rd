@@ -11,7 +11,7 @@ list_of_ptype(x)
 list_of_size(x)
 }
 \arguments{
-\item{x}{A \link[=list_of]{list_of}.}
+\item{x}{A \link{list_of}.}
 }
 \description{
 \itemize{

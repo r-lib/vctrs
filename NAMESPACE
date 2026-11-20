@@ -648,9 +648,11 @@ export(vec_unique_count)
 export(vec_unique_loc)
 export(vec_unrep)
 import(rlang)
-importFrom(stats,median)
-importFrom(stats,na.exclude)
-importFrom(stats,na.fail)
-importFrom(stats,na.omit)
-importFrom(stats,quantile)
+importFrom(stats,
+  median,
+  na.exclude,
+  na.fail,
+  na.omit,
+  quantile
+)
 useDynLib(vctrs, .registration = TRUE)

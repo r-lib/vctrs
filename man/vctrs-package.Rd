@@ -27,6 +27,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Davis Vaughan \email{davis@posit.co}
   \item Hadley Wickham \email{hadley@posit.co}
   \item Lionel Henry \email{lionel@posit.co}
 }
