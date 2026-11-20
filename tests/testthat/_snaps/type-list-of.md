@@ -245,10 +245,18 @@
 ---
 
     Code
+      str(x[0])
+    Output
+      list<dbl> [0] 
+      @ ptype: num(0) 
+
+# str method is reasonably correct when nested
+
+    Code
       str(list(list(x, y = 2:1)))
     Output
       List of 1
-       $ :List of 2
+       $ : List of 2
         ..$  : list<dbl> [1:2] 
         .. ..$ : num 1
         .. ..$ : num [1:2] 2 3
@@ -258,21 +266,11 @@
 ---
 
     Code
-      str(x[0])
-    Output
-      list<dbl> [1:0] 
-       list()
-      @ ptype: num(0) 
-
----
-
-    Code
       str(list(list(x[0], y = 2:1)))
     Output
       List of 1
-       $ :List of 2
-        ..$  : list<dbl> [1:0] 
-       list()
+       $ : List of 2
+        ..$  : list<dbl> [0] 
         .. ..@ ptype: num(0) 
         ..$ y: int [1:2] 2 1
 

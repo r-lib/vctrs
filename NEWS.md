@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `str.vctrs_vctr()` now works with the new spacing rules of `utils::str()` in R >=4.7.0.
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.

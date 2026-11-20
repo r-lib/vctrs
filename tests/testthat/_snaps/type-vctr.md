@@ -26,7 +26,7 @@
     Code
       str(h)
     Output
-       hidden [1:4] xxx, xxx, xxx, xxx
+      hidden [1:4] xxx, xxx, xxx, xxx
 
 # default print method shows names
 

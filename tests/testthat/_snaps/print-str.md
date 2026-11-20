@@ -3,13 +3,13 @@
     Code
       obj_str(x)
     Output
-       int [1:100]  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16...
+      int [1:100]  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,...
        @ x: chr "a string"
        @ y: int [1:20] 1 2 3 4 5 6 7 8 9 10 ...
-       @ z:'data.frame':	3 obs. of  1 variable:
+       @ z: 'data.frame':	3 obs. of  1 variable:
         ..$ x: int [1:3] 1 2 3
 
----
+# show data frame attributes
 
     Code
       obj_str(mtcars)
@@ -28,4 +28,15 @@
       $ gear: num  4 4 4 3 3 3 3 4 4 4 ...
       $ carb: num  4 4 1 1 2 1 4 2 2 4 ...
       @ row.names: chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
+
+---
+
+    Code
+      obj_str(mtcars[0, 1:2])
+    Output
+      df[,2] [0] 
+      'data.frame':	0 obs. of  2 variables:
+      $ mpg: num 
+      $ cyl: num 
+      @ row.names: chr(0) 
 

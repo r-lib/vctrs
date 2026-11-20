@@ -233,6 +233,16 @@ test_that("print and str use format", {
 
   expect_snapshot(r)
   expect_snapshot(str(r[1:10]))
+  expect_snapshot(str(r[0]))
+})
+
+test_that("str uses format when nested", {
+  # Printing of nested `$ :List of 1` was corrected to `$ : List of 1`
+  skip_if_not(getRversion() >= "4.7.0")
+
+  local_tuple_methods()
+  r <- tuple(1, 1:100)
+
   expect_snapshot(str(list(list(list(r, 1:100)))))
 })
 
