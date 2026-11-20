@@ -113,6 +113,180 @@ test_that("vec_ptype_common() includes index in argument tag", {
   )
 })
 
+test_that("vec_ptype_common() of many data frames is their pairwise common type", {
+  xs <- list(
+    data_frame(a = 1L, b = "x"),
+    data_frame(c = factor("u"), a = 2),
+    NULL,
+    data_frame(b = factor("y"), d = new_date(0)),
+    tibble(e = data_frame(p = 1), c = factor("v")),
+    data_frame(f = NA, e = data_frame(q = "z"), a = TRUE),
+    NULL,
+    data_frame(d = new_datetime(0, tzone = "UTC"), f = 1L)
+  )
+  expect_identical(
+    vec_ptype_common(!!!xs),
+    vec_ptype_finalise(Reduce(vec_ptype2, xs, NULL))
+  )
+
+  # Enough columns to grow the hash table, in an order that differs from the
+  # order they first appeared in
+  wide <- lapply(1:40, function(i) {
+    new_data_frame(set_names(list(i, i), sprintf("w%02d", c(i, 41 - i))))
+  })
+  expect_identical(
+    vec_ptype_common(!!!wide),
+    vec_ptype_finalise(Reduce(vec_ptype2, wide, NULL))
+  )
+})
+
+test_that("vec_ptype_common() of many data frames handles the common class fallback", {
+  local_methods(
+    c.vctrs_foobar = function(...) foobar(NextMethod())
+  )
+
+  # `vec_ptype2()` turns `x` into a fallback type even though no other data
+  # frame has it
+  xs <- list(
+    data_frame(x = foobar(1)),
+    data_frame(y = foobar(2)),
+    data_frame(z = 3),
+    data_frame(y = foobar(4))
+  )
+  expect_identical(
+    vec_ptype_common_fallback(!!!xs),
+    vec_ptype_finalise(Reduce(
+      function(acc, x) vec_ptype2_opts(acc, x, opts = enabled_fallback_opts()),
+      xs,
+      NULL
+    ))
+  )
+})
+
+test_that("vec_ptype_common() of many tibbles retypes data frame columns at `NULL`", {
+  local_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod())
+  )
+
+  # `vec_ptype2()` of a tibble and `NULL` turns `b$x` into a fallback type
+  xs <- list(
+    tibble(b = data_frame(x = foobar(1))),
+    tibble(a = 1),
+    NULL,
+    tibble(c = 1),
+    tibble(d = 2),
+    NULL,
+    tibble(e = 3, b = data_frame(y = foobar(4)))
+  )
+  expect_identical(
+    vec_ptype_common_fallback(!!!xs),
+    vec_ptype_finalise(Reduce(
+      function(acc, x) vec_ptype2_opts(acc, x, opts = enabled_fallback_opts()),
+      xs,
+      NULL
+    ))
+  )
+
+  # So `vec_rbind()` combines it with `c()`
+  xs <- list(
+    tibble(b = data_frame(x = foobar(1))),
+    tibble(a = 1),
+    NULL,
+    tibble(c = 1),
+    tibble(d = 2)
+  )
+  out <- vec_rbind(!!!xs)
+  expect_identical(out$b$x, quux(c(1, NA, NA, NA)))
+})
+
+test_that("vec_ptype_common() of many data frames retypes combined classed columns they lack", {
+  local_methods(
+    c.vctrs_foobar = function(...) quux(NextMethod())
+  )
+
+  # `vec_ptype2()` of `z` with itself at `w = 1` turns `z$b$x` into a fallback
+  # type, though combining `z` with the second one left it as it was
+  xs <- list(
+    data_frame(z = tibble(b = data_frame(x = foobar(1)))),
+    data_frame(z = tibble(a = 1)),
+    data_frame(w = 1),
+    data_frame(w = 2)
+  )
+  expect_identical(
+    vec_ptype_common_fallback(!!!xs),
+    vec_ptype_finalise(Reduce(
+      function(acc, x) vec_ptype2_opts(acc, x, opts = enabled_fallback_opts()),
+      xs,
+      NULL
+    ))
+  )
+
+  out <- vec_rbind(!!!xs)
+  expect_identical(out$z$b$x, quux(c(1, NA, NA, NA)))
+})
+
+test_that("vec_ptype_common() of many data frames matches names like `vec_match()`", {
+  utf8 <- "caf\u00e9"
+  latin1 <- iconv(utf8, "UTF-8", "latin1")
+
+  xs <- list(
+    new_data_frame(set_names(list(1), utf8)),
+    data_frame(a = 1),
+    data_frame(b = 1),
+    new_data_frame(set_names(list(2L), latin1)),
+    data_frame(a = 1)
+  )
+  out <- vec_ptype_common(!!!xs)
+  expect_identical(out, vec_ptype_finalise(Reduce(vec_ptype2, xs, NULL)))
+  expect_named(out, c(utf8, "a", "b"))
+
+  # Duplicate and missing names
+  xs <- list(
+    data_frame(a = 1),
+    data_frame(b = 1),
+    new_data_frame(list(c = 1, c = "x")),
+    data_frame(a = 1),
+    new_data_frame(set_names(list(1), NA_character_)),
+    data_frame(b = 1)
+  )
+  expect_identical(
+    vec_ptype_common(!!!xs),
+    vec_ptype_finalise(Reduce(vec_ptype2, xs, NULL))
+  )
+})
+
+test_that("vec_ptype_common() of many data frames reports the same incompatible column", {
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(
+      data_frame(a = 1),
+      data_frame(b = 1),
+      data_frame(c = 1),
+      data_frame(b = "x")
+    )
+  })
+
+  # Columns are combined in the order they first appeared in
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(
+      data_frame(a = 1, b = 1),
+      data_frame(c = 1),
+      data_frame(d = 1),
+      data_frame(b = "x", a = "x")
+    )
+  })
+
+  # A tibble takes over as the current input
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(
+      x = data_frame(a = 1),
+      y = data_frame(b = 1),
+      z = tibble(c = 1),
+      w = data_frame(d = 1),
+      v = data_frame(a = "x")
+    )
+  })
+})
+
 test_that("proxied types are have s3 bare type", {
   for (x in proxied_empty_types) {
     expect_identical(vec_typeof_bare(x), "s3")

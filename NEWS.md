@@ -10,6 +10,8 @@
 
 * Fixed a small protection bug (#2173).
 
+* `vec_ptype_common()`, and the functions that use it such as `vec_rbind()`, `vec_c()`, and `list_unchop()`, are much faster when combining many data frames that don't all have the same columns. Each data frame now only touches its own columns, rather than every column seen so far (#2196).
+
 # vctrs 0.7.3
 
 * Experimentally turned `KeepSource: true` on in `DESCRIPTION`.

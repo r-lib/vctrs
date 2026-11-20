@@ -151,6 +151,33 @@
       Error:
       ! Can't combine `foo` <logical> and `baz` <character>.
 
+# vec_ptype_common() of many data frames reports the same incompatible column
+
+    Code
+      vec_ptype_common(data_frame(a = 1), data_frame(b = 1), data_frame(c = 1),
+      data_frame(b = "x"))
+    Condition
+      Error:
+      ! Can't combine `..1$b` <double> and `..4$b` <character>.
+
+---
+
+    Code
+      vec_ptype_common(data_frame(a = 1, b = 1), data_frame(c = 1), data_frame(d = 1),
+      data_frame(b = "x", a = "x"))
+    Condition
+      Error:
+      ! Can't combine `..1$a` <double> and `..4$a` <character>.
+
+---
+
+    Code
+      vec_ptype_common(x = data_frame(a = 1), y = data_frame(b = 1), z = tibble(c = 1),
+      w = data_frame(d = 1), v = data_frame(a = "x"))
+    Condition
+      Error:
+      ! Can't combine `z$a` <double> and `v$a` <character>.
+
 # vec_ptype_common() handles spliced names consistently (#1570)
 
     Code
