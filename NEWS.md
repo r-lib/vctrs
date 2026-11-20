@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Fixed a small protection bug (#2173).
+
 * Fixed a performance regression for `vec_c()` and `list_unchop()` with many inputs (#2182, @kevinushey).
 
 * Removed the vctrs methods for sf, as these now live in sf (#2143).

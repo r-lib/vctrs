@@ -312,7 +312,7 @@ r_obj* new_error_subscript_type(r_obj* subscript,
 
   subscript = KEEP(expr_protect(subscript));
   r_obj* subscript_arg = KEEP(vctrs_arg(opts->subscript_arg));
-  r_obj* ffi_call = r_lazy_eval_protect(opts->call);
+  r_obj* ffi_call = KEEP(r_lazy_eval_protect(opts->call));
 
   r_obj* syms[] = {
     syms_i,
@@ -340,7 +340,7 @@ r_obj* new_error_subscript_type(r_obj* subscript,
   r_obj* call = KEEP(r_call_n(syms_new_error_subscript_type, syms, args));
   r_obj* out = r_eval(call, vctrs_ns_env);
 
-  FREE(3);
+  FREE(4);
   return out;
 }
 
