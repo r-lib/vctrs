@@ -2,7 +2,15 @@
 
 ## vctrs (development version)
 
-- `str.vctrs_vctr()` now works with the new spacing rules of
+- Removed the vctrs methods for sf, as these now live in sf
+  ([\#2143](https://github.com/r-lib/vctrs/issues/2143)).
+
+- Fixed a factor related
+  [`structure()`](https://rdrr.io/r/base/structure.html) call for R
+  4.7.0 compatibility
+  ([\#2198](https://github.com/r-lib/vctrs/issues/2198)).
+
+- Fixed `str.vctrs_vctr()` to work with the new spacing rules of
   [`utils::str()`](https://rdrr.io/r/utils/str.html) in R \>=4.7.0.
 
 ## vctrs 0.7.3
