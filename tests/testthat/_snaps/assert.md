@@ -84,7 +84,7 @@
       vec_assert(lgl(), factor(levels = "foo"))
     Condition
       Error:
-      ! `lgl()` must be a vector with type <factor<c1562>>.
+      ! `lgl()` must be a vector with type <factor<2e296>>.
       Instead, it has type <logical>.
 
 ---
@@ -93,8 +93,8 @@
       vec_assert(factor(levels = "bar"), factor(levels = "foo"))
     Condition
       Error:
-      ! `factor(levels = "bar")` must be a vector with type <factor<c1562>>.
-      Instead, it has type <factor<9f154>>.
+      ! `factor(levels = "bar")` must be a vector with type <factor<2e296>>.
+      Instead, it has type <factor<eaafd>>.
 
 ---
 

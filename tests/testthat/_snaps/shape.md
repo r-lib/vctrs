@@ -43,6 +43,6 @@
       vec_cast(x, y)
     Condition
       Error:
-      ! Can't convert `x` <factor<32af0>[,1]> to <factor<32af0>>.
+      ! Can't convert `x` <factor<4d3bf>[,1]> to <factor<4d3bf>>.
       Can't decrease dimensionality from 2 to 1.
 

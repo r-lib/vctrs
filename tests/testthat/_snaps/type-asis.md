@@ -16,5 +16,5 @@
     Output
       <error/vctrs_error_cast>
       Error:
-      ! Can't convert `I(1)` <double> to <factor<bf275>>.
+      ! Can't convert `I(1)` <double> to <factor<9758a>>.
 

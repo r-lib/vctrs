@@ -152,7 +152,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error:
-      ! Can't convert from `"a"` <character> to <factor<9b7e3>> due to loss of generality.
+      ! Can't convert from `"a"` <character> to <factor<3e2c8>> due to loss of generality.
       * Locations: 1
 
 # lossy cast `conditionMessage()` result matches `cnd_message()` (#1592)
@@ -171,7 +171,7 @@
     Output
       <error/vctrs_error_cast>
       Error:
-      ! Can't convert `ordered("x")` <ordered<bf275>> to <ordered<fd1ad>>.
+      ! Can't convert `ordered("x")` <ordered<9758a>> to <ordered<b0b08>>.
 
 # incompatible size errors
 

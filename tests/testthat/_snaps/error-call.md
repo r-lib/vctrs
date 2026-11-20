@@ -148,7 +148,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from `"a"` <character> to <factor<9b7e3>> due to loss of generality.
+      ! Can't convert from `"a"` <character> to <factor<3e2c8>> due to loss of generality.
       * Locations: 1
 
 # names validation reports correct error call

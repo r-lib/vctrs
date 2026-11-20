@@ -29,7 +29,7 @@
       vec_cast(factor("foo"), 10)
     Condition
       Error:
-      ! Can't convert `factor("foo")` <factor<c1562>> to <double>.
+      ! Can't convert `factor("foo")` <factor<2e296>> to <double>.
 
 ---
 
@@ -50,7 +50,7 @@
       vec_cast(x, y)
     Condition
       Error:
-      ! Can't convert `x$a$b` <factor<c1562>> to match type of `a$b` <double>.
+      ! Can't convert `x$a$b` <factor<2e296>> to match type of `a$b` <double>.
 
 ---
 
@@ -60,7 +60,7 @@
       vec_cast_common(x, y)
     Condition
       Error:
-      ! Can't combine `..1$a$b` <factor<c1562>> and `..2$a$b` <double>.
+      ! Can't combine `..1$a$b` <factor<2e296>> and `..2$a$b` <double>.
 
 # vec_cast() only attempts to fall back if `to` is a data frame (#1568)
 
