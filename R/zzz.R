@@ -168,6 +168,8 @@
   })
 
   on_package_load("sf", {
+    # In Nov 2026, dropped vctrs side sf support with an informative error.
+    # Around May 2027, remove this entirely.
     if (!is_installed("sf (>= 1.1-0)")) {
       sf_update <- function(...) {
         abort(
