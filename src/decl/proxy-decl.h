@@ -10,6 +10,11 @@ r_obj* fns_vec_proxy_equal_array;
 r_obj* fns_vec_proxy_compare_array;
 r_obj* fns_vec_proxy_order_array;
 
+r_obj* fns_vec_proxy_factor;
+r_obj* fns_vec_proxy_ordered;
+r_obj* fns_vec_proxy_date;
+r_obj* fns_vec_proxy_posixct;
+
 static inline
 r_obj* vec_proxy_2(r_obj* x, bool recurse);
 

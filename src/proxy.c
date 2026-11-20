@@ -128,10 +128,23 @@ r_obj* vec_proxy_method(r_obj* x) {
 r_obj* vec_proxy_invoke(r_obj* x, r_obj* method) {
   if (method == r_null) {
     return x;
-  } else {
-    return vctrs_dispatch1(syms_vec_proxy, method,
-                           syms_x, x);
   }
+
+  // vctrs' own methods for these base classes are found on very hot paths
+  // (per element in `list_combine()`, per column in `vec_rbind()`), and
+  // evaluating them through R costs far more than the work they do. They are
+  // compared by identity, so user overrides are still dispatched to.
+  if (method == fns_vec_proxy_factor || method == fns_vec_proxy_ordered) {
+    return x;
+  }
+  if (method == fns_vec_proxy_date) {
+    return date_validate(x);
+  }
+  if (method == fns_vec_proxy_posixct) {
+    return datetime_validate(x);
+  }
+
+  return vctrs_dispatch1(syms_vec_proxy, method, syms_x, x);
 }
 
 static inline
@@ -267,6 +280,11 @@ void vctrs_init_data(r_obj* ns) {
   fns_vec_proxy_equal_array = r_env_get(ns, syms_vec_proxy_equal_array);
   fns_vec_proxy_compare_array = r_env_get(ns, syms_vec_proxy_compare_array);
   fns_vec_proxy_order_array = r_env_get(ns, syms_vec_proxy_order_array);
+
+  fns_vec_proxy_factor = r_env_get(ns, r_sym("vec_proxy.factor"));
+  fns_vec_proxy_ordered = r_env_get(ns, r_sym("vec_proxy.ordered"));
+  fns_vec_proxy_date = r_env_get(ns, r_sym("vec_proxy.Date"));
+  fns_vec_proxy_posixct = r_env_get(ns, r_sym("vec_proxy.POSIXct"));
 }
 
 r_obj* syms_vec_proxy = NULL;
@@ -280,3 +298,8 @@ r_obj* syms_vec_proxy_order_array = NULL;
 r_obj* fns_vec_proxy_equal_array = NULL;
 r_obj* fns_vec_proxy_compare_array = NULL;
 r_obj* fns_vec_proxy_order_array = NULL;
+
+r_obj* fns_vec_proxy_factor = NULL;
+r_obj* fns_vec_proxy_ordered = NULL;
+r_obj* fns_vec_proxy_date = NULL;
+r_obj* fns_vec_proxy_posixct = NULL;
